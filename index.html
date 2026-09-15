@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Blutmond — Vampir Tower Defense</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="description" content="Blutmond – ein Tower-Defense-Spiel, in dem du als Vampirfürst mit Blut-, Schatten- und Qi-Kräften immer stärker wirst.">
+<meta name="theme-color" content="#0b0410">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Blutmond">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/icon-192.png">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body {
+    width:100%; height:100%; overflow:hidden; background:#07030c;
+    overscroll-behavior:none; touch-action:none;
+    -webkit-user-select:none; user-select:none;
+    font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  body { position:fixed; inset:0; }
+  #wrap {
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    background:
+      radial-gradient(120% 90% at 50% 0%, #1a0a22 0%, #0b0410 55%, #06020a 100%);
+  }
+  canvas#c { display:block; touch-action:none; image-rendering:auto; }
+  #boot {
+    position:absolute; inset:0; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:14px; color:#e6d5f5;
+    background:#07030c; z-index:10; letter-spacing:.14em; font-size:13px;
+  }
+  #boot .fang { font-size:44px; }
+  #boot.hide { display:none; }
+</style>
+</head>
+<body>
+  <div id="wrap"><canvas id="c"></canvas></div>
+  <div id="boot"><div class="fang">🩸</div><div>BLUTMOND WIRD GEWECKT…</div></div>
+  <script src="game.js?v=1"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('sw.js').catch(function(){});
+      });
+    }
+  </script>
+</body>
+</html>
