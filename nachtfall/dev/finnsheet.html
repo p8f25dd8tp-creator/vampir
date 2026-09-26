@@ -1,0 +1,10 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{margin:0;background:#3b3a3a}</style></head><body>
+<canvas id="game" style="display:none"></canvas><canvas id="out"></canvas>
+<script src="../src/00-core.js"></script><script src="../src/01-artkit.js"></script><script src="../src/02-heroes.js"></script><script src="../src/03-enemies-art.js"></script><script src="../src/04-world-art.js"></script><script src="../src/05-data.js"></script><script src="../src/06-fx.js"></script><script src="../src/07-abilities.js"></script><script src="../src/08-enemies.js"></script><script src="../src/09-game.js"></script><script src="../src/10-render.js"></script><script src="../src/11-ui.js"></script><script src="../src/13-finn.js"></script>
+<script>
+buildParticleSprites();
+const out=document.getElementById('out'); out.width=1600; out.height=560; const o=out.getContext('2d'); o.fillStyle='#3b3a3a'; o.fillRect(0,0,1600,560);
+for(let t=0;t<8;t++){ const r1=renderHero('finn',{t:0.4},{tier:t,rim:FINN_TIERS[t].rim},5,null,{glow:true}); o.drawImage(r1.out, t*200-100, -130, r1.S*0.8, r1.S*0.8);
+ const r2=renderHero('finn',{t:1,run:1,phase:0.6,cast:0.8,aim:0.2},{tier:t,rim:FINN_TIERS[t].rim},5,null,{glow:true}); o.drawImage(r2.out, t*200-100, 150, r2.S*0.8, r2.S*0.8);
+ o.fillStyle='#fff'; o.font='16px serif'; o.fillText(FINN_TIERS[t].name, t*200+20, 545); }
+</script></body></html>

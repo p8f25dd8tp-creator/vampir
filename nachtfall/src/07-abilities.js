@@ -102,6 +102,14 @@ function buildAbilitySprites() {
     g.fillStyle = rg(g, 0, 0, 0, 30, [0, 'rgba(255,240,255,1)', 0.15, 'rgba(190,140,255,1)', 0.4, 'rgba(90,40,180,0.8)', 0.7, 'rgba(30,5,60,0.6)', 1, 'rgba(10,0,30,0)']);
     g.beginPath(); g.arc(0, 0, 30, 0, TAU); g.fill();
   });
+  // Bodenriss (Hammerschlag)
+  ASPR.crack = mk(128, 128, (g) => {
+    g.translate(64, 64);
+    g.fillStyle = rg(g, 0, 0, 0, 60, [0, 'rgba(20,12,10,0.8)', 0.5, 'rgba(30,20,18,0.35)', 1, 'rgba(0,0,0,0)']); g.beginPath(); g.arc(0, 0, 60, 0, TAU); g.fill();
+    g.strokeStyle = '#0a0606'; g.lineCap = 'round';
+    const rnd = mulberry(9);
+    for (let i = 0; i < 9; i++) { let a = i / 9 * TAU + rnd() * 0.4, x = 0, y = 0; g.beginPath(); g.moveTo(0, 0); for (let k = 0; k < 5; k++) { a += (rnd() - 0.5) * 0.6; x += Math.cos(a) * 11; y += Math.sin(a) * 11; g.lineTo(x, y); } g.lineWidth = 3; g.stroke(); }
+  });
   // Blut-Klingenwelle (Blutwisch L5)
   ASPR.crescent = mk(120, 120, (g) => {
     g.translate(60, 60);
@@ -859,6 +867,7 @@ function castUlt(p) {
   const H = HEROES[p.hero];
   if (p.ultCd > 0 || !p.alive) return false;
   if (p.hero === 'shen' && p.qi < 1) { UI.toast('Kein Qi — steh still, um Qi zu sammeln'); return false; }
+  if (p.hero === 'finn' && !p.tier) { UI.toast('Noch keine Kräfte — finde das Buch!'); return false; }
   p.ultCd = H.ult.cd * (p.hero === 'shen' ? 1 : p.st.cd);
   GAME.stats.ults++;
   const fn = ULTS[H.ult.id];
@@ -933,7 +942,7 @@ const ULTS = {
 /* ======================================================== Ausweichen */
 function doDodge(p) {
   if (p.dodgeCd > 0 || p.dodgeT > 0 || !p.alive) return false;
-  const H = HEROES[p.hero];
+  const H = HEROES[p.hero], DK = dodgeKind(p);
   let dx = INPUT.moveX, dy = INPUT.moveY;
   if (Math.hypot(dx, dy) < 0.2) { dx = p.lastMoveX || p.face; dy = p.lastMoveY || 0; }
   const d = Math.hypot(dx, dy) || 1; dx /= d; dy /= d;
@@ -941,11 +950,12 @@ function doDodge(p) {
   p.dodgeCd = H.dodgeCd * p.st.dodgeCdMul;
   if (Math.abs(dx) > 0.15) p.face = dx > 0 ? 1 : -1;
   const trail = abLvl('nebelgang') >= 3 || (p.passives.nebelgang || 0) >= 3;
-  if (H.dodge === 'shadowstep') {
+  if (DK === 'shadowstep' || DK === 'blink') {
+    const blink = DK === 'blink', lc = blink ? '#ff3a5a' : '#a77bff';
     // Teleport-Sprint: sofort, schneidet alles auf dem Weg
     const len = 135;
     const x0 = p.x, y0 = p.y;
-    spawnAfterimage(p, 1.6, 'decoy');
+    if (!blink || abLvl('nachbilder')) spawnAfterimage(p, 1.6, 'decoy');
     p.x += dx * len; p.y += dy * len;
     p.iframes = Math.max(p.iframes, 0.35);
     p.dodgeT = 0.12; p.dodgeMax = 0.12;
@@ -954,18 +964,18 @@ function doDodge(p) {
     for (let s = 0; s <= 1; s += 0.1) forEnemiesInRadius(x0 + dx * len * s, y0 + dy * len * s, 26, (en) => { if (hit.has(en.id)) return; hit.add(en.id); dealDamage(en, 20, 'shadow', 'schattenschritt', { kb: 60, kx: -dy, ky: dx }); });
     addEffect({ x: x0, y: y0, dur: 0.35, layer: 1, draw(g, e, k) {
       g.globalCompositeOperation = 'lighter'; g.globalAlpha = 1 - k;
-      g.strokeStyle = '#a77bff'; g.lineWidth = 10 * (1 - k) + 1;
+      g.strokeStyle = lc; g.lineWidth = 10 * (1 - k) + 1;
       g.beginPath(); g.moveTo(x0, y0 - 20); g.lineTo(x0 + dx * len, y0 + dy * len - 20); g.stroke();
       g.strokeStyle = '#fff'; g.lineWidth = 2 * (1 - k);
       g.beginPath(); g.moveTo(x0, y0 - 20); g.lineTo(x0 + dx * len, y0 + dy * len - 20); g.stroke();
     } });
-    burstShadow(x0, y0, 10, 1); burstShadow(p.x, p.y, 10, 1);
+    if (blink) { burstSparks(x0, y0 - 16, 10, lc, 1); burstSparks(p.x, p.y - 16, 10, lc, 1); } else { burstShadow(x0, y0, 10, 1); burstShadow(p.x, p.y, 10, 1); }
     if (abLvl('spiegel')) spawnAfterimage(p, 5.5, 'mirror');
   } else {
-    p.dodgeT = H.dodge === 'mist' ? 0.32 : 0.3; p.dodgeMax = p.dodgeT;
+    p.dodgeT = DK === 'mist' ? 0.32 : 0.3; p.dodgeMax = p.dodgeT;
     p.iframes = Math.max(p.iframes, p.dodgeT + 0.08);
     sfx('dodge');
-    if (H.dodge === 'mist') burstBlood(p.x, p.y, 8, 0.6);
+    if (DK === 'mist') burstBlood(p.x, p.y, 8, 0.6);
   }
   if (trail) {
     const x0 = p.x - dx * 60, y0 = p.y - dy * 60, slowT = (p.passives.nebelgang || 0) >= 5;

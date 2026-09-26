@@ -319,7 +319,7 @@ function playerPoseState(p) {
   const dodgeK = p.dodgeT > 0 ? Math.sin(Math.PI * clamp(1 - p.dodgeT / p.dodgeMax, 0, 1)) : 0;
   return {
     t: p.animT, run: clamp(p.runAmt, 0, 1), phase: p.phase, cast: castK, aim: aimLocal,
-    dodge: HEROES[p.hero].dodge === 'roll' ? dodgeK * 0.6 : dodgeK, hurt: p.hurtT / 0.3,
+    dodge: dodgeKind(p) === 'roll' ? dodgeK * 0.6 : dodgeK, hurt: p.hurtT / 0.3,
     dead: p.alive ? 0 : clamp(p.deadT / 1.1, 0, 1), rooted: p.rooted || 0
   };
 }
@@ -329,6 +329,7 @@ function heroLook(p) {
   if (p.hero === 'liora') H.rage = clamp(1 - p.hp / p.st.maxHp + (p.buffAder > 0 ? 0.6 : 0), 0, 1);
   if (p.hero === 'nyx') H.flow = p.flow + (p.ultT > 0 ? 1 : 0);
   if (p.hero === 'shen') H.qi = clamp(p.qi / 5, 0, 1);
+  if (p.hero === 'finn') { H.tier = p.tier || 0; H.rim = FINN_TIERS[H.tier].rim; }
   return H;
 }
 function drawPlayer(g, p, time) {
@@ -340,12 +341,12 @@ function drawPlayer(g, p, time) {
   g.save();
   g.translate(p.x, p.y);
   let alpha = 1;
-  const H = HEROES[p.hero];
-  if (p.dodgeT > 0 && H.dodge === 'mist') alpha = 0.35;
-  if (p.dodgeT > 0 && H.dodge === 'shadowstep') alpha = 0.15;
+  const DK = dodgeKind(p);
+  if (p.dodgeT > 0 && DK === 'mist') alpha = 0.35;
+  if (p.dodgeT > 0 && (DK === 'shadowstep' || DK === 'blink')) alpha = 0.15;
   if (p.iframes > 0 && p.hurtT <= 0 && p.dodgeT <= 0 && !(p.ultT > 0)) alpha *= 0.65 + 0.35 * Math.sin(time * 40);
   if (!p.alive) alpha = 1 - clamp((p.deadT - 1.1) / 1.2, 0, 1);
-  if (p.dodgeT > 0 && H.dodge === 'roll') {
+  if (p.dodgeT > 0 && DK === 'roll') {
     const k = 1 - p.dodgeT / p.dodgeMax;
     g.translate(0, -18); g.rotate(k * TAU * p.face); g.translate(0, 18);
   }
@@ -381,7 +382,7 @@ function drawPlayerGlow(g, p, time) {
 }
 function drawPlayerRing(g, p, time) {
   if (!p || !p.alive) return;
-  const col = HERO_ART[p.hero].rim;
+  const col = heroRim(p);
   g.save(); g.translate(p.x, p.y); g.scale(1, 0.55);
   g.globalAlpha = 0.55;
   g.strokeStyle = col; g.lineWidth = 2;
@@ -474,6 +475,23 @@ function drawPickups(g, G, time) {
       g.fillStyle = rg(g, q.x - 2, y - 2, 0, 8, [0, '#ffffff', 0.4, '#a8c8ff', 1, '#3a4a8a']);
       g.beginPath(); g.arc(q.x, y - 4, 7, 0, TAU); g.fill();
       addLight(q.x, q.y, 70, '#a8c8ff', 0.9);
+    } else if (q.kind === 'book') { // das Buch: schwebender Foliant mit Blutrunen und Lichtsaeule
+      const by = y - 10 + Math.sin(time * 2) * 3;
+      g.save(); g.globalCompositeOperation = 'lighter';
+      g.globalAlpha = 0.35 + Math.sin(time * 3) * 0.1;
+      g.fillStyle = lg(g, q.x - 14, 0, q.x + 14, 0, [0, 'rgba(255,40,60,0)', 0.5, 'rgba(255,90,110,0.8)', 1, 'rgba(255,40,60,0)']);
+      g.fillRect(q.x - 14, by - 220, 28, 220);
+      g.globalAlpha = 1; g.drawImage(glowSprite('#ff3048', true), q.x - 26, by - 26, 52, 52);
+      g.restore();
+      g.fillStyle = 'rgba(0,0,0,0.45)'; g.beginPath(); g.ellipse(q.x, q.y, 14, 4, 0, 0, TAU); g.fill();
+      g.save(); g.translate(q.x, by); g.rotate(Math.sin(time * 1.5) * 0.08);
+      g.fillStyle = '#2a0a10'; g.fillRect(-12, -9, 24, 17);
+      g.fillStyle = lg(g, -11, -8, 11, 8, [0, '#6a1020', 1, '#3a0610']); g.fillRect(-11, -8, 22, 15);
+      g.strokeStyle = '#c9a24c'; g.lineWidth = 1; g.strokeRect(-9, -6, 18, 11);
+      g.fillStyle = '#e8d8c0'; g.fillRect(-11, 6, 22, 2);
+      g.save(); g.globalCompositeOperation = 'lighter'; g.fillStyle = '#ff5a6a'; g.font = '700 9px serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('ᛟ', 0, -0.5); g.restore();
+      g.restore();
+      addLight(q.x, q.y, 180, '#ff3048', 1);
     } else if (q.kind === 'chest') {
       g.fillStyle = 'rgba(0,0,0,0.45)'; g.beginPath(); g.ellipse(q.x, q.y, 16, 5, 0, 0, TAU); g.fill();
       g.fillStyle = lg(g, 0, y - 16, 0, y + 4, [0, '#8a5a2a', 1, '#3a200a']); g.fillRect(q.x - 14, y - 14, 28, 18);
@@ -508,7 +526,7 @@ function drawOffscreenMarkers(g, G, x0, y0) {
   const list = [];
   if (G.boss && !G.boss.dead) list.push([G.boss, '#ff5a2a', 16]);
   if (G.mini && !G.mini.dead) list.push([G.mini, '#ffb040', 12]);
-  for (const q of G.pickups) if (q.kind === 'chest') list.push([q, '#ffe070', 12]);
+  for (const q of G.pickups) if (q.kind === 'chest' || q.kind === 'book') list.push([q, q.kind === 'book' ? '#ff4a5a' : '#ffe070', 14]);
   for (const [o, col, sz] of list) {
     const sx = (o.x - x0) * S, sy = (o.y - 40 - y0) * S;
     const m = 30 * VIEW.dpr;

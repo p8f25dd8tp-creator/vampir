@@ -1,0 +1,20 @@
+const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+(async () => {
+  const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+  const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, hasTouch: true, isMobile: true });
+  const p = await ctx.newPage();
+  const errs = []; p.on('pageerror', e => errs.push(e.message + e.stack));
+  await p.goto('http://localhost:8765/index.html'); await p.waitForTimeout(2500);
+  await p.evaluate(() => { UI.selHero = 'finn'; UI.showSelect(); });
+  await p.waitForTimeout(1200); await p.screenshot({ path: '/tmp/claude-0/f-select.png' });
+  await p.evaluate(() => startGame('finn'));
+  await p.waitForTimeout(1500); await p.screenshot({ path: '/tmp/claude-0/f-start.png' });
+  await p.evaluate(() => { const bk = GAME.pickups.find(q => q.kind === 'book'); GAME.p.x = bk.x - 20; GAME.p.y = bk.y; });
+  await p.waitForTimeout(700); await p.screenshot({ path: '/tmp/claude-0/f-evo.png' });
+  await p.addScriptTag({ path: 'dev/bot.js' });
+  await p.evaluate(() => { UI.showLevelUp = function(){}; let n=0; while (GAME.t < 420 && n++ < 40000) { if (GAME.state==='levelup') botPick(); if (GAME.state==='play') updateGame(1/30); } setInterval(() => { if (GAME.state === 'levelup') botPick(); }, 200); });
+  await p.waitForTimeout(1500); await p.screenshot({ path: '/tmp/claude-0/f-late.png' });
+  console.log(await p.evaluate(() => JSON.stringify({ tier: GAME.p.tier, lvl: GAME.level, ab: Object.keys(GAME.p.ab) })));
+  console.log(errs.join('\n'));
+  await b.close();
+})();

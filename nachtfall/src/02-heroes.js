@@ -768,8 +768,8 @@ function renderHero(id, st, H, px, target, opts) {
   if (out.width !== S) { out.width = S; out.height = S; }
   finishSprite(raw, {
     outline: Math.max(1.2, px * 0.62),
-    rim: art.rim, rimW: px * 0.75, rimA: 0.9,
-    glow: opts && opts.glow ? art.rim : null, glowA: 0.6,
+    rim: (H && H.rim) || art.rim, rimW: px * 0.75, rimA: 0.9,
+    glow: opts && opts.glow ? ((H && H.rim) || art.rim) : null, glowA: 0.6,
     moonW: px * 0.55
   }, out);
   return { raw, out, P, S, anchorY: S * 0.78 };

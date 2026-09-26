@@ -38,9 +38,10 @@ function newRun(heroId) {
   };
   GAME.p = makePlayer(heroId);
   GAME.cam.x = 0; GAME.cam.y = 0;
-  giveCard(H.start, true);
+  if (H.start) giveCard(H.start, true);
   recomputeStats();
   GAME.p.hp = GAME.p.st.maxHp;
+  if (H.onStart) H.onStart();
   AudioSys.startMusic();
   sfx('bell');
 }
@@ -57,7 +58,7 @@ function makePlayer(heroId) {
 
 /* -------------------------------------------------------- Werte */
 function recomputeStats() {
-  const p = GAME.p, H = HEROES[p.hero], ps = p.passives, M = SAVE.meta;
+  const p = GAME.p, H0 = HEROES[p.hero], H = H0.baseStats ? Object.assign({}, H0, H0.baseStats(p)) : H0, ps = p.passives, M = SAVE.meta;
   const st = {
     maxHp: H.hp * (1 + 0.08 * (M.vitae || 0)) + (ps.vampirblut || 0) * 20 + ((ps.vampirblut || 0) >= 5 ? 10 : 0),
     regen: (ps.vampirblut || 0) * 0.4 + ((ps.vampirblut || 0) >= 5 ? 0.2 : 0),
@@ -84,6 +85,7 @@ function heroDamageMult(p, school) {
   if (p.hero === 'shen') { if (school === 'blood' || school === 'shadow') m *= 0.85; m *= 1 + Math.floor(p.qi) * 0.05; }
   if (p.hero === 'liora') { const miss = 1 - p.hp / p.st.maxHp; m *= 1 + clamp(miss * 1.25, 0, 0.9); if (p.buffAder > 0) m *= 1.6; }
   if (p.hero === 'nyx') m *= 1 + p.flow * 0.45;
+  if (p.hero === 'finn') m *= FINN_TIERS[p.tier || 0].might;
   return m;
 }
 
@@ -298,7 +300,8 @@ function updatePickups(dt) {
     if (q.vz || q.z > 0) { q.vz -= 400 * dt; q.z = Math.max(0, q.z + q.vz * dt); if (q.z === 0) q.vz = 0; }
     const d2 = dist2(q.x, q.y, p.x, p.y);
     if (!q.magnet && (d2 < pr2 || (q.kind === 'xp' && G.magnetAll))) q.magnet = true;
-    if (q.kind === 'chest' && d2 < 40 * 40) q.magnet = true;
+    if ((q.kind === 'chest' || q.kind === 'book') && d2 < 40 * 40) q.magnet = true;
+    if (q.kind === 'book' && !q.magnet) { G.pickups[w++] = q; continue; }
     if (q.magnet && p.alive) {
       const d = Math.sqrt(d2) || 1;
       const sp = 260 + q.t * 200;
@@ -319,7 +322,8 @@ function collect(q) {
     G.gemCombo = (G.gemCombo || 0) + 1; G.gemComboT = 0.4;
     sfx('gem', Math.min(12, G.gemCombo), 0.03);
     while (G.xp >= G.xpNext) { G.xp -= G.xpNext; G.level++; G.xpNext = xpNeed(G.level); G.pendingLevels++; }
-  } else if (q.kind === 'soul') { G.souls += q.v; sfx('gem', 14, 0.03); }
+  } else if (q.kind === 'book') { finnEvolve(1); }
+  else if (q.kind === 'soul') { G.souls += q.v; sfx('gem', 14, 0.03); }
   else if (q.kind === 'heal') { healPlayer(p.st.maxHp * 0.3 * (p.hero === 'liora' ? 1.5 : 1)); burstBlood(p.x, p.y - 20, 6, 0.5); }
   else if (q.kind === 'magnet') { G.magnetAll = true; for (const o of G.pickups) if (o.kind === 'xp') o.magnet = true; sfx('heal'); UI.toast('Mondstein: alle Seelensplitter fliegen zu dir'); }
   else if (q.kind === 'chest') {
@@ -331,7 +335,7 @@ function collect(q) {
 
 /* -------------------------------------------------------- Karten */
 function ownedAbilities() { return Object.keys(GAME.p.ab); }
-function abilityCount() { return Object.keys(GAME.p.ab).length; }
+function abilityCount() { return Object.keys(GAME.p.ab).filter((k) => CARDS[k]).length; }
 function passiveCount() { return Object.keys(GAME.p.passives).length; }
 function hasSchool(school) {
   const p = GAME.p;
@@ -361,8 +365,9 @@ function makeOffers() {
   const cands = [];
   // Fusionen haben Vorrang (goldene Karte)
   for (const fid in FUSIONS) if (fusionReady(fid)) cands.push({ id: fid, fusion: true, w: 1000 });
-  const slotsA = abilityCount() < H.slots, slotsP = passiveCount() < 4;
-  for (const id of H.pool) {
+  const heroSlots = H.slotsOf ? H.slotsOf(p) : H.slots;
+  const slotsA = abilityCount() < heroSlots, slotsP = passiveCount() < 4;
+  for (const id of (H.poolOf ? H.poolOf(p) : H.pool)) {
     const C = CARDS[id];
     if (C.kind === 'ability') {
       // bereits in einer Fusion aufgegangen?
@@ -447,9 +452,10 @@ function updatePlayer(dt) {
   let tvx = mx * speed, tvy = my * speed;
   if (p.dodgeT > 0) {
     p.dodgeT -= dt;
-    if (H.dodge !== 'shadowstep') { const ds = speed * (H.dodge === 'mist' ? 2.6 : 2.9); tvx = p.dodgeDir[0] * ds; tvy = p.dodgeDir[1] * ds; }
-    if (H.dodge === 'mist' && Math.random() < 0.8) spawnPart({ x: p.x + rand(-10, 10), y: p.y + rand(-6, 6), z: rand(10, 40), vx: rand(-30, 30), vy: rand(-30, 30), vz: 20, drag: 2, life: 0.5, size: 8, size1: 16, spr: tinted('smoke', '#8a0a20'), alpha: 0.7, alpha1: 0 });
-    if (p.dodgeT <= 0 && H.dodge === 'slide') { // Meister: Gleitschritt endet in einem kleinen Qi-Stoss
+    const dk = dodgeKind(p);
+    if (dk !== 'shadowstep' && dk !== 'blink') { const ds = speed * (dk === 'mist' ? 2.6 : 2.9); tvx = p.dodgeDir[0] * ds; tvy = p.dodgeDir[1] * ds; }
+    if (dk === 'mist' && Math.random() < 0.8) spawnPart({ x: p.x + rand(-10, 10), y: p.y + rand(-6, 6), z: rand(10, 40), vx: rand(-30, 30), vy: rand(-30, 30), vz: 20, drag: 2, life: 0.5, size: 8, size1: 16, spr: tinted('smoke', '#8a0a20'), alpha: 0.7, alpha1: 0 });
+    if (p.dodgeT <= 0 && dk === 'slide') { // Meister: Gleitschritt endet in einem kleinen Qi-Stoss
       forEnemiesInRadius(p.x, p.y, 60, (en) => dealDamage(en, 10, 'qi', 'harmonie', { kb: 200 * p.st.kb, kx: en.x - p.x, ky: en.y - p.y, norm: true, quiet: true }));
       fxRing(p.x, p.y, 10, 60, 0.25, '#5ff0d0', 4); p.qi = Math.min(5, p.qi + 0.25);
     }
@@ -499,7 +505,7 @@ function updatePlayer(dt) {
   // Licht der Figur (Lesbarkeit: der Held ist immer gut ausgeleuchtet)
   addLight(p.x, p.y - 20, 340, '#ffeedd', 1);
   addLight(p.x, p.y - 20, 150, '#ffffff', 0.6);
-  addLight(p.x, p.y - 10, 110, HERO_ART[p.hero].rim, 0.55);
+  addLight(p.x, p.y - 10, 110, heroRim(p), 0.55);
 }
 function updateCamera(dt) {
   const G = GAME, p = G.p, c = G.cam;
@@ -534,7 +540,8 @@ function updateGame(rdt) {
   G.shake = Math.max(0, G.shake - rdt * 30);
   if (G.gemComboT > 0) { G.gemComboT -= rdt; if (G.gemComboT <= 0) G.gemCombo = 0; }
   AudioSys.musicTick(rdt, clamp(G.alive / 150, 0, 1) * 0.7 + (G.bossAlive ? 0.3 : 0));
-  if (G.pendingLevels > 0 && G.p.alive && !G.won) { G.pendingLevels--; openLevelUp(); }
+  const HH = HEROES[G.hero]; if (HH.onUpdate) HH.onUpdate(dt);
+  if (G.pendingLevels > 0 && G.p.alive && !G.won && G.state === 'play') { G.pendingLevels--; openLevelUp(); }
 }
 function openLevelUp() {
   const G = GAME;
@@ -580,3 +587,6 @@ function endRun(won) {
   if (won) sfx('win');
   UI.showEnd(won, soulsEarned, newly);
 }
+
+function dodgeKind(p) { return p.dodgeKind || HEROES[p.hero].dodge; }
+function heroRim(p) { return p.hero === 'finn' ? FINN_TIERS[p.tier || 0].rim : HERO_ART[p.hero].rim; }

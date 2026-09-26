@@ -47,6 +47,13 @@ function icon(id) {
     dodge_mist() { glow('#ff2a40', 30); g.drawImage(tinted('smoke', '#c0102a'), -40, -30, 80, 60); g.strokeStyle = '#ffd0d6'; g.lineWidth = 4; g.beginPath(); g.moveTo(-26, 10); g.lineTo(20, -10); g.lineTo(10, -20); g.moveTo(20, -10); g.lineTo(8, 2); g.stroke(); },
     dodge_roll() { glow('#ff2a40', 26); g.strokeStyle = '#ffd0d6'; g.lineWidth = 5; g.beginPath(); g.arc(0, 0, 22, 0.4, TAU - 0.6); g.stroke(); g.beginPath(); g.moveTo(22, -14); g.lineTo(24, 4); g.lineTo(10, -4); g.fill(); },
     dodge_shadowstep() { g.drawImage(PART.shadowwisp, -40, -30, 80, 60); g.strokeStyle = '#c7a6ff'; g.lineWidth = 5; g.beginPath(); g.moveTo(-30, 16); g.lineTo(28, -16); g.stroke(); g.strokeStyle = '#fff'; g.lineWidth = 1.6; g.stroke(); },
+    blutspray() { glow('#ff2a40', 30); for (let i = -2; i <= 2; i++) { g.save(); g.rotate(-0.6 + i * 0.22); g.drawImage(PART.drop, 6 + Math.abs(i) * 3, -5, 30, 11); g.restore(); } g.fillStyle = '#300'; g.beginPath(); g.arc(-26, 14, 8, 0, TAU); g.fill(); },
+    hammerschlag() { g.drawImage(ASPR.crack, -44, -20, 88, 60); glow('#ffb070', 20); g.fillStyle = lg(g, -12, -40, 12, 0, [0, '#e8d0c0', 1, '#8a6a5a']); g.beginPath(); g.ellipse(0, -14, 14, 16, 0, 0, TAU); g.fill(); g.strokeStyle = '#2a1a14'; g.lineWidth = 2; g.stroke(); for (let k = -1; k <= 2; k++) { g.beginPath(); g.moveTo(-10 + k * 6, -24); g.lineTo(-10 + k * 6, -12); g.stroke(); } },
+    blitzschritt() { glow('#ff3a5a', 30); g.strokeStyle = '#ff3a5a'; g.lineWidth = 6; g.beginPath(); g.moveTo(-36, 20); g.lineTo(-8, 4); g.lineTo(-14, -2); g.lineTo(34, -24); g.stroke(); g.strokeStyle = '#fff'; g.lineWidth = 2; g.stroke(); },
+    himmelsstrahl() { g.fillStyle = lg(g, -12, 0, 12, 0, [0, 'rgba(255,230,160,0)', 0.5, '#fff6d8', 1, 'rgba(255,230,160,0)']); g.fillRect(-12, -48, 24, 80); glow('#ffe6a0', 30); },
+    goetterfall() { glow('#ffb040', 34); for (let i = -1; i <= 1; i++) { g.save(); g.translate(i * 16, -6 + Math.abs(i) * 8); g.rotate(0.15); g.fillStyle = lg(g, 0, -34, 0, 16, [0, '#ffd27a', 0.8, '#fff6d8', 1, '#c01030']); g.beginPath(); g.moveTo(-3, -34); g.lineTo(3, -34); g.lineTo(4, 8); g.lineTo(0, 18); g.lineTo(-4, 8); g.closePath(); g.fill(); g.restore(); } },
+    erwachen() { g.drawImage(glowSprite('#ff2a40', true), -46, -46, 92, 92); g.save(); g.globalCompositeOperation = 'lighter'; g.drawImage(glowSprite('#ffe6a0', true), -26, -40, 52, 52); g.restore(); g.fillStyle = '#1a0006'; g.beginPath(); g.moveTo(-20, 30); g.lineTo(0, -30); g.lineTo(20, 30); g.lineTo(0, 16); g.closePath(); g.fill(); g.strokeStyle = '#ffd27a'; g.lineWidth = 2; g.stroke(); },
+    dodge_blink() { D.blitzschritt(); },
     dodge_slide() { glow('#4ff0cc', 26); g.strokeStyle = '#9affe6'; g.lineWidth = 4; for (let i = 0; i < 3; i++) { g.beginPath(); g.moveTo(-34, -12 + i * 12); g.lineTo(14, -12 + i * 12); g.stroke(); } g.drawImage(ASPR.palm, 0, -24, 50, 40); }
   };
   (D[id] || D.grabesmacht)();
@@ -148,7 +155,8 @@ const UI = {
         <div class="stat"><div class="k">RÜSTUNG</div><div class="v">${H.armor}</div></div>
         <div class="stat"><div class="k">AUSWEICHEN</div><div class="v">${H.dodgeCd}s</div></div>
       </div>
-      <div class="blk"><b class="lbl">START: ${CARDS[H.start].name.toUpperCase()}</b><p>${CARDS[H.start].lv[0]}</p></div>
+      ${H.start ? `<div class="blk"><b class="lbl">START: ${CARDS[H.start].name.toUpperCase()}</b><p>${CARDS[H.start].lv[0]}</p></div>` : `<div class="blk"><b class="lbl">START: NICHTS</b><p>Kein Angriff, keine Kraft. Lauf zum leuchtenden Buch.</p></div>`}
+      ${H.evo ? `<div class="blk"><b class="lbl">EVOLUTIONEN</b><div class="builds">${FINN_TIERS.slice(1).map((T) => `<div><span>${T.name}${T.level ? ' (Stufe ' + T.level + ')' : ' (Buch)'}:</span> ${T.desc}</div>`).join('')}</div></div>` : ''}
       <div class="blk"><b class="lbl" style="color:${sc.col}">MECHANIK: ${H.mech.name.toUpperCase()}</b><p>${H.mech.desc}</p></div>
       <div class="blk"><b class="lbl">ULTIMATIV: ${H.ult.name.toUpperCase()}</b><p>${H.ult.desc}</p></div>
       <div class="blk two"><div><b class="lbl">STÄRKEN</b><ul class="plus">${H.strengths.map((s) => `<li>${s}</li>`).join('')}</ul></div>
@@ -171,12 +179,13 @@ const UI = {
       g.setTransform(1, 0, 0, 1, 0, 0);
       g.clearRect(0, 0, w, h);
       const sel = pv.id === this.selHero;
-      g.fillStyle = rg(g, w / 2, h * 0.62, 4, w * 0.8, [0, rgba(HERO_ART[pv.id].rim, sel ? 0.35 : 0.14), 1, 'rgba(0,0,0,0)']);
+      g.fillStyle = rg(g, w / 2, h * 0.62, 4, w * 0.8, [0, rgba(pv.id === 'finn' ? FINN_TIERS[pv.tier || 0].rim : HERO_ART[pv.id].rim, sel ? 0.35 : 0.14), 1, 'rgba(0,0,0,0)']);
       g.fillRect(0, 0, w, h);
       const px = h / 88;
       const cyc = pv.t % 6;
       const st = { t: pv.t, run: sel ? 1 : 0, phase: pv.t * 9, cast: sel && cyc > 4.2 && cyc < 5 ? Math.sin((cyc - 4.2) / 0.8 * Math.PI) : 0, aim: 0.1, rooted: pv.id === 'shen' && !sel ? 1 : 0 };
       const look = { glow: 0.6, rage: 0.4, flow: sel ? 0.8 : 0.2, qi: 0.6, crown: 1 };
+      if (pv.id === 'finn') { pv.tier = sel ? Math.floor(pv.t / 1.6) % FINN_TIERS.length : 0; look.tier = pv.tier; look.rim = FINN_TIERS[pv.tier].rim; }
       pv.spr = renderHero(pv.id, st, look, px, pv.spr, { glow: sel });
       g.drawImage(pv.spr.out, w / 2 - pv.spr.S / 2, h * 0.86 - pv.spr.anchorY);
     }
@@ -232,7 +241,7 @@ const UI = {
     const key = Object.keys(p.ab).map((k) => k + p.ab[k].lvl).join() + '|' + Object.keys(p.passives).map((k) => k + p.passives[k]).join();
     if (this.cache.slots !== key) {
       this.cache.slots = key;
-      $('#slots').innerHTML = Object.keys(p.ab).map((k) => `<div class="slot ${FUSIONS[k] ? 'fus' : ''}"><img src="${icon(k)}"><span class="lv">${FUSIONS[k] ? '★' : p.ab[k].lvl}</span></div>`).join('');
+      $('#slots').innerHTML = Object.keys(p.ab).map((k) => `<div class="slot ${FUSIONS[k] || !CARDS[k] ? 'fus' : ''}"><img src="${icon(k)}"><span class="lv">${FUSIONS[k] || !CARDS[k] ? '★' : p.ab[k].lvl}</span></div>`).join('');
       $('#pslots').innerHTML = Object.keys(p.passives).map((k) => `<div class="slot pas"><img src="${icon(k)}"><span class="lv">${p.passives[k]}</span></div>`).join('');
     }
     // Aktionen
@@ -249,6 +258,7 @@ const UI = {
     if (p.hero === 'vorian') { let n = 0; for (const e of G.enemies) if (!e.dead && e.bstack > 0) n += e.bstack; mv = Math.min(1, n / 60); mt = 'Blutmale: ' + n; }
     if (p.hero === 'liora') { mv = clamp((1 - p.hp / p.st.maxHp) / 0.72, 0, 1); mt = 'Blutrausch +' + Math.round(clamp((1 - p.hp / p.st.maxHp) * 1.25, 0, 0.9) * 100) + '%' + (p.buffAder > 0 ? ' · ADERLASS' : ''); }
     if (p.hero === 'nyx') { mv = p.flow; mc = '#a77bff'; mt = 'Schattenfluss +' + Math.round(p.flow * 45) + '%' + (p.ultT > 0 ? ' · MITTERNACHT' : ''); }
+    if (p.hero === 'finn') { const T = FINN_TIERS[p.tier || 0], N = FINN_TIERS[(p.tier || 0) + 1]; mc = T.col; if (!p.tier) { mv = 0; mt = 'Mensch · finde das Buch!'; } else if (N) { const prev = T.level || 1; mv = clamp((G.level - prev + G.xp / G.xpNext) / (N.level - prev), 0, 1); mt = T.name + ' · nächste Form ab St. ' + N.level; } else { mv = 1; mt = T.name.toUpperCase(); } }
     if (p.hero === 'shen') { mv = p.qi / 5; mc = '#4ff0cc'; mt = 'Qi ' + Math.floor(p.qi) + '/5' + (p.rooted > 0.5 ? ' · Wurzelstand' : ''); }
     this.set('mfill', (mv * 100).toFixed(0) + '%', 'width');
     this.set('mfill', mc, 'background');
@@ -276,6 +286,17 @@ const UI = {
     a.className = 'announce ' + (cls || ''); a.textContent = txt;
     requestAnimationFrame(() => a.classList.add('show'));
     clearTimeout(this._annT); this._annT = setTimeout(() => a.classList.remove('show'), 2600);
+  },
+  evolution(T, N) {
+    const hud = this.hud; if (!hud) return;
+    if (T.id !== 'halbling' && T.id !== 'mensch') { const db = $('#dbtn'); if (db && GAME.p.dodgeKind === 'blink' && !db.dataset.blink) { db.dataset.blink = 1; db.querySelector('img').src = icon('dodge_blink'); db.querySelector('.lbl').textContent = 'Blitzschritt'; } }
+    let el = $('#evo'); if (el) el.remove();
+    el = document.createElement('div'); el.id = 'evo'; el.className = 'evo';
+    const names = T.grants.map((c) => (CARDS[c] ? CARDS[c].name : FUSIONS[c] ? FUSIONS[c].name : SRC_NAMES[c] || c));
+    el.innerHTML = `<div class="evk">EVOLUTION</div><div class="evn" style="color:${T.col}">${T.name}</div><div class="evd">${T.desc}</div>
+      <div class="evg">${T.grants.map((c) => `<img src="${icon(c)}">`).join('')}</div><div class="evd small">${names.join(' · ')}${N ? '<br>Nächste Form: ' + N.name + ' ab Stufe ' + N.level : '<br>Höchste Form erreicht.'}</div>`;
+    hud.appendChild(el);
+    setTimeout(() => el.classList.add('out'), 3600); setTimeout(() => el.remove(), 4300);
   },
   toast(txt) {
     const t = $('#toast'); if (!t) return;
@@ -323,9 +344,9 @@ const UI = {
   showPause() {
     const G = GAME, p = G.p;
     const rows = Object.keys(p.ab).map((k) => {
-      const nm = FUSIONS[k] ? '✦ ' + FUSIONS[k].name : CARDS[k].name;
-      const ds = FUSIONS[k] ? FUSIONS[k].desc : CARDS[k].lv.slice(0, p.ab[k].lvl).join(' ');
-      return `<div class="bl"><img src="${icon(k)}"><div><div class="bn2">${nm} ${FUSIONS[k] ? '' : '· Stufe ' + p.ab[k].lvl}</div><div style="font-size:14px;color:#cdbdb0">${ds}</div></div></div>`;
+      const nm = FUSIONS[k] ? '✦ ' + FUSIONS[k].name : CARDS[k] ? CARDS[k].name : '✦ ' + (SRC_NAMES[k] || k);
+      const ds = FUSIONS[k] ? FUSIONS[k].desc : CARDS[k] ? CARDS[k].lv.slice(0, p.ab[k].lvl).join(' ') : (FINN_TIERS.find((T) => T.grants.includes(k)) || { desc: '' }).desc;
+      return `<div class="bl"><img src="${icon(k)}"><div><div class="bn2">${nm} ${FUSIONS[k] || !CARDS[k] ? '' : '· Stufe ' + p.ab[k].lvl}</div><div style="font-size:14px;color:#cdbdb0">${ds}</div></div></div>`;
     }).join('') + Object.keys(p.passives).map((k) => `<div class="bl"><img src="${icon(k)}"><div><div class="bn2">${CARDS[k].name} · Stufe ${p.passives[k]}</div></div></div>`).join('');
     // moegliche Fusionen fuer diesen Helden
     const fus = Object.keys(FUSIONS).filter((f) => FUSIONS[f].heroes.includes(p.hero)).map((f) => {

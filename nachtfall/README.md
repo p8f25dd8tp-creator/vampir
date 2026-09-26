@@ -80,6 +80,32 @@ Angriffe laufen **automatisch**. Bei jedem Stufenaufstieg wählst du **eine von 
 | Stärken | Horden, zäh, Kettenreaktionen | Einzelschaden, heilt sich | schnellster Held, kurzes Ausweichen | alle drei Schulen, höchstes Kombo-Potenzial |
 | Schwächen | langsam, kurze Reichweite | wenig Leben, keine Regeneration | zerbrechlich, schwach im Stillstand | langsamer Start, muss stillstehen; Blut/Schatten nur 85 % |
 
+
+### Fünfter Held: Finn Müller (Evolutions-Held)
+
+*Fan-Figur, angelehnt an „My Vampire System“ — nur für den privaten Gebrauch. Vor einer
+Veröffentlichung (App Store, öffentliche Seite) Namen und Anlehnung ändern.*
+
+Finn beginnt als **Mensch ohne jede Fähigkeit**. In der Nähe leuchtet **das Buch** (Pfeil am
+Bildrand) — wer es erreicht, wird zum Halbling. Danach entwickelt er sich mit seiner Stufe:
+
+| Form | Wann | Neu | Aussehen |
+|---|---|---|---|
+| Mensch | Start | nichts | Kapuzenpulli, Brille |
+| Halbling | Buch | Blutwisch, Blutspray | rote Augen, Blutflecken |
+| Vampir | Stufe 5 | Hammerschlag, Blitzschritt; Ausweichen wird Blitz-Teleport | Lederjacke, Fangzähne |
+| Vampiradliger | Stufe 10 | Schattenflammen; Nachtschlund & Nachbilder als Karten | langer Adelsmantel, Stehkragen |
+| Vampirlord | Stufe 16 | Qi-Handfläche, Blutnova; Qi-Kette, Bluternte, Eiserne Meridiane als Karten | Umhang, Krone, Qi-Tattoos |
+| Himmlischer Vampirlord | Stufe 22 | Himmelsstrahl (Lichtsäulen setzen alle drei Male) | Heiligenschein, Lichtflügel |
+| Reiner Himmlischer | Stufe 28 | Dreifaltiges Siegel | weißes Gewand, silbernes Haar |
+| Gottbezwinger | Stufe 34 | Götterfall (Speerregen) | schwarz-goldene Rüstung, große Flügel, zerbrochener Heiligenschein |
+
+Jede Form bringt mehr Leben, Tempo, Schaden und **mehr Fähigkeiten-Plätze** (2 → 9).
+Die Ultimative **Erwachen** wächst mit: Blut, ab Adliger Schatten, ab Lord Qi, ab
+Himmlischer Licht, als Gottbezwinger alles zugleich plus Zeitlupe.
+Neue Karten: **Blutspray** (Fächer aus Blutgeschossen), **Hammerschlag** (Einschlag mit
+Betäubung, Schockwelle, Erdspalt), **Blitzschritt** (ein Abbild blitzt durch mehrere Gegner).
+
 **Freischaltung** (alles durch Spielen, keine Käufe):
 Vorian von Anfang an · Liora: Stufe 12 in einem Lauf (oder 400 Seelen) ·
 Nyx: 6 Minuten überleben (oder 700 Seelen) · Shen: Vaelgor besiegen (oder 1500 Seelen).
@@ -185,6 +211,7 @@ mit jeder Qi-Perle, beim Wurzelstand erscheint eine Lotusblüte.
 | `src/10-render.js` | Render-Pipeline |
 | `src/11-ui.js` | Menüs, HUD, Karten, Pause, Ende, Altar, Chronik |
 | `src/12-main.js` | Start, Hauptschleife, Qualität |
+| `src/13-finn.js` | Finn Müller: Evolutionen, Figur, eigene Fähigkeiten, Buch |
 | `build.js` | baut `nachtfall-standalone.html` und setzt die Offline-Cache-Version |
 | `dev/` | Test-Werkzeuge (Bot, Balance-Simulation, Screenshots) |
 

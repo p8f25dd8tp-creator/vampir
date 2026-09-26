@@ -20,6 +20,8 @@ readMove = function () {
   // Boss: auf Nahkampf-/Mitteldistanz umkreisen
   const B = G.boss && !G.boss.dead ? G.boss : null;
   if (B) { const dx = B.x - p.x, dy = B.y - p.y, d = Math.hypot(dx, dy) || 1; const want = p.hero === 'vorian' || p.hero === 'liora' ? 110 : 190; const k = (d - want) / 100; mx += dx / d * k * 1.5 - dy / d * 0.6; my += dy / d * k * 1.5 + dx / d * 0.6; }
+  const book = G.pickups.find((q) => q.kind === 'book');
+  if (book) { const dx = book.x - p.x, dy = book.y - p.y, d = Math.hypot(dx, dy) || 1; mx += dx / d * 3; my += dy / d * 3; }
   // zurueck Richtung Ursprung, damit er nicht endlos wegrennt
   mx += -p.x / 4000; my += -p.y / 4000;
   let mm = Math.hypot(mx, my);
