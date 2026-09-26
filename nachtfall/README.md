@@ -100,7 +100,7 @@ mit den Kräften seiner aktuellen Form und verbessert sie über Karten (System-F
 | 4 Die Vampir-Siedlung | Siedlung der Familien | Wachen, Vampirritter, Blutmagierinnen | Anführer der Familien | Titel Vampirkönig |
 | 5 Graham | Brennende Ruinen | Dalki, Dalki-Werwölfe | Graham (8 Stacheln) | Nest-Kristall → Himmlischer Vampirlord |
 | 6 Die Himmlischen | Himmelsebene | Lichtjünger, Himmelsritter | Der Himmlische Richter | Reiner Himmlischer |
-| 7 Gottbezwinger | Reich der Götter | Götterbestien, Götterritter | Ein Gott | Erins Kristall → Gottbezwinger |
+| 7 Gottbezwinger | Reich der Götter | Götterbestien, Götterritter | Ein Gott | Emma Wagners Kristall → Gottbezwinger |
 
 * **Quests des Systems:** je Kapitel drei (z. B. „Besiege 200 Dalki“), Belohnung Kristalle
   plus Stufenaufstieg oder Heilung.
@@ -118,6 +118,19 @@ Für die Probeversion ist der **Testmodus „alle Helden frei“** eingeschaltet
 (Einstellungen → ausschalten, um das Freispielen zu erleben).
 
 ---
+
+#### Begleiter
+Im Kapitelmenü wählst du bis zu zwei Begleiter. Sie folgen Finn, greifen selbstständig an und sind unverwundbar:
+
+| Begleiter | Rolle | frei nach |
+|---|---|---|
+| Peter Kraus | Wight · zieht Gegner auf sich, Nahkampf-Flächenschlag | Kapitel 1 |
+| Lena Grimm | Bogenschützin · durchschlagende Pfeile | Kapitel 2 |
+| Leo | blinder Qi-Meister · Qi-Welle mit Rückstoß | Kapitel 3 |
+| Fex Sanguini | Vampir · springende Blutfäden | Kapitel 4 |
+| Emma Wagner | Schwertkämpferin · weiter Schwertbogen | Kapitel 5 |
+
+Ab dem Vampiradligen wird Finns Ausweichen zum **Schattensprung**.
 
 ## Kartenpool (15 Karten)
 

@@ -215,7 +215,7 @@ const UI = {
       <div class="mech" id="mech"><div id="mechname">${H.mech.name}</div><div class="mbar"><div class="mfill" id="mfill"></div></div></div>
       <div class="actions">
         <button class="abtn ult interactive" id="ubtn"><img src="${icon(H.ult.id)}"><canvas class="cd" id="ucd" width="160" height="160"></canvas><div class="cdt" id="ucdt"></div><div class="lbl">${H.ult.name}</div></button>
-        <button class="abtn dodge interactive" id="dbtn"><img src="${icon('dodge_' + H.dodge)}"><canvas class="cd" id="dcd" width="140" height="140"></canvas><div class="cdt" id="dcdt"></div><div class="lbl">${H.dodge === 'shadowstep' ? 'Schattenschritt' : 'Ausweichen'}</div></button>
+        <button class="abtn dodge interactive" id="dbtn"><img src="${icon('dodge_' + dodgeKind(GAME.p))}"><canvas class="cd" id="dcd" width="140" height="140"></canvas><div class="cdt" id="dcdt"></div><div class="lbl">${({ shadowstep: GAME.hero === 'finn' ? 'Schattensprung' : 'Schattenschritt', blink: 'Blitzschritt' })[dodgeKind(GAME.p)] || 'Ausweichen'}</div></button>
       </div>`;
     this.root.appendChild(d);
     this.hud = d;

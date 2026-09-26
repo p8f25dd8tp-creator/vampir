@@ -20,7 +20,7 @@ const CHAPTERS = [
   {
     n: 1, id: 'buch', title: 'Das Buch', place: 'Militärakademie — Übungsgelände bei Nacht', theme: 'akademie', tier: 1,
     intro: [
-      'Finn Müller ist sechzehn, hat keine Fähigkeit und ist an der Militärakademie der Außenseiter.',
+      'Finn Müller ist sechzehn, hat keine Fähigkeit und ist an der Militärakademie der Außenseiter. Nur Peter Kraus hält zu ihm.',
       'In dieser Nacht brechen Bestien durch den Zaun des Übungsgeländes. Irgendwo hier liegt das alte Buch seiner Familie …'
     ],
     diff: { hp: 0.5, count: 0.8, dmg: 0.75 },
@@ -87,7 +87,7 @@ const CHAPTERS = [
       { type: 'level', n: 20, text: 'Erreiche Stufe 20', reward: { crystals: 30, bonus: 'heal' } },
       { type: 'mini', text: 'Besiege den Dalki mit sechs Stacheln', reward: { crystals: 50, bonus: 'level' } }
     ],
-    reward: { tier: 4, text: 'Evolution: Vampirlord — Qi und gewaltige Blutkräfte' }
+    reward: { tier: 4, text: 'Evolution: Vampirlord — Leo lehrt dich Qi, dazu gewaltige Blutkräfte' }
   },
   {
     n: 4, id: 'siedlung', title: 'Die Vampir-Siedlung', place: 'Siedlung der Vampirfamilien', theme: 'siedlung', tier: 4,
@@ -164,7 +164,7 @@ const CHAPTERS = [
   {
     n: 7, id: 'goetter', title: 'Gottbezwinger', place: 'Das Reich der Götter', theme: 'goetter', tier: 6,
     intro: [
-      'Götter sind keine Legende. Und Erins Kristall trägt die Macht, sie zu bezwingen.',
+      'Götter sind keine Legende. Und Emma Wagners Gottbezwinger-Kristall trägt die Macht, sie zu bezwingen.',
       'Um die Macht zu tragen, muss Finn einen Gott besiegen.'
     ],
     diff: { hp: 3.1, count: 1.2, dmg: 1.8 },
@@ -183,7 +183,7 @@ const CHAPTERS = [
       { type: 'level', n: 35, text: 'Erreiche Stufe 35', reward: { crystals: 80, bonus: 'heal' } },
       { type: 'mini', text: 'Besiege den Auserwählten', reward: { crystals: 100, bonus: 'level' } }
     ],
-    reward: { tier: 7, text: 'Erins Kristall — Evolution: Vampir-Gottbezwinger' }
+    reward: { tier: 7, text: 'Emma Wagners Kristall — Evolution: Vampir-Gottbezwinger' }
   }
 ];
 
@@ -218,6 +218,7 @@ function storySetup(G, ch) {
   G.quests = ch.quests.map((q) => ({ q, prog: 0, done: false }));
   G.questRoleKills = {};
   G.onKill = storyOnKill;
+  spawnCompanions(G);
   const S = storySave(), gr = S.gear;
   G.statMod = (st) => {
     st.might *= 1 + 0.08 * (gr.handschuhe || 0) + (S.king ? 0.1 : 0);

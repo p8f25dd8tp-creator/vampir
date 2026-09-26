@@ -80,11 +80,13 @@ function renderWorld(G, time) {
   for (const pr of props) if (pr.x > x0 - 120 && pr.x < x0 + VIEW.w + 120 && pr.y > y0 - 30 && pr.y < y0 + VIEW.h + 200) _drawList.push({ y: pr.y, k: 0, o: pr });
   for (const e of G.enemies) if (inView(e.x, e.y, 120)) _drawList.push({ y: e.y, k: 1, o: e });
   for (const im of G.images) _drawList.push({ y: im.y - 0.5, k: 3, o: im });
+  if (G.comps) for (const c of G.comps) _drawList.push({ y: c.y, k: 4, o: c });
   _drawList.sort((a, b) => a.y - b.y);
   for (const d of _drawList) {
     if (d.k === 0) drawProp(ctx, d.o, G, time);
     else if (d.k === 1) drawEnemy(ctx, d.o, time);
     else if (d.k === 2) drawPlayer(ctx, d.o, time);
+    else if (d.k === 4) drawCompanion(ctx, d.o, time);
     else drawImagesOne(ctx, d.o);
   }
   if (G.p) drawPlayer(ctx, G.p, time); // Held immer obenauf: nie in der Horde verloren

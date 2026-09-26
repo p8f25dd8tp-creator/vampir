@@ -61,7 +61,7 @@ window.simRun = function (hero, maxT) {
 };
 
 window.simStory = function (ch, tier, maxT, gear, king) {
-  const S = storySave(); S.gear = { handschuhe: gear || 0, stiefel: gear || 0, panzer: gear || 0, amulett: gear || 0 }; S.king = !!king;
+  const S = storySave(); S.party = (window.SIM_PARTY || []).slice(); S.gear = { handschuhe: gear || 0, stiefel: gear || 0, panzer: gear || 0, amulett: gear || 0 }; S.king = !!king;
   UI.showLevelUp = function () {}; UI.hideLevelUp = function () {}; UI.showEnd = function () {}; UI.announce = function () {}; UI.toast = function () {}; UI.hurtFlash = function () {}; UI.sysWindow = function () {}; UI.evolution = function () {};
   SAVE.settings.testUnlock = true; UI.finnPick = tier; storyStart(ch);
   AudioSys.stopMusic();

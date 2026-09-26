@@ -19,7 +19,7 @@ const FINN_TIERS = [
     desc: 'Hammerschlag und Blitzschritt. Ausweichen wird zum Blitz-Teleport.' },
   { id: 'adliger', name: 'Vampiradliger', hp: 150, speed: 175, armor: 1, might: 1.22, req: { essence: 2500, text: 'Erreiche Stufe 22 in einem Lauf', check: (r) => r.level >= 22 }, slots: 6, rim: '#b07bff', col: '#a77bff',
     grants: ['schattenflammen'], unlocks: ['schattenflammen', 'nachtschlund', 'nachbilder'],
-    desc: 'Die Schatten gehorchen: Schattenflammen, Nachtschlund, Nachbilder.' },
+    desc: 'Die Schatten gehorchen: Schattensprung statt Ausweichen, Schattenflammen, Nachtschlund, Nachbilder.' },
   { id: 'lord', name: 'Vampirlord', hp: 180, speed: 180, armor: 2, might: 1.38, req: { essence: 6000, text: 'Besiege Hauptmann Kharn', check: (r) => r.miniKilled }, slots: 8, rim: '#ff3a4e', col: '#4ff0cc',
     grants: ['qihand', 'blutnova'], unlocks: ['qihand', 'qikette', 'blutnova', 'bluternte', 'eisenmeridiane'],
     desc: 'Qi erwacht — und mit ihm gewaltige Blutkräfte.' },
@@ -298,7 +298,7 @@ function finnStart() {
   p.tier = tier;
   G.finnStartTier = tier;
   for (let t = 1; t <= tier; t++) finnGrant(p, t);
-  if (tier >= 2) p.dodgeKind = 'blink';
+  if (tier >= 2) p.dodgeKind = tier >= 3 ? 'shadowstep' : 'blink';
   recomputeStats(); p.hp = p.st.maxHp;
   if (tier === 0) {
     const a = Math.random() * TAU;
@@ -311,7 +311,7 @@ function finnEvolve(tier) {
   const G = GAME, p = G.p, T = FINN_TIERS[tier];
   p.tier = tier;
   finnGrant(p, tier);
-  if (tier >= 2) p.dodgeKind = 'blink';
+  if (tier >= 2) p.dodgeKind = tier >= 3 ? 'shadowstep' : 'blink';
   recomputeStats();
   p.hp = p.st.maxHp;
   p.iframes = Math.max(p.iframes, 1.5);

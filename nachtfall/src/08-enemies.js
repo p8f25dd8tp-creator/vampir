@@ -176,7 +176,7 @@ function updateEnemies(dt) {
   const ts = G.slowmo > 0 ? 0.4 : 1;
   const edt = dt * ts;
   const farX = VIEW.w * 0.85, farY = VIEW.h * 0.8;
-  const decoys = G.images.filter((i) => i.taunt);
+  const decoys = G.images.filter((i) => i.taunt).concat((G.comps || []).filter((c) => c.id === 'peter'));
   for (const e of G.enemies) {
     if (e.dead) { e.deathT += dt; continue; }
     e.animT += edt;

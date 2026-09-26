@@ -409,7 +409,7 @@ function drawLiora(g, P, H) {
   g.restore();
   // --- vorderer Arm mit Sichel
   drawSlimArm(g, P.armF, C, false);
-  drawSickle(g, P.armF, C, P, H);
+  if (H.weapon) drawCompanionWeapon(g, P.armF, H.weapon, P); else drawSickle(g, P.armF, C, P, H);
 }
 function drawBootLeg(g, L, C, back) {
   const dk = back ? -0.4 : 0;
@@ -773,4 +773,25 @@ function renderHero(id, st, H, px, target, opts) {
     moonW: px * 0.55
   }, out);
   return { raw, out, P, S, anchorY: S * 0.78 };
+}
+
+// Waffen der Begleiter (Bogen, Schwert) statt Lioras Sichel
+function drawCompanionWeapon(g, A, kind, P) {
+  const a = Math.atan2(A.hy - A.ey, A.hx - A.ex);
+  g.save(); g.translate(A.hx, A.hy);
+  if (kind === 'bow') {
+    g.rotate(P.cast > 0 ? P.aim : -0.2);
+    g.strokeStyle = '#4a2e1a'; g.lineWidth = 1.8;
+    g.beginPath(); g.arc(-3, 0, 12, -1.2, 1.2); g.stroke();
+    g.strokeStyle = '#e8e0d0'; g.lineWidth = 0.5;
+    g.beginPath(); g.moveTo(-3 + Math.cos(-1.2) * 12, Math.sin(-1.2) * 12); g.lineTo(-3 - P.cast * 5, 0); g.lineTo(-3 + Math.cos(1.2) * 12, Math.sin(1.2) * 12); g.stroke();
+    if (P.cast > 0.2) { g.strokeStyle = '#d8d0c0'; g.lineWidth = 0.9; g.beginPath(); g.moveTo(-3 - P.cast * 5, 0); g.lineTo(12, 0); g.stroke(); }
+  } else {
+    g.rotate(a - 0.9 - P.cast * 1.4);
+    g.fillStyle = '#2a2430'; g.fillRect(-2, -0.9, 4, 1.8);
+    g.fillStyle = '#c9a24c'; g.fillRect(1.6, -2.6, 1.2, 5.2);
+    g.beginPath(); g.moveTo(2.8, -1); g.lineTo(22, -0.4); g.lineTo(24, 0.3); g.lineTo(2.8, 1); g.closePath();
+    paint(g, lg(g, 3, -1, 3, 1, [0, '#ffffff', 0.5, '#b8d8f0', 1, '#6a88a8']), 'rgba(0,0,0,0.7)', 0.4);
+  }
+  g.restore();
 }

@@ -7,7 +7,7 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
   const p = await b.newPage({ viewport: { width: 390, height: 844 } });
   const errs = []; p.on('pageerror', e => errs.push(e.message + '\n' + e.stack));
   await p.goto('http://localhost:8765/index.html'); await p.waitForTimeout(2500);
-  await p.addScriptTag({ path: 'dev/bot.js' });
+  await p.addScriptTag({ path: 'dev/bot.js' }); await p.evaluate((pp) => { window.SIM_PARTY = pp ? pp.split(',') : []; }, process.env.PARTY || '');
   for (const [ch, tier] of jobs) for (let r = 0; r < runs; r++) {
     const res = await p.evaluate(([c, t, gr, k]) => simStory(c, t, 720, gr, k), [ch, tier, jobGear[ch] || 0, ch >= 5]);
     console.log(JSON.stringify(res));

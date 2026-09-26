@@ -545,6 +545,7 @@ function updateGame(rdt) {
   updateEnemies(dt);
   updateEnemyShots(dt);
   updateImages(dt);
+  if (G.comps) updateCompanions(dt);
   updatePickups(dt);
   updateFX(dt);
   updateCamera(rdt);

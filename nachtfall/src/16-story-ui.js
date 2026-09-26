@@ -29,6 +29,7 @@ UI.act = function (a, ds, e) {
     case 'chapterGo': return this.showChapterIntro(this.selChapter);
     case 'chapterStart': return storyStart(this.selChapter);
     case 'storyform': this.finnPick = +ds.t; return this.showStory();
+    case 'comp': { const P0 = companionParty(); const i = P0.indexOf(ds.id); if (i >= 0) P0.splice(i, 1); else { if (P0.length >= 2) P0.shift(); P0.push(ds.id); } writeSave(); return this.showStory(); }
     case 'gear': return this.showGear();
     case 'buygear': {
       const S = storySave(), G0 = GEAR[ds.id], lv = S.gear[ds.id] || 0;
@@ -73,6 +74,11 @@ UI.showStory = function () {
       ${test ? `<div class="sysnote">Testmodus: Form für den Lauf frei wählbar (zählt dann nicht für die Evolution)</div><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">${chips}</div>` : ''}
     </div>
     <div class="chaps">${cards}</div>
+    <div class="syswin" style="width:min(560px,100%);margin-bottom:10px">
+      <div class="syshead">BEGLEITER (bis zu 2)</div>
+      <div class="comps">${COMP_ORDER.map((id) => { const C0 = COMPANIONS[id], open = companionOpen(id), on = companionParty().includes(id); return `<button class="comp ${on ? 'on' : ''}" data-act="${open ? 'comp' : ''}" data-id="${id}" ${open ? '' : 'disabled'}><b style="color:${C0.col}">${open ? '' : '🔒 '}${C0.name}</b><small>${open ? C0.role : 'nach Kapitel ' + C0.unlock}</small></button>`; }).join('')}</div>
+      ${companionParty().length ? `<div class="sysnote">${companionParty().map((id) => COMPANIONS[id].desc).join('<br>')}</div>` : '<div class="sysnote">Finn kämpft allein.</div>'}
+    </div>
     <div class="syswin" style="width:min(560px,100%)">
       <div class="syshead">KAPITEL ${ch.n} · ${ch.title.toUpperCase()}</div>
       <div class="sysplace">${ch.place}</div>
