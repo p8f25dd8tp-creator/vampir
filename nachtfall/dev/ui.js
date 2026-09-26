@@ -1,0 +1,21 @@
+const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+(async () => {
+  const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+  const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, hasTouch: true, isMobile: true });
+  const p = await ctx.newPage();
+  const errs = []; p.on('pageerror', e => errs.push(e.message + e.stack));
+  await p.goto('http://localhost:8765/index.html');
+  await p.waitForTimeout(2500);
+  await p.evaluate(() => { startGame('shen'); for (let i = 0; i < 3; i++) giveCard('qihand', true); giveCard('schattenflammen', true); giveCard('blutnova', true); giveCard('nachbilder', true); giveCard('nachbilder', true); for (let i=0;i<3;i++) giveCard('qikette', true); GAME.level = 7; openLevelUp(); });
+  await p.waitForTimeout(900);
+  await p.screenshot({ path: '/tmp/claude-0/ui-level.png' });
+  await p.evaluate(() => { chooseCard(0); togglePause(true); });
+  await p.waitForTimeout(400);
+  await p.screenshot({ path: '/tmp/claude-0/ui-pause.png' });
+  await p.evaluate(() => { togglePause(false); GAME.t = 400; GAME.kills = 3000; GAME.stats.dmg = { qihand: 5000, qikette: 3000, reaktion: 2500, blutnova: 1000 }; endRun(false); });
+  await p.waitForTimeout(600);
+  await p.screenshot({ path: '/tmp/claude-0/ui-end.png' });
+  await p.evaluate(() => UI.showAltar()); await p.waitForTimeout(300); await p.screenshot({ path: '/tmp/claude-0/ui-altar.png' });
+  console.log(errs.join('\n'));
+  await b.close();
+})();

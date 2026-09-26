@@ -1,0 +1,11 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{margin:0;background:#2a2530}canvas{display:block}</style></head><body>
+<canvas id="game" style="display:none"></canvas><canvas id="out"></canvas>
+<script src="../src/00-core.js"></script><script src="../src/01-artkit.js"></script><script src="../src/02-heroes.js"></script><script src="../src/03-enemies-art.js"></script>
+<script>
+buildParticleSprites(); bakeEnemies(4);
+const out=document.getElementById('out'); const W=1400,H=1000; out.width=W; out.height=H; const o=out.getContext('2d');
+o.fillStyle='#3f4038'; o.fillRect(0,0,W,H);
+let r=0; for(const id in ENEMY_SPR){ const s=ENEMY_SPR[id]; for(let f=0;f<Math.min(6,s.frames.length);f++){ o.drawImage(s.frames[f], 10+f*170, 10+r*160, s.S*0.45, s.S*0.45);} if(s.atk[0]) o.drawImage(s.atk[0], 10+6*170, 10+r*160, s.S*0.45, s.S*0.45); r++; }
+const bc=mkCanvas(900,900); const bg=bc.getContext('2d'); bg.setTransform(3,0,0,3,450,800); drawBoss(bg,{t:1,run:0.5,phase:1}); o.drawImage(bc, 1100, 0, 300,300);
+const bc2=mkCanvas(900,900); const bg2=bc2.getContext('2d'); bg2.setTransform(3,0,0,3,450,800); drawBoss(bg2,{t:1,slam:0.9}); o.drawImage(bc2, 1100, 330, 300,300);
+</script></body></html>

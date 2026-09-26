@@ -1,0 +1,13 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{margin:0;background:#2a2530}canvas{display:block}</style></head><body>
+<canvas id="game" style="display:none"></canvas><canvas id="out"></canvas>
+<script src="../src/00-core.js"></script><script src="../src/01-artkit.js"></script><script src="../src/02-heroes.js"></script>
+<script>
+buildParticleSprites();
+const out=document.getElementById('out'); const W=1400,H=900; out.width=W; out.height=H; const o=out.getContext('2d');
+o.fillStyle='#3b3a3a'; o.fillRect(0,0,W,H);
+const ids=['vorian','liora','nyx','shen'];
+const poses=[{t:0.3},{t:1,run:1,phase:0.5},{t:1,run:1,phase:2.1},{t:1,cast:1,aim:0.2},{t:1,dodge:1,run:1},{t:1,hurt:1},{t:1,dead:0.6},{t:1,rooted:1}];
+const px=3.2;
+ids.forEach((id,r)=>{ poses.forEach((st,c)=>{ const res=renderHero(id,st,{glow:1,rage:1,flow:1,qi:1,crown:1},px); o.drawImage(res.out, 20+c*172 - 20, 10+r*220 -60, res.S*0.55, res.S*0.55); }); });
+window.DONE=true;
+</script></body></html>

@@ -1,0 +1,15 @@
+<!DOCTYPE html><html><body style="margin:0;background:#000"><canvas id="game" style="display:none"></canvas>
+<script src="../src/00-core.js"></script><script src="../src/01-artkit.js"></script><script src="../src/02-heroes.js"></script>
+<script>
+buildParticleSprites();
+window.makeIcon = function(S){
+  const c = mkCanvas(S,S), g = c.getContext('2d');
+  g.fillStyle = rg(g, S/2, S*0.42, S*0.05, S*0.75, [0,'#8a0a20',0.45,'#3a0610',1,'#07030a']); g.fillRect(0,0,S,S);
+  // Blutmond
+  g.fillStyle = rg(g, S/2, S*0.36, 0, S*0.3, [0,'#ffd0c0',0.5,'#e0304a',1,'rgba(160,10,30,0)']); g.beginPath(); g.arc(S/2,S*0.36,S*0.3,0,TAU); g.fill();
+  const px = S/82;
+  const r = renderHero('vorian', {t:0.3, cast:0.9, aim:-0.9}, {glow:1, crown:2}, px, null, {glow:true});
+  g.drawImage(r.out, S/2 - r.S/2 - S*0.02, S*0.93 - r.anchorY);
+  return c.toDataURL('image/png');
+};
+</script></body></html>

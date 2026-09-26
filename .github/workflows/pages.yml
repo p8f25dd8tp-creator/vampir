@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - claude/vampire-tower-defense-game-4c58sq
+      - claude/survivors-mobile-game-m3ke30
   workflow_dispatch:
 
 permissions:

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Nachtfall — Blut · Schatten · Qi</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="description" content="Nachtfall – ein Dark-Fantasy-Survivors-Spiel mit vier Helden, Blut-, Schatten- und Qi-Kräften.">
+<meta name="theme-color" content="#07040a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Nachtfall">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+<canvas id="game"></canvas>
+<div id="ui"></div>
+<div id="boot"><div class="boot-title">NACHTFALL</div><div class="boot-sub" id="bootMsg">Die Nacht bricht herein …</div></div>
+<!--SCRIPTS-->
+<script src="src/00-core.js?v=1"></script>
+<script src="src/01-artkit.js?v=1"></script>
+<script src="src/02-heroes.js?v=1"></script>
+<script src="src/03-enemies-art.js?v=1"></script>
+<script src="src/04-world-art.js?v=1"></script>
+<script src="src/05-data.js?v=1"></script>
+<script src="src/06-fx.js?v=1"></script>
+<script src="src/07-abilities.js?v=1"></script>
+<script src="src/08-enemies.js?v=1"></script>
+<script src="src/09-game.js?v=1"></script>
+<script src="src/10-render.js?v=1"></script>
+<script src="src/11-ui.js?v=1"></script>
+<script src="src/12-main.js?v=1"></script>
+<!--/SCRIPTS-->
+<script>
+  if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function(){}); });
+  }
+</script>
+</body>
+</html>
