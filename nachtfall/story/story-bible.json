@@ -1,6 +1,6 @@
 {
  "quelle": "Das Vampirsystem – Recherche-Dossier (Stand 26.09.2026), Abschnitt 7",
- "hinweis": "Kanon (canonical_events) und Spielvorschlag (game_proposal) sind getrennt. Kapitelzahlen = englischer Webroman.",
+ "hinweis": "Kanon (canonical_events) und Spielvorschlag (game_proposal) sind getrennt. Kapitelzahlen = englischer Webroman. Evolutionen am Volltext (Systemmeldungen) geprüft; Dossierangaben dazu korrigiert.",
  "aliase": [
   {
    "de": "Finn Müller",
@@ -50,40 +50,44 @@
  ],
  "evolution_kanon": [
   {
+   "stufe": "Mensch",
+   "kanon": "Kap. 1–17"
+  },
+  {
    "stufe": "Halbling",
-   "kanon": "früh (Blood Swipe, Durst), Kap. 15–27"
+   "kanon": "Kap. 17–18 (Systemmeldung „Race: Halfling“)"
   },
   {
    "stufe": "Vampir",
-   "kanon": "Kap. 86 (roter Portalplanet)"
+   "kanon": "Kap. 86, Stufe 10"
   },
   {
-   "stufe": "Vampiradliger / zehnter Familienleiter",
-   "kanon": "Kap. 497"
+   "stufe": "Vampiradliger (Vampire Noble)",
+   "kanon": "Kap. 426–428, Stufe 20"
   },
   {
    "stufe": "Vampirlord",
-   "kanon": "Kap. 785–808"
+   "kanon": "Kap. 805–807, Stufe 40"
   },
   {
-   "stufe": "Vampirkönig (politischer Titel)",
+   "stufe": "Vampirkönig (Titel)",
    "kanon": "Kap. 1371–1375"
   },
   {
-   "stufe": "Himmlischer Vampir (Celestial)",
-   "kanon": "nach dem langen Schlaf, Kap. 1587–1614"
+   "stufe": "Himmlischer Vampirlord (Celestial Vampire Lord) + Titel „Ruler of Blood“",
+   "kanon": "Kap. 1565, im Kampf gegen Graham"
   },
   {
    "stufe": "Reiner Himmlischer",
-   "kanon": "KEINE sichere Stufe im Original – eigene Auslegung des Spiels"
+   "kanon": "kommt im Roman nicht vor — eigene Auslegung"
   },
   {
-   "stufe": "Gottbezwinger (God Slayer)",
-   "kanon": "Kap. 1992–1993"
+   "stufe": "Gottbezwinger-Kräfte (God Slayer)",
+   "kanon": "Kap. 1688 (Kraft), 1992 (Waffe), 2537 (vollständig verstanden)"
   },
   {
-   "stufe": "Vampirdämon / letzter Vampir",
-   "kanon": "Kap. 2185–2545"
+   "stufe": "Vampirdämon-Form",
+   "kanon": "Kap. 2105 freigeschaltet, 2185 erster Einsatz, 2388 vollständig"
   }
  ],
  "missionen": [

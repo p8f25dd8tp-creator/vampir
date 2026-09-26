@@ -137,7 +137,7 @@ const CHAPTERS = [
       { type: 'survive', n: 420, text: 'Überlebe 7 Minuten', reward: { crystals: 40, bonus: 'heal' } },
       { type: 'mini', text: 'Überstehe die Begegnung mit Boneclaw', reward: { crystals: 60, bonus: 'level' } }
     ],
-    reward: { tier: 3, text: 'Zehnter Familienleiter (Kap. 497) — Evolution: Vampiradliger' }
+    reward: { tier: 3, text: 'Evolution: Vampiradliger (Kap. 428) · zehnter Familienleiter' }
   },
   {
     n: 6, id: 'blade', title: 'Die Verfluchten', src: 'Kapitel 535–668', missions: [30, 33], place: 'Blade Island', theme: 'ruinen', tier: 3,
@@ -257,7 +257,7 @@ const CHAPTERS = [
       { type: 'level', n: 32, text: 'Erreiche Stufe 32', reward: { crystals: 70, bonus: 'heal' } },
       { type: 'mini', text: 'Besiege Grahams General', reward: { crystals: 90, bonus: 'level' } }
     ],
-    reward: { tier: 5, text: 'Tausend Jahre Schlaf — du erwachst als Himmlischer Vampirlord (Celestial Vampire System)' }
+    reward: { tier: 5, text: 'Herrscher des Blutes — Evolution: Himmlischer Vampirlord (Kap. 1565)' }
   },
   {
     n: 11, id: 'legende', title: 'Die Rückkehr einer Legende', src: 'Kapitel 1573–1985', missions: [58, 66], place: 'Celestial Space und die Welt nach tausend Jahren', theme: 'himmel', tier: 5,
@@ -281,7 +281,7 @@ const CHAPTERS = [
       { type: 'survive', n: 480, text: 'Überlebe 8 Minuten', reward: { crystals: 80, bonus: 'heal' } },
       { type: 'mini', text: 'Besiege den Vertrautenkönig', reward: { crystals: 100, bonus: 'level' } }
     ],
-    reward: { tier: 6, text: 'Emma Wagners Kristall bleibt zurück · Reiner Himmlischer (eigene Auslegung des Spiels)' }
+    reward: { tier: 6, text: 'Emma Wagners Kristall bleibt zurück · Reiner Himmlischer (eigene Auslegung — kommt im Roman nicht vor)' }
   },
   {
     n: 12, id: 'letzter', title: 'Der letzte Vampir', src: 'Kapitel 1986–2545', missions: [67, 80], place: 'Red Space', theme: 'redspace', tier: 6,

@@ -98,16 +98,16 @@ sind dauerhaft und kommen dort, wo sie im Roman auftauchen — beim ersten Sieg 
 | 2 Das rote Portal | 65–110 | 7–8 | Ian | Vampir (Kap. 86) + Schatten |
 | 3 Caladi | 111–138 | 9–10 | Dalki | Peter wird Ghoul, Blutkräfte |
 | 4 Der Nachtdämon | 139–383 | 11–19 | Duke | Qi von Leo |
-| 5 Die Vampirsiedlung | 384–534 | 20–29 | Vollstrecker des Rates | Vampiradliger (Kap. 497) |
+| 5 Die Vampirsiedlung | 384–534 | 20–29 | Vollstrecker des Rates | Vampiradliger (Kap. 428) |
 | 6 Die Verfluchten | 535–668 | 30–33 | Hilston Blade | 3 Begleiter |
 | 7 Bürgerkrieg | 669–808 | 34–38 | Jack Truedream | Vampirlord |
 | 8 Kampf um den Thron | 809–945 | 39–45 | Cindy Cha | Absolute Blutkontrolle |
 | 9 Der König mit Bedingungen | 946–1408 | 46–54 | Laxmus | Vampirkönig + 2. Qi-Stufe |
-| 10 Graham | 1409–1572 | 55–57 | Graham | Himmlischer Vampirlord (nach dem Schlaf) |
+| 10 Graham | 1409–1572 | 55–57 | Graham | Himmlischer Vampirlord (Kap. 1565) |
 | 11 Die Rückkehr einer Legende | 1573–1985 | 58–66 | Emma Wagner (Dhampir-Königin) | Emmas Kristall, Reiner Himmlischer* |
 | 12 Der letzte Vampir | 1986–2545 | 67–80 | Immortui | Gottbezwinger |
 
-\* „Reiner Himmlischer“ ist keine gesicherte Stufe im Original, sondern eigene Auslegung.
+\* „Reiner Himmlischer“ kommt im Roman nicht vor (geprüft am Volltext) — eigene Auslegung.
 
 * **Quests des Systems:** je Kapitel drei (z. B. „Besiege 200 Dalki“), Belohnung Kristalle
   plus Stufenaufstieg oder Heilung.
