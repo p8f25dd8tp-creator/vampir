@@ -14,15 +14,15 @@ const FINN_TIERS = [
   { id: 'halbling', name: 'Halbling', hp: 100, speed: 158, armor: 0, might: 1, req: { text: 'Finde das Buch (erster Lauf).' }, slots: 2, rim: '#ff4a5a', col: '#ff4a5a',
     grants: ['blutwisch', 'blutspray'], unlocks: ['blutwisch', 'blutspray', 'lebensraub', 'vampirblut', 'nebelgang', 'grabesmacht', 'seelenmagnet'],
     desc: 'Das Buch erwacht. Blutwisch und Blutspray.' },
-  { id: 'vampir', name: 'Vampir', hp: 125, speed: 168, armor: 1, might: 1.1, req: { essence: 600, text: 'Überlebe 5 Minuten', check: (r) => r.t >= 300 }, slots: 4, rim: '#ff2a40', col: '#ff2a40',
+  { id: 'vampir', name: 'Vampir', hp: 125, speed: 168, armor: 1, might: 1.1, req: { essence: 600, text: 'Überlebe 5 Minuten', check: (r) => r.t >= 300 }, slots: 6, rim: '#ff2a40', col: '#ff2a40',
     grants: ['hammerschlag', 'blitzschritt'], unlocks: ['hammerschlag', 'blitzschritt', 'kettenreaktion'],
     desc: 'Hammerschlag und Blitzschritt. Ausweichen wird zum Blitz-Teleport.' },
-  { id: 'adliger', name: 'Vampiradliger', hp: 150, speed: 175, armor: 1, might: 1.22, req: { essence: 2500, text: 'Erreiche Stufe 22 in einem Lauf', check: (r) => r.level >= 22 }, slots: 6, rim: '#b07bff', col: '#a77bff',
-    grants: ['schattenflammen'], unlocks: ['schattenflammen', 'nachtschlund', 'nachbilder'],
-    desc: 'Die Schatten gehorchen: Schattensprung statt Ausweichen, Schattenflammen, Nachtschlund, Nachbilder.' },
+  { id: 'adliger', name: 'Vampiradliger', hp: 150, speed: 175, armor: 1, might: 1.22, req: { essence: 2500, text: 'Erreiche Stufe 22 in einem Lauf', check: (r) => r.level >= 22 }, slots: 7, rim: '#b07bff', col: '#a77bff',
+    grants: ['schattenflammen'], unlocks: [],
+    desc: 'Oberhaupt der zehnten Familie: Adelsmantel, mehr Kraft, Schattenflammen von Beginn an.' },
   { id: 'lord', name: 'Vampirlord', hp: 180, speed: 180, armor: 2, might: 1.38, req: { essence: 6000, text: 'Besiege Hauptmann Kharn', check: (r) => r.miniKilled }, slots: 8, rim: '#ff3a4e', col: '#4ff0cc',
-    grants: ['qihand', 'blutnova'], unlocks: ['qihand', 'qikette', 'blutnova', 'bluternte', 'eisenmeridiane'],
-    desc: 'Qi erwacht — und mit ihm gewaltige Blutkräfte.' },
+    grants: ['qihand', 'blutnova'], unlocks: [],
+    desc: 'Der Sonnenmalus ist herausgewachsen: Qi-Hand und Blutnova von Beginn an.' },
   { id: 'himmelslord', name: 'Himmlischer Vampirlord', hp: 210, speed: 186, armor: 2, might: 1.55, req: { essence: 11000, text: 'Besiege Vaelgor, den Gruftkoloss', check: (r) => r.won }, slots: 9, rim: '#ffd27a', col: '#ffd27a',
     grants: ['himmelsstrahl'], unlocks: [],
     desc: 'Himmelslicht: Lichtsäulen strafen die Toten. Blut, Schatten und Qi verschmelzen.' },
@@ -52,7 +52,7 @@ HEROES.finn = {
   pool: [],
   unlock: { desc: 'Von Anfang an verfügbar.', cost: 0, check: () => true },
   baseStats(p) { return FINN_TIERS[p.tier || 0]; },
-  poolOf(p) { const s = new Set(); for (let i = 0; i <= (p.tier || 0); i++) FINN_TIERS[i].unlocks.forEach((c) => s.add(c)); return [...s]; },
+  poolOf(p) { const s = new Set(); for (let i = 0; i <= (p.tier || 0); i++) FINN_TIERS[i].unlocks.forEach((c) => s.add(c)); if ((p.tier || 0) >= 1 && typeof finnSkills === 'function') finnSkills().forEach((k) => FINN_SKILLS[k].cards.forEach((c) => s.add(c))); return [...s]; },
   slotsOf(p) { return FINN_TIERS[p.tier || 0].slots; }
 };
 HERO_ORDER.push('finn');
@@ -292,13 +292,17 @@ function finnGrant(p, tier) {
     p.ab[c] = { lvl: 1, t: 0.4 }; p.order.push(c);
   }
 }
+function finnDodge(tier) {
+  if (tier >= 2 && typeof finnSkills === 'function' && finnSkills().has('schatten')) return 'shadowstep';
+  return tier >= 3 ? 'shadowstep' : tier >= 2 ? 'blink' : undefined;
+}
 function finnStart() {
   const G = GAME, p = G.p, F = finnSave();
   const tier = clamp(G.finnTier !== undefined ? G.finnTier : F.tier, 0, FINN_TIERS.length - 1);
   p.tier = tier;
   G.finnStartTier = tier;
   for (let t = 1; t <= tier; t++) finnGrant(p, t);
-  if (tier >= 2) p.dodgeKind = tier >= 3 ? 'shadowstep' : 'blink';
+  p.dodgeKind = finnDodge(tier);
   recomputeStats(); p.hp = p.st.maxHp;
   if (tier === 0) {
     const a = Math.random() * TAU;
@@ -311,7 +315,7 @@ function finnEvolve(tier) {
   const G = GAME, p = G.p, T = FINN_TIERS[tier];
   p.tier = tier;
   finnGrant(p, tier);
-  if (tier >= 2) p.dodgeKind = tier >= 3 ? 'shadowstep' : 'blink';
+  p.dodgeKind = finnDodge(tier);
   recomputeStats();
   p.hp = p.st.maxHp;
   p.iframes = Math.max(p.iframes, 1.5);

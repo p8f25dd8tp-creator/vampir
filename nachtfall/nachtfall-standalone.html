@@ -1223,7 +1223,8 @@ function drawVorianHead(g, P, C, H) {
   g.beginPath();
   g.moveTo(-5, -3); g.quadraticCurveTo(-4.5, -9, 1.5, -8.2); g.quadraticCurveTo(4.5, -7.5, 4, -5.6);
   g.quadraticCurveTo(0, -6.6, -2, -3.8); g.closePath();
-  paint(g, lg(g, 0, -9, 0, -3, [0, '#ffffff', 1, '#b6b0c4']), 'rgba(40,30,50,0.6)', 0.5);
+  paint(g, H.plain ? lg(g, 0, -9, 0, -3, [0, C.hair, 1, C.armorD]) : lg(g, 0, -9, 0, -3, [0, '#ffffff', 1, '#b6b0c4']), 'rgba(40,30,50,0.6)', 0.5);
+  if (H.plain) { g.restore(); return; } // Mensch: ohne Krone
   // Krone mit Dornen
   const lvl = H.crown || 0;
   g.save(); g.translate(-0.3, -7.2); g.rotate(-0.08);
@@ -2211,6 +2212,41 @@ const THEMES = {
     patches: ['gold', 'cloud'],
     props: [['marble', 4], ['goldcrystal', 2.5], ['goldbrazier', 1.5], ['rock', 1]],
     cluster: 'marble'
+  },
+  basisnacht: {
+    name: 'Militärbasis 2 — nach der Sperrstunde', ambient: 'rgb(92,98,138)', fog: [110, 130, 190], fogA: 0.9,
+    ground: { base: [48, 50, 58], vary: [12, 12, 14], moss: [34, 46, 36], mossVar: [8, 12, 8], mossAmt: 0.35, detail: 'concrete', grass: ['#3a5a3a', '#4a6a40'], pebble: [70, 70, 78], leaves: null, cracks: 'rgba(14,14,22,0.6)' },
+    patches: ['puddle', 'marking', 'blood'],
+    props: [['barrier', 4], ['crate', 5], ['lamp', 1.8], ['fence', 2], ['wreck', 0.8], ['rock', 1.5]],
+    cluster: 'crate'
+  },
+  rotezone: {
+    name: 'Rote Zone — hinter dem roten Portal', ambient: 'rgb(150,86,92)', fog: [220, 90, 90], fogA: 1.1,
+    ground: { base: [44, 22, 26], vary: [16, 8, 8], moss: [70, 24, 30], mossVar: [20, 8, 8], detail: 'grass', grass: ['#7a2a30', '#5a1a24', '#9a3a2a', '#3a1418'], pebble: [80, 50, 54], leaves: ['#8a2a2a', '#5a1a1a'], cracks: 'rgba(20,4,6,0.55)' },
+    patches: ['blood', 'spore', 'ash'],
+    props: [['alienplant', 3.5], ['crystal', 2], ['bones', 3], ['rock', 3], ['spikes', 1.2]],
+    cluster: 'bones'
+  },
+  caladi: {
+    name: 'Planet Caladi — zwei Sonnen', ambient: 'rgb(170,150,120)', fog: [240, 210, 160], fogA: 0.55,
+    ground: { base: [92, 76, 54], vary: [22, 18, 12], moss: [84, 90, 50], mossVar: [16, 16, 10], mossAmt: 0.45, detail: 'scorched', grass: ['#8a8a4a', '#6a6a34', '#a09050'], pebble: [120, 104, 84], leaves: null, cracks: 'rgba(40,24,10,0.45)' },
+    patches: ['crater', 'ash', 'moss'],
+    props: [['rock', 5], ['wreck', 2], ['barrier', 1.5], ['bones', 2], ['crate', 1.5], ['spikes', 0.8]],
+    cluster: 'rock'
+  },
+  burg: {
+    name: 'Die zehnte Burg', ambient: 'rgb(104,84,124)', fog: [150, 100, 170], fogA: 1.1,
+    ground: { base: [34, 28, 38], vary: [10, 8, 12], moss: [26, 20, 32], mossVar: [6, 4, 8], detail: 'tiles', tile: [64, 50, 72], grass: ['#2a2030'], pebble: [66, 56, 76], leaves: ['#4a1a3a', '#2a1024'], cracks: 'rgba(8,4,12,0.55)', glowCracks: '#b04aff' },
+    patches: ['flag', 'blood', 'nebula'],
+    props: [['pillar', 3], ['banner', 2.5], ['coffin', 2], ['candles', 2.5], ['obelisk', 1], ['brazier', 1.5]],
+    cluster: 'pillar'
+  },
+  roterhimmel: {
+    name: 'Die letzte Linie — roter Himmel', ambient: 'rgb(150,80,76)', fog: [230, 90, 70], fogA: 1.1,
+    ground: { base: [40, 26, 24], vary: [16, 10, 8], moss: [30, 18, 18], mossVar: [8, 6, 6], detail: 'scorched', grass: ['#4a2a24', '#3a201c'], pebble: [80, 58, 54], leaves: null, cracks: 'rgba(12,2,2,0.6)', glowCracks: '#ff3a1a' },
+    patches: ['crater', 'blood', 'ash'],
+    props: [['wreck', 3.5], ['spikes', 3], ['rock', 2.5], ['brazier', 1.2], ['bones', 2]],
+    cluster: 'wreck'
   },
   goetter: {
     name: 'Das Reich der Götter', ambient: 'rgb(96,92,146)', fog: [150, 130, 230], fogA: 1,
@@ -4787,6 +4823,7 @@ function heroDamageMult(p, school) {
   if (p.hero === 'liora') { const miss = 1 - p.hp / p.st.maxHp; m *= 1 + clamp(miss * 1.25, 0, 0.9); if (p.buffAder > 0) m *= 1.6; }
   if (p.hero === 'nyx') m *= 1 + p.flow * 0.45;
   if (p.hero === 'finn') m *= FINN_TIERS[p.tier || 0].might;
+  if (GAME.schoolMul && GAME.schoolMul[school]) m *= GAME.schoolMul[school];
   return m;
 }
 
@@ -6088,7 +6125,7 @@ const UI = {
       <div class="mech" id="mech"><div id="mechname">${H.mech.name}</div><div class="mbar"><div class="mfill" id="mfill"></div></div></div>
       <div class="actions">
         <button class="abtn ult interactive" id="ubtn"><img src="${icon(H.ult.id)}"><canvas class="cd" id="ucd" width="160" height="160"></canvas><div class="cdt" id="ucdt"></div><div class="lbl">${H.ult.name}</div></button>
-        <button class="abtn dodge interactive" id="dbtn"><img src="${icon('dodge_' + dodgeKind(GAME.p))}"><canvas class="cd" id="dcd" width="140" height="140"></canvas><div class="cdt" id="dcdt"></div><div class="lbl">${({ shadowstep: GAME.hero === 'finn' ? 'Schattensprung' : 'Schattenschritt', blink: 'Blitzschritt' })[dodgeKind(GAME.p)] || 'Ausweichen'}</div></button>
+        <button class="abtn dodge interactive" id="dbtn"><img src="${icon('dodge_' + dodgeKind(GAME.p))}"><canvas class="cd" id="dcd" width="140" height="140"></canvas><div class="cdt" id="dcdt"></div><div class="lbl">${({ shadowstep: 'Schattenschritt', blink: 'Blitzschritt' })[dodgeKind(GAME.p)] || 'Ausweichen'}</div></button>
       </div>`;
     this.root.appendChild(d);
     this.hud = d;
@@ -6363,15 +6400,15 @@ const FINN_TIERS = [
   { id: 'halbling', name: 'Halbling', hp: 100, speed: 158, armor: 0, might: 1, req: { text: 'Finde das Buch (erster Lauf).' }, slots: 2, rim: '#ff4a5a', col: '#ff4a5a',
     grants: ['blutwisch', 'blutspray'], unlocks: ['blutwisch', 'blutspray', 'lebensraub', 'vampirblut', 'nebelgang', 'grabesmacht', 'seelenmagnet'],
     desc: 'Das Buch erwacht. Blutwisch und Blutspray.' },
-  { id: 'vampir', name: 'Vampir', hp: 125, speed: 168, armor: 1, might: 1.1, req: { essence: 600, text: 'Überlebe 5 Minuten', check: (r) => r.t >= 300 }, slots: 4, rim: '#ff2a40', col: '#ff2a40',
+  { id: 'vampir', name: 'Vampir', hp: 125, speed: 168, armor: 1, might: 1.1, req: { essence: 600, text: 'Überlebe 5 Minuten', check: (r) => r.t >= 300 }, slots: 6, rim: '#ff2a40', col: '#ff2a40',
     grants: ['hammerschlag', 'blitzschritt'], unlocks: ['hammerschlag', 'blitzschritt', 'kettenreaktion'],
     desc: 'Hammerschlag und Blitzschritt. Ausweichen wird zum Blitz-Teleport.' },
-  { id: 'adliger', name: 'Vampiradliger', hp: 150, speed: 175, armor: 1, might: 1.22, req: { essence: 2500, text: 'Erreiche Stufe 22 in einem Lauf', check: (r) => r.level >= 22 }, slots: 6, rim: '#b07bff', col: '#a77bff',
-    grants: ['schattenflammen'], unlocks: ['schattenflammen', 'nachtschlund', 'nachbilder'],
-    desc: 'Die Schatten gehorchen: Schattensprung statt Ausweichen, Schattenflammen, Nachtschlund, Nachbilder.' },
+  { id: 'adliger', name: 'Vampiradliger', hp: 150, speed: 175, armor: 1, might: 1.22, req: { essence: 2500, text: 'Erreiche Stufe 22 in einem Lauf', check: (r) => r.level >= 22 }, slots: 7, rim: '#b07bff', col: '#a77bff',
+    grants: ['schattenflammen'], unlocks: [],
+    desc: 'Oberhaupt der zehnten Familie: Adelsmantel, mehr Kraft, Schattenflammen von Beginn an.' },
   { id: 'lord', name: 'Vampirlord', hp: 180, speed: 180, armor: 2, might: 1.38, req: { essence: 6000, text: 'Besiege Hauptmann Kharn', check: (r) => r.miniKilled }, slots: 8, rim: '#ff3a4e', col: '#4ff0cc',
-    grants: ['qihand', 'blutnova'], unlocks: ['qihand', 'qikette', 'blutnova', 'bluternte', 'eisenmeridiane'],
-    desc: 'Qi erwacht — und mit ihm gewaltige Blutkräfte.' },
+    grants: ['qihand', 'blutnova'], unlocks: [],
+    desc: 'Der Sonnenmalus ist herausgewachsen: Qi-Hand und Blutnova von Beginn an.' },
   { id: 'himmelslord', name: 'Himmlischer Vampirlord', hp: 210, speed: 186, armor: 2, might: 1.55, req: { essence: 11000, text: 'Besiege Vaelgor, den Gruftkoloss', check: (r) => r.won }, slots: 9, rim: '#ffd27a', col: '#ffd27a',
     grants: ['himmelsstrahl'], unlocks: [],
     desc: 'Himmelslicht: Lichtsäulen strafen die Toten. Blut, Schatten und Qi verschmelzen.' },
@@ -6401,7 +6438,7 @@ HEROES.finn = {
   pool: [],
   unlock: { desc: 'Von Anfang an verfügbar.', cost: 0, check: () => true },
   baseStats(p) { return FINN_TIERS[p.tier || 0]; },
-  poolOf(p) { const s = new Set(); for (let i = 0; i <= (p.tier || 0); i++) FINN_TIERS[i].unlocks.forEach((c) => s.add(c)); return [...s]; },
+  poolOf(p) { const s = new Set(); for (let i = 0; i <= (p.tier || 0); i++) FINN_TIERS[i].unlocks.forEach((c) => s.add(c)); if ((p.tier || 0) >= 1 && typeof finnSkills === 'function') finnSkills().forEach((k) => FINN_SKILLS[k].cards.forEach((c) => s.add(c))); return [...s]; },
   slotsOf(p) { return FINN_TIERS[p.tier || 0].slots; }
 };
 HERO_ORDER.push('finn');
@@ -6641,13 +6678,17 @@ function finnGrant(p, tier) {
     p.ab[c] = { lvl: 1, t: 0.4 }; p.order.push(c);
   }
 }
+function finnDodge(tier) {
+  if (tier >= 2 && typeof finnSkills === 'function' && finnSkills().has('schatten')) return 'shadowstep';
+  return tier >= 3 ? 'shadowstep' : tier >= 2 ? 'blink' : undefined;
+}
 function finnStart() {
   const G = GAME, p = G.p, F = finnSave();
   const tier = clamp(G.finnTier !== undefined ? G.finnTier : F.tier, 0, FINN_TIERS.length - 1);
   p.tier = tier;
   G.finnStartTier = tier;
   for (let t = 1; t <= tier; t++) finnGrant(p, t);
-  if (tier >= 2) p.dodgeKind = tier >= 3 ? 'shadowstep' : 'blink';
+  p.dodgeKind = finnDodge(tier);
   recomputeStats(); p.hp = p.st.maxHp;
   if (tier === 0) {
     const a = Math.random() * TAU;
@@ -6660,7 +6701,7 @@ function finnEvolve(tier) {
   const G = GAME, p = G.p, T = FINN_TIERS[tier];
   p.tier = tier;
   finnGrant(p, tier);
-  if (tier >= 2) p.dodgeKind = tier >= 3 ? 'shadowstep' : 'blink';
+  p.dodgeKind = finnDodge(tier);
   recomputeStats();
   p.hp = p.st.maxHp;
   p.iframes = Math.max(p.iframes, 1.5);
@@ -7073,6 +7114,26 @@ Object.assign(ENEMY_ART, {
   v_magier: heroArt('liora', [[HERO_PAL.liora, { coat: '#3a0a2a', coatL: '#7a1a5a', coatD: '#1a0410', hair: '#e8e0e8', hairL: '#ffffff' }]], { rage: 0.5 }, '#ff5ab0', 110),
   bat_blut: palArt('bat', [], '#ff5a6a'),
   v_thrall: palArt('brute', [[EPAL.brute, { skin: '#9a8a90', skinL: '#d0c4c8', skinD: '#4a3a40', eye: '#ff2a3a' }]], '#ff5a6a'),
+  // Storybook: Menschen, Fraktionen, neue Bestien
+  h_laeufer: heroArt('vorian', [[HERO_PAL.vorian, { skin: '#d8c0a8', armor: '#3a4230', armorL: '#6a7456', armorD: '#161a10', red: '#4a5a2a', redL: '#a0c050', redD: '#1a2208', hair: '#3a2a1a', eye: '#e0c050', rim: '#e0c050' }]], { plain: true, glow: 0 }, '#e0c050', 116),
+  h_wache: heroArt('vorian', [[HERO_PAL.vorian, { skin: '#d8c0a8', armor: '#22261c', armorL: '#4a5040', armorD: '#0a0c08', red: '#6a5a2a', redL: '#e0c050', redD: '#2a2208', hair: '#1a1a1a', eye: '#e0c050', rim: '#e0c050' }]], { plain: true, glow: 0.2 }, '#e0c050', 120),
+  h_truedream: heroArt('liora', [[HERO_PAL.liora, { coat: '#d8d8e0', coatL: '#ffffff', coatD: '#7a7a88', hair: '#2a2430', hairL: '#5a5068', eye: '#8ab0ff', rim: '#8ab0ff' }]], { weapon: 'sword' }, '#8ab0ff', 110),
+  h_torres: heroArt('vorian', [[HERO_PAL.vorian, { skin: '#e0c0a0', armor: '#5a2a14', armorL: '#a0582a', armorD: '#200a04', red: '#e05a1a', redL: '#ffb040', redD: '#5a1a04', hair: '#c04a1a', eye: '#ffb040', rim: '#ff8a2a' }]], { plain: true, glow: 0.8 }, '#ff8a2a', 120),
+  h_jack: heroArt('vorian', [[HERO_PAL.vorian, { skin: '#e0d0c0', armor: '#e8e8f0', armorL: '#ffffff', armorD: '#8a8a98', red: '#2a4a8a', redL: '#8ab0ff', redD: '#0a1a3a', hair: '#d8c070', eye: '#8ab0ff', rim: '#8ab0ff' }]], { plain: true, glow: 0.5 }, '#8ab0ff', 120),
+  h_sunshield: heroArt('vorian', [[HERO_PAL.vorian, { skin: '#e0c8b0', armor: '#a89060', armorL: '#e8d8a0', armorD: '#4a3a18', red: '#c07a1a', redL: '#ffd04a', redD: '#4a2a04', hair: '#3a2a1a', eye: '#ffd04a', rim: '#ffd04a' }]], { plain: true, glow: 0.2 }, '#ffd04a', 116),
+  h_pure: heroArt('shen', [[HERO_PAL.shen, { robe: '#1a1a22', robeL: '#3a3a4a', robeD: '#08080c', sash: '#e8e8f0', sashL: '#ffffff', hat: '#1a1a22', hatL: '#3a3a4a', hatD: '#050508', eye: '#e8f0ff', rim: '#e8f0ff' }]], { qi: 0.6 }, '#e8f0ff', 110),
+  h_markiert: heroArt('nyx', [[HERO_PAL.nyx, { cloak: '#3a3a40', cloakL: '#6a6a74', cloakD: '#16161a', scarf: '#5a0a10', scarfL: '#ff1a2a', mask: '#c8b8b0', eye: '#ff1a2a', rim: '#ff1a2a' }]], { flow: 0.1 }, '#ff1a2a', 106),
+  h_rotvamp: heroArt('nyx', [[HERO_PAL.nyx, { cloak: '#4a0a10', cloakL: '#8a1a24', cloakD: '#1a0206', scarf: '#1a0206', scarfL: '#ff3a1a', mask: '#e8d0c8', eye: '#ff3a1a', rim: '#ff3a1a' }]], { flow: 0.6 }, '#ff3a1a', 110),
+  h_xander: heroArt('vorian', [[HERO_PAL.vorian, { armor: '#2a1a30', armorL: '#5a3a66', red: '#5a0a3a', redL: '#d02a8a', hair: '#e8e0e8', eye: '#ff3a8a', rim: '#ff3a8a' }]], { plain: true, glow: 0.6 }, '#ff3a8a', 120),
+  h_klon: heroArt('shen', [[HERO_PAL.shen, { robe: '#e8e8ec', robeL: '#ffffff', robeD: '#9a9aa4', sash: '#2a8a5a', sashL: '#6aff9a', hat: '#e8e8ec', hatL: '#ffffff', hatD: '#8a8a94', eye: '#6aff9a', rim: '#6aff9a' }]], { qi: 0.3 }, '#6aff9a', 114),
+  q_kanal: quadArt({ L: 26, H: 11, bulk: 13, legW: 2.2, head: 'wolf', tail: 10, cols: { body: '#4a4a44', bodyL: '#7a7a6a', bodyD: '#22221c', belly: '#6a6a5a', eye: '#b8ff3a', horn: '#c8c8b0' } }, 62, '#b8ff3a'),
+  q_rot: quadArt({ L: 30, H: 14, bulk: 15, legW: 2.4, head: 'wolf', tail: 12, spikes: 3, cols: { body: '#5a1a1e', bodyL: '#9a3a3a', bodyD: '#2a0608', belly: '#7a3030', eye: '#ffe06a', horn: '#e8d0c0', glow: '#ff5a3a' } }, 70, '#ff5a3a'),
+  q_rotP: quadArt({ L: 38, H: 14, bulk: 22, legW: 3.8, head: 'rhino', plates: 4, cols: { body: '#4a1418', bodyL: '#8a3034', bodyD: '#200406', belly: '#6a2a2a', eye: '#ffb02a', horn: '#e8d0c0' } }, 90, '#ff7a3a'),
+  q_orange: quadArt({ L: 44, H: 19, bulk: 25, legW: 4.4, head: 'king', spikes: 5, tail: 14, cols: { body: '#6a3a14', bodyL: '#b06a2a', bodyD: '#2a1404', belly: '#8a5a2a', eye: '#ffe06a', horn: '#f0e0c0' } }, 112, '#ffa03a'),
+  q_caladi: quadArt({ L: 30, H: 12, bulk: 14, legW: 2.2, head: 'rhino', tail: 6, spikes: 2, cols: { body: '#8a7050', bodyL: '#c0a878', bodyD: '#4a3a24', belly: '#a89070', eye: '#ff5a2a', horn: '#f0e8d0' } }, 66, '#ffb07a'),
+  q_hase: quadArt({ L: 20, H: 10, bulk: 12, legW: 2, head: 'wolf', tail: 4, cols: { body: '#16141a', bodyL: '#3a3440', bodyD: '#050406', belly: '#2a2430', eye: '#ff2a3a', horn: '#e8e0e8' } }, 56, '#ff2a3a'),
+  q_daemon: quadArt({ L: 48, H: 20, bulk: 28, legW: 5, head: 'king', spikes: 8, tail: 16, plates: 3, cols: { body: '#2a0a0e', bodyL: '#6a1a20', bodyD: '#0a0204', belly: '#4a1016', eye: '#ffffff', horn: '#ff5a3a', glow: '#ff2a1a' } }, 120, '#ff3a1a'),
+  dalki4: dalkiArt({ spikes: 4, cols: DCOL.grau, armor: true }, 84),
   // Kapitel 6: Himmelsebene
   h_juenger: heroArt('shen', [[HERO_PAL.shen, { robe: '#d8d0b8', robeL: '#ffffff', robeD: '#9a9278', sash: '#c9a24c', sashL: '#ffe6a0', hat: '#e8d8a0', hatL: '#fff4d0', hatD: '#9a8a50', eye: '#ffe6a0', rim: '#ffe6a0' }]], { qi: 0.6 }, '#ffe6a0', 110),
   h_ritter: palArt('knight', [[EPAL.knight, { iron: '#b8a878', ironL: '#fff0c8', ironD: '#6a5a30', bone: '#ffffff', eye: '#ffe6a0', rust: '#d8b050', wood: '#e8d8b0' }]], '#ffe6a0'),
@@ -7090,6 +7151,12 @@ Object.assign(ENEMY_ART, {
 });
 
 /* ---------------------------------------------------------------- Bosse (live gemalt) */
+function humanBoss(g, st, hero, pal, look, sc) {
+  g.scale(sc, sc);
+  const SP = { vorian: SPEC_VORIAN, liora: SPEC_LIORA, nyx: SPEC_NYX, shen: SPEC_SHEN }[hero];
+  const DR = { vorian: drawVorian, liora: drawLiora, nyx: drawNyx, shen: drawShen }[hero];
+  withPal(pal, () => { const P = makePose(SP, { t: st.t, run: st.run || 0, phase: st.phase || 0, cast: Math.min(1, st.slam || 0), aim: -1.1, hurt: st.hurt || 0, dead: st.dead || 0 }); DR(g, P, look || {}); });
+}
 const BOSS_ART = {
   // Kapitel 1: Fortgeschrittene Bestie (gross)
   bestieF: (g, st) => { g.scale(2.4, 2.4); drawQuad(g, (st.t * 0.9) % 1, { rear: Math.min(1, st.slam || 0), atk: st.roar || 0 }, { L: 40, H: 18, bulk: 22, legW: 4, head: 'king', spikes: 5, tail: 12, cols: QCOL.wolfK }); },
@@ -7109,6 +7176,19 @@ const BOSS_ART = {
     g.strokeStyle = '#ffe6a0'; g.lineWidth = 1.8; g.beginPath(); g.ellipse(-2, -74, 9, 3.2, -0.2, 0, TAU); g.stroke(); glowDot(g, -2, -74, 12, '#ffe6a0', 0.5);
     withPal([[HERO_PAL.shen, { robe: '#e8e0c8', robeL: '#ffffff', robeD: '#a8a088', sash: '#c9a24c', sashL: '#ffe6a0', hat: '#f4e8c0', hatL: '#ffffff', hatD: '#b0a060', skin: '#f0dcc8', eye: '#ffe6a0' }]], () => { const P = makePose(SPEC_SHEN, { t: st.t, run: st.run || 0, phase: st.phase || 0, cast: Math.min(1, st.slam || 0), aim: -1.2, rooted: st.run ? 0 : 0.6, hurt: st.hurt || 0, dead: st.dead || 0 }); drawShen(g, P, { qi: 1 }); });
   },
+  // Storybook-Bosse ------------------------------------------------------
+  container: (g, st) => { g.scale(2.3, 2.3); drawQuad(g, (st.t * 0.9) % 1, { rear: Math.min(1, st.slam || 0), atk: st.roar || 0 }, { L: 40, H: 16, bulk: 24, legW: 4, head: 'toad', spikes: 6, tail: 10, cols: Object.assign({}, QCOL.alien, { body: '#5a3a1a', bodyL: '#9a6a3a', bodyD: '#2a1808', eye: '#ffb02a', glow: '#ff8a2a' }) }); },
+  blutsauger: (g, st) => { g.scale(2.6, 2.6); drawQuad(g, (st.t * 1.1) % 1, { rear: Math.min(1, st.slam || 0), atk: st.roar || 0 }, { L: 44, H: 26, bulk: 12, legW: 2.2, head: 'wolf', spikes: 3, tail: 18, cols: { body: '#c8b8b0', bodyL: '#f4ece8', bodyD: '#6a5a58', belly: '#e0d0cc', eye: '#ff1a2a', horn: '#fff4f0', glow: '#ff2a3a' } }); },
+  dalki1: (g, st) => { g.scale(3, 3); drawDalki(g, (st.t * 0.6) % 1, { atk: st.slam > 0.2 ? 1 : 0, idle: !st.run }, { spikes: 1, cols: DCOL.grau, big: true }); },
+  stahlmann: (g, st) => humanBoss(g, st, 'vorian', [[HERO_PAL.vorian, { skin: '#d8c0a8', skinD: '#8a7058', armor: '#3a4230', armorL: '#6a7456', armorD: '#161a10', red: '#6a5a2a', redL: '#e0c050', redD: '#2a2208', hair: '#8a8a8a', eye: '#e0c050', rim: '#e0c050' }]], { glow: 0.2, plain: true }, 2.3),
+  silva: (g, st) => humanBoss(g, st, 'liora', [[HERO_PAL.liora, { skin: '#f0e0e8', coat: '#2a0a1a', coatL: '#6a1a3a', coatD: '#10040a', hair: '#e8e0f0', hairL: '#ffffff', eye: '#ff2a4a', rim: '#ff2a4a' }]], { rage: 0.7, weapon: 'sword' }, 2.3),
+  sunshield: (g, st) => humanBoss(g, st, 'vorian', [[HERO_PAL.vorian, { skin: '#e0c8b0', armor: '#c8b070', armorL: '#fff0c0', armorD: '#6a5a28', red: '#e08a1a', redL: '#ffd04a', redD: '#6a3a08', hair: '#3a2a1a', eye: '#ffd04a', rim: '#ffd04a' }]], { glow: 0.6, plain: true }, 2.4),
+  hagon: (g, st) => humanBoss(g, st, 'shen', [[HERO_PAL.shen, { robe: '#1a1a24', robeL: '#4a4a5a', robeD: '#08080c', inner: '#c8c8d8', sash: '#3a6aa0', sashL: '#8ac8ff', hat: '#2a2a34', hatL: '#5a5a6a', hatD: '#0a0a10', beard: '#d8d8e0', eye: '#8ac8ff', rim: '#8ac8ff' }]], { qi: 1 }, 2.5),
+  original: (g, st) => humanBoss(g, st, 'nyx', [[HERO_PAL.nyx, { cloak: '#e8e0d8', cloakL: '#ffffff', cloakD: '#8a8278', scarf: '#6a0a14', scarfL: '#ff1a2a', mask: '#1a1418', maskD: '#000000', eye: '#ff1a2a', rim: '#ff1a2a' }]], { flow: 1 }, 2.7),
+  samuel: (g, st) => humanBoss(g, st, 'shen', [[HERO_PAL.shen, { robe: '#e8e8ec', robeL: '#ffffff', robeD: '#9a9aa4', sash: '#2a8a5a', sashL: '#6aff9a', hat: '#e8e8ec', hatL: '#ffffff', hatD: '#8a8a94', eye: '#6aff9a', rim: '#6aff9a' }]], { qi: 0.3 }, 2.2),
+  finnklon: (g, st) => { g.scale(2.3, 2.3); const P = makePose(SPEC_FINN, { t: st.t, run: st.run || 0, phase: st.phase || 0, cast: Math.min(1, st.slam || 0), aim: -1.1, hurt: st.hurt || 0, dead: st.dead || 0 }); drawFinn(g, P, { tier: 4 }); },
+  arian: (g, st) => { g.scale(3.2, 3.2); drawDalki(g, (st.t * 0.55) % 1, { atk: st.slam > 0.2 ? 1 : 0, idle: !st.run }, { spikes: 6, cols: { skin: '#4a3a46', skinL: '#8a7486', skinD: '#1e141c', spike: '#f0e0e8', spikeD: '#6a4a5a', eye: st.enrage ? '#ff1a1a' : '#ff6a2a', cloth: '#2a0a10' }, armor: true, big: true }); },
+  arianF: (g, st) => { glowDot(g, 0, -90, 120, '#ff2a1a', 0.35); g.scale(3.6, 3.6); drawDalki(g, (st.t * 0.5) % 1, { atk: st.slam > 0.2 ? 1 : 0, idle: !st.run }, { spikes: 7, cols: { skin: '#5a1a1e', skinL: '#a0444a', skinD: '#200608', spike: '#ffe0d0', spikeD: '#8a2a1a', eye: '#ffffff', cloth: '#100204' }, armor: true, big: true }); },
   // Kapitel 7: ein Gott — kosmischer Koloss mit Krone
   gott: (g, st) => {
     withPal([[BPAL, { skin: '#2a2046', skinL: '#5a4a8a', skinD: '#0a0616', bone: '#e8e0ff', boneD: '#8a7ab0', bell: '#4a3a8a', bellL: '#9a8ad0', heart: '#c08aff', iron: '#2a2440', ironL: '#6a5a9a' }]], () => drawBoss(g, st));
@@ -7121,7 +7201,7 @@ const BOSS_ART = {
 /* ---- src/15-story.js ---- */
 'use strict';
 /* ==========================================================================
-   STORY-MODUS „Das Vampirsystem“ — Finn Müllers Weg in 7 Kapiteln.
+   STORY-MODUS „Das Vampirsystem“ — Finn Müllers Weg in 12 Kapiteln.
    Fan-Umsetzung, angelehnt an „My Vampire System“ (dt. Hörspiel „Das
    Vampirsystem“). Nur fuer den privaten Gebrauch.
    Alle Namen und Texte stehen hier gesammelt und lassen sich leicht aendern.
@@ -7137,176 +7217,320 @@ function defBoss(id, draw, name, hp, o) {
   return id;
 }
 
+// Kapitel 1–10 folgen den zehn Akten des Storybooks „Vampirsystem Basis Zwei“
+// (Vorlage Kapitel 1–1572), Kapitel 11–12 spielen nach dem Zeitsprung.
 const CHAPTERS = [
   {
-    n: 1, id: 'buch', title: 'Das Buch', place: 'Militärakademie — Übungsgelände bei Nacht', theme: 'akademie', tier: 1,
+    n: 1, id: 'basis', title: 'Militärbasis 2', src: 'Kapitel 1–75', place: 'Militärbasis 2 — Übungsgelände bei Nacht', theme: 'akademie', tier: 1,
     intro: [
-      'Finn Müller ist sechzehn, hat keine Fähigkeit und ist an der Militärakademie der Außenseiter. Nur Peter Kraus hält zu ihm.',
-      'In dieser Nacht brechen Bestien durch den Zaun des Übungsgeländes. Irgendwo hier liegt das alte Buch seiner Familie …'
+      'Kampfwert 1. Keine verwertbare Fähigkeit. Finn Müller ist sechzehn, seine Eltern sind tot — geblieben ist nur ein Buch, das sich nicht öffnen lässt.',
+      'Nachts brechen Bestien aus Stahlmanns Container. Irgendwo auf dem Gelände liegt das Buch …'
     ],
     diff: { hp: 0.5, count: 0.8, dmg: 0.75 },
     roles: {
-      ghoul: defEnemy('c1_basis', 'ghoul', 'q_basis', 'Basis-Bestie'),
+      ghoul: defEnemy('c1_kanal', 'ghoul', 'q_kanal', 'Kanalisationsbestie'),
       bat: defEnemy('c1_flatter', 'bat', 'bat_braun', 'Flatterbestie'),
       knight: defEnemy('c1_panzer', 'knight', 'q_panzer', 'Panzerbestie (Mittelstufe)', { armor: 1 }),
       witch: defEnemy('c1_spucker', 'witch', 'q_kroete', 'Säurekröte', { shot: 'acid', flier: false }),
       brute: defEnemy('c1_mutter', 'brute', 'q_mutter', 'Brutmutter'),
-      captain: defEnemy('c1_rudel', 'captain', 'q_fort', 'Rudelführer (Fortgeschritten)', { scale: 1.35, hp: 900 }),
-      boss: defBoss('c1_boss', 'bestieF', 'Fortgeschrittene Bestie', 2400, { bellShot: 'acid' })
+      captain: defEnemy('c1_laeufer', 'captain', 'h_laeufer', 'Stahlmanns Läufer', { scale: 1.2, hp: 900 }),
+      boss: defBoss('c1_boss', 'container', 'Das Ding aus dem Container', 2400, { bellShot: 'acid' })
     },
-    texts: { swarm: 'Ein Schwarm Flatterbestien!', ring: 'Die Bestien kreisen dich ein …', boss: 'Das Heulen einer Fortgeschrittenen Bestie hallt über das Gelände.' },
+    texts: { swarm: 'Ein Schwarm Flatterbestien!', ring: 'Die Bestien kreisen dich ein …', boss: 'Der überzählige Container bricht auf.' },
     quests: [
-      { type: 'kill', role: 'ghoul', n: 120, text: 'Besiege 120 Basis-Bestien', reward: { crystals: 15, bonus: 'level' } },
+      { type: 'kill', role: 'ghoul', n: 120, text: 'Besiege 120 Kanalisationsbestien', reward: { crystals: 15, bonus: 'level' } },
       { type: 'survive', n: 240, text: 'Überlebe 4 Minuten', reward: { crystals: 15, bonus: 'heal' } },
-      { type: 'mini', text: 'Besiege den Rudelführer', reward: { crystals: 25, bonus: 'level' } }
+      { type: 'mini', text: 'Besiege Stahlmanns Läufer', reward: { crystals: 25, bonus: 'level' } }
     ],
-    reward: { tier: 2, text: 'Evolution: Vampir' }
+    reward: { tier: 2, text: 'Evolution: Vampir — „Es ist Zeit zu fressen“' }
   },
   {
-    n: 2, id: 'mission', title: 'Die erste Mission', place: 'Bestien-Planet', theme: 'bestienplanet', tier: 2,
+    n: 2, id: 'portal', title: 'Das rote Portal', src: 'Kapitel 76–110', place: 'Rote Zone — keine Sonne, kein Schatten', theme: 'rotezone', tier: 2,
     intro: [
-      'Ein Einsatz auf einem Bestien-Planeten. Hier ist jede Bestie stärker als alles auf dem Übungsgelände.',
-      'Tief im leuchtenden Dschungel wartet eine Bestie der Kaiserstufe.'
+      'Stahlmanns Läufer stoßen Fabian Skala ins rote Portal. Finn springt hinterher.',
+      'Kein Sonnenlicht: zum ersten Mal arbeitet sein Körper mit voller Kraft. Im Zentrum der Zone wartet der Blutsauger.'
     ],
-    diff: { hp: 0.9, count: 0.9, dmg: 1 },
+    diff: { hp: 0.85, count: 0.9, dmg: 0.95 },
     roles: {
-      ghoul: defEnemy('c2_laeufer', 'ghoul', 'q_alien', 'Schattenläufer'),
-      bat: defEnemy('c2_gleiter', 'bat', 'bat_alien', 'Gleiter'),
-      knight: defEnemy('c2_panzer', 'knight', 'q_alienP', 'Panzerbestie (Königsstufe)', { armor: 2 }),
+      ghoul: defEnemy('c2_rot', 'ghoul', 'q_rot', 'Rotzonen-Bestie'),
+      bat: defEnemy('c2_gleiter', 'bat', 'bat_blut', 'Blutflatterer'),
+      knight: defEnemy('c2_panzer', 'knight', 'q_rotP', 'Panzerbestie (Fortgeschritten)', { armor: 2 }),
       witch: defEnemy('c2_spore', 'witch', 'q_spore', 'Sporenbestie', { shot: 'acid', flier: false }),
       brute: defEnemy('c2_mutter', 'brute', 'q_alienM', 'Bestienmutter'),
-      captain: defEnemy('c2_koenig', 'captain', 'q_koenig', 'Königsstufen-Bestie', { scale: 1.3, hp: 1600 }),
-      boss: defBoss('c2_boss', 'bestieK', 'Kaiserstufen-Bestie', 7500, { bellShot: 'acid' })
+      captain: defEnemy('c2_orange', 'captain', 'q_orange', 'Mittelstufen-Bestie', { scale: 1.3, hp: 1400 }),
+      boss: defBoss('c2_boss', 'blutsauger', 'Blutsauger (Rote Zone)', 6000, { bellShot: 'blood' })
     },
-    texts: { swarm: 'Gleiter stürzen aus den Baumkronen!', ring: 'Der Dschungel schließt sich um dich …', boss: 'Der Boden bebt. Eine Kaiserstufen-Bestie erhebt sich.' },
+    texts: { swarm: 'Blutflatterer aus dem roten Himmel!', ring: 'Die rote Zone schließt sich um dich …', boss: 'Dünn wie ein Skelett, zu lang für seine Haut: der Blutsauger.' },
     quests: [
       { type: 'kill', role: 'knight', n: 25, text: 'Besiege 25 Panzerbestien', reward: { crystals: 30, bonus: 'level' } },
       { type: 'crystals', n: 20, text: 'Sammle 20 Bestienkristalle', reward: { crystals: 20, bonus: 'heal' } },
-      { type: 'mini', text: 'Besiege die Königsstufen-Bestie', reward: { crystals: 40, bonus: 'level' } }
+      { type: 'mini', text: 'Besiege die Mittelstufen-Bestie', reward: { crystals: 40, bonus: 'level' } }
     ],
-    reward: { tier: 3, text: 'Evolution: Vampiradliger — die Schatten erwachen' }
+    reward: { skills: ['schatten', 'qi'], text: 'Schatten freigeschaltet — „Diese Fähigkeit ist älter als du“ · Leo lehrt dich Qi' }
   },
   {
-    n: 3, id: 'dalki', title: 'Der Dalki-Krieg', place: 'Schlachtfeld', theme: 'schlachtfeld', tier: 3,
+    n: 3, id: 'caladi', title: 'Caladi und die Dalki', src: 'Kapitel 111–140', place: 'Planet Caladi — der Vorposten', theme: 'caladi', tier: 2,
     intro: [
-      'Die Dalki greifen an: graue Krieger mit Stacheln. Je mehr Stacheln, desto gefährlicher.',
-      'Halte die Linie. Irgendwo hinter der Front führt ein Dalki mit sieben Stacheln den Angriff.'
+      'Bewertungsreise nach Caladi: zwei Sonnen, lange Tage, vierhundert Namen auf der Rangliste — Finn auf Platz 397.',
+      'Der Gleiter stürzt ab. Im zerstörten Vorposten steht etwas, das es nicht mehr geben dürfte: ein Dalki.'
     ],
-    diff: { hp: 1.2, count: 1, dmg: 1.15 },
+    diff: { hp: 0.92, count: 0.92, dmg: 0.98 },
     roles: {
-      ghoul: defEnemy('c3_d1', 'ghoul', 'dalki1', 'Dalki (1 Stachel)', { hp: 16 }),
+      ghoul: defEnemy('c3_laeufer', 'ghoul', 'q_caladi', 'Caladi-Läufer'),
       bat: defEnemy('c3_aas', 'bat', 'bat_aas', 'Aasflieger'),
-      knight: defEnemy('c3_d3', 'knight', 'dalki3', 'Dalki (3 Stacheln)', { armor: 3 }),
-      witch: defEnemy('c3_speer', 'witch', 'dalki2', 'Dalki-Speerwerfer (2 Stacheln)', { shot: 'spike', flier: false }),
-      brute: defEnemy('c3_d5', 'brute', 'dalki5', 'Dalki (5 Stacheln)', { splits: 0, hp: 150 }),
-      captain: defEnemy('c3_d6', 'captain', 'dalki6', 'Dalki (6 Stacheln)', { scale: 1.45, hp: 2400 }),
-      boss: defBoss('c3_boss', 'dalkiK', 'Dalki-Kommandant (7 Stacheln)', 11500, { bellShot: 'spike' })
+      knight: defEnemy('c3_panzer', 'knight', 'q_panzer', 'Grubenbestie', { armor: 2 }),
+      witch: defEnemy('c3_spucker', 'witch', 'q_kroete', 'Säurekröte', { shot: 'acid', flier: false }),
+      brute: defEnemy('c3_koenig', 'brute', 'q_fort', 'Grubenkönig'),
+      captain: defEnemy('c3_torres', 'captain', 'h_torres', 'Torres — Rang A, Feuer', { scale: 1.2, hp: 1800 }),
+      boss: defBoss('c3_boss', 'dalki1', 'Dalki (Ein Stachel)', 7000, { bellShot: 'spike' })
     },
-    texts: { swarm: 'Aasflieger kreisen über dem Schlachtfeld!', ring: 'Die Dalki umzingeln deine Stellung!', boss: 'Der Dalki-Kommandant tritt vor.' },
+    texts: { swarm: 'Aasflieger über der Ebene!', ring: 'Die Bestien von Caladi umzingeln euch!', boss: '„Dalki.“ Fabian sagt es so leise, dass es fast untergeht.' },
     quests: [
-      { type: 'kill', role: 'ghoul', n: 200, text: 'Besiege 200 Dalki', reward: { crystals: 40, bonus: 'level' } },
-      { type: 'level', n: 20, text: 'Erreiche Stufe 20', reward: { crystals: 30, bonus: 'heal' } },
-      { type: 'mini', text: 'Besiege den Dalki mit sechs Stacheln', reward: { crystals: 50, bonus: 'level' } }
+      { type: 'kill', role: 'ghoul', n: 180, text: 'Besiege 180 Caladi-Läufer', reward: { crystals: 35, bonus: 'level' } },
+      { type: 'level', n: 18, text: 'Erreiche Stufe 18', reward: { crystals: 25, bonus: 'heal' } },
+      { type: 'mini', text: 'Gewinne das Duell gegen Torres', reward: { crystals: 45, bonus: 'level' } }
     ],
-    reward: { tier: 4, text: 'Evolution: Vampirlord — Leo lehrt dich Qi, dazu gewaltige Blutkräfte' }
+    reward: { skills: ['qi2', 'ghoul'], text: 'Grünes Blut: Peter wird Ghoul · Qi-Kette und Eisenmeridiane' }
   },
   {
-    n: 4, id: 'siedlung', title: 'Die Vampir-Siedlung', place: 'Siedlung der Vampirfamilien', theme: 'siedlung', tier: 4,
+    n: 4, id: 'nachtdaemon', title: 'Der Nachtdämon', src: 'Kapitel 141–382', place: 'Militärbasis 2 — nach der Sperrstunde', theme: 'basisnacht', tier: 2,
     intro: [
-      'Unter falschem Namen betritt Finn die Welt der Vampirfamilien. Ihre Anführer verteidigen ihre Gesetze mit Blut.',
-      'Wer die Siedlung führen will, muss sich ihrem Stärksten stellen.'
+      'Fex Sanguini hat Finn gerochen — und ihn nicht verraten. Leander baut ihm eine Maske: kein Gesicht, kein Geruch, keine Stimme.',
+      'Unter der Maske geht Finn gegen General Viktor Stahlmann vor, Rang S, Kommandant von Basis 2.'
     ],
-    diff: { hp: 1.55, count: 1.05, dmg: 1.3 },
+    diff: { hp: 1.0, count: 0.95, dmg: 1.02 },
     roles: {
-      ghoul: defEnemy('c4_wache', 'ghoul', 'v_wache', 'Vampir-Wache', { hp: 18 }),
-      bat: defEnemy('c4_fleder', 'bat', 'bat_blut', 'Blutfledermaus'),
-      knight: defEnemy('c4_ritter', 'knight', 'v_ritter', 'Vampirritter', { armor: 3 }),
-      witch: defEnemy('c4_magier', 'witch', 'v_magier', 'Blutmagierin', { shot: 'blood', flier: false }),
-      brute: defEnemy('c4_thrall', 'brute', 'v_thrall', 'Thrall-Koloss'),
-      captain: defEnemy('c4_ober', 'captain', 'v_ritter', 'Familienoberhaupt', { scale: 1.4, hp: 3200 }),
-      boss: defBoss('c4_boss', 'vampF', 'Der Anführer der Familien', 16500, { bellShot: 'blood' })
+      ghoul: defEnemy('c4_kanal', 'ghoul', 'q_kanal', 'Container-Bestie', { hp: 16 }),
+      bat: defEnemy('c4_flatter', 'bat', 'bat_braun', 'Flatterbestie'),
+      knight: defEnemy('c4_wache', 'knight', 'h_wache', 'Stahlmanns Leibwache', { armor: 2 }),
+      witch: defEnemy('c4_agent', 'witch', 'h_truedream', 'Truedream-Agent', { shot: 'soul', flier: false }),
+      brute: defEnemy('c4_mutter', 'brute', 'q_orange', 'Bestie aus dem orangen Portal', { splits: 0, hp: 130 }),
+      captain: defEnemy('c4_jack', 'captain', 'h_jack', 'Jack Truedream', { scale: 1.2, hp: 2200 }),
+      boss: defBoss('c4_boss', 'stahlmann', 'General Viktor Stahlmann (Rang S)', 7800, { bellShot: 'spike' })
     },
-    texts: { swarm: 'Blutfledermäuse aus den Türmen!', ring: 'Die Wachen der Familien schließen den Kreis.', boss: 'Der Anführer der Familien erhebt sich von seinem Thron.' },
+    texts: { swarm: 'Flatterbestien über dem Kasernenhof!', ring: 'Stahlmanns Leute schließen den Kreis.', boss: '„Endlich“, sagt General Stahlmann und zieht das Jackett aus.' },
+    quests: [
+      { type: 'kill', role: 'knight', n: 35, text: 'Besiege 35 Leibwächter', reward: { crystals: 40, bonus: 'level' } },
+      { type: 'survive', n: 360, text: 'Überlebe 6 Minuten', reward: { crystals: 30, bonus: 'heal' } },
+      { type: 'mini', text: 'Widersetze dich Jack Truedream', reward: { crystals: 50, bonus: 'level' } }
+    ],
+    reward: { skills: ['blut'], text: 'Der Nachtdämon: Blutnova und Bluternte' }
+  },
+  {
+    n: 5, id: 'lintarnia', title: 'Die Vampirsiedlung', src: 'Kapitel 383–510', place: 'Lintarnia — der Blutdom', theme: 'siedlung', tier: 2,
+    intro: [
+      'Die Heimatwelt der Vampire: dreizehn Burgen, ein Rat, und ein Todesurteil gegen Fex — an seinem Geburtstag, im Blutdom.',
+      '„Beanspruche den zehnten Sitz.“ Doch zuerst steht Silva Sanguini zwischen Finn und seinem Freund.'
+    ],
+    diff: { hp: 1.1, count: 0.98, dmg: 1.08 },
+    roles: {
+      ghoul: defEnemy('c5_hase', 'ghoul', 'q_hase', 'Schwarzer Hase', { hp: 18 }),
+      bat: defEnemy('c5_fleder', 'bat', 'bat_blut', 'Todesfledermaus'),
+      knight: defEnemy('c5_ritter', 'knight', 'v_ritter', 'Vampirritter der Achten', { armor: 3 }),
+      witch: defEnemy('c5_magier', 'witch', 'v_magier', 'Blutmagierin', { shot: 'blood', flier: false }),
+      brute: defEnemy('c5_wache', 'brute', 'v_thrall', 'Wache des Rates', { splits: 0, hp: 150 }),
+      captain: defEnemy('c5_xander', 'captain', 'h_xander', 'Xander', { scale: 1.2, hp: 2600 }),
+      boss: defBoss('c5_boss', 'silva', 'Silva Sanguini (Vampirritterin)', 9000, { bellShot: 'blood' })
+    },
+    texts: { swarm: 'Zehn Todesfledermäuse — ein Wetterphänomen!', ring: 'Die Wachen des Rates schließen den Kreis.', boss: 'Silva Sanguini erfüllt eine Vorschrift. Das macht es schlimmer.' },
     quests: [
       { type: 'kill', role: 'knight', n: 40, text: 'Besiege 40 Vampirritter', reward: { crystals: 50, bonus: 'level' } },
       { type: 'survive', n: 420, text: 'Überlebe 7 Minuten', reward: { crystals: 40, bonus: 'heal' } },
-      { type: 'mini', text: 'Besiege das Familienoberhaupt', reward: { crystals: 60, bonus: 'level' } }
+      { type: 'mini', text: 'Besiege Xander vor der Vampirschule', reward: { crystals: 60, bonus: 'level' } }
     ],
-    reward: { king: true, text: 'Titel: Vampirkönig (+10 % Leben und Schaden, dauerhaft)' }
+    reward: { tier: 3, text: 'Oberhaupt der zehnten Familie — Evolution: Vampiradliger' }
   },
   {
-    n: 5, id: 'graham', title: 'Graham', place: 'Die brennenden Ruinen', theme: 'ruinen', tier: 4,
+    n: 6, id: 'verfluchte', title: 'Die Verfluchten', src: 'Kapitel 511–611', place: 'Cudenti — der Außenposten der Crows', theme: 'ruinen', tier: 3,
     intro: [
-      'Graham, der Anführer der Dalki: acht Stacheln und der Hunger eines Werwolfs, der seine Beute frisst und dadurch wächst.',
-      'Um ihn zu besiegen, braucht Finn die Macht eines Nest-Kristalls.'
+      'Elf Mutterschiffe: der zweite Dalki-Krieg. Die Freunde trennen sich, Finn geht mit Leander und 31 Überlebenden zu den Crows.',
+      'Sunshield greift den Außenposten an — dreißig Traveller ohne Kampfrang. Ihr Kommandant ist Rang S.'
     ],
-    diff: { hp: 1.8, count: 1.1, dmg: 1.4 },
+    diff: { hp: 1.25, count: 1.02, dmg: 1.18 },
     roles: {
-      ghoul: defEnemy('c5_d2', 'ghoul', 'dalki2', 'Dalki (2 Stacheln)', { hp: 20 }),
-      bat: defEnemy('c5_aas', 'bat', 'bat_aas', 'Aasflieger'),
-      knight: defEnemy('c5_wolf', 'knight', 'dalkiW', 'Dalki-Werwolf', { armor: 3, spd: 46 }),
-      witch: defEnemy('c5_speer', 'witch', 'dalki3', 'Dalki-Speerwerfer (3 Stacheln)', { shot: 'spike', flier: false }),
-      brute: defEnemy('c5_d5', 'brute', 'dalki5', 'Dalki (5 Stacheln)', { splits: 0, hp: 170 }),
-      captain: defEnemy('c5_d6', 'captain', 'dalki6', 'Dalki-General', { scale: 1.6, hp: 4200 }),
-      boss: defBoss('c5_boss', 'graham', 'Graham', 20000, { bellShot: 'spike', r: 48 })
+      ghoul: defEnemy('c6_d1', 'ghoul', 'dalki1', 'Dalki (1 Stachel)', { hp: 18 }),
+      bat: defEnemy('c6_aas', 'bat', 'bat_aas', 'Aasflieger'),
+      knight: defEnemy('c6_sun', 'knight', 'h_sunshield', 'Sunshield-Sturmsoldat', { armor: 3 }),
+      witch: defEnemy('c6_speer', 'witch', 'dalki2', 'Dalki-Speerwerfer (2 Stacheln)', { shot: 'spike', flier: false }),
+      brute: defEnemy('c6_koenig', 'brute', 'q_koenig', 'Königsstufen-Bestie', { splits: 0, hp: 170 }),
+      captain: defEnemy('c6_d2', 'captain', 'dalki3', 'Dalki (Zwei Stacheln)', { scale: 1.5, hp: 3000 }),
+      boss: defBoss('c6_boss', 'sunshield', 'Sunshield-Kommandant (Rang S)', 10000, { bellShot: 'spike' })
     },
-    texts: { swarm: 'Aasflieger über den Ruinen!', ring: 'Grahams Armee umzingelt dich!', boss: 'Graham ist hier.' },
+    texts: { swarm: 'Aasflieger über dem Außenposten!', ring: 'Sunshield kreist den Posten ein!', boss: 'Für ihn sind Traveller kein Gegner, sondern Gelände.' },
     quests: [
-      { type: 'kill', role: 'knight', n: 50, text: 'Besiege 50 Dalki-Werwölfe', reward: { crystals: 60, bonus: 'level' } },
-      { type: 'level', n: 28, text: 'Erreiche Stufe 28', reward: { crystals: 50, bonus: 'heal' } },
-      { type: 'mini', text: 'Besiege den Dalki-General', reward: { crystals: 70, bonus: 'level' } }
+      { type: 'kill', role: 'knight', n: 45, text: 'Besiege 45 Sunshield-Soldaten', reward: { crystals: 55, bonus: 'level' } },
+      { type: 'level', n: 24, text: 'Erreiche Stufe 24', reward: { crystals: 45, bonus: 'heal' } },
+      { type: 'mini', text: 'Besiege den Dalki mit zwei Stacheln', reward: { crystals: 65, bonus: 'level' } }
     ],
-    reward: { tier: 5, text: 'Nest-Kristall aufgenommen — Evolution: Himmlischer Vampirlord' }
+    reward: { skills: ['fraktion'], text: 'Die Verfluchten sind gegründet — ab jetzt bis zu 3 Begleiter' }
   },
   {
-    n: 6, id: 'himmel', title: 'Die Himmlischen', place: 'Die Himmelsebene', theme: 'himmel', tier: 5,
+    n: 7, id: 'weltmacht', title: 'Weltmacht', src: 'Kapitel 612–811', place: 'Kolonie Vermill — die Front', theme: 'schlachtfeld', tier: 3,
     intro: [
-      'Als erster Vampir hat Finn himmlischen Rang erreicht. Seine Macht wächst jetzt mit denen, die an ihn glauben.',
-      'Die Diener des Himmels prüfen, ob er würdig ist.'
+      'Peter kehrt als Wight zurück. Die Verfluchten sitzen am Tisch der Weltmächte — elf Monate nach ihrer Gründung.',
+      'Hagon Skala, der stärkste Mensch der Welt, hat Sil in sein Labor gesperrt. Er kopiert alles, was er sieht.'
     ],
-    diff: { hp: 2.5, count: 1.15, dmg: 1.6 },
+    diff: { hp: 1.4, count: 1.05, dmg: 1.26 },
     roles: {
-      ghoul: defEnemy('c6_juenger', 'ghoul', 'h_juenger', 'Lichtjünger', { hp: 20, gore: 'light' }),
-      bat: defEnemy('c6_funke', 'bat', 'bat_licht', 'Lichtfunke', { gore: 'light' }),
-      knight: defEnemy('c6_ritter', 'knight', 'h_ritter', 'Himmelsritter', { armor: 4, gore: 'light' }),
-      witch: defEnemy('c6_seherin', 'witch', 'h_seherin', 'Himmelsseherin', { shot: 'light', gore: 'light' }),
-      brute: defEnemy('c6_koloss', 'brute', 'h_koloss', 'Lichtkoloss', { gore: 'light' }),
-      captain: defEnemy('c6_waechter', 'captain', 'h_waechter', 'Erster Wächter', { hp: 5200, gore: 'light' }),
-      boss: defBoss('c6_boss', 'himmlisch', 'Der Himmlische Richter', 33000, { bellShot: 'light' })
+      ghoul: defEnemy('c7_d2', 'ghoul', 'dalki2', 'Dalki (2 Stacheln)', { hp: 20 }),
+      bat: defEnemy('c7_aas', 'bat', 'bat_aas', 'Aasflieger'),
+      knight: defEnemy('c7_d3', 'knight', 'dalki3', 'Dalki (3 Stacheln)', { armor: 3 }),
+      witch: defEnemy('c7_pure', 'witch', 'h_pure', 'Agent der Wahrhaftigen', { shot: 'soul', flier: false }),
+      brute: defEnemy('c7_d5', 'brute', 'dalki5', 'Dalki (5 Stacheln)', { splits: 0, hp: 170 }),
+      captain: defEnemy('c7_drei', 'captain', 'dalki4', 'Dreistachler von Vermill', { scale: 1.55, hp: 3400 }),
+      boss: defBoss('c7_boss', 'hagon', 'Hagon Skala (Stärkster Mensch)', 12500, { bellShot: 'light' })
+    },
+    texts: { swarm: 'Aasflieger über Vermill!', ring: 'Die Dalki umzingeln die Kolonie!', boss: '„Ich werde mir deine Kräfte ansehen, während du sie benutzt.“' },
+    quests: [
+      { type: 'kill', role: 'ghoul', n: 250, text: 'Besiege 250 Dalki', reward: { crystals: 60, bonus: 'level' } },
+      { type: 'survive', n: 450, text: 'Halte die Linie 7:30 Minuten', reward: { crystals: 50, bonus: 'heal' } },
+      { type: 'mini', text: 'Stelle den Dreistachler allein', reward: { crystals: 70, bonus: 'level' } }
+    ],
+    reward: { tier: 4, text: 'Evolution: Vampirlord — der Sonnenmalus ist herausgewachsen' }
+  },
+  {
+    n: 8, id: 'krone', title: 'Die Krone', src: 'Kapitel 812–1000', place: 'Die zehnte Burg', theme: 'burg', tier: 4,
+    intro: [
+      'Samuel Eno hat die Dalki erschaffen — und er stirbt nicht richtig. Sechs Familienoberhäupter kommen gleichzeitig in die zehnte Burg.',
+      'In der Nacht bricht etwas durch das Haupttor, das älter ist als die dreizehn Familien: ein Original.'
+    ],
+    diff: { hp: 1.8, count: 1.1, dmg: 1.42 },
+    roles: {
+      ghoul: defEnemy('c8_rot', 'ghoul', 'h_rotvamp', 'Roter Vampir', { hp: 20 }),
+      bat: defEnemy('c8_fleder', 'bat', 'bat_blut', 'Blutfledermaus'),
+      knight: defEnemy('c8_ritter', 'knight', 'v_ritter', 'Ritter der Achten', { armor: 4 }),
+      witch: defEnemy('c8_magier', 'witch', 'v_magier', 'Blutmagierin', { shot: 'blood', flier: false }),
+      brute: defEnemy('c8_thrall', 'brute', 'v_thrall', 'Diener des Untoten Königs', { splits: 0, hp: 180 }),
+      captain: defEnemy('c8_klon', 'captain', 'h_klon', 'Samuel Eno — Klon', { scale: 1.2, hp: 3800 }),
+      boss: defBoss('c8_boss', 'original', 'Ein Original', 17500, { bellShot: 'blood' })
+    },
+    texts: { swarm: 'Blutfledermäuse aus den Türmen!', ring: 'Rote Vampire umzingeln die Burg!', boss: 'Signatur unbekannt. Älter als die Gesetze.' },
+    quests: [
+      { type: 'kill', role: 'knight', n: 50, text: 'Besiege 50 Ritter der Achten', reward: { crystals: 65, bonus: 'level' } },
+      { type: 'level', n: 28, text: 'Erreiche Stufe 28', reward: { crystals: 55, bonus: 'heal' } },
+      { type: 'mini', text: 'Töte den Klon von Samuel Eno', reward: { crystals: 75, bonus: 'level' } }
+    ],
+    reward: { skills: ['absolut'], text: 'Absoluter Schatten & Absolute Blutkontrolle (+25 % Blut- und Schattenschaden)' }
+  },
+  {
+    n: 9, id: 'krieg', title: 'Der lange Krieg', src: 'Kapitel 1001–1400', place: 'Welt Kadar — achtzehn Fronten', theme: 'ruinen', tier: 4,
+    intro: [
+      'Achtzehn Welten, derselbe Tag. Das rote Mal breitet sich aus, die Familie Skala erlischt, Menschen und Vampire kämpfen in derselben Linie.',
+      'Auf einem Hügel wartet ein Dalki, der spricht: Arian, sechs Stacheln. „Ich wollte sehen, ob du interessant bist.“'
+    ],
+    diff: { hp: 2.0, count: 1.12, dmg: 1.5 },
+    roles: {
+      ghoul: defEnemy('c9_mark', 'ghoul', 'h_markiert', 'Markierter', { hp: 22 }),
+      bat: defEnemy('c9_aas', 'bat', 'bat_aas', 'Aasflieger'),
+      knight: defEnemy('c9_d3', 'knight', 'dalki3', 'Dalki-Horde (3 Stacheln)', { armor: 4 }),
+      witch: defEnemy('c9_rot', 'witch', 'h_rotvamp', 'Roter Vampir', { shot: 'blood', flier: false }),
+      brute: defEnemy('c9_d5', 'brute', 'dalki5', 'Dalki (5 Stacheln)', { splits: 0, hp: 190 }),
+      captain: defEnemy('c9_daemon', 'captain', 'q_daemon', 'Bestie der Dämonenstufe', { scale: 1.3, hp: 4200 }),
+      boss: defBoss('c9_boss', 'arian', 'Arian (Sechs Stacheln)', 20000, { bellShot: 'spike', r: 46 })
+    },
+    texts: { swarm: 'Aasflieger über Kadar!', ring: 'Die Markierten umzingeln dich — ihre Augen glühen rot.', boss: '„Du bist der, der die Schiffe aufmacht.“' },
+    quests: [
+      { type: 'kill', role: 'ghoul', n: 350, text: 'Halte 350 Markierte auf', reward: { crystals: 70, bonus: 'level' } },
+      { type: 'survive', n: 480, text: 'Überlebe 8 Minuten', reward: { crystals: 60, bonus: 'heal' } },
+      { type: 'mini', text: 'Töte die Bestie der Dämonenstufe', reward: { crystals: 80, bonus: 'level' } }
+    ],
+    reward: { king: true, skills: ['handschuh'], text: 'Vampirkönig (+10 % Leben und Schaden) · Leanders Bluthandschuh (+10 % Schaden)' }
+  },
+  {
+    n: 10, id: 'atemzug', title: 'Der letzte Atemzug', src: 'Kapitel 1401–1572', place: 'Die letzte Linie — roter Himmel', theme: 'roterhimmel', tier: 4,
+    intro: [
+      'Zwölf Jahre Krieg. Alle neun Mutterschiffe sind zerstört. Was übrig ist, steht an einem Ort — und Arian kommt allein. Sieben Stacheln.',
+      'Wenn alles nicht reicht, wird der Himmel rot.'
+    ],
+    diff: { hp: 2.25, count: 1.15, dmg: 1.6 },
+    roles: {
+      ghoul: defEnemy('c10_d3', 'ghoul', 'dalki3', 'Dalki (3 Stacheln)', { hp: 24 }),
+      bat: defEnemy('c10_aas', 'bat', 'bat_aas', 'Aasflieger'),
+      knight: defEnemy('c10_elite', 'knight', 'dalki4', 'Dalki-Elite (4 Stacheln)', { armor: 5 }),
+      witch: defEnemy('c10_speer', 'witch', 'dalki5', 'Dalki-Speerwerfer (5 Stacheln)', { shot: 'spike', flier: false }),
+      brute: defEnemy('c10_d6', 'brute', 'dalki6', 'Dalki (6 Stacheln)', { splits: 0, hp: 210 }),
+      captain: defEnemy('c10_klon', 'captain', 'h_klon', 'Samuel Enos letzter Klon', { scale: 1.2, hp: 4800 }),
+      boss: defBoss('c10_boss', 'arianF', 'Arian (Letzte Form)', 24000, { bellShot: 'spike', r: 50 })
+    },
+    texts: { swarm: 'Aasflieger verdunkeln den roten Himmel!', ring: 'Die Dalki-Elite schließt den Kreis!', boss: '„Ich habe gewartet. Du warst es wert.“' },
+    quests: [
+      { type: 'kill', role: 'knight', n: 60, text: 'Besiege 60 Dalki der Elite', reward: { crystals: 80, bonus: 'level' } },
+      { type: 'level', n: 32, text: 'Erreiche Stufe 32', reward: { crystals: 70, bonus: 'heal' } },
+      { type: 'mini', text: 'Beende Samuel Enos letzten Klon', reward: { crystals: 90, bonus: 'level' } }
+    ],
+    reward: { tier: 5, text: 'Herrscher des Blutes — Evolution: Himmlischer Vampirlord' }
+  },
+  {
+    n: 11, id: 'rueckkehr', title: 'Die Rückkehr einer Legende', src: 'ab Kapitel 1573', place: 'Die Himmelsebene', theme: 'himmel', tier: 5,
+    intro: [
+      'Leander hatte sich geirrt: Finn schläft nicht ein paar Jahre, sondern über tausend. Peter hat die ganze Zeit vor der Gruft gewacht.',
+      'Finn erwacht in einer veränderten Welt. Seine himmlische Kraft wächst mit denen, die an ihn glauben — die Diener des Himmels prüfen, ob er würdig ist.'
+    ],
+    diff: { hp: 2.6, count: 1.15, dmg: 1.65 },
+    roles: {
+      ghoul: defEnemy('c11_juenger', 'ghoul', 'h_juenger', 'Lichtjünger', { hp: 20, gore: 'light' }),
+      bat: defEnemy('c11_funke', 'bat', 'bat_licht', 'Lichtfunke', { gore: 'light' }),
+      knight: defEnemy('c11_ritter', 'knight', 'h_ritter', 'Himmelsritter', { armor: 4, gore: 'light' }),
+      witch: defEnemy('c11_seherin', 'witch', 'h_seherin', 'Himmelsseherin', { shot: 'light', gore: 'light' }),
+      brute: defEnemy('c11_koloss', 'brute', 'h_koloss', 'Lichtkoloss', { gore: 'light' }),
+      captain: defEnemy('c11_waechter', 'captain', 'h_waechter', 'Erster Wächter', { hp: 5200, gore: 'light' }),
+      boss: defBoss('c11_boss', 'himmlisch', 'Der Himmlische Richter', 33000, { bellShot: 'light' })
     },
     texts: { swarm: 'Ein Regen aus Lichtfunken!', ring: 'Die Jünger des Lichts umringen dich.', boss: 'Der Himmlische Richter steigt herab.' },
     quests: [
-      { type: 'kill', role: 'ghoul', n: 400, text: 'Besiege 400 Lichtjünger', reward: { crystals: 70, bonus: 'level' } },
-      { type: 'survive', n: 480, text: 'Überlebe 8 Minuten', reward: { crystals: 60, bonus: 'heal' } },
-      { type: 'mini', text: 'Besiege den Ersten Wächter', reward: { crystals: 80, bonus: 'level' } }
+      { type: 'kill', role: 'ghoul', n: 400, text: 'Besiege 400 Lichtjünger', reward: { crystals: 90, bonus: 'level' } },
+      { type: 'survive', n: 480, text: 'Überlebe 8 Minuten', reward: { crystals: 80, bonus: 'heal' } },
+      { type: 'mini', text: 'Besiege den Ersten Wächter', reward: { crystals: 100, bonus: 'level' } }
     ],
     reward: { tier: 6, text: 'Evolution: Reiner Himmlischer' }
   },
   {
-    n: 7, id: 'goetter', title: 'Gottbezwinger', place: 'Das Reich der Götter', theme: 'goetter', tier: 6,
+    n: 12, id: 'goetter', title: 'Gottbezwinger', src: 'spätere Kapitel', place: 'Das Reich der Götter', theme: 'goetter', tier: 6,
     intro: [
       'Götter sind keine Legende. Und Emma Wagners Gottbezwinger-Kristall trägt die Macht, sie zu bezwingen.',
-      'Um die Macht zu tragen, muss Finn einen Gott besiegen.'
+      'Um diese Macht zu tragen, muss Finn einen Gott besiegen.'
     ],
     diff: { hp: 3.1, count: 1.2, dmg: 1.8 },
     roles: {
-      ghoul: defEnemy('c7_bestie', 'ghoul', 'q_void', 'Götterbestie', { hp: 22, gore: 'void' }),
-      bat: defEnemy('c7_schwinge', 'bat', 'bat_void', 'Leerenschwinge', { gore: 'void' }),
-      knight: defEnemy('c7_ritter', 'knight', 'g_ritter', 'Götterritter', { armor: 5, gore: 'void' }),
-      witch: defEnemy('c7_priesterin', 'witch', 'g_seherin', 'Priesterin der Leere', { shot: 'void', gore: 'void' }),
-      brute: defEnemy('c7_titan', 'brute', 'q_voidP', 'Titanbestie', { splits: 2, gore: 'void' }),
-      captain: defEnemy('c7_diener', 'captain', 'g_diener', 'Auserwählter eines Gottes', { hp: 6500, gore: 'void' }),
-      boss: defBoss('c7_boss', 'gott', 'Ein Gott', 46000, { bellShot: 'void' })
+      ghoul: defEnemy('c12_bestie', 'ghoul', 'q_void', 'Götterbestie', { hp: 22, gore: 'void' }),
+      bat: defEnemy('c12_schwinge', 'bat', 'bat_void', 'Leerenschwinge', { gore: 'void' }),
+      knight: defEnemy('c12_ritter', 'knight', 'g_ritter', 'Götterritter', { armor: 5, gore: 'void' }),
+      witch: defEnemy('c12_priesterin', 'witch', 'g_seherin', 'Priesterin der Leere', { shot: 'void', gore: 'void' }),
+      brute: defEnemy('c12_titan', 'brute', 'q_voidP', 'Titanbestie', { splits: 2, gore: 'void' }),
+      captain: defEnemy('c12_diener', 'captain', 'g_diener', 'Auserwählter eines Gottes', { hp: 6500, gore: 'void' }),
+      boss: defBoss('c12_boss', 'gott', 'Ein Gott', 46000, { bellShot: 'void' })
     },
     texts: { swarm: 'Leerenschwingen verdunkeln den Himmel!', ring: 'Die Diener der Götter schließen den Kreis.', boss: 'Ein Gott wendet sich dir zu.' },
     quests: [
-      { type: 'kill', role: 'knight', n: 60, text: 'Besiege 60 Götterritter', reward: { crystals: 90, bonus: 'level' } },
-      { type: 'level', n: 35, text: 'Erreiche Stufe 35', reward: { crystals: 80, bonus: 'heal' } },
-      { type: 'mini', text: 'Besiege den Auserwählten', reward: { crystals: 100, bonus: 'level' } }
+      { type: 'kill', role: 'knight', n: 60, text: 'Besiege 60 Götterritter', reward: { crystals: 110, bonus: 'level' } },
+      { type: 'level', n: 35, text: 'Erreiche Stufe 35', reward: { crystals: 100, bonus: 'heal' } },
+      { type: 'mini', text: 'Besiege den Auserwählten', reward: { crystals: 120, bonus: 'level' } }
     ],
     reward: { tier: 7, text: 'Emma Wagners Kristall — Evolution: Vampir-Gottbezwinger' }
   }
 ];
+
+/* ---------------------------------------------------------------- Kräfte (dauerhaft, pro Kapitel) */
+// Unabhaengig von der Evolution: Kraefte kommen dort, wo sie in der Geschichte auftauchen.
+const FINN_SKILLS = {
+  schatten: { name: 'Schatten', cards: ['schattenflammen', 'nachtschlund', 'nachbilder'], desc: 'Schattenschritt statt Ausweichen; Schattenflammen, Nachtschlund und Nachbilder erscheinen als Karten.' },
+  qi: { name: 'Qi (Leo)', cards: ['qihand'], desc: 'Leos Grundform: die Qi-Hand erscheint als Karte.' },
+  qi2: { name: 'Qi vertieft', cards: ['qikette', 'eisenmeridiane'], desc: 'Qi-Kette und Eisenmeridiane erscheinen als Karten.' },
+  ghoul: { name: 'Peter, der Ghoul', cards: [], desc: 'Peter Kraus kämpft deutlich stärker.' },
+  blut: { name: 'Blutkräfte', cards: ['blutnova', 'bluternte'], desc: 'Blutnova und Bluternte erscheinen als Karten.' },
+  fraktion: { name: 'Die Verfluchten', cards: [], desc: 'Bis zu 3 Begleiter gleichzeitig.' },
+  absolut: { name: 'Absolute Kontrolle', cards: [], desc: '+25 % Blut- und Schattenschaden.' },
+  handschuh: { name: 'Bluthandschuh', cards: [], desc: '+10 % Schaden.' }
+};
+// welche Kraefte eine Form mindestens voraussetzt (Testmodus / alte Spielstaende)
+const SKILLS_BY_TIER = { 3: ['schatten', 'qi', 'qi2', 'ghoul', 'blut'], 4: ['fraktion'], 5: ['absolut', 'handschuh'] };
+function finnSkills() {
+  const S = storySave(), F = finnSave(), out = new Set(S.skills || []);
+  const tier = GAME && GAME.p && GAME.p.hero === 'finn' ? (GAME.p.tier || 0) : F.tier;
+  for (const t in SKILLS_BY_TIER) if (tier >= +t || F.tier >= +t) SKILLS_BY_TIER[t].forEach((k) => out.add(k));
+  if (SAVE.settings.testUnlock && (UI.finnPick || 0) >= 2) Object.keys(FINN_SKILLS).forEach((k) => out.add(k));
+  return out;
+}
 
 /* ---------------------------------------------------------------- Bestienausruestung (dauerhaft) */
 const GEAR = {
@@ -7318,8 +7542,15 @@ const GEAR = {
 function storySave() {
   if (!SAVE.story) SAVE.story = {};
   const S = SAVE.story;
-  S.cleared = S.cleared || {}; S.gear = S.gear || {}; S.best = S.best || {};
+  S.cleared = S.cleared || {}; S.gear = S.gear || {}; S.best = S.best || {}; S.skills = S.skills || [];
   if (S.crystals === undefined) S.crystals = 0;
+  if (!S.v2) { // Spielstand aus der 7-Kapitel-Fassung: nach erreichter Form umrechnen
+    S.v2 = true;
+    const t = (SAVE.finn && SAVE.finn.tier) || 0, old = Object.keys(S.cleared).length;
+    const upTo = old ? [0, 0, 1, 5, 7, 10, 11, 12][Math.min(7, t)] : 0;
+    S.cleared = {};
+    for (let n = 1; n <= upTo; n++) { S.cleared[n] = true; (CHAPTERS[n - 1].reward.skills || []).forEach((k) => { if (!S.skills.includes(k)) S.skills.push(k); }); }
+  }
   return S;
 }
 
@@ -7339,10 +7570,12 @@ function storySetup(G, ch) {
   G.quests = ch.quests.map((q) => ({ q, prog: 0, done: false }));
   G.questRoleKills = {};
   G.onKill = storyOnKill;
+  G.schoolMul = finnSkills().has('absolut') ? { blood: 1.25, shadow: 1.25 } : null;
   spawnCompanions(G);
   const S = storySave(), gr = S.gear;
   G.statMod = (st) => {
-    st.might *= 1 + 0.08 * (gr.handschuhe || 0) + (S.king ? 0.1 : 0);
+    const sk = finnSkills();
+    st.might *= 1 + 0.08 * (gr.handschuhe || 0) + (S.king ? 0.1 : 0) + (sk.has('handschuh') ? 0.1 : 0);
     st.speed *= 1 + 0.05 * (gr.stiefel || 0);
     st.dodgeCdMul *= Math.pow(0.94, gr.stiefel || 0);
     st.maxHp *= 1 + 0.1 * (gr.panzer || 0) + (S.king ? 0.1 : 0);
@@ -7396,6 +7629,8 @@ function storyEnd(won) {
     if (!G.finnTest) {
       if (R.tier && F.tier < R.tier) { F.tier = R.tier; res.reward = R; res.evolved = FINN_TIERS[R.tier]; }
       if (R.king && !S.king) { S.king = true; res.reward = R; }
+      const neu = (R.skills || []).filter((k) => !S.skills.includes(k));
+      if (neu.length) { S.skills.push(...neu); res.reward = R; res.skills = neu; }
     }
   }
   return res;
@@ -7403,7 +7638,7 @@ function storyEnd(won) {
 // Finn: im Story-Modus zaehlt das Kapitel, nicht mehr die Essenz
 const _finnEndOld = HEROES.finn.onEnd;
 HEROES.finn.onEnd = function (won) { return GAME.story ? storyEnd(won) : _finnEndOld(won); };
-HEROES.finn.mech.desc = 'Finn beginnt als Mensch ohne jede Fähigkeit — im ersten Kapitel findet er das Buch und wird zum Halbling. Jede weitere Evolution erhält er dauerhaft, wenn er den Boss des passenden Kapitels besiegt. Im Lauf kämpft er mit den Kräften seiner aktuellen Form; Bestienkristalle aus den Läufen werden zu dauerhafter Ausrüstung.';
+HEROES.finn.mech.desc = 'Finn beginnt als Mensch ohne jede Fähigkeit — im ersten Kapitel findet er das Buch und wird zum Halbling. Evolutionen und Kräfte (Schatten, Qi, Blut) erhält er dauerhaft an den Stellen, an denen sie auch in der Geschichte auftauchen: beim ersten Sieg über den Boss des Kapitels. Im Lauf kämpft er mit den Kräften seiner aktuellen Form; Bestienkristalle aus den Läufen werden zu dauerhafter Ausrüstung.';
 
 // Finn gehoert in den Story-Modus, nicht in die Arcade-Heldenwahl
 (function () { const i = HERO_ORDER.indexOf('finn'); if (i >= 0) HERO_ORDER.splice(i, 1); })();
@@ -7450,7 +7685,7 @@ UI.act = function (a, ds, e) {
     case 'chapterGo': return this.showChapterIntro(this.selChapter);
     case 'chapterStart': return storyStart(this.selChapter);
     case 'storyform': this.finnPick = +ds.t; return this.showStory();
-    case 'comp': { const P0 = companionParty(); const i = P0.indexOf(ds.id); if (i >= 0) P0.splice(i, 1); else { if (P0.length >= 2) P0.shift(); P0.push(ds.id); } writeSave(); return this.showStory(); }
+    case 'comp': { const P0 = companionParty(); const i = P0.indexOf(ds.id); if (i >= 0) P0.splice(i, 1); else { if (P0.length >= partyMax()) P0.shift(); P0.push(ds.id); } writeSave(); return this.showStory(); }
     case 'gear': return this.showGear();
     case 'buygear': {
       const S = storySave(), G0 = GEAR[ds.id], lv = S.gear[ds.id] || 0;
@@ -7467,7 +7702,7 @@ UI.act = function (a, ds, e) {
 function chapterOpen(n) { const S = storySave(); return n === 1 || S.cleared[n - 1] || SAVE.settings.testUnlock; }
 UI.showStory = function () {
   const S = storySave(), F = finnSave();
-  if (!this.selChapter) { this.selChapter = 1; for (let n = 1; n <= 7; n++) if (chapterOpen(n) && !S.cleared[n]) { this.selChapter = n; break; } }
+  if (!this.selChapter) { this.selChapter = 1; for (let n = 1; n <= CHAPTERS.length; n++) if (chapterOpen(n) && !S.cleared[n]) { this.selChapter = n; break; } }
   const ch = CHAPTERS[this.selChapter - 1];
   MENU = null; setTheme(ch.theme); menuScene();
   const test = SAVE.settings.testUnlock;
@@ -7489,20 +7724,21 @@ UI.showStory = function () {
           <span>Name</span><span>Finn Müller</span>
           <span>Form</span><span style="color:${FINN_TIERS[F.tier].col}">${FINN_TIERS[F.tier].name}</span>
           <span>Titel</span><span>${S.king ? 'Vampirkönig' : '—'}</span>
-          <span>Kapitel</span><span>${Object.keys(S.cleared).length} / 7</span>
+          <span>Kapitel</span><span>${Object.keys(S.cleared).length} / ${CHAPTERS.length}</span>
           <span>Bestienkristalle</span><span style="color:#8ad8ff">${S.crystals} ◆</span>
         </div></div>
+      <div class="sysnote">Kräfte: ${[...finnSkills()].map((k) => `<b style="color:#8ad8ff">${FINN_SKILLS[k].name}</b>`).join(' · ') || '—'}</div>
       ${test ? `<div class="sysnote">Testmodus: Form für den Lauf frei wählbar (zählt dann nicht für die Evolution)</div><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">${chips}</div>` : ''}
     </div>
     <div class="chaps">${cards}</div>
     <div class="syswin" style="width:min(560px,100%);margin-bottom:10px">
-      <div class="syshead">BEGLEITER (bis zu 2)</div>
+      <div class="syshead">BEGLEITER (bis zu ${partyMax()})</div>
       <div class="comps">${COMP_ORDER.map((id) => { const C0 = COMPANIONS[id], open = companionOpen(id), on = companionParty().includes(id); return `<button class="comp ${on ? 'on' : ''}" data-act="${open ? 'comp' : ''}" data-id="${id}" ${open ? '' : 'disabled'}><b style="color:${C0.col}">${open ? '' : '🔒 '}${C0.name}</b><small>${open ? C0.role : 'nach Kapitel ' + C0.unlock}</small></button>`; }).join('')}</div>
       ${companionParty().length ? `<div class="sysnote">${companionParty().map((id) => COMPANIONS[id].desc).join('<br>')}</div>` : '<div class="sysnote">Finn kämpft allein.</div>'}
     </div>
     <div class="syswin" style="width:min(560px,100%)">
       <div class="syshead">KAPITEL ${ch.n} · ${ch.title.toUpperCase()}</div>
-      <div class="sysplace">${ch.place}</div>
+      <div class="sysplace">${ch.place} · <span style="opacity:.7">Vorlage ${ch.src}</span></div>
       <p class="sysp">${ch.intro[0]}</p>
       <div class="sysnote">Empfohlene Form: <b style="color:${FINN_TIERS[ch.tier].col}">${FINN_TIERS[ch.tier].name}</b> · Boss: <b>${ENEMIES[ch.roles.boss].name}</b></div>
       <div class="sysnote">Belohnung beim ersten Sieg: <b style="color:#ffe6a0">${ch.reward.text}</b>${S.cleared[ch.n] ? ' (erhalten)' : ''}</div>
@@ -7630,7 +7866,10 @@ UI.showEnd = function (won, souls, newly, extra) {
   if (extra.test) rew = '<div class="sysnote">Testform — Belohnungen der Form werden nicht vergeben.</div>';
   if (extra.evolved) rew += `<div style="text-align:center;margin:10px 0"><div class="syshead">[ SYSTEM ] · EVOLUTION</div><div class="cinzel" style="font-size:26px;font-weight:800;color:${extra.evolved.col};text-shadow:0 0 18px currentColor">${extra.evolved.name}</div><p class="sysp">${extra.evolved.desc}</p></div>`;
   else if (extra.reward && extra.reward.king) rew += `<div style="text-align:center;margin:10px 0"><div class="syshead">[ SYSTEM ] · TITEL ERHALTEN</div><div class="cinzel" style="font-size:24px;font-weight:800;color:#ffe6a0">Vampirkönig</div><p class="sysp">+10 % Leben und Schaden, dauerhaft.</p></div>`;
-  const hasNext = won && ch.n < 7;
+  if (extra.skills) rew += `<div style="text-align:center;margin:10px 0"><div class="syshead">[ SYSTEM ] · NEUE KRAFT</div>${extra.skills.map((k) => `<div class="cinzel" style="font-size:20px;font-weight:800;color:#8ad8ff">${FINN_SKILLS[k].name}</div><p class="sysp">${FINN_SKILLS[k].desc}</p>`).join('')}</div>`;
+  const neuC = won && extra.firstClear ? COMP_ORDER.filter((id) => COMPANIONS[id].unlock === ch.n) : [];
+  if (neuC.length) rew += `<div class="sysnote" style="text-align:center">Neue Begleiter: ${neuC.map((id) => `<b style="color:${COMPANIONS[id].col}">${COMPANIONS[id].name}</b>`).join(', ')}</div>`;
+  const hasNext = won && ch.n < CHAPTERS.length;
   this.show(`<div class="syswin big" style="width:min(540px,100%);margin:auto 0">
     <div class="syshead">[ SYSTEM ] · KAPITEL ${ch.n}</div>
     <div class="bigres ${won ? 'win' : 'lose'}" style="font-size:clamp(26px,8vw,40px)">${won ? 'KAPITEL GESCHAFFT' : 'GESCHEITERT'}</div>
@@ -7672,50 +7911,58 @@ UI.showGear = function () {
 
 const COMPANIONS = {
   peter: {
-    name: 'Peter Kraus', role: 'Wight · Leibwächter', unlock: 1, col: '#9aff9a',
-    desc: 'Finns erster Diener. Als untoter Wight zieht er Gegner auf sich und zerschmettert sie aus nächster Nähe.',
+    name: 'Peter Kraus', role: 'Leibwächter · später Ghoul und Wight', unlock: 1, col: '#9aff9a',
+    desc: 'Kampfwert F — und der Erste, der sich dazwischenwirft. Zieht Gegner auf sich; wird nach Caladi zum Ghoul und später zum Wight.',
     hero: 'vorian', pal: [[HERO_PAL.vorian, { skin: '#9ab09a', skinD: '#5a6a5a', armor: '#2a3028', armorL: '#5a6a58', armorD: '#101410', red: '#3a5a3a', redL: '#8aff8a', redD: '#142014', hair: '#1a1a14', eye: '#9aff9a', rim: '#9aff9a' }]],
     look: { glow: 0.3 }, speed: 150, range: 60, cd: 1.6
   },
   lena: {
-    name: 'Lena Grimm', role: 'Bogenschützin', unlock: 2, col: '#c8a0ff',
-    desc: 'Trifft aus großer Entfernung. Ihre Pfeile durchschlagen mehrere Gegner.',
+    name: 'Lena Grimm', role: 'Bogenschützin · Die Wahrhaftigen', unlock: 1, col: '#c8a0ff',
+    desc: 'Sie weiß mehr, als sie sagt. Trifft aus großer Entfernung, ihre Pfeile durchschlagen mehrere Gegner.',
     hero: 'liora', pal: [[HERO_PAL.liora, { coat: '#3a2a5a', coatL: '#6a4a9a', coatD: '#1a1028', hair: '#2a1a3a', hairL: '#8a5aba', eye: '#c8a0ff', rim: '#c8a0ff' }]],
     look: { weapon: 'bow' }, speed: 165, range: 320, cd: 1.1
   },
   leo: {
-    name: 'Leo', role: 'Blinder Qi-Meister', unlock: 3, col: '#5ff0d0',
-    desc: 'Finns Lehrmeister im Qi. Seine Qi-Wellen schleudern ganze Horden zurück.',
+    name: 'Leo', role: 'Blinder Qi-Meister', unlock: 2, col: '#5ff0d0',
+    desc: 'Er sieht nichts und merkt alles. Finns Lehrmeister im Qi — seine Qi-Wellen schleudern ganze Horden zurück.',
     hero: 'shen', pal: [[HERO_PAL.shen, { robe: '#e0dcd0', robeL: '#ffffff', robeD: '#8a867a', sash: '#2a6a5a', sashL: '#5ff0d0', hat: '#5a4a3a', hatL: '#8a7a5a', hatD: '#2a2014', beard: '#2a2420', rim: '#5ff0d0' }]],
     look: { qi: 0 }, speed: 150, range: 100, cd: 2.4
   },
   fex: {
     name: 'Fex Sanguini', role: 'Vampir · Blutfäden', unlock: 4, col: '#ff4a6a',
-    desc: 'Finns Bruder im Geiste. Seine Blutfäden springen von Gegner zu Gegner.',
+    desc: 'Finns Blutsbruder aus der dreizehnten Familie. Seine fast unsichtbaren Fäden springen von Gegner zu Gegner.',
     hero: 'nyx', pal: [[HERO_PAL.nyx, { cloak: '#2a0a14', cloakL: '#6a1a2a', cloakD: '#10040a', scarf: '#8a0a1e', scarfL: '#ff4a6a', eye: '#ff4a6a', rim: '#ff4a6a' }]],
     look: { flow: 0.4 }, speed: 180, range: 260, cd: 1.3
   },
   emma: {
-    name: 'Emma Wagner', role: 'Schwertkämpferin', unlock: 5, col: '#9ad8ff',
-    desc: 'Eine der Stärksten an Finns Seite. Ihr Schwert zerteilt alles in einem weiten Bogen.',
+    name: 'Emma Wagner', role: 'Rang A · Eis und Schwert', unlock: 3, col: '#9ad8ff',
+    desc: 'Rechnet alles nach. Ihr Eisschwert zerteilt alles in einem weiten Bogen und lässt Gegner erstarren.',
     hero: 'liora', pal: [[HERO_PAL.liora, { coat: '#2a3a5a', coatL: '#5a7aaa', coatD: '#101828', hair: '#e8e8f0', hairL: '#ffffff', eye: '#9ad8ff', rim: '#9ad8ff', band: '#c8d8e8' }]],
     look: { weapon: 'sword' }, speed: 175, range: 90, cd: 1.2
   }
 };
-const COMP_ORDER = ['peter', 'lena', 'leo', 'fex', 'emma'];
+COMPANIONS.fabian = {
+  name: 'Fabian Skala', role: 'Drei in einem Körper · Ratan', unlock: 2, col: '#ffd27a',
+  desc: 'Fabian, Ratan — und Sil. Wenn es ernst wird, übernimmt Ratan: blitzschnelle Schlagfolgen mitten in die Gegner.',
+  hero: 'vorian', pal: [[HERO_PAL.vorian, { skin: '#ecd8c8', skinD: '#a88878', armor: '#1a2436', armorL: '#3a4a6a', armorD: '#080c14', red: '#2a3a6a', redL: '#ffd27a', redD: '#10182a', hair: '#e8cf7a', eye: '#ffd27a', rim: '#ffd27a' }]],
+  look: { glow: 0, plain: true }, speed: 190, range: 70, cd: 1.0
+};
+const COMP_ORDER = ['peter', 'lena', 'fabian', 'leo', 'emma', 'fex'];
+function partyMax() { return typeof finnSkills === 'function' && finnSkills().has('fraktion') ? 3 : 2; }
 function companionOpen(id) { const S = storySave(); return SAVE.settings.testUnlock || !!S.cleared[COMPANIONS[id].unlock]; }
 function companionParty() {
   const S = storySave();
   if (!S.party) S.party = [];
-  S.party = S.party.filter((id) => COMPANIONS[id] && companionOpen(id)).slice(0, 2);
+  S.party = S.party.filter((id) => COMPANIONS[id] && companionOpen(id)).slice(0, partyMax());
   return S.party;
 }
 
 /* ---------------------------------------------------------------- im Lauf */
 function spawnCompanions(G) {
-  G.comps = companionParty().map((id, i) => ({ id, def: COMPANIONS[id], x: (i ? 40 : -40), y: 20, vx: 0, vy: 0, face: 1, t: rand(0, 1), cd: 1 + i * 0.5, castT: 0, aim: 0, phase: 0, run: 0, spr: null, slot: i }));
+  G.comps = companionParty().map((id, i) => ({ id, def: COMPANIONS[id], x: [-40, 40, 0][i], y: [20, 20, 44][i], vx: 0, vy: 0, face: 1, t: rand(0, 1), cd: 1 + i * 0.5, castT: 0, aim: 0, phase: 0, run: 0, spr: null, slot: i }));
 }
 function compPower(G) { return Math.pow(G.story ? G.story.diff.hp : 1, 0.85) * (1 + G.level * 0.035); }
+function peterPower() { const S = storySave(); return S.cleared[9] ? 2.2 : S.cleared[7] ? 1.7 : S.cleared[3] ? 1.3 : 1; }
 function updateCompanions(dt) {
   const G = GAME;
   if (!G.comps) return;
@@ -7752,7 +7999,7 @@ function compAttack(c, tgt, pw) {
   if (id === 'peter') { // Faustschlag mit Flaeche
     GAME.later(0.12, () => {
       const r = 58;
-      forEnemiesInRadius(tgt.x, tgt.y, r, (en) => dealDamage(en, 20 * pw, 'none', 'peter', { kb: 180, kx: en.x - c.x, ky: en.y - c.y, norm: true, noMark: true }));
+      forEnemiesInRadius(tgt.x, tgt.y, r, (en) => dealDamage(en, 20 * pw * peterPower(), 'none', 'peter', { kb: 180, kx: en.x - c.x, ky: en.y - c.y, norm: true, noMark: true }));
       fxRing(tgt.x, tgt.y, 8, r, 0.25, '#9aff9a', 5); burstAsh(tgt.x, tgt.y, 4, '#5a6a5a'); sfx('stomp', 0, 0.2); shake(1);
     });
   } else if (id === 'lena') { // durchschlagender Pfeil
@@ -7776,10 +8023,18 @@ function compAttack(c, tgt, pw) {
     fxRing(x, y, 10, r, 0.4, '#5ff0d0', 6); fxRing(x, y, 6, r * 0.7, 0.35, '#ffe6a0', 3);
   } else if (id === 'fex') { // Blutfaeden springen
     qiChain(x, y - 20, 4, 13 * pw, 'fex', { col: '#ff3a5a' });
+  } else if (id === 'fabian') { // Ratan: Sprung ins Ziel, drei schnelle Schlaege
+    const a = c.aim;
+    c.x = tgt.x - Math.cos(a) * 26; c.y = tgt.y - Math.sin(a) * 18;
+    burstShadow(c.x, c.y, 4, 0.4);
+    for (let k = 0; k < 3; k++) GAME.later(0.08 * k, () => {
+      forEnemiesInRadius(c.x + Math.cos(a) * 26, c.y + Math.sin(a) * 18, 44, (en) => dealDamage(en, 11 * pw, 'none', 'fabian', { kb: 70, kx: Math.cos(a), ky: Math.sin(a), norm: true, noMark: true }));
+      burstSparks(c.x + Math.cos(a) * 26, c.y - 12 + Math.sin(a) * 18, 3, '#ffd27a'); sfx('whip', 0, 0.06);
+    });
   } else if (id === 'emma') { // weiter Schwertbogen
     sfx('whip', 0, 0.1);
     const a = c.aim, R = 95, hit = new Set();
-    forEnemiesInRadius(x, y, R, (en) => { if (!inArc(en.x, en.y, x, y, a, 1.4) || hit.has(en.id)) return; hit.add(en.id); dealDamage(en, 26 * pw, 'none', 'emma', { kb: 140, kx: en.x - x, ky: en.y - y, norm: true, noMark: true }); });
+    forEnemiesInRadius(x, y, R, (en) => { if (!inArc(en.x, en.y, x, y, a, 1.4) || hit.has(en.id)) return; hit.add(en.id); dealDamage(en, 26 * pw, 'none', 'emma', { kb: 140, kx: en.x - x, ky: en.y - y, norm: true, noMark: true }); en.slowT = Math.max(en.slowT, 1.2); en.slowF = Math.min(en.slowF || 1, 0.5); burstSparks(en.x, en.y - 10, 2, '#cfe8ff'); });
     addEffect({ x, y, dur: 0.22, layer: 1, draw(g, e, k) {
       g.save(); g.translate(x, y - 16); g.scale(1, 0.7); g.globalCompositeOperation = 'lighter';
       g.globalAlpha = 1 - k; g.strokeStyle = '#cfe8ff'; g.lineWidth = 8 * (1 - k) + 1;
@@ -7803,7 +8058,7 @@ function drawCompanion(g, c, time) {
   g.lineWidth = 3; g.strokeStyle = 'rgba(0,0,0,0.8)'; g.strokeText(D.name, c.x, c.y + 14);
   g.fillStyle = D.col; g.fillText(D.name, c.x, c.y + 14);
 }
-Object.assign(SRC_NAMES, { peter: 'Peter Kraus', lena: 'Lena Grimm', leo: 'Leo', fex: 'Fex Sanguini', emma: 'Emma Wagner' });
+Object.assign(SRC_NAMES, { fabian: 'Fabian Skala', peter: 'Peter Kraus', lena: 'Lena Grimm', leo: 'Leo', fex: 'Fex Sanguini', emma: 'Emma Wagner' });
 
 /* ---- src/12-main.js ---- */
 'use strict';

@@ -91,6 +91,7 @@ function heroDamageMult(p, school) {
   if (p.hero === 'liora') { const miss = 1 - p.hp / p.st.maxHp; m *= 1 + clamp(miss * 1.25, 0, 0.9); if (p.buffAder > 0) m *= 1.6; }
   if (p.hero === 'nyx') m *= 1 + p.flow * 0.45;
   if (p.hero === 'finn') m *= FINN_TIERS[p.tier || 0].might;
+  if (GAME.schoolMul && GAME.schoolMul[school]) m *= GAME.schoolMul[school];
   return m;
 }
 

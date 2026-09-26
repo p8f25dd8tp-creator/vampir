@@ -203,6 +203,26 @@ Object.assign(ENEMY_ART, {
   v_magier: heroArt('liora', [[HERO_PAL.liora, { coat: '#3a0a2a', coatL: '#7a1a5a', coatD: '#1a0410', hair: '#e8e0e8', hairL: '#ffffff' }]], { rage: 0.5 }, '#ff5ab0', 110),
   bat_blut: palArt('bat', [], '#ff5a6a'),
   v_thrall: palArt('brute', [[EPAL.brute, { skin: '#9a8a90', skinL: '#d0c4c8', skinD: '#4a3a40', eye: '#ff2a3a' }]], '#ff5a6a'),
+  // Storybook: Menschen, Fraktionen, neue Bestien
+  h_laeufer: heroArt('vorian', [[HERO_PAL.vorian, { skin: '#d8c0a8', armor: '#3a4230', armorL: '#6a7456', armorD: '#161a10', red: '#4a5a2a', redL: '#a0c050', redD: '#1a2208', hair: '#3a2a1a', eye: '#e0c050', rim: '#e0c050' }]], { plain: true, glow: 0 }, '#e0c050', 116),
+  h_wache: heroArt('vorian', [[HERO_PAL.vorian, { skin: '#d8c0a8', armor: '#22261c', armorL: '#4a5040', armorD: '#0a0c08', red: '#6a5a2a', redL: '#e0c050', redD: '#2a2208', hair: '#1a1a1a', eye: '#e0c050', rim: '#e0c050' }]], { plain: true, glow: 0.2 }, '#e0c050', 120),
+  h_truedream: heroArt('liora', [[HERO_PAL.liora, { coat: '#d8d8e0', coatL: '#ffffff', coatD: '#7a7a88', hair: '#2a2430', hairL: '#5a5068', eye: '#8ab0ff', rim: '#8ab0ff' }]], { weapon: 'sword' }, '#8ab0ff', 110),
+  h_torres: heroArt('vorian', [[HERO_PAL.vorian, { skin: '#e0c0a0', armor: '#5a2a14', armorL: '#a0582a', armorD: '#200a04', red: '#e05a1a', redL: '#ffb040', redD: '#5a1a04', hair: '#c04a1a', eye: '#ffb040', rim: '#ff8a2a' }]], { plain: true, glow: 0.8 }, '#ff8a2a', 120),
+  h_jack: heroArt('vorian', [[HERO_PAL.vorian, { skin: '#e0d0c0', armor: '#e8e8f0', armorL: '#ffffff', armorD: '#8a8a98', red: '#2a4a8a', redL: '#8ab0ff', redD: '#0a1a3a', hair: '#d8c070', eye: '#8ab0ff', rim: '#8ab0ff' }]], { plain: true, glow: 0.5 }, '#8ab0ff', 120),
+  h_sunshield: heroArt('vorian', [[HERO_PAL.vorian, { skin: '#e0c8b0', armor: '#a89060', armorL: '#e8d8a0', armorD: '#4a3a18', red: '#c07a1a', redL: '#ffd04a', redD: '#4a2a04', hair: '#3a2a1a', eye: '#ffd04a', rim: '#ffd04a' }]], { plain: true, glow: 0.2 }, '#ffd04a', 116),
+  h_pure: heroArt('shen', [[HERO_PAL.shen, { robe: '#1a1a22', robeL: '#3a3a4a', robeD: '#08080c', sash: '#e8e8f0', sashL: '#ffffff', hat: '#1a1a22', hatL: '#3a3a4a', hatD: '#050508', eye: '#e8f0ff', rim: '#e8f0ff' }]], { qi: 0.6 }, '#e8f0ff', 110),
+  h_markiert: heroArt('nyx', [[HERO_PAL.nyx, { cloak: '#3a3a40', cloakL: '#6a6a74', cloakD: '#16161a', scarf: '#5a0a10', scarfL: '#ff1a2a', mask: '#c8b8b0', eye: '#ff1a2a', rim: '#ff1a2a' }]], { flow: 0.1 }, '#ff1a2a', 106),
+  h_rotvamp: heroArt('nyx', [[HERO_PAL.nyx, { cloak: '#4a0a10', cloakL: '#8a1a24', cloakD: '#1a0206', scarf: '#1a0206', scarfL: '#ff3a1a', mask: '#e8d0c8', eye: '#ff3a1a', rim: '#ff3a1a' }]], { flow: 0.6 }, '#ff3a1a', 110),
+  h_xander: heroArt('vorian', [[HERO_PAL.vorian, { armor: '#2a1a30', armorL: '#5a3a66', red: '#5a0a3a', redL: '#d02a8a', hair: '#e8e0e8', eye: '#ff3a8a', rim: '#ff3a8a' }]], { plain: true, glow: 0.6 }, '#ff3a8a', 120),
+  h_klon: heroArt('shen', [[HERO_PAL.shen, { robe: '#e8e8ec', robeL: '#ffffff', robeD: '#9a9aa4', sash: '#2a8a5a', sashL: '#6aff9a', hat: '#e8e8ec', hatL: '#ffffff', hatD: '#8a8a94', eye: '#6aff9a', rim: '#6aff9a' }]], { qi: 0.3 }, '#6aff9a', 114),
+  q_kanal: quadArt({ L: 26, H: 11, bulk: 13, legW: 2.2, head: 'wolf', tail: 10, cols: { body: '#4a4a44', bodyL: '#7a7a6a', bodyD: '#22221c', belly: '#6a6a5a', eye: '#b8ff3a', horn: '#c8c8b0' } }, 62, '#b8ff3a'),
+  q_rot: quadArt({ L: 30, H: 14, bulk: 15, legW: 2.4, head: 'wolf', tail: 12, spikes: 3, cols: { body: '#5a1a1e', bodyL: '#9a3a3a', bodyD: '#2a0608', belly: '#7a3030', eye: '#ffe06a', horn: '#e8d0c0', glow: '#ff5a3a' } }, 70, '#ff5a3a'),
+  q_rotP: quadArt({ L: 38, H: 14, bulk: 22, legW: 3.8, head: 'rhino', plates: 4, cols: { body: '#4a1418', bodyL: '#8a3034', bodyD: '#200406', belly: '#6a2a2a', eye: '#ffb02a', horn: '#e8d0c0' } }, 90, '#ff7a3a'),
+  q_orange: quadArt({ L: 44, H: 19, bulk: 25, legW: 4.4, head: 'king', spikes: 5, tail: 14, cols: { body: '#6a3a14', bodyL: '#b06a2a', bodyD: '#2a1404', belly: '#8a5a2a', eye: '#ffe06a', horn: '#f0e0c0' } }, 112, '#ffa03a'),
+  q_caladi: quadArt({ L: 30, H: 12, bulk: 14, legW: 2.2, head: 'rhino', tail: 6, spikes: 2, cols: { body: '#8a7050', bodyL: '#c0a878', bodyD: '#4a3a24', belly: '#a89070', eye: '#ff5a2a', horn: '#f0e8d0' } }, 66, '#ffb07a'),
+  q_hase: quadArt({ L: 20, H: 10, bulk: 12, legW: 2, head: 'wolf', tail: 4, cols: { body: '#16141a', bodyL: '#3a3440', bodyD: '#050406', belly: '#2a2430', eye: '#ff2a3a', horn: '#e8e0e8' } }, 56, '#ff2a3a'),
+  q_daemon: quadArt({ L: 48, H: 20, bulk: 28, legW: 5, head: 'king', spikes: 8, tail: 16, plates: 3, cols: { body: '#2a0a0e', bodyL: '#6a1a20', bodyD: '#0a0204', belly: '#4a1016', eye: '#ffffff', horn: '#ff5a3a', glow: '#ff2a1a' } }, 120, '#ff3a1a'),
+  dalki4: dalkiArt({ spikes: 4, cols: DCOL.grau, armor: true }, 84),
   // Kapitel 6: Himmelsebene
   h_juenger: heroArt('shen', [[HERO_PAL.shen, { robe: '#d8d0b8', robeL: '#ffffff', robeD: '#9a9278', sash: '#c9a24c', sashL: '#ffe6a0', hat: '#e8d8a0', hatL: '#fff4d0', hatD: '#9a8a50', eye: '#ffe6a0', rim: '#ffe6a0' }]], { qi: 0.6 }, '#ffe6a0', 110),
   h_ritter: palArt('knight', [[EPAL.knight, { iron: '#b8a878', ironL: '#fff0c8', ironD: '#6a5a30', bone: '#ffffff', eye: '#ffe6a0', rust: '#d8b050', wood: '#e8d8b0' }]], '#ffe6a0'),
@@ -220,6 +240,12 @@ Object.assign(ENEMY_ART, {
 });
 
 /* ---------------------------------------------------------------- Bosse (live gemalt) */
+function humanBoss(g, st, hero, pal, look, sc) {
+  g.scale(sc, sc);
+  const SP = { vorian: SPEC_VORIAN, liora: SPEC_LIORA, nyx: SPEC_NYX, shen: SPEC_SHEN }[hero];
+  const DR = { vorian: drawVorian, liora: drawLiora, nyx: drawNyx, shen: drawShen }[hero];
+  withPal(pal, () => { const P = makePose(SP, { t: st.t, run: st.run || 0, phase: st.phase || 0, cast: Math.min(1, st.slam || 0), aim: -1.1, hurt: st.hurt || 0, dead: st.dead || 0 }); DR(g, P, look || {}); });
+}
 const BOSS_ART = {
   // Kapitel 1: Fortgeschrittene Bestie (gross)
   bestieF: (g, st) => { g.scale(2.4, 2.4); drawQuad(g, (st.t * 0.9) % 1, { rear: Math.min(1, st.slam || 0), atk: st.roar || 0 }, { L: 40, H: 18, bulk: 22, legW: 4, head: 'king', spikes: 5, tail: 12, cols: QCOL.wolfK }); },
@@ -239,6 +265,19 @@ const BOSS_ART = {
     g.strokeStyle = '#ffe6a0'; g.lineWidth = 1.8; g.beginPath(); g.ellipse(-2, -74, 9, 3.2, -0.2, 0, TAU); g.stroke(); glowDot(g, -2, -74, 12, '#ffe6a0', 0.5);
     withPal([[HERO_PAL.shen, { robe: '#e8e0c8', robeL: '#ffffff', robeD: '#a8a088', sash: '#c9a24c', sashL: '#ffe6a0', hat: '#f4e8c0', hatL: '#ffffff', hatD: '#b0a060', skin: '#f0dcc8', eye: '#ffe6a0' }]], () => { const P = makePose(SPEC_SHEN, { t: st.t, run: st.run || 0, phase: st.phase || 0, cast: Math.min(1, st.slam || 0), aim: -1.2, rooted: st.run ? 0 : 0.6, hurt: st.hurt || 0, dead: st.dead || 0 }); drawShen(g, P, { qi: 1 }); });
   },
+  // Storybook-Bosse ------------------------------------------------------
+  container: (g, st) => { g.scale(2.3, 2.3); drawQuad(g, (st.t * 0.9) % 1, { rear: Math.min(1, st.slam || 0), atk: st.roar || 0 }, { L: 40, H: 16, bulk: 24, legW: 4, head: 'toad', spikes: 6, tail: 10, cols: Object.assign({}, QCOL.alien, { body: '#5a3a1a', bodyL: '#9a6a3a', bodyD: '#2a1808', eye: '#ffb02a', glow: '#ff8a2a' }) }); },
+  blutsauger: (g, st) => { g.scale(2.6, 2.6); drawQuad(g, (st.t * 1.1) % 1, { rear: Math.min(1, st.slam || 0), atk: st.roar || 0 }, { L: 44, H: 26, bulk: 12, legW: 2.2, head: 'wolf', spikes: 3, tail: 18, cols: { body: '#c8b8b0', bodyL: '#f4ece8', bodyD: '#6a5a58', belly: '#e0d0cc', eye: '#ff1a2a', horn: '#fff4f0', glow: '#ff2a3a' } }); },
+  dalki1: (g, st) => { g.scale(3, 3); drawDalki(g, (st.t * 0.6) % 1, { atk: st.slam > 0.2 ? 1 : 0, idle: !st.run }, { spikes: 1, cols: DCOL.grau, big: true }); },
+  stahlmann: (g, st) => humanBoss(g, st, 'vorian', [[HERO_PAL.vorian, { skin: '#d8c0a8', skinD: '#8a7058', armor: '#3a4230', armorL: '#6a7456', armorD: '#161a10', red: '#6a5a2a', redL: '#e0c050', redD: '#2a2208', hair: '#8a8a8a', eye: '#e0c050', rim: '#e0c050' }]], { glow: 0.2, plain: true }, 2.3),
+  silva: (g, st) => humanBoss(g, st, 'liora', [[HERO_PAL.liora, { skin: '#f0e0e8', coat: '#2a0a1a', coatL: '#6a1a3a', coatD: '#10040a', hair: '#e8e0f0', hairL: '#ffffff', eye: '#ff2a4a', rim: '#ff2a4a' }]], { rage: 0.7, weapon: 'sword' }, 2.3),
+  sunshield: (g, st) => humanBoss(g, st, 'vorian', [[HERO_PAL.vorian, { skin: '#e0c8b0', armor: '#c8b070', armorL: '#fff0c0', armorD: '#6a5a28', red: '#e08a1a', redL: '#ffd04a', redD: '#6a3a08', hair: '#3a2a1a', eye: '#ffd04a', rim: '#ffd04a' }]], { glow: 0.6, plain: true }, 2.4),
+  hagon: (g, st) => humanBoss(g, st, 'shen', [[HERO_PAL.shen, { robe: '#1a1a24', robeL: '#4a4a5a', robeD: '#08080c', inner: '#c8c8d8', sash: '#3a6aa0', sashL: '#8ac8ff', hat: '#2a2a34', hatL: '#5a5a6a', hatD: '#0a0a10', beard: '#d8d8e0', eye: '#8ac8ff', rim: '#8ac8ff' }]], { qi: 1 }, 2.5),
+  original: (g, st) => humanBoss(g, st, 'nyx', [[HERO_PAL.nyx, { cloak: '#e8e0d8', cloakL: '#ffffff', cloakD: '#8a8278', scarf: '#6a0a14', scarfL: '#ff1a2a', mask: '#1a1418', maskD: '#000000', eye: '#ff1a2a', rim: '#ff1a2a' }]], { flow: 1 }, 2.7),
+  samuel: (g, st) => humanBoss(g, st, 'shen', [[HERO_PAL.shen, { robe: '#e8e8ec', robeL: '#ffffff', robeD: '#9a9aa4', sash: '#2a8a5a', sashL: '#6aff9a', hat: '#e8e8ec', hatL: '#ffffff', hatD: '#8a8a94', eye: '#6aff9a', rim: '#6aff9a' }]], { qi: 0.3 }, 2.2),
+  finnklon: (g, st) => { g.scale(2.3, 2.3); const P = makePose(SPEC_FINN, { t: st.t, run: st.run || 0, phase: st.phase || 0, cast: Math.min(1, st.slam || 0), aim: -1.1, hurt: st.hurt || 0, dead: st.dead || 0 }); drawFinn(g, P, { tier: 4 }); },
+  arian: (g, st) => { g.scale(3.2, 3.2); drawDalki(g, (st.t * 0.55) % 1, { atk: st.slam > 0.2 ? 1 : 0, idle: !st.run }, { spikes: 6, cols: { skin: '#4a3a46', skinL: '#8a7486', skinD: '#1e141c', spike: '#f0e0e8', spikeD: '#6a4a5a', eye: st.enrage ? '#ff1a1a' : '#ff6a2a', cloth: '#2a0a10' }, armor: true, big: true }); },
+  arianF: (g, st) => { glowDot(g, 0, -90, 120, '#ff2a1a', 0.35); g.scale(3.6, 3.6); drawDalki(g, (st.t * 0.5) % 1, { atk: st.slam > 0.2 ? 1 : 0, idle: !st.run }, { spikes: 7, cols: { skin: '#5a1a1e', skinL: '#a0444a', skinD: '#200608', spike: '#ffe0d0', spikeD: '#8a2a1a', eye: '#ffffff', cloth: '#100204' }, armor: true, big: true }); },
   // Kapitel 7: ein Gott — kosmischer Koloss mit Krone
   gott: (g, st) => {
     withPal([[BPAL, { skin: '#2a2046', skinL: '#5a4a8a', skinD: '#0a0616', bone: '#e8e0ff', boneD: '#8a7ab0', bell: '#4a3a8a', bellL: '#9a8ad0', heart: '#c08aff', iron: '#2a2440', ironL: '#6a5a9a' }]], () => drawBoss(g, st));

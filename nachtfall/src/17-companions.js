@@ -7,50 +7,58 @@
 
 const COMPANIONS = {
   peter: {
-    name: 'Peter Kraus', role: 'Wight · Leibwächter', unlock: 1, col: '#9aff9a',
-    desc: 'Finns erster Diener. Als untoter Wight zieht er Gegner auf sich und zerschmettert sie aus nächster Nähe.',
+    name: 'Peter Kraus', role: 'Leibwächter · später Ghoul und Wight', unlock: 1, col: '#9aff9a',
+    desc: 'Kampfwert F — und der Erste, der sich dazwischenwirft. Zieht Gegner auf sich; wird nach Caladi zum Ghoul und später zum Wight.',
     hero: 'vorian', pal: [[HERO_PAL.vorian, { skin: '#9ab09a', skinD: '#5a6a5a', armor: '#2a3028', armorL: '#5a6a58', armorD: '#101410', red: '#3a5a3a', redL: '#8aff8a', redD: '#142014', hair: '#1a1a14', eye: '#9aff9a', rim: '#9aff9a' }]],
     look: { glow: 0.3 }, speed: 150, range: 60, cd: 1.6
   },
   lena: {
-    name: 'Lena Grimm', role: 'Bogenschützin', unlock: 2, col: '#c8a0ff',
-    desc: 'Trifft aus großer Entfernung. Ihre Pfeile durchschlagen mehrere Gegner.',
+    name: 'Lena Grimm', role: 'Bogenschützin · Die Wahrhaftigen', unlock: 1, col: '#c8a0ff',
+    desc: 'Sie weiß mehr, als sie sagt. Trifft aus großer Entfernung, ihre Pfeile durchschlagen mehrere Gegner.',
     hero: 'liora', pal: [[HERO_PAL.liora, { coat: '#3a2a5a', coatL: '#6a4a9a', coatD: '#1a1028', hair: '#2a1a3a', hairL: '#8a5aba', eye: '#c8a0ff', rim: '#c8a0ff' }]],
     look: { weapon: 'bow' }, speed: 165, range: 320, cd: 1.1
   },
   leo: {
-    name: 'Leo', role: 'Blinder Qi-Meister', unlock: 3, col: '#5ff0d0',
-    desc: 'Finns Lehrmeister im Qi. Seine Qi-Wellen schleudern ganze Horden zurück.',
+    name: 'Leo', role: 'Blinder Qi-Meister', unlock: 2, col: '#5ff0d0',
+    desc: 'Er sieht nichts und merkt alles. Finns Lehrmeister im Qi — seine Qi-Wellen schleudern ganze Horden zurück.',
     hero: 'shen', pal: [[HERO_PAL.shen, { robe: '#e0dcd0', robeL: '#ffffff', robeD: '#8a867a', sash: '#2a6a5a', sashL: '#5ff0d0', hat: '#5a4a3a', hatL: '#8a7a5a', hatD: '#2a2014', beard: '#2a2420', rim: '#5ff0d0' }]],
     look: { qi: 0 }, speed: 150, range: 100, cd: 2.4
   },
   fex: {
     name: 'Fex Sanguini', role: 'Vampir · Blutfäden', unlock: 4, col: '#ff4a6a',
-    desc: 'Finns Bruder im Geiste. Seine Blutfäden springen von Gegner zu Gegner.',
+    desc: 'Finns Blutsbruder aus der dreizehnten Familie. Seine fast unsichtbaren Fäden springen von Gegner zu Gegner.',
     hero: 'nyx', pal: [[HERO_PAL.nyx, { cloak: '#2a0a14', cloakL: '#6a1a2a', cloakD: '#10040a', scarf: '#8a0a1e', scarfL: '#ff4a6a', eye: '#ff4a6a', rim: '#ff4a6a' }]],
     look: { flow: 0.4 }, speed: 180, range: 260, cd: 1.3
   },
   emma: {
-    name: 'Emma Wagner', role: 'Schwertkämpferin', unlock: 5, col: '#9ad8ff',
-    desc: 'Eine der Stärksten an Finns Seite. Ihr Schwert zerteilt alles in einem weiten Bogen.',
+    name: 'Emma Wagner', role: 'Rang A · Eis und Schwert', unlock: 3, col: '#9ad8ff',
+    desc: 'Rechnet alles nach. Ihr Eisschwert zerteilt alles in einem weiten Bogen und lässt Gegner erstarren.',
     hero: 'liora', pal: [[HERO_PAL.liora, { coat: '#2a3a5a', coatL: '#5a7aaa', coatD: '#101828', hair: '#e8e8f0', hairL: '#ffffff', eye: '#9ad8ff', rim: '#9ad8ff', band: '#c8d8e8' }]],
     look: { weapon: 'sword' }, speed: 175, range: 90, cd: 1.2
   }
 };
-const COMP_ORDER = ['peter', 'lena', 'leo', 'fex', 'emma'];
+COMPANIONS.fabian = {
+  name: 'Fabian Skala', role: 'Drei in einem Körper · Ratan', unlock: 2, col: '#ffd27a',
+  desc: 'Fabian, Ratan — und Sil. Wenn es ernst wird, übernimmt Ratan: blitzschnelle Schlagfolgen mitten in die Gegner.',
+  hero: 'vorian', pal: [[HERO_PAL.vorian, { skin: '#ecd8c8', skinD: '#a88878', armor: '#1a2436', armorL: '#3a4a6a', armorD: '#080c14', red: '#2a3a6a', redL: '#ffd27a', redD: '#10182a', hair: '#e8cf7a', eye: '#ffd27a', rim: '#ffd27a' }]],
+  look: { glow: 0, plain: true }, speed: 190, range: 70, cd: 1.0
+};
+const COMP_ORDER = ['peter', 'lena', 'fabian', 'leo', 'emma', 'fex'];
+function partyMax() { return typeof finnSkills === 'function' && finnSkills().has('fraktion') ? 3 : 2; }
 function companionOpen(id) { const S = storySave(); return SAVE.settings.testUnlock || !!S.cleared[COMPANIONS[id].unlock]; }
 function companionParty() {
   const S = storySave();
   if (!S.party) S.party = [];
-  S.party = S.party.filter((id) => COMPANIONS[id] && companionOpen(id)).slice(0, 2);
+  S.party = S.party.filter((id) => COMPANIONS[id] && companionOpen(id)).slice(0, partyMax());
   return S.party;
 }
 
 /* ---------------------------------------------------------------- im Lauf */
 function spawnCompanions(G) {
-  G.comps = companionParty().map((id, i) => ({ id, def: COMPANIONS[id], x: (i ? 40 : -40), y: 20, vx: 0, vy: 0, face: 1, t: rand(0, 1), cd: 1 + i * 0.5, castT: 0, aim: 0, phase: 0, run: 0, spr: null, slot: i }));
+  G.comps = companionParty().map((id, i) => ({ id, def: COMPANIONS[id], x: [-40, 40, 0][i], y: [20, 20, 44][i], vx: 0, vy: 0, face: 1, t: rand(0, 1), cd: 1 + i * 0.5, castT: 0, aim: 0, phase: 0, run: 0, spr: null, slot: i }));
 }
 function compPower(G) { return Math.pow(G.story ? G.story.diff.hp : 1, 0.85) * (1 + G.level * 0.035); }
+function peterPower() { const S = storySave(); return S.cleared[9] ? 2.2 : S.cleared[7] ? 1.7 : S.cleared[3] ? 1.3 : 1; }
 function updateCompanions(dt) {
   const G = GAME;
   if (!G.comps) return;
@@ -87,7 +95,7 @@ function compAttack(c, tgt, pw) {
   if (id === 'peter') { // Faustschlag mit Flaeche
     GAME.later(0.12, () => {
       const r = 58;
-      forEnemiesInRadius(tgt.x, tgt.y, r, (en) => dealDamage(en, 20 * pw, 'none', 'peter', { kb: 180, kx: en.x - c.x, ky: en.y - c.y, norm: true, noMark: true }));
+      forEnemiesInRadius(tgt.x, tgt.y, r, (en) => dealDamage(en, 20 * pw * peterPower(), 'none', 'peter', { kb: 180, kx: en.x - c.x, ky: en.y - c.y, norm: true, noMark: true }));
       fxRing(tgt.x, tgt.y, 8, r, 0.25, '#9aff9a', 5); burstAsh(tgt.x, tgt.y, 4, '#5a6a5a'); sfx('stomp', 0, 0.2); shake(1);
     });
   } else if (id === 'lena') { // durchschlagender Pfeil
@@ -111,10 +119,18 @@ function compAttack(c, tgt, pw) {
     fxRing(x, y, 10, r, 0.4, '#5ff0d0', 6); fxRing(x, y, 6, r * 0.7, 0.35, '#ffe6a0', 3);
   } else if (id === 'fex') { // Blutfaeden springen
     qiChain(x, y - 20, 4, 13 * pw, 'fex', { col: '#ff3a5a' });
+  } else if (id === 'fabian') { // Ratan: Sprung ins Ziel, drei schnelle Schlaege
+    const a = c.aim;
+    c.x = tgt.x - Math.cos(a) * 26; c.y = tgt.y - Math.sin(a) * 18;
+    burstShadow(c.x, c.y, 4, 0.4);
+    for (let k = 0; k < 3; k++) GAME.later(0.08 * k, () => {
+      forEnemiesInRadius(c.x + Math.cos(a) * 26, c.y + Math.sin(a) * 18, 44, (en) => dealDamage(en, 11 * pw, 'none', 'fabian', { kb: 70, kx: Math.cos(a), ky: Math.sin(a), norm: true, noMark: true }));
+      burstSparks(c.x + Math.cos(a) * 26, c.y - 12 + Math.sin(a) * 18, 3, '#ffd27a'); sfx('whip', 0, 0.06);
+    });
   } else if (id === 'emma') { // weiter Schwertbogen
     sfx('whip', 0, 0.1);
     const a = c.aim, R = 95, hit = new Set();
-    forEnemiesInRadius(x, y, R, (en) => { if (!inArc(en.x, en.y, x, y, a, 1.4) || hit.has(en.id)) return; hit.add(en.id); dealDamage(en, 26 * pw, 'none', 'emma', { kb: 140, kx: en.x - x, ky: en.y - y, norm: true, noMark: true }); });
+    forEnemiesInRadius(x, y, R, (en) => { if (!inArc(en.x, en.y, x, y, a, 1.4) || hit.has(en.id)) return; hit.add(en.id); dealDamage(en, 26 * pw, 'none', 'emma', { kb: 140, kx: en.x - x, ky: en.y - y, norm: true, noMark: true }); en.slowT = Math.max(en.slowT, 1.2); en.slowF = Math.min(en.slowF || 1, 0.5); burstSparks(en.x, en.y - 10, 2, '#cfe8ff'); });
     addEffect({ x, y, dur: 0.22, layer: 1, draw(g, e, k) {
       g.save(); g.translate(x, y - 16); g.scale(1, 0.7); g.globalCompositeOperation = 'lighter';
       g.globalAlpha = 1 - k; g.strokeStyle = '#cfe8ff'; g.lineWidth = 8 * (1 - k) + 1;
@@ -138,4 +154,4 @@ function drawCompanion(g, c, time) {
   g.lineWidth = 3; g.strokeStyle = 'rgba(0,0,0,0.8)'; g.strokeText(D.name, c.x, c.y + 14);
   g.fillStyle = D.col; g.fillText(D.name, c.x, c.y + 14);
 }
-Object.assign(SRC_NAMES, { peter: 'Peter Kraus', lena: 'Lena Grimm', leo: 'Leo', fex: 'Fex Sanguini', emma: 'Emma Wagner' });
+Object.assign(SRC_NAMES, { fabian: 'Fabian Skala', peter: 'Peter Kraus', lena: 'Lena Grimm', leo: 'Leo', fex: 'Fex Sanguini', emma: 'Emma Wagner' });

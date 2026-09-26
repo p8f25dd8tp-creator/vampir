@@ -315,7 +315,8 @@ function drawVorianHead(g, P, C, H) {
   g.beginPath();
   g.moveTo(-5, -3); g.quadraticCurveTo(-4.5, -9, 1.5, -8.2); g.quadraticCurveTo(4.5, -7.5, 4, -5.6);
   g.quadraticCurveTo(0, -6.6, -2, -3.8); g.closePath();
-  paint(g, lg(g, 0, -9, 0, -3, [0, '#ffffff', 1, '#b6b0c4']), 'rgba(40,30,50,0.6)', 0.5);
+  paint(g, H.plain ? lg(g, 0, -9, 0, -3, [0, C.hair, 1, C.armorD]) : lg(g, 0, -9, 0, -3, [0, '#ffffff', 1, '#b6b0c4']), 'rgba(40,30,50,0.6)', 0.5);
+  if (H.plain) { g.restore(); return; } // Mensch: ohne Krone
   // Krone mit Dornen
   const lvl = H.crown || 0;
   g.save(); g.translate(-0.3, -7.2); g.rotate(-0.08);

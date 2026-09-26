@@ -87,28 +87,35 @@ Angriffe laufen **automatisch**. Bei jedem Stufenaufstieg wählst du **eine von 
 Vampirsystem“. Nicht zur Veröffentlichung gedacht — der Arcade-Modus mit den vier eigenen
 Helden ist davon unabhängig. Alle Namen und Texte stehen gesammelt in `src/15-story.js`.*
 
-Finn spielt nur im Story-Modus. Er beginnt als **Mensch ohne Fähigkeit**; im ersten Kapitel
-findet er **das Buch** und wird dauerhaft zum Halbling. Jede weitere **Evolution ist dauerhaft**
-und gibt es beim **ersten Sieg über den Boss** des passenden Kapitels. Im Lauf kämpft Finn nur
-mit den Kräften seiner aktuellen Form und verbessert sie über Karten (System-Fenster).
+Finn spielt nur im Story-Modus. Die Handlung folgt dem Storybook „Vampirsystem Basis Zwei“
+(zehn Akte, Vorlage Kapitel 1–1572); die Kapitel 11–12 spielen nach dem Zeitsprung.
+Finn beginnt als **Mensch ohne Fähigkeit**; im ersten Kapitel findet er **das Buch** und wird
+dauerhaft zum Halbling. **Evolutionen und Kräfte sind dauerhaft** und kommen dort, wo sie auch
+in der Geschichte auftauchen — beim **ersten Sieg über den Boss** des Kapitels. Im Lauf kämpft
+Finn nur mit dem, was er bis dahin kann.
 
-| Kapitel | Welt | Gegner | Boss | Belohnung |
+| Kapitel | Vorlage | Welt | Boss | Belohnung |
 |---|---|---|---|---|
-| 1 Das Buch | Militärakademie, Übungsgelände | Basis-/Mittelstufen-Bestien | Fortgeschrittene Bestie | Vampir |
-| 2 Die erste Mission | Bestien-Planet | Königsstufen-Bestien | Kaiserstufen-Bestie | Vampiradliger (Schatten) |
-| 3 Der Dalki-Krieg | Schlachtfeld | Dalki mit 1–6 Stacheln | Dalki-Kommandant (7 Stacheln) | Vampirlord (Qi & Blut) |
-| 4 Die Vampir-Siedlung | Siedlung der Familien | Wachen, Vampirritter, Blutmagierinnen | Anführer der Familien | Titel Vampirkönig |
-| 5 Graham | Brennende Ruinen | Dalki, Dalki-Werwölfe | Graham (8 Stacheln) | Nest-Kristall → Himmlischer Vampirlord |
-| 6 Die Himmlischen | Himmelsebene | Lichtjünger, Himmelsritter | Der Himmlische Richter | Reiner Himmlischer |
-| 7 Gottbezwinger | Reich der Götter | Götterbestien, Götterritter | Ein Gott | Emma Wagners Kristall → Gottbezwinger |
+| 1 Militärbasis 2 | 1–75 | Übungsgelände | Das Ding aus dem Container | Vampir |
+| 2 Das rote Portal | 76–110 | Rote Zone | Blutsauger | Schatten + Qi (Leo) |
+| 3 Caladi und die Dalki | 111–140 | Planet Caladi | Dalki (Ein Stachel) | Peter wird Ghoul, Qi vertieft |
+| 4 Der Nachtdämon | 141–382 | Basis 2 bei Nacht | General Viktor Stahlmann | Blutnova & Bluternte |
+| 5 Die Vampirsiedlung | 383–510 | Lintarnia | Silva Sanguini | Vampiradliger (zehnte Familie) |
+| 6 Die Verfluchten | 511–611 | Cudenti | Sunshield-Kommandant | 3 Begleiter gleichzeitig |
+| 7 Weltmacht | 612–811 | Kolonie Vermill | Hagon Skala | Vampirlord |
+| 8 Die Krone | 812–1000 | Zehnte Burg | Ein Original | Absoluter Schatten & Blutkontrolle |
+| 9 Der lange Krieg | 1001–1400 | Kadar | Arian (6 Stacheln) | Vampirkönig + Bluthandschuh |
+| 10 Der letzte Atemzug | 1401–1572 | Roter Himmel | Arian (Letzte Form) | Himmlischer Vampirlord |
+| 11 Die Rückkehr einer Legende | ab 1573 | Himmelsebene | Der Himmlische Richter | Reiner Himmlischer |
+| 12 Gottbezwinger | später | Reich der Götter | Ein Gott | Emma Wagners Kristall → Gottbezwinger |
 
 * **Quests des Systems:** je Kapitel drei (z. B. „Besiege 200 Dalki“), Belohnung Kristalle
   plus Stufenaufstieg oder Heilung.
 * **Bestienkristalle** fallen von Gegnern und Bossen. Im Menü **Ausrüstung** werden daraus
   dauerhafte Bestienhandschuhe (+Schaden), Stiefel (+Tempo), Panzer (+Leben) und ein
   Kristallamulett (+Sammelradius/Erfahrung).
-* **Schwierigkeit:** Kapitel 1–2 sind ohne Ausrüstung machbar, ab Kapitel 3 braucht es
-  Ausrüstung aus früheren Läufen; Graham ist die härteste Hürde (Ausrüstung Stufe 4 empfohlen).
+* **Schwierigkeit:** Kapitel 1–2 sind ohne Ausrüstung machbar, danach wächst der Bedarf
+  langsam (Richtwert: Kapitel 5 Ausrüstung Stufe 2, Kapitel 9 Stufe 4, Kapitel 12 Stufe 5).
 * Kein Blutdurst, keine Sonnen-Schwäche.
 
 **Freischaltung** (alles durch Spielen, keine Käufe):
@@ -120,17 +127,18 @@ Für die Probeversion ist der **Testmodus „alle Helden frei“** eingeschaltet
 ---
 
 #### Begleiter
-Im Kapitelmenü wählst du bis zu zwei Begleiter. Sie folgen Finn, greifen selbstständig an und sind unverwundbar:
+Im Kapitelmenü wählst du bis zu zwei Begleiter (ab Kapitel 6 drei). Sie folgen Finn, greifen selbstständig an und sind unverwundbar:
 
 | Begleiter | Rolle | frei nach |
 |---|---|---|
-| Peter Kraus | Wight · zieht Gegner auf sich, Nahkampf-Flächenschlag | Kapitel 1 |
-| Lena Grimm | Bogenschützin · durchschlagende Pfeile | Kapitel 2 |
-| Leo | blinder Qi-Meister · Qi-Welle mit Rückstoß | Kapitel 3 |
+| Peter Kraus | zieht Gegner auf sich, Flächenschlag; stärker als Ghoul (Kap. 3), Wight (Kap. 7) und nach Kap. 9 | Kapitel 1 |
+| Lena Grimm | Bogenschützin · durchschlagende Pfeile | Kapitel 1 |
+| Fabian Skala | Ratan: Sprung ins Ziel, drei schnelle Schläge | Kapitel 2 |
+| Leo | blinder Qi-Meister · Qi-Welle mit Rückstoß | Kapitel 2 |
+| Emma Wagner | Rang A · Eisschwert, verlangsamt Gegner | Kapitel 3 |
 | Fex Sanguini | Vampir · springende Blutfäden | Kapitel 4 |
-| Emma Wagner | Schwertkämpferin · weiter Schwertbogen | Kapitel 5 |
 
-Ab dem Vampiradligen wird Finns Ausweichen zum **Schattensprung**.
+Sobald Finn die Schatten hat (Kapitel 2), wird sein Ausweichen zum **Schattenschritt**.
 
 ## Kartenpool (15 Karten)
 

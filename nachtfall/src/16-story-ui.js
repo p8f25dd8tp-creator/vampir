@@ -29,7 +29,7 @@ UI.act = function (a, ds, e) {
     case 'chapterGo': return this.showChapterIntro(this.selChapter);
     case 'chapterStart': return storyStart(this.selChapter);
     case 'storyform': this.finnPick = +ds.t; return this.showStory();
-    case 'comp': { const P0 = companionParty(); const i = P0.indexOf(ds.id); if (i >= 0) P0.splice(i, 1); else { if (P0.length >= 2) P0.shift(); P0.push(ds.id); } writeSave(); return this.showStory(); }
+    case 'comp': { const P0 = companionParty(); const i = P0.indexOf(ds.id); if (i >= 0) P0.splice(i, 1); else { if (P0.length >= partyMax()) P0.shift(); P0.push(ds.id); } writeSave(); return this.showStory(); }
     case 'gear': return this.showGear();
     case 'buygear': {
       const S = storySave(), G0 = GEAR[ds.id], lv = S.gear[ds.id] || 0;
@@ -46,7 +46,7 @@ UI.act = function (a, ds, e) {
 function chapterOpen(n) { const S = storySave(); return n === 1 || S.cleared[n - 1] || SAVE.settings.testUnlock; }
 UI.showStory = function () {
   const S = storySave(), F = finnSave();
-  if (!this.selChapter) { this.selChapter = 1; for (let n = 1; n <= 7; n++) if (chapterOpen(n) && !S.cleared[n]) { this.selChapter = n; break; } }
+  if (!this.selChapter) { this.selChapter = 1; for (let n = 1; n <= CHAPTERS.length; n++) if (chapterOpen(n) && !S.cleared[n]) { this.selChapter = n; break; } }
   const ch = CHAPTERS[this.selChapter - 1];
   MENU = null; setTheme(ch.theme); menuScene();
   const test = SAVE.settings.testUnlock;
@@ -68,20 +68,21 @@ UI.showStory = function () {
           <span>Name</span><span>Finn Müller</span>
           <span>Form</span><span style="color:${FINN_TIERS[F.tier].col}">${FINN_TIERS[F.tier].name}</span>
           <span>Titel</span><span>${S.king ? 'Vampirkönig' : '—'}</span>
-          <span>Kapitel</span><span>${Object.keys(S.cleared).length} / 7</span>
+          <span>Kapitel</span><span>${Object.keys(S.cleared).length} / ${CHAPTERS.length}</span>
           <span>Bestienkristalle</span><span style="color:#8ad8ff">${S.crystals} ◆</span>
         </div></div>
+      <div class="sysnote">Kräfte: ${[...finnSkills()].map((k) => `<b style="color:#8ad8ff">${FINN_SKILLS[k].name}</b>`).join(' · ') || '—'}</div>
       ${test ? `<div class="sysnote">Testmodus: Form für den Lauf frei wählbar (zählt dann nicht für die Evolution)</div><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">${chips}</div>` : ''}
     </div>
     <div class="chaps">${cards}</div>
     <div class="syswin" style="width:min(560px,100%);margin-bottom:10px">
-      <div class="syshead">BEGLEITER (bis zu 2)</div>
+      <div class="syshead">BEGLEITER (bis zu ${partyMax()})</div>
       <div class="comps">${COMP_ORDER.map((id) => { const C0 = COMPANIONS[id], open = companionOpen(id), on = companionParty().includes(id); return `<button class="comp ${on ? 'on' : ''}" data-act="${open ? 'comp' : ''}" data-id="${id}" ${open ? '' : 'disabled'}><b style="color:${C0.col}">${open ? '' : '🔒 '}${C0.name}</b><small>${open ? C0.role : 'nach Kapitel ' + C0.unlock}</small></button>`; }).join('')}</div>
       ${companionParty().length ? `<div class="sysnote">${companionParty().map((id) => COMPANIONS[id].desc).join('<br>')}</div>` : '<div class="sysnote">Finn kämpft allein.</div>'}
     </div>
     <div class="syswin" style="width:min(560px,100%)">
       <div class="syshead">KAPITEL ${ch.n} · ${ch.title.toUpperCase()}</div>
-      <div class="sysplace">${ch.place}</div>
+      <div class="sysplace">${ch.place} · <span style="opacity:.7">Vorlage ${ch.src}</span></div>
       <p class="sysp">${ch.intro[0]}</p>
       <div class="sysnote">Empfohlene Form: <b style="color:${FINN_TIERS[ch.tier].col}">${FINN_TIERS[ch.tier].name}</b> · Boss: <b>${ENEMIES[ch.roles.boss].name}</b></div>
       <div class="sysnote">Belohnung beim ersten Sieg: <b style="color:#ffe6a0">${ch.reward.text}</b>${S.cleared[ch.n] ? ' (erhalten)' : ''}</div>
@@ -209,7 +210,10 @@ UI.showEnd = function (won, souls, newly, extra) {
   if (extra.test) rew = '<div class="sysnote">Testform — Belohnungen der Form werden nicht vergeben.</div>';
   if (extra.evolved) rew += `<div style="text-align:center;margin:10px 0"><div class="syshead">[ SYSTEM ] · EVOLUTION</div><div class="cinzel" style="font-size:26px;font-weight:800;color:${extra.evolved.col};text-shadow:0 0 18px currentColor">${extra.evolved.name}</div><p class="sysp">${extra.evolved.desc}</p></div>`;
   else if (extra.reward && extra.reward.king) rew += `<div style="text-align:center;margin:10px 0"><div class="syshead">[ SYSTEM ] · TITEL ERHALTEN</div><div class="cinzel" style="font-size:24px;font-weight:800;color:#ffe6a0">Vampirkönig</div><p class="sysp">+10 % Leben und Schaden, dauerhaft.</p></div>`;
-  const hasNext = won && ch.n < 7;
+  if (extra.skills) rew += `<div style="text-align:center;margin:10px 0"><div class="syshead">[ SYSTEM ] · NEUE KRAFT</div>${extra.skills.map((k) => `<div class="cinzel" style="font-size:20px;font-weight:800;color:#8ad8ff">${FINN_SKILLS[k].name}</div><p class="sysp">${FINN_SKILLS[k].desc}</p>`).join('')}</div>`;
+  const neuC = won && extra.firstClear ? COMP_ORDER.filter((id) => COMPANIONS[id].unlock === ch.n) : [];
+  if (neuC.length) rew += `<div class="sysnote" style="text-align:center">Neue Begleiter: ${neuC.map((id) => `<b style="color:${COMPANIONS[id].col}">${COMPANIONS[id].name}</b>`).join(', ')}</div>`;
+  const hasNext = won && ch.n < CHAPTERS.length;
   this.show(`<div class="syswin big" style="width:min(540px,100%);margin:auto 0">
     <div class="syshead">[ SYSTEM ] · KAPITEL ${ch.n}</div>
     <div class="bigres ${won ? 'win' : 'lose'}" style="font-size:clamp(26px,8vw,40px)">${won ? 'KAPITEL GESCHAFFT' : 'GESCHEITERT'}</div>

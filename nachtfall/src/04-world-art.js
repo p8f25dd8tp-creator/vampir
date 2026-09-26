@@ -58,6 +58,41 @@ const THEMES = {
     props: [['marble', 4], ['goldcrystal', 2.5], ['goldbrazier', 1.5], ['rock', 1]],
     cluster: 'marble'
   },
+  basisnacht: {
+    name: 'Militärbasis 2 — nach der Sperrstunde', ambient: 'rgb(92,98,138)', fog: [110, 130, 190], fogA: 0.9,
+    ground: { base: [48, 50, 58], vary: [12, 12, 14], moss: [34, 46, 36], mossVar: [8, 12, 8], mossAmt: 0.35, detail: 'concrete', grass: ['#3a5a3a', '#4a6a40'], pebble: [70, 70, 78], leaves: null, cracks: 'rgba(14,14,22,0.6)' },
+    patches: ['puddle', 'marking', 'blood'],
+    props: [['barrier', 4], ['crate', 5], ['lamp', 1.8], ['fence', 2], ['wreck', 0.8], ['rock', 1.5]],
+    cluster: 'crate'
+  },
+  rotezone: {
+    name: 'Rote Zone — hinter dem roten Portal', ambient: 'rgb(150,86,92)', fog: [220, 90, 90], fogA: 1.1,
+    ground: { base: [44, 22, 26], vary: [16, 8, 8], moss: [70, 24, 30], mossVar: [20, 8, 8], detail: 'grass', grass: ['#7a2a30', '#5a1a24', '#9a3a2a', '#3a1418'], pebble: [80, 50, 54], leaves: ['#8a2a2a', '#5a1a1a'], cracks: 'rgba(20,4,6,0.55)' },
+    patches: ['blood', 'spore', 'ash'],
+    props: [['alienplant', 3.5], ['crystal', 2], ['bones', 3], ['rock', 3], ['spikes', 1.2]],
+    cluster: 'bones'
+  },
+  caladi: {
+    name: 'Planet Caladi — zwei Sonnen', ambient: 'rgb(170,150,120)', fog: [240, 210, 160], fogA: 0.55,
+    ground: { base: [92, 76, 54], vary: [22, 18, 12], moss: [84, 90, 50], mossVar: [16, 16, 10], mossAmt: 0.45, detail: 'scorched', grass: ['#8a8a4a', '#6a6a34', '#a09050'], pebble: [120, 104, 84], leaves: null, cracks: 'rgba(40,24,10,0.45)' },
+    patches: ['crater', 'ash', 'moss'],
+    props: [['rock', 5], ['wreck', 2], ['barrier', 1.5], ['bones', 2], ['crate', 1.5], ['spikes', 0.8]],
+    cluster: 'rock'
+  },
+  burg: {
+    name: 'Die zehnte Burg', ambient: 'rgb(104,84,124)', fog: [150, 100, 170], fogA: 1.1,
+    ground: { base: [34, 28, 38], vary: [10, 8, 12], moss: [26, 20, 32], mossVar: [6, 4, 8], detail: 'tiles', tile: [64, 50, 72], grass: ['#2a2030'], pebble: [66, 56, 76], leaves: ['#4a1a3a', '#2a1024'], cracks: 'rgba(8,4,12,0.55)', glowCracks: '#b04aff' },
+    patches: ['flag', 'blood', 'nebula'],
+    props: [['pillar', 3], ['banner', 2.5], ['coffin', 2], ['candles', 2.5], ['obelisk', 1], ['brazier', 1.5]],
+    cluster: 'pillar'
+  },
+  roterhimmel: {
+    name: 'Die letzte Linie — roter Himmel', ambient: 'rgb(150,80,76)', fog: [230, 90, 70], fogA: 1.1,
+    ground: { base: [40, 26, 24], vary: [16, 10, 8], moss: [30, 18, 18], mossVar: [8, 6, 6], detail: 'scorched', grass: ['#4a2a24', '#3a201c'], pebble: [80, 58, 54], leaves: null, cracks: 'rgba(12,2,2,0.6)', glowCracks: '#ff3a1a' },
+    patches: ['crater', 'blood', 'ash'],
+    props: [['wreck', 3.5], ['spikes', 3], ['rock', 2.5], ['brazier', 1.2], ['bones', 2]],
+    cluster: 'wreck'
+  },
   goetter: {
     name: 'Das Reich der Götter', ambient: 'rgb(96,92,146)', fog: [150, 130, 230], fogA: 1,
     ground: { base: [20, 20, 36], vary: [10, 10, 20], moss: [30, 24, 56], mossVar: [10, 8, 20], detail: 'stars', grass: ['#6a5aa0'], pebble: [60, 56, 90], leaves: null, cracks: 'rgba(160,120,255,0.35)', glowCracks: '#8a6aff' },
