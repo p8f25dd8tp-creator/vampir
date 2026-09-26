@@ -224,3 +224,43 @@ h1, h2, h3, .cinzel { font-family: 'Cinzel', serif; letter-spacing: .06em; }
 .evo { padding: 8px 12px; }
 .evo .evd { font-size: 14.5px; }
 .mech #mechname { max-width: 52vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ------------------------------------------------ System-Fenster (Story) */
+.syswin { background: linear-gradient(180deg, rgba(8,26,52,.93), rgba(4,12,28,.95)); border: 1px solid #4aa8ff; border-radius: 6px; padding: 12px 14px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.6) inset, 0 0 24px rgba(60,160,255,.28); color: #d8ecff; }
+.syswin.big { padding: 16px; }
+.syshead { font-family: 'Cinzel', serif; font-size: 11.5px; letter-spacing: .22em; color: #8ad8ff; font-weight: 800; border-bottom: 1px solid rgba(74,168,255,.35); padding-bottom: 4px; margin-bottom: 6px; }
+.systitle { font-family: 'Cinzel', serif; font-size: 26px; font-weight: 800; color: #ffffff; text-shadow: 0 0 16px rgba(90,180,255,.7); letter-spacing: .05em; }
+.sysplace { font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: .12em; color: #9ab8d8; margin-bottom: 6px; }
+.sysp { font-size: 16px; line-height: 1.35; color: #dcecff; margin: 4px 0; }
+.sysnote { font-size: 14px; color: #a8c4e0; margin-top: 4px; }
+.syst { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: .3em; color: #8ad8ff; }
+.sysbtn { background: linear-gradient(180deg, #0e3a6a 0%, #06182e 100%) !important; border-color: #4aa8ff !important; color: #e8f4ff !important; box-shadow: 0 0 26px rgba(60,160,255,.35) !important; line-height: 1.25; }
+.btn small { font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: .02em; color: #c8d8e8; }
+.questline { font-size: 15px; color: #dcecff; display: flex; justify-content: space-between; gap: 8px; padding: 2px 0; }
+.questline span { color: #8ad8ff; white-space: nowrap; }
+.questline.done { color: #7dff9a; }
+.statusrow { display: flex; gap: 10px; align-items: center; }
+.statusrow canvas { width: 90px; height: 100px; flex: 0 0 90px; border: 1px solid rgba(74,168,255,.35); border-radius: 4px; background: rgba(0,10,30,.6); }
+.chaps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; width: min(560px, 100%); margin: 10px 0; }
+.chap { position: relative; border: 1px solid #2a5a8a; border-radius: 6px; overflow: hidden; background: #06101e; aspect-ratio: 1 / 1.05; cursor: pointer; }
+.chap canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.chap .cn { position: absolute; left: 0; right: 0; bottom: 14px; padding: 0 2px; font-family: 'Cinzel', serif; font-size: 9px; word-break: break-word; hyphens: auto; font-weight: 800; color: #fff; text-align: center; text-shadow: 0 1px 3px #000, 0 0 6px #000; line-height: 1.1; }
+.chap .cnum { color: #8ad8ff; }
+.chap .cs { position: absolute; left: 0; right: 0; bottom: 2px; font-size: 11px; text-align: center; color: #9ad8a0; text-shadow: 0 1px 2px #000; }
+.chap.locked .cs { color: #a0a0a8; }
+.chap.sel { border-color: #8ad8ff; box-shadow: 0 0 16px rgba(90,180,255,.55); }
+.sysmsg { position: absolute; left: 50%; transform: translateX(-50%); width: min(340px, 86vw); pointer-events: none; text-align: center; font-size: 15px;
+  background: linear-gradient(180deg, rgba(8,26,52,.94), rgba(4,12,28,.94)); border: 1px solid #4aa8ff; border-radius: 6px; padding: 7px 10px; color: #e8f4ff;
+  box-shadow: 0 0 22px rgba(60,160,255,.35); animation: evoIn .35s ease-out; transition: opacity .5s, transform .5s; }
+.sysmsg.out { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+.sysmsg .syshead { margin-bottom: 3px; }
+.questbox { position: absolute; left: calc(10px + var(--safe-l)); top: calc(162px + var(--safe-t)); max-width: 56vw; pointer-events: none; font-size: 12.5px; color: #dcecff;
+  background: rgba(4,14,30,.55); border-left: 2px solid #4aa8ff; padding: 4px 8px; border-radius: 0 6px 6px 0; text-shadow: 0 1px 2px #000; }
+.questbox .qh { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: .18em; color: #8ad8ff; font-weight: 800; }
+.questbox .ql b { color: #8ad8ff; font-weight: 700; }
+.questbox .ql.done { color: #7dff9a; }
+#levelup.sysmode h2 { color: #e8f4ff; text-shadow: 0 0 18px rgba(90,180,255,.8); text-align: center; line-height: 1.1; }
+#levelup.sysmode .card { border-color: #2a6aa8; background: linear-gradient(180deg, rgba(10,30,60,.97), rgba(4,12,28,.97)); }
+.syswin .btns { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+.syswin .btns .btn { width: 100%; }

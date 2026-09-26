@@ -420,7 +420,7 @@ const UI = {
       <div class="setrow"><span>Bildschirmwackeln</span><input type="range" min="0" max="1.5" step="0.1" value="${s.shake}" id="rshk"></div>
       <div class="setrow"><span>Schadenszahlen</span><div class="toggle interactive ${s.dmgNumbers ? 'on' : ''}" data-act="toggle" data-k="dmgNumbers"></div></div>
       <div class="setrow"><span>Grafikqualität</span><button class="btn small" data-act="quality">${s.quality}</button></div>
-      <div class="setrow"><span>Testmodus: alle Helden frei<br><small style="color:var(--dim)">für die Probeversion. Aus = Helden durch Spielen freischalten.</small></span><div class="toggle interactive ${s.testUnlock ? 'on' : ''}" data-act="toggle" data-k="testUnlock"></div></div>
+      <div class="setrow"><span>Testmodus: alles frei<br><small style="color:var(--dim)">Helden, Kapitel und Finns Formen frei wählbar. Aus = alles durch Spielen freischalten.</small></span><div class="toggle interactive ${s.testUnlock ? 'on' : ''}" data-act="toggle" data-k="testUnlock"></div></div>
       <div class="btns"><button class="btn" data-act="title">Zurück</button><button class="btn ghost small" data-act="reset">Fortschritt löschen</button></div></div>`, 'settings', 'dim');
     const bind = (id, k) => d.querySelector('#' + id).addEventListener('input', (e) => { SAVE.settings[k] = +e.target.value; AudioSys.applyVolumes(); writeSave(); });
     bind('rsfx', 'sfx'); bind('rmus', 'music'); bind('rshk', 'shake');

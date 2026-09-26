@@ -81,34 +81,35 @@ Angriffe laufen **automatisch**. Bei jedem Stufenaufstieg wählst du **eine von 
 | Schwächen | langsam, kurze Reichweite | wenig Leben, keine Regeneration | zerbrechlich, schwach im Stillstand | langsamer Start, muss stillstehen; Blut/Schatten nur 85 % |
 
 
-### Fünfter Held: Finn Müller (Evolutions-Held)
+### Story-Modus „Das Vampirsystem“ (Finn Müller)
 
-*Fan-Figur, angelehnt an „My Vampire System“ — nur für den privaten Gebrauch. Vor einer
-Veröffentlichung (App Store, öffentliche Seite) Namen und Anlehnung ändern.*
+*Private Fan-Umsetzung, angelehnt an „My Vampire System“ / das deutsche Hörspiel „Das
+Vampirsystem“. Nicht zur Veröffentlichung gedacht — der Arcade-Modus mit den vier eigenen
+Helden ist davon unabhängig. Alle Namen und Texte stehen gesammelt in `src/15-story.js`.*
 
-Finns Evolutionen sind **dauerhaft** und werden **über viele Läufe** verdient. Im Lauf selbst
-kämpft er nur mit den Kräften seiner aktuellen Form und verbessert sie über Karten.
+Finn spielt nur im Story-Modus. Er beginnt als **Mensch ohne Fähigkeit**; im ersten Kapitel
+findet er **das Buch** und wird dauerhaft zum Halbling. Jede weitere **Evolution ist dauerhaft**
+und gibt es beim **ersten Sieg über den Boss** des passenden Kapitels. Im Lauf kämpft Finn nur
+mit den Kräften seiner aktuellen Form und verbessert sie über Karten (System-Fenster).
 
-* **Erster Lauf:** Mensch ohne jede Fähigkeit. Das Buch leuchtet in der Nähe (Pfeil am Rand) —
-  wer es erreicht, wird Halbling, und zwar dauerhaft.
-* Jeder Finn-Lauf bringt **Blutessenz** (Kills, Zeit, Stufe, Hauptmann, Sieg).
-* Die nächste Form braucht genug Essenz **und** eine bestandene **Prüfung** in der aktuellen
-  Form. Die Evolution passiert am Ende des Laufs (höchstens eine Stufe pro Lauf).
+| Kapitel | Welt | Gegner | Boss | Belohnung |
+|---|---|---|---|---|
+| 1 Das Buch | Militärakademie, Übungsgelände | Basis-/Mittelstufen-Bestien | Fortgeschrittene Bestie | Vampir |
+| 2 Die erste Mission | Bestien-Planet | Königsstufen-Bestien | Kaiserstufen-Bestie | Vampiradliger (Schatten) |
+| 3 Der Dalki-Krieg | Schlachtfeld | Dalki mit 1–6 Stacheln | Dalki-Kommandant (7 Stacheln) | Vampirlord (Qi & Blut) |
+| 4 Die Vampir-Siedlung | Siedlung der Familien | Wachen, Vampirritter, Blutmagierinnen | Anführer der Familien | Titel Vampirkönig |
+| 5 Graham | Brennende Ruinen | Dalki, Dalki-Werwölfe | Graham (8 Stacheln) | Nest-Kristall → Himmlischer Vampirlord |
+| 6 Die Himmlischen | Himmelsebene | Lichtjünger, Himmelsritter | Der Himmlische Richter | Reiner Himmlischer |
+| 7 Gottbezwinger | Reich der Götter | Götterbestien, Götterritter | Ein Gott | Erins Kristall → Gottbezwinger |
 
-| Form | Bedingung | Kräfte (fest im Lauf) | Aussehen |
-|---|---|---|---|
-| Mensch | Start | keine | Kapuzenpulli, Brille |
-| Halbling | Buch finden | Blutwisch, Blutspray | rote Augen, Blutflecken |
-| Vampir | 600 Essenz + 5 Min. überleben | + Hammerschlag, Blitzschritt, Blitz-Teleport | Lederjacke, Fangzähne |
-| Vampiradliger | 2 500 + Stufe 22 | + Schattenflammen; Nachtschlund/Nachbilder als Karten | Adelsmantel, Stehkragen |
-| Vampirlord | 6 000 + Hauptmann Kharn besiegen | + Qi-Handfläche, Blutnova; Qi-Kette/Bluternte als Karten | Umhang, Krone, Qi-Tattoos |
-| Himmlischer Vampirlord | 11 000 + Vaelgor besiegen | + Himmelsstrahl | Heiligenschein, Lichtflügel |
-| Reiner Himmlischer | 18 000 + insgesamt 3 Siege | + Dreifaltiges Siegel | weißes Gewand, silbernes Haar |
-| Gottbezwinger | 28 000 + Sieg mit über 50 % Leben | + Götterfall | schwarz-goldene Rüstung, große Flügel |
-
-Ein guter Lauf bringt etwa 1 000–3 000 Essenz — bis zum Gottbezwinger sind es rund ein Dutzend
-starke Läufe. Im **Testmodus** lässt sich jede Form in der Heldenauswahl direkt wählen; solche
-Läufe zählen nicht für Essenz und Evolution.
+* **Quests des Systems:** je Kapitel drei (z. B. „Besiege 200 Dalki“), Belohnung Kristalle
+  plus Stufenaufstieg oder Heilung.
+* **Bestienkristalle** fallen von Gegnern und Bossen. Im Menü **Ausrüstung** werden daraus
+  dauerhafte Bestienhandschuhe (+Schaden), Stiefel (+Tempo), Panzer (+Leben) und ein
+  Kristallamulett (+Sammelradius/Erfahrung).
+* **Schwierigkeit:** Kapitel 1–2 sind ohne Ausrüstung machbar, ab Kapitel 3 braucht es
+  Ausrüstung aus früheren Läufen; Graham ist die härteste Hürde (Ausrüstung Stufe 4 empfohlen).
+* Kein Blutdurst, keine Sonnen-Schwäche.
 
 **Freischaltung** (alles durch Spielen, keine Käufe):
 Vorian von Anfang an · Liora: Stufe 12 in einem Lauf (oder 400 Seelen) ·
@@ -206,7 +207,7 @@ mit jeder Qi-Perle, beim Wurzelstand erscheint eine Lotusblüte.
 | `src/01-artkit.js` | Mal-Werkzeuge: Formen, Kontur, Randlicht, Lichter, Rauschen |
 | `src/02-heroes.js` | die vier Helden (Skelett + Malerei) |
 | `src/03-enemies-art.js` | Gegner, Hauptmann, Boss |
-| `src/04-world-art.js` | Boden, Requisiten, Nebel, unendliche Welt |
+| `src/04-world-art.js` | Welten (Friedhof + 7 Kapitel): Boden, Requisiten, Nebel, Licht |
 | `src/05-data.js` | Helden, Karten, Fusionen, Reaktionen, Gegner, Wellen, Altar |
 | `src/06-fx.js` | Partikel, Decals, Lichter, Schadenszahlen |
 | `src/07-abilities.js` | alle Fähigkeiten, Fusionen, Ultimates, Ausweichen |
@@ -215,7 +216,10 @@ mit jeder Qi-Perle, beim Wurzelstand erscheint eine Lotusblüte.
 | `src/10-render.js` | Render-Pipeline |
 | `src/11-ui.js` | Menüs, HUD, Karten, Pause, Ende, Altar, Chronik |
 | `src/12-main.js` | Start, Hauptschleife, Qualität |
-| `src/13-finn.js` | Finn Müller: Evolutionen, Figur, eigene Fähigkeiten, Buch |
+| `src/13-finn.js` | Finn Müller: Formen, Figur, eigene Fähigkeiten, Buch |
+| `src/14-story-art.js` | Story-Gegner & Bosse (Bestien, Dalki, Vampire, Himmlische, Götter) |
+| `src/15-story.js` | Kapitel, Quests, Belohnungen, Bestienausrüstung |
+| `src/16-story-ui.js` | Story-Oberfläche im System-Stil |
 | `build.js` | baut `nachtfall-standalone.html` und setzt die Offline-Cache-Version |
 | `dev/` | Test-Werkzeuge (Bot, Balance-Simulation, Screenshots) |
 

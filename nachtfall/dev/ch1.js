@@ -1,0 +1,22 @@
+const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+(async () => {
+  const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+  const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
+  const p = await ctx.newPage();
+  const errs = []; p.on('pageerror', e => errs.push(e.message + '\n' + e.stack));
+  await p.goto('http://localhost:8765/index.html'); await p.waitForTimeout(2500);
+  await p.evaluate(() => { SAVE.settings.testUnlock = false; UI.act('story', {}); });
+  await p.waitForTimeout(600); await p.screenshot({ path: '/tmp/claude-0/c1-story.png' });
+  await p.evaluate(() => { UI.act('chapterGo', {}); UI.act('chapterStart', {}); });
+  await p.waitForTimeout(800);
+  const a = await p.evaluate(() => ({ tier: GAME.p.tier, book: !!GAME.pickups.find(q => q.kind === 'book'), abs: Object.keys(GAME.p.ab) }));
+  await p.evaluate(() => { const bk = GAME.pickups.find(q => q.kind === 'book'); GAME.p.x = bk.x - 15; GAME.p.y = bk.y; });
+  await p.waitForTimeout(900);
+  const b2 = await p.evaluate(() => ({ tier: GAME.p.tier, saved: finnSave().tier, abs: Object.keys(GAME.p.ab) }));
+  await p.evaluate(() => { GAME.t = 560; GAME.kills = 3000; GAME.level = 30; GAME.crystals = 150; GAME.quests.forEach(q => q.done = true); endRun(true); });
+  await p.waitForTimeout(800); await p.screenshot({ path: '/tmp/claude-0/c1-end.png' });
+  const c = await p.evaluate(() => ({ saved: finnSave().tier, story: storySave() }));
+  console.log(JSON.stringify({ a, b2, c }));
+  console.log(errs.join('\n'));
+  await b.close();
+})();

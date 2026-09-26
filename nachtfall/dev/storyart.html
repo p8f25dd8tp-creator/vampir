@@ -1,0 +1,9 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{margin:0;background:#3b3a3a}</style></head><body>
+<canvas id="game" style="display:none"></canvas><canvas id="out"></canvas>
+<script src="../src/00-core.js"></script><script src="../src/01-artkit.js"></script><script src="../src/02-heroes.js"></script><script src="../src/03-enemies-art.js"></script><script src="../src/04-world-art.js"></script><script src="../src/05-data.js"></script><script src="../src/06-fx.js"></script><script src="../src/07-abilities.js"></script><script src="../src/08-enemies.js"></script><script src="../src/09-game.js"></script><script src="../src/10-render.js"></script><script src="../src/11-ui.js"></script><script src="../src/13-finn.js"></script><script src="../src/14-story-art.js"></script>
+<script>
+buildParticleSprites(); ENEMY_PX = 3;
+const ids = ['q_basis','q_panzer','q_kroete','q_mutter','q_fort','bat_braun','q_alien','q_alienP','q_spore','q_alienM','q_koenig','bat_alien','dalki1','dalki2','dalki3','dalki5','dalki6','dalkiW','v_wache','v_ritter','v_magier','v_thrall','h_juenger','h_ritter','h_seherin','bat_licht','h_koloss','h_waechter','q_void','q_voidP','g_seherin','g_ritter','g_diener'];
+const out=document.getElementById('out'); out.width=1600; out.height=900; const o=out.getContext('2d'); o.fillStyle='#4a4a44'; o.fillRect(0,0,1600,900);
+ids.forEach((id,i)=>{ const s=ensureArt(id); const sc=150/ s.S * (ENEMY_ART[id].box/80); o.drawImage(s.frames[2], (i%11)*145, Math.floor(i/11)*200, s.S*0.42*1.3, s.S*0.42*1.3); o.fillStyle='#fff'; o.font='12px sans-serif'; o.fillText(id,(i%11)*145+10, Math.floor(i/11)*200+195); });
+</script></body></html>

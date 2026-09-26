@@ -1,0 +1,9 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{margin:0;background:#3b3a3a}</style></head><body>
+<canvas id="game" style="display:none"></canvas><canvas id="out"></canvas>
+<script src="../src/00-core.js"></script><script src="../src/01-artkit.js"></script><script src="../src/02-heroes.js"></script><script src="../src/03-enemies-art.js"></script><script src="../src/04-world-art.js"></script><script src="../src/05-data.js"></script><script src="../src/06-fx.js"></script><script src="../src/07-abilities.js"></script><script src="../src/08-enemies.js"></script><script src="../src/09-game.js"></script><script src="../src/10-render.js"></script><script src="../src/11-ui.js"></script><script src="../src/13-finn.js"></script><script src="../src/14-story-art.js"></script>
+<script>
+buildParticleSprites(); ENEMY_PX = 3;
+const ids = Object.keys(BOSS_ART);
+const out=document.getElementById('out'); out.width=1600; out.height=900; const o=out.getContext('2d'); o.fillStyle='#4a4a44'; o.fillRect(0,0,1600,900);
+ids.forEach((id,i)=>{ const c=mkCanvas(600,600), g=c.getContext('2d'); g.setTransform(1.7,0,0,1.7,300,540); g.lineCap='round'; g.lineJoin='round'; BOSS_ART[id](g,{t:1.3,run:0.6,phase:1,slam:i%2?0.9:0}); o.drawImage(c,(i%4)*400,Math.floor(i/4)*450,400,400); o.fillStyle='#fff'; o.fillText(id,(i%4)*400+20,Math.floor(i/4)*450+420); });
+</script></body></html>

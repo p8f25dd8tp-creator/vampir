@@ -314,30 +314,28 @@ const ENEMY_ART = {
   captain: { draw: (g, ph, o) => drawKnight(g, ph, Object.assign({ captain: true }, o)), frames: 8, box: 90, anchor: 0.8, rim: '#ff5a3a', h: 64 }
 };
 const ENEMY_SPR = {};
+let ENEMY_PX = 2;
+// einzelne Gegnerfigur vorrendern (bei Bedarf)
+function ensureArt(id) {
+  if (ENEMY_SPR[id]) return ENEMY_SPR[id];
+  const A = ENEMY_ART[id];
+  const px = ENEMY_PX * (id === 'captain' || id === 'h_waechter' || id === 'g_diener' ? 1.9 : 1);
+  const S = Math.ceil(A.box * px);
+  const frames = [], flashes = [], atk = [];
+  const bake = (ph, o) => {
+    const raw = mkCanvas(S, S), g = raw.getContext('2d');
+    g.setTransform(px, 0, 0, px, S / 2, S * A.anchor);
+    g.lineCap = 'round'; g.lineJoin = 'round';
+    A.draw(g, ph, o);
+    return finishSprite(raw, { outline: Math.max(1.2, px * 0.6), rim: A.rim, rimW: px * 0.7, rimA: 0.55, moonW: px * 0.5 });
+  };
+  for (let f = 0; f < A.frames; f++) { const fin = bake(f / A.frames, {}); frames.push(fin); flashes.push(flashSprite(fin, '#ffffff')); }
+  for (let f = 0; f < 4; f++) atk.push(bake(f / 4, { atk: 1, idle: true }));
+  return (ENEMY_SPR[id] = { frames, flashes, atk, S, px, ax: S / 2, ay: S * A.anchor });
+}
 function bakeEnemies(px) {
-  for (const id in ENEMY_ART) {
-    const A = ENEMY_ART[id];
-    const S = Math.ceil(A.box * px);
-    const frames = [], flashes = [], atk = [];
-    for (let f = 0; f < A.frames; f++) {
-      const raw = mkCanvas(S, S), g = raw.getContext('2d');
-      g.setTransform(px, 0, 0, px, S / 2, S * A.anchor);
-      g.lineCap = 'round'; g.lineJoin = 'round';
-      A.draw(g, f / A.frames, {});
-      const fin = finishSprite(raw, { outline: Math.max(1.2, px * 0.6), rim: A.rim, rimW: px * 0.7, rimA: 0.55, moonW: px * 0.5 });
-      frames.push(fin); flashes.push(flashSprite(fin, '#ffffff'));
-    }
-    if (id === 'witch' || id === 'knight' || id === 'captain') { // Angriffsframes
-      for (let f = 0; f < 4; f++) {
-        const raw = mkCanvas(S, S), g = raw.getContext('2d');
-        g.setTransform(px, 0, 0, px, S / 2, S * A.anchor);
-        g.lineCap = 'round'; g.lineJoin = 'round';
-        A.draw(g, f / 4, { atk: 1, idle: true });
-        atk.push(finishSprite(raw, { outline: Math.max(1.2, px * 0.6), rim: A.rim, rimW: px * 0.7, rimA: 0.55, moonW: px * 0.5 }));
-      }
-    }
-    ENEMY_SPR[id] = { frames, flashes, atk, S, px, ax: S / 2, ay: S * A.anchor };
-  }
+  ENEMY_PX = px;
+  for (const id of ['ghoul', 'bat', 'knight', 'witch', 'brute', 'captain']) ensureArt(id);
 }
 
 /* ============================================================ BOSS: VAELGOR, DER GRUFTKOLOSS

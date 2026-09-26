@@ -240,6 +240,46 @@ h1, h2, h3, .cinzel { font-family: 'Cinzel', serif; letter-spacing: .06em; }
 .evo .evd { font-size: 14.5px; }
 .mech #mechname { max-width: 52vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
+/* ------------------------------------------------ System-Fenster (Story) */
+.syswin { background: linear-gradient(180deg, rgba(8,26,52,.93), rgba(4,12,28,.95)); border: 1px solid #4aa8ff; border-radius: 6px; padding: 12px 14px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.6) inset, 0 0 24px rgba(60,160,255,.28); color: #d8ecff; }
+.syswin.big { padding: 16px; }
+.syshead { font-family: 'Cinzel', serif; font-size: 11.5px; letter-spacing: .22em; color: #8ad8ff; font-weight: 800; border-bottom: 1px solid rgba(74,168,255,.35); padding-bottom: 4px; margin-bottom: 6px; }
+.systitle { font-family: 'Cinzel', serif; font-size: 26px; font-weight: 800; color: #ffffff; text-shadow: 0 0 16px rgba(90,180,255,.7); letter-spacing: .05em; }
+.sysplace { font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: .12em; color: #9ab8d8; margin-bottom: 6px; }
+.sysp { font-size: 16px; line-height: 1.35; color: #dcecff; margin: 4px 0; }
+.sysnote { font-size: 14px; color: #a8c4e0; margin-top: 4px; }
+.syst { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: .3em; color: #8ad8ff; }
+.sysbtn { background: linear-gradient(180deg, #0e3a6a 0%, #06182e 100%) !important; border-color: #4aa8ff !important; color: #e8f4ff !important; box-shadow: 0 0 26px rgba(60,160,255,.35) !important; line-height: 1.25; }
+.btn small { font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: .02em; color: #c8d8e8; }
+.questline { font-size: 15px; color: #dcecff; display: flex; justify-content: space-between; gap: 8px; padding: 2px 0; }
+.questline span { color: #8ad8ff; white-space: nowrap; }
+.questline.done { color: #7dff9a; }
+.statusrow { display: flex; gap: 10px; align-items: center; }
+.statusrow canvas { width: 90px; height: 100px; flex: 0 0 90px; border: 1px solid rgba(74,168,255,.35); border-radius: 4px; background: rgba(0,10,30,.6); }
+.chaps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; width: min(560px, 100%); margin: 10px 0; }
+.chap { position: relative; border: 1px solid #2a5a8a; border-radius: 6px; overflow: hidden; background: #06101e; aspect-ratio: 1 / 1.05; cursor: pointer; }
+.chap canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.chap .cn { position: absolute; left: 0; right: 0; bottom: 14px; padding: 0 2px; font-family: 'Cinzel', serif; font-size: 9px; word-break: break-word; hyphens: auto; font-weight: 800; color: #fff; text-align: center; text-shadow: 0 1px 3px #000, 0 0 6px #000; line-height: 1.1; }
+.chap .cnum { color: #8ad8ff; }
+.chap .cs { position: absolute; left: 0; right: 0; bottom: 2px; font-size: 11px; text-align: center; color: #9ad8a0; text-shadow: 0 1px 2px #000; }
+.chap.locked .cs { color: #a0a0a8; }
+.chap.sel { border-color: #8ad8ff; box-shadow: 0 0 16px rgba(90,180,255,.55); }
+.sysmsg { position: absolute; left: 50%; transform: translateX(-50%); width: min(340px, 86vw); pointer-events: none; text-align: center; font-size: 15px;
+  background: linear-gradient(180deg, rgba(8,26,52,.94), rgba(4,12,28,.94)); border: 1px solid #4aa8ff; border-radius: 6px; padding: 7px 10px; color: #e8f4ff;
+  box-shadow: 0 0 22px rgba(60,160,255,.35); animation: evoIn .35s ease-out; transition: opacity .5s, transform .5s; }
+.sysmsg.out { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+.sysmsg .syshead { margin-bottom: 3px; }
+.questbox { position: absolute; left: calc(10px + var(--safe-l)); top: calc(162px + var(--safe-t)); max-width: 56vw; pointer-events: none; font-size: 12.5px; color: #dcecff;
+  background: rgba(4,14,30,.55); border-left: 2px solid #4aa8ff; padding: 4px 8px; border-radius: 0 6px 6px 0; text-shadow: 0 1px 2px #000; }
+.questbox .qh { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: .18em; color: #8ad8ff; font-weight: 800; }
+.questbox .ql b { color: #8ad8ff; font-weight: 700; }
+.questbox .ql.done { color: #7dff9a; }
+#levelup.sysmode h2 { color: #e8f4ff; text-shadow: 0 0 18px rgba(90,180,255,.8); text-align: center; line-height: 1.1; }
+#levelup.sysmode .card { border-color: #2a6aa8; background: linear-gradient(180deg, rgba(10,30,60,.97), rgba(4,12,28,.97)); }
+.syswin .btns { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+.syswin .btns .btn { width: 100%; }
+
 </style>
 </head>
 <body>
@@ -1953,30 +1993,28 @@ const ENEMY_ART = {
   captain: { draw: (g, ph, o) => drawKnight(g, ph, Object.assign({ captain: true }, o)), frames: 8, box: 90, anchor: 0.8, rim: '#ff5a3a', h: 64 }
 };
 const ENEMY_SPR = {};
+let ENEMY_PX = 2;
+// einzelne Gegnerfigur vorrendern (bei Bedarf)
+function ensureArt(id) {
+  if (ENEMY_SPR[id]) return ENEMY_SPR[id];
+  const A = ENEMY_ART[id];
+  const px = ENEMY_PX * (id === 'captain' || id === 'h_waechter' || id === 'g_diener' ? 1.9 : 1);
+  const S = Math.ceil(A.box * px);
+  const frames = [], flashes = [], atk = [];
+  const bake = (ph, o) => {
+    const raw = mkCanvas(S, S), g = raw.getContext('2d');
+    g.setTransform(px, 0, 0, px, S / 2, S * A.anchor);
+    g.lineCap = 'round'; g.lineJoin = 'round';
+    A.draw(g, ph, o);
+    return finishSprite(raw, { outline: Math.max(1.2, px * 0.6), rim: A.rim, rimW: px * 0.7, rimA: 0.55, moonW: px * 0.5 });
+  };
+  for (let f = 0; f < A.frames; f++) { const fin = bake(f / A.frames, {}); frames.push(fin); flashes.push(flashSprite(fin, '#ffffff')); }
+  for (let f = 0; f < 4; f++) atk.push(bake(f / 4, { atk: 1, idle: true }));
+  return (ENEMY_SPR[id] = { frames, flashes, atk, S, px, ax: S / 2, ay: S * A.anchor });
+}
 function bakeEnemies(px) {
-  for (const id in ENEMY_ART) {
-    const A = ENEMY_ART[id];
-    const S = Math.ceil(A.box * px);
-    const frames = [], flashes = [], atk = [];
-    for (let f = 0; f < A.frames; f++) {
-      const raw = mkCanvas(S, S), g = raw.getContext('2d');
-      g.setTransform(px, 0, 0, px, S / 2, S * A.anchor);
-      g.lineCap = 'round'; g.lineJoin = 'round';
-      A.draw(g, f / A.frames, {});
-      const fin = finishSprite(raw, { outline: Math.max(1.2, px * 0.6), rim: A.rim, rimW: px * 0.7, rimA: 0.55, moonW: px * 0.5 });
-      frames.push(fin); flashes.push(flashSprite(fin, '#ffffff'));
-    }
-    if (id === 'witch' || id === 'knight' || id === 'captain') { // Angriffsframes
-      for (let f = 0; f < 4; f++) {
-        const raw = mkCanvas(S, S), g = raw.getContext('2d');
-        g.setTransform(px, 0, 0, px, S / 2, S * A.anchor);
-        g.lineCap = 'round'; g.lineJoin = 'round';
-        A.draw(g, f / 4, { atk: 1, idle: true });
-        atk.push(finishSprite(raw, { outline: Math.max(1.2, px * 0.6), rim: A.rim, rimW: px * 0.7, rimA: 0.55, moonW: px * 0.5 }));
-      }
-    }
-    ENEMY_SPR[id] = { frames, flashes, atk, S, px, ax: S / 2, ay: S * A.anchor };
-  }
+  ENEMY_PX = px;
+  for (const id of ['ghoul', 'bat', 'knight', 'witch', 'brute', 'captain']) ensureArt(id);
 }
 
 /* ============================================================ BOSS: VAELGOR, DER GRUFTKOLOSS
@@ -2088,35 +2126,95 @@ function drawBoss(g, st) {
 /* ---- src/04-world-art.js ---- */
 'use strict';
 /* ==========================================================================
-   WELT — der Aschefriedhof von Varn.
-   Kachelbarer Boden (Rauschen + gemalte Details), weltweit verteilte
-   Requisiten (Grabsteine, tote Baeume, Laternen, Kerzen, Pilze …) und
-   Nebel-Texturen. Alles wird einmal beim Start erzeugt.
+   WELT — mehrere Schauplaetze (Themen): der Aschefriedhof (Arcade) und die
+   Kapitel-Welten des Story-Modus. Jedes Thema hat eigenen kachelbaren Boden,
+   eigene Requisiten, eigenes Umgebungslicht und eigenen Nebel.
+   Alles wird beim ersten Betreten eines Themas erzeugt und zwischengespeichert.
    ========================================================================== */
 
-const WORLD = { groundTile: null, tileSize: 512, props: {}, fog: null, patches: [] };
+const WORLD = { groundTile: null, tileSize: 512, props: {}, fog: null, patches: [], theme: null, ambient: 'rgb(116,110,150)', cache: {} };
 
-function buildGround() {
+const THEMES = {
+  friedhof: {
+    name: 'Aschefriedhof von Varn', ambient: 'rgb(116,110,150)', fog: [150, 160, 200], fogA: 1,
+    ground: { base: [34, 30, 36], vary: [18, 14, 14], moss: [30, 46, 34], mossVar: [12, 16, 8], detail: 'grass', grass: ['#3c5a34', '#50683a', '#2a3e2a'], pebble: [60, 56, 66], leaves: ['#5a3a24', '#6a4222', '#4a2c1c', '#7a4a20', '#3a2418'], cracks: 'rgba(8,6,10,0.55)' },
+    patches: ['flag', 'moss', 'puddle', 'ash'],
+    props: [['grave', 10], ['cross', 3], ['tree', 3], ['lantern', 1.3], ['candles', 1.6], ['shrooms', 2], ['bones', 3], ['pillar', 1.5], ['fence', 1.4], ['coffin', 0.7]],
+    cluster: 'grave'
+  },
+  akademie: {
+    name: 'Militärakademie — Übungsgelände', ambient: 'rgb(118,124,152)', fog: [150, 170, 200], fogA: 0.7,
+    ground: { base: [58, 60, 66], vary: [14, 14, 16], moss: [40, 56, 40], mossVar: [10, 14, 8], mossAmt: 0.5, detail: 'concrete', grass: ['#4a6a3a', '#5a7a44', '#3a5230'], pebble: [80, 80, 86], leaves: null, cracks: 'rgba(20,20,26,0.6)' },
+    patches: ['moss', 'puddle', 'marking'],
+    props: [['barrier', 5], ['crate', 4], ['lamp', 1.4], ['dummy', 2], ['fence', 1.5], ['rock', 2]],
+    cluster: 'barrier'
+  },
+  bestienplanet: {
+    name: 'Bestien-Planet', ambient: 'rgb(104,92,136)', fog: [170, 130, 220], fogA: 0.7,
+    ground: { base: [30, 34, 44], vary: [10, 16, 18], moss: [34, 70, 64], mossVar: [14, 30, 26], detail: 'grass', grass: ['#6a3a8a', '#3a8a7a', '#8a4aa0', '#2a6a64'], pebble: [70, 60, 90], leaves: ['#8a3a9a', '#2a8a8a', '#5a2a7a'], cracks: 'rgba(10,6,20,0.5)' },
+    patches: ['spore', 'moss', 'puddle'],
+    props: [['alienplant', 5], ['crystal', 2.5], ['rock', 3], ['bones', 1.5], ['shrooms', 2.5]],
+    cluster: 'alienplant'
+  },
+  schlachtfeld: {
+    name: 'Schlachtfeld des Dalki-Kriegs', ambient: 'rgb(124,100,100)', fog: [190, 150, 130], fogA: 0.6,
+    ground: { base: [46, 38, 34], vary: [18, 12, 10], moss: [26, 22, 22], mossVar: [10, 8, 8], detail: 'scorched', grass: ['#4a4430', '#3a3424'], pebble: [74, 66, 62], leaves: null, cracks: 'rgba(10,6,4,0.6)' },
+    patches: ['crater', 'ash', 'crater'],
+    props: [['wreck', 3], ['spikes', 3], ['barrier', 2.5], ['brazier', 1.2], ['rock', 2.5], ['bones', 2]],
+    cluster: 'spikes'
+  },
+  siedlung: {
+    name: 'Die Vampir-Siedlung', ambient: 'rgb(114,92,116)', fog: [180, 110, 130], fogA: 1,
+    ground: { base: [40, 30, 34], vary: [12, 8, 10], moss: [30, 22, 26], mossVar: [6, 4, 6], detail: 'tiles', tile: [70, 46, 52], grass: ['#3a2a30'], pebble: [70, 56, 62], leaves: ['#5a1a24', '#3a1018'], cracks: 'rgba(10,4,6,0.5)' },
+    patches: ['flag', 'blood'],
+    props: [['banner', 3], ['pillar', 2.5], ['brazier', 2], ['candles', 2], ['fence', 1.5], ['coffin', 1]],
+    cluster: 'pillar'
+  },
+  ruinen: {
+    name: 'Die brennenden Ruinen', ambient: 'rgb(126,96,86)', fog: [200, 140, 110], fogA: 1,
+    ground: { base: [36, 30, 30], vary: [14, 10, 10], moss: [22, 18, 18], mossVar: [6, 5, 5], detail: 'tiles', tile: [60, 52, 54], grass: ['#3a302a'], pebble: [66, 58, 56], leaves: null, cracks: 'rgba(8,4,2,0.6)', glowCracks: '#ff6a1a' },
+    patches: ['crater', 'ash', 'blood'],
+    props: [['wreck', 2.5], ['pillar', 3], ['spikes', 2], ['brazier', 2], ['banner', 1.2], ['rock', 2]],
+    cluster: 'pillar'
+  },
+  himmel: {
+    name: 'Die Himmelsebene', ambient: 'rgb(168,162,184)', fog: [240, 235, 255], fogA: 1.2,
+    ground: { base: [120, 116, 128], vary: [16, 16, 18], moss: [150, 140, 120], mossVar: [10, 10, 8], mossAmt: 0.4, detail: 'marble', tile: [170, 166, 176], gold: '#c9a24c', grass: ['#d8d0b0'], pebble: [180, 176, 186], leaves: null, cracks: 'rgba(80,70,90,0.35)' },
+    patches: ['gold', 'cloud'],
+    props: [['marble', 4], ['goldcrystal', 2.5], ['goldbrazier', 1.5], ['rock', 1]],
+    cluster: 'marble'
+  },
+  goetter: {
+    name: 'Das Reich der Götter', ambient: 'rgb(96,92,146)', fog: [150, 130, 230], fogA: 1,
+    ground: { base: [20, 20, 36], vary: [10, 10, 20], moss: [30, 24, 56], mossVar: [10, 8, 20], detail: 'stars', grass: ['#6a5aa0'], pebble: [60, 56, 90], leaves: null, cracks: 'rgba(160,120,255,0.35)', glowCracks: '#8a6aff' },
+    patches: ['nebula', 'gold'],
+    props: [['crystal', 3], ['goldcrystal', 2], ['obelisk', 2.5], ['rock', 2]],
+    cluster: 'obelisk'
+  }
+};
+
+/* ---------------------------------------------------------------- Boden */
+function buildGroundTheme(th) {
+  const G0 = th.ground;
   const T = WORLD.tileSize, PX = 2, S = T * PX;
-  // 1) Farbrauschen auf halber Aufloesung (schnell), dann hochskaliert
   const N = 256;
-  const n1 = tileNoise(N, 4, 11, 4), n2 = tileNoise(N, 8, 23, 3), n3 = tileNoise(N, 16, 5, 2);
+  const seed = th.name.length * 13;
+  const n1 = tileNoise(N, 4, 11 + seed, 4), n2 = tileNoise(N, 8, 23 + seed, 3), n3 = tileNoise(N, 16, 5 + seed, 2);
   const low = mkCanvas(N, N), lg0 = low.getContext('2d');
   const img = lg0.createImageData(N, N);
+  const mA = G0.mossAmt === undefined ? 1 : G0.mossAmt;
   for (let i = 0; i < N * N; i++) {
-    const moss = smooth(clamp((n1[i] - 0.45) * 3.2, 0, 1));
+    const moss = smooth(clamp((n1[i] - 0.45) * 3.2, 0, 1)) * mA;
     const dirt = n2[i], grain = n3[i];
-    // dunkle Erde -> moosiges Gruen -> kaltes Grau
-    let r = 34 + dirt * 18 + grain * 10, gg = 30 + dirt * 14 + grain * 8, b = 36 + dirt * 14 + grain * 8;
-    r = lerp(r, 30 + grain * 12, moss); gg = lerp(gg, 46 + grain * 16 + dirt * 10, moss); b = lerp(b, 34 + grain * 8, moss);
+    let r = G0.base[0] + dirt * G0.vary[0] + grain * 10, gg = G0.base[1] + dirt * G0.vary[1] + grain * 8, b = G0.base[2] + dirt * G0.vary[2] + grain * 8;
+    r = lerp(r, G0.moss[0] + grain * G0.mossVar[0], moss); gg = lerp(gg, G0.moss[1] + grain * G0.mossVar[1] + dirt * 10, moss); b = lerp(b, G0.moss[2] + grain * G0.mossVar[2], moss);
     img.data[i * 4] = r; img.data[i * 4 + 1] = gg; img.data[i * 4 + 2] = b; img.data[i * 4 + 3] = 255;
   }
   lg0.putImageData(img, 0, 0);
   const c = mkCanvas(S, S), g = c.getContext('2d');
   g.imageSmoothingEnabled = true;
-  // 3x3 zeichnen, damit die Kanten beim Hochskalieren nahtlos bleiben
   for (let oy = -1; oy <= 1; oy++) for (let ox = -1; ox <= 1; ox++) g.drawImage(low, ox * S, oy * S, S, S);
-  const rnd = mulberry(99);
+  const rnd = mulberry(99 + seed);
   const wrapDraw = (x, y, r, fn) => {
     for (let oy = -1; oy <= 1; oy++) for (let ox = -1; ox <= 1; ox++) {
       const xx = x + ox * S, yy = y + oy * S;
@@ -2124,13 +2222,39 @@ function buildGround() {
       fn(xx, yy);
     }
   };
-  // 2) Grasbueschel
-  for (let i = 0; i < 1400; i++) {
+  // Grundstruktur je nach Art
+  if (G0.detail === 'concrete') { // Betonplatten mit Fugen und Markierungen
+    const P = 128;
+    g.strokeStyle = 'rgba(20,20,26,0.5)'; g.lineWidth = 2;
+    for (let x = 0; x <= S; x += P) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, S); g.stroke(); }
+    for (let y = 0; y <= S; y += P) { g.beginPath(); g.moveTo(0, y); g.lineTo(S, y); g.stroke(); }
+    g.strokeStyle = 'rgba(200,200,210,0.08)'; g.lineWidth = 1;
+    for (let x = 2; x <= S; x += P) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, S); g.stroke(); }
+    for (let i = 0; i < 20; i++) { const x = (rnd() * 8 | 0) * P, y = (rnd() * 8 | 0) * P; g.fillStyle = rgba('#000000', 0.05 + rnd() * 0.08); g.fillRect(x, y, P, P); }
+  } else if (G0.detail === 'tiles' || G0.detail === 'marble') {
+    const tc = G0.tile;
+    const P = G0.detail === 'marble' ? 96 : 72;
+    for (let y = 0; y < S; y += P / 2) for (let x = ((y / (P / 2)) % 2) * P / 2; x < S; x += P) {
+      const v = (rnd() - 0.5) * (G0.detail === 'marble' ? 20 : 26);
+      g.fillStyle = `rgba(${tc[0] + v},${tc[1] + v},${tc[2] + v},0.55)`;
+      g.fillRect(x + 1.5, y + 1.5, P - 3, P / 2 - 3);
+      g.strokeStyle = 'rgba(0,0,0,0.35)'; g.lineWidth = 1.5; g.strokeRect(x + 1, y + 1, P - 2, P / 2 - 2);
+      if (G0.detail === 'marble') { g.strokeStyle = 'rgba(120,110,140,0.25)'; g.lineWidth = 1; g.beginPath(); g.moveTo(x + rnd() * P, y); g.bezierCurveTo(x + rnd() * P, y + 10, x + rnd() * P, y + 20, x + rnd() * P, y + P / 2); g.stroke(); }
+    }
+    if (G0.gold) { g.strokeStyle = rgba(G0.gold, 0.55); g.lineWidth = 2.5; for (let i = 0; i < 6; i++) { const cx = rnd() * S, cy = rnd() * S, r = 60 + rnd() * 60; wrapDraw(cx, cy, r + 4, (xx, yy) => { g.beginPath(); g.arc(xx, yy, r, 0, TAU); g.stroke(); g.beginPath(); g.arc(xx, yy, r * 0.7, 0, TAU); g.stroke(); }); } }
+  } else if (G0.detail === 'stars') {
+    for (let i = 0; i < 900; i++) { const x = rnd() * S, y = rnd() * S, r = rnd() * rnd() * 2.4 + 0.4; g.fillStyle = rgba(pick(['#ffffff', '#c8b8ff', '#9ad8ff', '#ffe6a0']), 0.3 + rnd() * 0.6); g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill(); }
+  } else if (G0.detail === 'scorched') {
+    for (let i = 0; i < 60; i++) { const x = rnd() * S, y = rnd() * S, r = 20 + rnd() * 60; wrapDraw(x, y, r, (xx, yy) => { g.fillStyle = rg(g, xx, yy, 0, r, [0, 'rgba(10,6,4,0.35)', 1, 'rgba(0,0,0,0)']); g.fillRect(xx - r, yy - r, r * 2, r * 2); }); }
+  }
+  // Grasbueschel
+  const grassN = G0.detail === 'grass' ? 1400 : G0.detail === 'concrete' ? 260 : G0.detail === 'scorched' ? 200 : 60;
+  for (let i = 0; i < grassN; i++) {
     const x = rnd() * S, y = rnd() * S;
     const mossy = n1[((y / S * N) | 0) * N + ((x / S * N) | 0)] > 0.48;
     if (!mossy && rnd() < 0.7) continue;
     const len = 6 + rnd() * 12, cnt = 3 + (rnd() * 5 | 0);
-    const col = rnd() < 0.5 ? '#3c5a34' : (rnd() < 0.5 ? '#50683a' : '#2a3e2a');
+    const col = pick(G0.grass);
     wrapDraw(x, y, 30, (xx, yy) => {
       g.strokeStyle = col; g.lineWidth = 1.6; g.lineCap = 'round';
       for (let k = 0; k < cnt; k++) {
@@ -2141,55 +2265,55 @@ function buildGround() {
       }
     });
   }
-  // 3) Steinchen & Kiesel
-  for (let i = 0; i < 700; i++) {
+  // Steinchen
+  const pv = G0.pebble;
+  for (let i = 0; i < (G0.detail === 'stars' ? 200 : 700); i++) {
     const x = rnd() * S, y = rnd() * S, r = 1.5 + rnd() * rnd() * 7;
-    const v = 60 + rnd() * 40;
+    const v = rnd() * 40;
     wrapDraw(x, y, r + 4, (xx, yy) => {
       g.fillStyle = 'rgba(0,0,0,0.35)'; g.beginPath(); g.ellipse(xx + r * 0.3, yy + r * 0.35, r, r * 0.7, 0, 0, TAU); g.fill();
-      g.fillStyle = `rgb(${v},${v - 4},${v + 6})`; g.beginPath(); g.ellipse(xx, yy, r, r * 0.72, rnd(), 0, TAU); g.fill();
-      g.fillStyle = 'rgba(200,200,230,0.18)'; g.beginPath(); g.ellipse(xx - r * 0.3, yy - r * 0.3, r * 0.45, r * 0.3, 0, 0, TAU); g.fill();
+      g.fillStyle = `rgb(${pv[0] + v},${pv[1] + v - 4},${pv[2] + v + 6})`; g.beginPath(); g.ellipse(xx, yy, r, r * 0.72, rnd(), 0, TAU); g.fill();
+      g.fillStyle = 'rgba(220,220,240,0.18)'; g.beginPath(); g.ellipse(xx - r * 0.3, yy - r * 0.3, r * 0.45, r * 0.3, 0, 0, TAU); g.fill();
     });
   }
-  // 4) tote Blaetter
-  for (let i = 0; i < 500; i++) {
+  // Blaetter / Sporen
+  if (G0.leaves) for (let i = 0; i < 500; i++) {
     const x = rnd() * S, y = rnd() * S, r = 2.5 + rnd() * 3, a = rnd() * TAU;
-    const col = pick(['#5a3a24', '#6a4222', '#4a2c1c', '#7a4a20', '#3a2418']);
+    const col = pick(G0.leaves);
     wrapDraw(x, y, 8, (xx, yy) => {
       g.save(); g.translate(xx, yy); g.rotate(a);
       g.fillStyle = col; g.beginPath(); g.ellipse(0, 0, r, r * 0.45, 0, 0, TAU); g.fill();
-      g.strokeStyle = 'rgba(0,0,0,0.3)'; g.lineWidth = 0.6; g.beginPath(); g.moveTo(-r, 0); g.lineTo(r, 0); g.stroke();
       g.restore();
     });
   }
-  // 5) Risse
+  // Risse (optional gluehend)
   for (let i = 0; i < 40; i++) {
     let x = rnd() * S, y = rnd() * S, a = rnd() * TAU;
     const pts = [[x, y]];
     for (let k = 0; k < 6; k++) { a += (rnd() - 0.5) * 1.2; x += Math.cos(a) * 10; y += Math.sin(a) * 10; pts.push([x, y]); }
+    const glowIt = G0.glowCracks && rnd() < 0.4;
     wrapDraw(pts[0][0], pts[0][1], 80, (xx, yy) => {
       const dx = xx - pts[0][0], dy = yy - pts[0][1];
-      g.strokeStyle = 'rgba(8,6,10,0.55)'; g.lineWidth = 1.4;
+      g.strokeStyle = G0.cracks; g.lineWidth = glowIt ? 3 : 1.4;
       g.beginPath(); g.moveTo(pts[0][0] + dx, pts[0][1] + dy); for (const p of pts) g.lineTo(p[0] + dx, p[1] + dy); g.stroke();
+      if (glowIt) { g.strokeStyle = rgba(G0.glowCracks, 0.75); g.lineWidth = 1.2; g.stroke(); }
     });
   }
-  // 6) leichte Vignettierung von Flecken (Tiefe)
+  // Tiefenflecken
   for (let i = 0; i < 26; i++) {
     const x = rnd() * S, y = rnd() * S, r = 60 + rnd() * 140;
     const dark = rnd() < 0.6;
     wrapDraw(x, y, r, (xx, yy) => {
-      g.fillStyle = rg(g, xx, yy, 0, r, [0, dark ? 'rgba(0,0,0,0.22)' : 'rgba(120,130,160,0.06)', 1, 'rgba(0,0,0,0)']);
+      g.fillStyle = rg(g, xx, yy, 0, r, [0, dark ? 'rgba(0,0,0,0.22)' : 'rgba(160,160,200,0.06)', 1, 'rgba(0,0,0,0)']);
       g.fillRect(xx - r, yy - r, r * 2, r * 2);
     });
   }
-  WORLD.groundTile = c;
+  return c;
 }
 
-/* --------------------------------------------------------- Bodenflecken (per Chunk) */
-function buildPatches() {
-  const mk = (w, h, fn) => { const c = mkCanvas(w, h); fn(c.getContext('2d'), w, h); return c; };
-  // Steinplatten eines alten Weges
-  WORLD.patches.push(mk(360, 240, (g, w, h) => {
+/* ---------------------------------------------------------------- Bodenflecken */
+const PATCH_MAKERS = {
+  flag: () => mkPatch(360, 240, (g, w, h) => {
     const rnd = mulberry(4);
     g.save(); g.beginPath(); g.ellipse(w / 2, h / 2, w / 2 - 4, h / 2 - 4, 0, 0, TAU); g.clip();
     for (let y = 0; y < h; y += 34) for (let x = -20 + ((y / 34) % 2) * 26; x < w; x += 52) {
@@ -2203,50 +2327,187 @@ function buildPatches() {
       if (rnd() < 0.4) { g.fillStyle = 'rgba(60,90,50,0.45)'; g.beginPath(); g.arc(px + rnd() * pw, py + rnd() * ph, 4 + rnd() * 8, 0, TAU); g.fill(); }
     }
     g.restore();
-    g.globalCompositeOperation = 'destination-in';
-    g.save(); g.translate(w / 2, h / 2); g.scale(1, h / w);
-    g.fillStyle = rg(g, 0, 0, 0, w / 2, [0, 'rgba(0,0,0,1)', 0.7, 'rgba(0,0,0,0.9)', 1, 'rgba(0,0,0,0)']);
-    g.fillRect(-w / 2, -w / 2, w, w); g.restore();
-  }));
-  // Moospolster
-  WORLD.patches.push(mk(260, 180, (g, w, h) => {
-    const rnd = mulberry(8);
-    for (let i = 0; i < 70; i++) {
-      const a = rnd() * TAU, d = Math.sqrt(rnd()) * 0.45;
-      const x = w / 2 + Math.cos(a) * d * w, y = h / 2 + Math.sin(a) * d * h, r = 8 + rnd() * 18;
-      g.fillStyle = rg(g, x, y, 0, r, [0, rgba(pick(['#3e6a34', '#2e5a2a', '#4a7a3a']), 0.5), 1, 'rgba(40,80,40,0)']);
-      g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill();
-    }
-  }));
-  // Pfuetze (spiegelt das Mondlicht)
-  WORLD.patches.push(mk(180, 110, (g, w, h) => {
+    fadeEdges(g, w, h);
+  }),
+  moss: () => blobPatch(260, 180, 8, ['#3e6a34', '#2e5a2a', '#4a7a3a'], 0.5),
+  spore: () => blobPatch(260, 180, 9, ['#6a3a9a', '#3a9a8a', '#9a4ab0'], 0.45),
+  blood: () => blobPatch(220, 150, 12, ['#5a0a14', '#7a0a1a', '#3a0408'], 0.6),
+  gold: () => mkPatch(220, 150, (g, w, h) => { g.strokeStyle = 'rgba(230,190,90,0.55)'; g.lineWidth = 3; g.beginPath(); g.ellipse(w / 2, h / 2, w * 0.42, h * 0.38, 0, 0, TAU); g.stroke(); g.lineWidth = 1.5; g.beginPath(); g.ellipse(w / 2, h / 2, w * 0.3, h * 0.26, 0, 0, TAU); g.stroke(); for (let i = 0; i < 8; i++) { const a = i / 8 * TAU; g.beginPath(); g.moveTo(w / 2 + Math.cos(a) * w * 0.3, h / 2 + Math.sin(a) * h * 0.26); g.lineTo(w / 2 + Math.cos(a) * w * 0.42, h / 2 + Math.sin(a) * h * 0.38); g.stroke(); } }),
+  cloud: () => blobPatch(300, 200, 3, ['#ffffff', '#e8e4f8'], 0.3),
+  nebula: () => blobPatch(300, 200, 5, ['#5a3aa0', '#2a4aa0', '#8a3aa0'], 0.35),
+  puddle: () => mkPatch(180, 110, (g, w, h) => {
     g.fillStyle = 'rgba(0,0,0,0.3)'; blobPath(g, [[20, 55], [60, 18], [130, 22], [168, 58], [120, 96], [50, 92]]); g.fill();
     g.fillStyle = lg(g, 0, 0, w, h, [0, 'rgba(60,70,100,0.85)', 0.5, 'rgba(26,32,52,0.85)', 1, 'rgba(50,60,90,0.85)']);
     blobPath(g, [[26, 55], [62, 24], [128, 28], [160, 58], [118, 90], [52, 86]]); g.fill();
     g.strokeStyle = 'rgba(170,190,255,0.35)'; g.lineWidth = 2; g.beginPath(); g.ellipse(80, 48, 30, 6, -0.1, 0, TAU); g.stroke();
-    g.strokeStyle = 'rgba(170,190,255,0.18)'; g.beginPath(); g.ellipse(95, 64, 46, 10, -0.1, 0, TAU); g.stroke();
-  }));
-  // dunkle, verbrannte Erde (Ascheflecken)
-  WORLD.patches.push(mk(240, 170, (g, w, h) => {
+  }),
+  ash: () => mkPatch(240, 170, (g, w, h) => {
     const rnd = mulberry(15);
     g.fillStyle = rg(g, w / 2, h / 2, 0, w / 2, [0, 'rgba(10,8,10,0.55)', 1, 'rgba(10,8,10,0)']);
     g.save(); g.scale(1, h / w); g.beginPath(); g.arc(w / 2, w / 2, w / 2, 0, TAU); g.fill(); g.restore();
     for (let i = 0; i < 40; i++) { g.fillStyle = rgba('#8a8488', 0.18 + rnd() * 0.2); g.beginPath(); g.arc(w / 2 + (rnd() - 0.5) * w * 0.7, h / 2 + (rnd() - 0.5) * h * 0.7, 1 + rnd() * 2.5, 0, TAU); g.fill(); }
-  }));
+  }),
+  crater: () => mkPatch(220, 150, (g, w, h) => {
+    g.fillStyle = rg(g, w / 2, h / 2, 0, w / 2, [0, 'rgba(8,4,2,0.85)', 0.55, 'rgba(30,20,16,0.6)', 0.8, 'rgba(90,70,60,0.35)', 1, 'rgba(0,0,0,0)']);
+    g.save(); g.scale(1, h / w); g.beginPath(); g.arc(w / 2, w / 2, w / 2, 0, TAU); g.fill(); g.restore();
+    g.strokeStyle = 'rgba(140,110,90,0.35)'; g.lineWidth = 3; g.beginPath(); g.ellipse(w / 2, h / 2 - 3, w * 0.36, h * 0.3, 0, Math.PI * 1.05, Math.PI * 1.95); g.stroke();
+  }),
+  marking: () => mkPatch(260, 120, (g, w, h) => { g.strokeStyle = 'rgba(230,200,60,0.45)'; g.lineWidth = 6; g.setLineDash([22, 14]); g.beginPath(); g.moveTo(10, h / 2); g.lineTo(w - 10, h / 2); g.stroke(); g.setLineDash([]); g.strokeStyle = 'rgba(230,230,230,0.25)'; g.lineWidth = 4; g.strokeRect(30, 20, w - 60, h - 40); })
+};
+function mkPatch(w, h, fn) { const c = mkCanvas(w, h); fn(c.getContext('2d'), w, h); return c; }
+function blobPatch(w, h, seed, cols, a) {
+  return mkPatch(w, h, (g) => {
+    const rnd = mulberry(seed);
+    for (let i = 0; i < 70; i++) {
+      const an = rnd() * TAU, d = Math.sqrt(rnd()) * 0.45;
+      const x = w / 2 + Math.cos(an) * d * w, y = h / 2 + Math.sin(an) * d * h, r = 8 + rnd() * 18;
+      g.fillStyle = rg(g, x, y, 0, r, [0, rgba(pick(cols), a), 1, rgba(cols[0], 0)]);
+      g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill();
+    }
+  });
+}
+function fadeEdges(g, w, h) {
+  g.globalCompositeOperation = 'destination-in';
+  g.save(); g.translate(w / 2, h / 2); g.scale(1, h / w);
+  g.fillStyle = rg(g, 0, 0, 0, w / 2, [0, 'rgba(0,0,0,1)', 0.7, 'rgba(0,0,0,0.9)', 1, 'rgba(0,0,0,0)']);
+  g.fillRect(-w / 2, -w / 2, w, w); g.restore();
+  g.globalCompositeOperation = 'source-over';
 }
 
-/* --------------------------------------------------------- Requisiten */
-// jede Requisite: { c: Canvas, ax, ay (Ankerpunkt Fuss), light?: {x,y,col,r}, tall }
-function buildProps() {
-  const PX = 2.2;
-  const make = (w, h, anchorY, fn, opt) => {
-    const raw = mkCanvas(w * PX, h * PX), g = raw.getContext('2d');
-    g.setTransform(PX, 0, 0, PX, w * PX / 2, anchorY * PX);
-    g.lineCap = 'round'; g.lineJoin = 'round';
-    fn(g);
-    const fin = finishSprite(raw, { outline: 1.6, moonW: 1.4, moonA: 0.3, rim: opt && opt.rim, rimW: 1.6, rimA: 0.35 });
-    return Object.assign({ c: fin, ax: w * PX / 2, ay: anchorY * PX, px: PX }, opt || {});
-  };
+/* ---------------------------------------------------------------- Requisiten */
+const PROP_PX = 2.2;
+function makeProp(w, h, anchorY, fn, opt) {
+  const PX = PROP_PX;
+  const raw = mkCanvas(w * PX, h * PX), g = raw.getContext('2d');
+  g.setTransform(PX, 0, 0, PX, w * PX / 2, anchorY * PX);
+  g.lineCap = 'round'; g.lineJoin = 'round';
+  fn(g);
+  const fin = finishSprite(raw, { outline: 1.6, moonW: 1.4, moonA: 0.3, rim: opt && opt.rim, rimW: 1.6, rimA: 0.35 });
+  return Object.assign({ c: fin, ax: w * PX / 2, ay: anchorY * PX, px: PX }, opt || {});
+}
+const NEW_PROPS = {
+  barrier: () => [0, 1].map((v) => makeProp(52, 34, 28, (g) => {
+    g.fillStyle = 'rgba(0,0,0,0.4)'; g.beginPath(); g.ellipse(2, 0, 26, 5, 0, 0, TAU); g.fill();
+    g.beginPath(); g.moveTo(-24, 0); g.lineTo(-20, -8); g.lineTo(-14, -22); g.lineTo(14, -22); g.lineTo(20, -8); g.lineTo(24, 0); g.closePath();
+    paint(g, lg(g, 0, -22, 0, 0, [0, '#9a9aa4', 0.5, '#6e6e78', 1, '#3a3a42']), 'rgba(0,0,0,0.6)', 1);
+    g.fillStyle = v ? 'rgba(220,180,40,0.8)' : 'rgba(200,40,40,0.7)';
+    for (let k = -2; k <= 2; k++) { g.beginPath(); g.moveTo(k * 8 - 3, -18); g.lineTo(k * 8 + 1, -18); g.lineTo(k * 8 + 5, -12); g.lineTo(k * 8 + 1, -12); g.closePath(); g.fill(); }
+    g.strokeStyle = 'rgba(20,20,26,0.6)'; g.lineWidth = 0.8; g.beginPath(); g.moveTo(-6, -22); g.lineTo(-3, -12); g.lineTo(-7, -4); g.stroke();
+  })),
+  crate: () => [makeProp(36, 34, 30, (g) => {
+    g.fillStyle = 'rgba(0,0,0,0.4)'; g.beginPath(); g.ellipse(2, 0, 18, 5, 0, 0, TAU); g.fill();
+    g.beginPath(); g.rect(-15, -24, 26, 24); paint(g, lg(g, -15, -24, 11, 0, [0, '#6a7a4a', 1, '#34402a']), 'rgba(0,0,0,0.7)', 1);
+    g.beginPath(); g.moveTo(11, 0); g.lineTo(16, -3); g.lineTo(16, -27); g.lineTo(11, -24); g.closePath(); paint(g, '#2a3420', null);
+    g.beginPath(); g.moveTo(-15, -24); g.lineTo(-10, -27); g.lineTo(16, -27); g.lineTo(11, -24); g.closePath(); paint(g, '#7a8a58', 'rgba(0,0,0,0.5)', 0.6);
+    g.fillStyle = 'rgba(230,220,180,0.7)'; g.font = '700 7px sans-serif'; g.textAlign = 'center'; g.fillText('M-07', -2, -9);
+    g.strokeStyle = 'rgba(0,0,0,0.4)'; g.lineWidth = 1.2; g.strokeRect(-13, -22, 22, 20);
+  })],
+  lamp: () => [makeProp(34, 80, 76, (g) => {
+    g.fillStyle = 'rgba(0,0,0,0.4)'; g.beginPath(); g.ellipse(0, 0, 8, 3, 0, 0, TAU); g.fill();
+    g.fillStyle = lg(g, -2, 0, 2, 0, [0, '#6a6a74', 1, '#2a2a30']); g.fillRect(-1.6, -66, 3.2, 66);
+    g.beginPath(); g.moveTo(-2, -66); g.lineTo(10, -70); g.lineTo(14, -64); g.lineTo(2, -60); g.closePath(); paint(g, '#3a3a42', 'rgba(0,0,0,0.6)', 0.6);
+    g.fillStyle = '#eaf4ff'; g.beginPath(); g.ellipse(9, -64, 4, 1.6, -0.3, 0, TAU); g.fill();
+  }, { light: { x: 9, y: -60, col: '#cfe4ff', r: 170 }, glowCol: '#dff0ff' })],
+  dummy: () => [makeProp(30, 52, 48, (g) => {
+    g.fillStyle = 'rgba(0,0,0,0.4)'; g.beginPath(); g.ellipse(0, 0, 10, 3, 0, 0, TAU); g.fill();
+    g.fillStyle = '#4a3420'; g.fillRect(-1.5, -26, 3, 26);
+    g.beginPath(); g.ellipse(0, -30, 8, 11, 0, 0, TAU); paint(g, lg(g, -8, -40, 8, -20, [0, '#c8a868', 1, '#7a6030']), 'rgba(0,0,0,0.6)', 0.8);
+    g.fillStyle = '#4a3420'; g.fillRect(-11, -32, 22, 2.5);
+    g.beginPath(); g.arc(0, -44, 5.5, 0, TAU); paint(g, '#b89858', 'rgba(0,0,0,0.6)', 0.8);
+    g.strokeStyle = '#a02020'; g.lineWidth = 1.2; g.beginPath(); g.arc(0, -30, 3.5, 0, TAU); g.stroke(); g.beginPath(); g.arc(0, -30, 1.2, 0, TAU); g.stroke();
+  })],
+  rock: () => [0, 1, 2].map((v) => makeProp(44, 34, 28, (g) => {
+    const rnd = mulberry(40 + v);
+    g.fillStyle = 'rgba(0,0,0,0.4)'; g.beginPath(); g.ellipse(2, 0, 20, 5, 0, 0, TAU); g.fill();
+    const pts = []; for (let i = 0; i < 8; i++) { const a = Math.PI + i / 7 * Math.PI; pts.push([Math.cos(a) * (14 + rnd() * 6), Math.sin(a) * (10 + rnd() * 10 + v * 3)]); }
+    pts.push([12, 1], [-12, 1]);
+    blobPath(g, pts, 0.4); paint(g, lg(g, -10, -24, 10, 0, [0, '#8a8694', 0.5, '#5a5664', 1, '#26242c']), 'rgba(0,0,0,0.6)', 1);
+    g.strokeStyle = 'rgba(10,8,14,0.6)'; g.lineWidth = 0.8; g.beginPath(); g.moveTo(-4, -14); g.lineTo(0, -6); g.lineTo(-2, 0); g.stroke();
+  })),
+  alienplant: () => [['#b060ff', '#6a2aa0'], ['#40f0d0', '#1a7a6a']].map((c, v) => makeProp(40, 74, 70, (g) => {
+    g.fillStyle = 'rgba(0,0,0,0.4)'; g.beginPath(); g.ellipse(0, 0, 14, 4, 0, 0, TAU); g.fill();
+    for (let k = -1; k <= 1; k++) {
+      const h = 40 + (k === 0 ? 20 : 0) + v * 4, sway = k * 8;
+      g.strokeStyle = '#2a3a34'; g.lineWidth = 3.2; g.beginPath(); g.moveTo(k * 4, 0); g.quadraticCurveTo(k * 6, -h * 0.5, sway, -h); g.stroke();
+      g.strokeStyle = '#4a6a5a'; g.lineWidth = 1; g.stroke();
+      g.fillStyle = rg(g, sway - 1, -h - 2, 0, 7, [0, '#ffffff', 0.3, c[0], 1, c[1]]);
+      g.beginPath(); g.ellipse(sway, -h, 5.5, 7, 0, 0, TAU); g.fill();
+    }
+    g.fillStyle = '#2a4a3a'; for (let k = 0; k < 5; k++) { g.beginPath(); g.ellipse(-8 + k * 4, -3, 5, 2, -0.5 + k * 0.25, 0, TAU); g.fill(); }
+  }, { light: { x: 0, y: -50, col: c[0], r: 110 }, glowCol: c[0], flames: [[-8, -44 - v * 4], [0, -64 - v * 4], [8, -44 - v * 4]] })),
+  crystal: () => [['#6ac8ff', '#2a5aa0'], ['#b080ff', '#4a2a9a']].map((c) => makeProp(40, 50, 44, (g) => crystalCluster(g, c), { light: { x: 0, y: -18, col: c[0], r: 120 }, glowCol: c[0], flames: [[0, -26]] })),
+  goldcrystal: () => [makeProp(40, 50, 44, (g) => crystalCluster(g, ['#ffe6a0', '#b08a30']), { light: { x: 0, y: -18, col: '#ffd27a', r: 130 }, glowCol: '#ffe6a0', flames: [[0, -26]] })],
+  wreck: () => [0, 1].map((v) => makeProp(70, 40, 32, (g) => {
+    g.fillStyle = 'rgba(0,0,0,0.45)'; g.beginPath(); g.ellipse(2, 0, 32, 6, 0, 0, TAU); g.fill();
+    g.save(); g.rotate(v ? -0.12 : 0.08);
+    g.beginPath(); g.moveTo(-28, 0); g.lineTo(-24, -14); g.lineTo(-8, -18); g.lineTo(2, -26); g.lineTo(14, -24); g.lineTo(26, -12); g.lineTo(30, 0); g.closePath();
+    paint(g, lg(g, 0, -26, 0, 0, [0, '#5a5048', 0.5, '#3a3430', 1, '#1a1614']), 'rgba(0,0,0,0.7)', 1);
+    g.fillStyle = '#141010'; for (let k = 0; k < 5; k++) { g.beginPath(); g.arc(-20 + k * 10, -3, 3.5, 0, TAU); g.fill(); }
+    g.strokeStyle = '#6a5a4a'; g.lineWidth = 2.4; g.beginPath(); g.moveTo(4, -22); g.lineTo(26, -34); g.stroke();
+    g.fillStyle = 'rgba(160,70,20,0.5)'; g.beginPath(); g.arc(-10, -12, 4, 0, TAU); g.arc(12, -16, 3, 0, TAU); g.fill();
+    g.restore();
+  }, { light: { x: -10, y: -10, col: '#ff7a2a', r: 70, flicker: 1 } })),
+  spikes: () => [0, 1].map((v) => makeProp(50, 60, 54, (g) => {
+    const rnd = mulberry(60 + v);
+    g.fillStyle = 'rgba(0,0,0,0.45)'; g.beginPath(); g.ellipse(0, 0, 22, 5, 0, 0, TAU); g.fill();
+    for (let k = 0; k < 5; k++) {
+      const x = -16 + k * 8 + rnd() * 3, h = 22 + rnd() * 26, lean = (rnd() - 0.5) * 0.6;
+      g.save(); g.translate(x, 0); g.rotate(lean);
+      g.beginPath(); g.moveTo(-4, 0); g.quadraticCurveTo(-2, -h * 0.6, 0, -h); g.quadraticCurveTo(2, -h * 0.6, 4, 0); g.closePath();
+      paint(g, lg(g, -4, 0, 4, 0, [0, '#4a4a58', 0.5, '#8a8aa0', 1, '#262630']), 'rgba(0,0,0,0.7)', 0.8);
+      g.restore();
+    }
+  })),
+  brazier: () => [makeProp(30, 44, 40, (g) => brazier(g, '#3a3036'), { light: { x: 0, y: -26, col: '#ff8a3a', r: 160, flicker: 1 }, glowCol: '#ffb060', flames: [[-3, -30], [3, -32], [0, -34]] })],
+  goldbrazier: () => [makeProp(30, 44, 40, (g) => brazier(g, '#b08a40'), { light: { x: 0, y: -26, col: '#fff0c0', r: 170, flicker: 1 }, glowCol: '#fff4d0', flames: [[-3, -30], [3, -32], [0, -34]] })],
+  banner: () => [makeProp(34, 84, 80, (g) => {
+    g.fillStyle = 'rgba(0,0,0,0.4)'; g.beginPath(); g.ellipse(0, 0, 8, 3, 0, 0, TAU); g.fill();
+    g.fillStyle = lg(g, -2, 0, 2, 0, [0, '#2a2226', 1, '#0e0a0c']); g.fillRect(-1.6, -74, 3.2, 74);
+    g.fillStyle = '#c9a24c'; g.beginPath(); g.arc(0, -75, 2.4, 0, TAU); g.fill(); g.fillRect(-1, -72, 16, 2);
+    g.beginPath(); g.moveTo(1, -70); g.lineTo(15, -70); g.lineTo(15, -36); g.lineTo(8, -42); g.lineTo(1, -36); g.closePath();
+    paint(g, lg(g, 0, -70, 0, -36, [0, '#9a0a1e', 1, '#4a0410']), 'rgba(0,0,0,0.6)', 0.7);
+    g.fillStyle = '#e8c070'; g.beginPath(); g.moveTo(8, -64); g.lineTo(11, -56); g.lineTo(8, -48); g.lineTo(5, -56); g.closePath(); g.fill();
+    g.fillStyle = '#9a0a1e'; g.beginPath(); g.arc(8, -56, 1.6, 0, TAU); g.fill();
+  })],
+  marble: () => [0, 1].map((v) => makeProp(36, 86, 80, (g) => {
+    g.fillStyle = 'rgba(0,0,0,0.3)'; g.beginPath(); g.ellipse(2, 0, 16, 5, 0, 0, TAU); g.fill();
+    g.fillStyle = lg(g, -13, 0, 13, 0, [0, '#f4f0f8', 1, '#a8a4b4']); g.fillRect(-13, -7, 26, 7);
+    const top = v ? -50 : -70;
+    g.beginPath(); g.moveTo(-9, -7); g.lineTo(-9, top); g.lineTo(9, top); g.lineTo(9, -7); g.closePath();
+    paint(g, lg(g, -9, 0, 9, 0, [0, '#ffffff', 0.4, '#dcd8e4', 1, '#9a96a8']), 'rgba(60,50,80,0.5)', 1);
+    g.strokeStyle = 'rgba(120,110,140,0.35)'; g.lineWidth = 1; for (let k = -6; k <= 6; k += 4) { g.beginPath(); g.moveTo(k, -9); g.lineTo(k, top + 2); g.stroke(); }
+    g.fillStyle = '#d8b050'; g.fillRect(-12, top - 5, 24, 5); g.fillRect(-11, -10, 22, 3);
+    if (v) { g.fillStyle = '#c8c4d4'; g.beginPath(); g.moveTo(-9, top - 5); g.lineTo(-4, top - 12); g.lineTo(2, top - 6); g.lineTo(9, top - 10); g.lineTo(9, top - 5); g.fill(); }
+  })),
+  obelisk: () => [makeProp(34, 90, 84, (g) => {
+    g.fillStyle = 'rgba(0,0,0,0.45)'; g.beginPath(); g.ellipse(2, 0, 16, 5, 0, 0, TAU); g.fill();
+    g.beginPath(); g.moveTo(-10, 0); g.lineTo(-7, -70); g.lineTo(0, -80); g.lineTo(7, -70); g.lineTo(10, 0); g.closePath();
+    paint(g, lg(g, -10, 0, 10, 0, [0, '#3a3450', 0.5, '#1c1830', 1, '#0a0814']), 'rgba(0,0,0,0.7)', 1);
+    g.save(); g.globalCompositeOperation = 'lighter'; g.fillStyle = '#b090ff'; g.font = '700 7px serif'; g.textAlign = 'center';
+    'ᚱᛟᛞᚨᛉᚷ'.split('').forEach((r, i) => g.fillText(r, 0, -60 + i * 9)); g.restore();
+  }, { light: { x: 0, y: -40, col: '#9a7aff', r: 120 }, glowCol: '#b090ff', flames: [[0, -58], [0, -40], [0, -22]] })]
+};
+function crystalCluster(g, c) {
+  g.fillStyle = 'rgba(0,0,0,0.4)'; g.beginPath(); g.ellipse(0, 0, 16, 4, 0, 0, TAU); g.fill();
+  const shards = [[-9, 18, -0.4], [0, 32, 0], [8, 22, 0.35], [-3, 14, -0.15], [5, 12, 0.6]];
+  for (const s of shards) {
+    g.save(); g.translate(s[0], 0); g.rotate(s[2]);
+    g.beginPath(); g.moveTo(-4, 0); g.lineTo(-3.5, -s[1] * 0.75); g.lineTo(0, -s[1]); g.lineTo(3.5, -s[1] * 0.75); g.lineTo(4, 0); g.closePath();
+    paint(g, lg(g, -4, 0, 4, -s[1], [0, c[1], 0.6, c[0], 1, '#ffffff']), 'rgba(0,0,0,0.6)', 0.7);
+    g.strokeStyle = 'rgba(255,255,255,0.55)'; g.lineWidth = 0.7; g.beginPath(); g.moveTo(0, -2); g.lineTo(0, -s[1] + 2); g.stroke();
+    g.restore();
+  }
+}
+function brazier(g, metal) {
+  g.fillStyle = 'rgba(0,0,0,0.4)'; g.beginPath(); g.ellipse(0, 0, 10, 3, 0, 0, TAU); g.fill();
+  g.strokeStyle = shade(metal, -0.3); g.lineWidth = 2; g.beginPath(); g.moveTo(-7, 0); g.lineTo(-2, -20); g.moveTo(7, 0); g.lineTo(2, -20); g.moveTo(0, 0); g.lineTo(0, -20); g.stroke();
+  g.beginPath(); g.moveTo(-11, -26); g.quadraticCurveTo(0, -16, 11, -26); g.lineTo(9, -22); g.quadraticCurveTo(0, -14, -9, -22); g.closePath();
+  paint(g, lg(g, 0, -26, 0, -16, [0, shade(metal, 0.2), 1, shade(metal, -0.4)]), 'rgba(0,0,0,0.7)', 0.8);
+  g.fillStyle = '#ffe6a0'; g.beginPath(); g.ellipse(0, -26, 9, 2.2, 0, 0, TAU); g.fill();
+}
+
+function buildBaseProps() {
+  const make = makeProp;
   const P = WORLD.props;
   // Grabsteine (mehrere Varianten)
   const stone = (g, shape, tilt, seed) => {
@@ -2382,22 +2643,45 @@ function buildProps() {
     g.strokeStyle = '#a08050'; g.lineWidth = 1; g.beginPath(); g.moveTo(6, -2); g.lineTo(6, 4); g.moveTo(3, 0.5); g.lineTo(9, 0.5); g.stroke();
     g.restore();
   })];
-  P.list = [
-    ['grave', 10], ['cross', 3], ['tree', 3], ['lantern', 1.3], ['candles', 1.6], ['shrooms', 2], ['bones', 3], ['pillar', 1.5], ['fence', 1.4], ['coffin', 0.7]
-  ];
 }
 
-function buildFog() {
+function buildFogTheme(th) {
   const S = 256, c = mkCanvas(S, S), g = c.getContext('2d');
   const n = tileNoise(S, 4, 71, 4);
   const img = g.createImageData(S, S);
+  const f = th.fog, fa = th.fogA || 1;
   for (let i = 0; i < S * S; i++) {
     const v = smooth(clamp((n[i] - 0.42) * 2.4, 0, 1));
-    img.data[i * 4] = 150; img.data[i * 4 + 1] = 160; img.data[i * 4 + 2] = 200; img.data[i * 4 + 3] = v * 200;
+    img.data[i * 4] = f[0]; img.data[i * 4 + 1] = f[1]; img.data[i * 4 + 2] = f[2]; img.data[i * 4 + 3] = Math.min(255, v * 200 * fa);
   }
   g.putImageData(img, 0, 0);
-  WORLD.fog = c;
+  return c;
 }
+
+/* Thema aktivieren (Boden, Flecken, Requisiten, Nebel, Licht) */
+function setTheme(id) {
+  if (WORLD.theme === id) return;
+  const th = THEMES[id] || THEMES.friedhof;
+  let C = WORLD.cache[id];
+  if (!C) {
+    C = WORLD.cache[id] = {
+      ground: buildGroundTheme(th),
+      patches: th.patches.map((p) => PATCH_MAKERS[p]()),
+      fog: buildFogTheme(th)
+    };
+  }
+  for (const [type] of th.props) if (!WORLD.props[type] && NEW_PROPS[type]) WORLD.props[type] = NEW_PROPS[type]();
+  WORLD.theme = id;
+  WORLD.groundTile = C.ground; WORLD.patches = C.patches; WORLD.fog = C.fog;
+  WORLD.props.list = th.props; WORLD.cluster = th.cluster;
+  WORLD.ambient = th.ambient;
+  _chunkCache.clear();
+}
+// Kompatibilitaet: Start mit dem Friedhof
+function buildGround() { buildBaseProps(); setTheme('friedhof'); }
+function buildPatches() {}
+function buildProps() {}
+function buildFog() {}
 
 /* Requisiten pro Chunk (deterministisch, unendliche Welt) */
 const CHUNK = 420;
@@ -2407,25 +2691,23 @@ function chunkProps(cx, cy) {
   let list = _chunkCache.get(key);
   if (list) return list;
   list = [];
-  const rnd = mulberry(hash2(cx, cy, 5));
-  // Startbereich frei halten
+  const rnd = mulberry(hash2(cx, cy, 5 + (WORLD.theme || '').length));
   const near = Math.abs(cx) <= 0 && Math.abs(cy) <= 0;
   const weights = WORLD.props.list;
   const total = weights.reduce((s, w) => s + w[1], 0);
   const n = near ? 3 : 4 + (rnd() * 5 | 0);
-  // manche Chunks bilden kleine Grabfelder
   const cluster = rnd() < 0.35;
   const clx = rnd() * CHUNK, cly = rnd() * CHUNK;
   for (let i = 0; i < n; i++) {
     let r = rnd() * total, type = weights[0][0];
     for (const w of weights) { r -= w[1]; if (r <= 0) { type = w[0]; break; } }
     let x = cx * CHUNK + rnd() * CHUNK, y = cy * CHUNK + rnd() * CHUNK;
-    if (cluster && type === 'grave') { x = cx * CHUNK + clx + (i % 3) * 38 - 38; y = cy * CHUNK + cly + Math.floor(i / 3) * 44; }
+    if (cluster && type === WORLD.cluster) { x = cx * CHUNK + clx + (i % 3) * 42 - 42; y = cy * CHUNK + cly + Math.floor(i / 3) * 46; }
     if (near && Math.hypot(x, y) < 160) continue;
     const vars = WORLD.props[type];
+    if (!vars) continue;
     list.push({ type, v: vars[(rnd() * vars.length) | 0], x, y, flip: rnd() < 0.5, seed: rnd() * 10 });
   }
-  // Bodenflecken
   const pn = 1 + (rnd() * 2 | 0);
   list.patches = [];
   for (let i = 0; i < pn; i++) list.patches.push({ c: WORLD.patches[(rnd() * WORLD.patches.length) | 0], x: cx * CHUNK + rnd() * CHUNK, y: cy * CHUNK + rnd() * CHUNK, rot: (rnd() - 0.5) * 0.4 });
@@ -3983,6 +4265,7 @@ function doDodge(p) {
 }
 
 /* ---- src/08-enemies.js ---- */
+const SHOT_COL = { soul: '#7dff9a', bell: '#ffa040', acid: '#b8ff3a', spike: '#d8dce8', blood: '#ff3a4e', light: '#ffe6a0', void: '#c08aff' };
 'use strict';
 /* ==========================================================================
    GEGNER — Raster fuer schnelle Abfragen, Nachschub & Wellen, KI,
@@ -4053,15 +4336,17 @@ function randomEnemyNear(x, y, r) {
 /* -------------------------------------------------------- Erzeugen */
 let _eid = 1;
 function makeEnemy(type, x, y, opts) {
+  const role = type;
+  if (GAME.roles && GAME.roles[type]) type = GAME.roles[type];
   const D = ENEMIES[type];
   opts = opts || {};
   const hs = hpScale(GAME.t) * (GAME.diffHp || 1);
   const elite = !!opts.elite;
   const e = {
-    id: _eid++, type, def: D, x, y, kvx: 0, kvy: 0,
+    id: _eid++, type, role: D.role || role, def: D, x, y, kvx: 0, kvy: 0,
     hp: 0, maxHp: 0,
     spd: D.spd * rand(0.9, 1.1) * (1 + Math.min(0.25, GAME.t / 2400)),
-    r: D.r * (elite ? 1.45 : 1), dmg: D.dmg * (1 + GAME.t / 540) * (elite ? 1.5 : 1),
+    r: D.r * (elite ? 1.45 : 1), dmg: D.dmg * (1 + GAME.t / 540) * (elite ? 1.5 : 1) * (GAME.diffDmg || 1),
     mass: D.mass * (elite ? 6 : 1), armor: (D.armor || 0) * (1 + GAME.t / 600),
     scale: D.scale * (elite ? 1.5 : 1), elite,
     face: 1, animT: Math.random() * 10, flash: 0, dead: false, deathT: 0,
@@ -4111,7 +4396,8 @@ function updateSpawns(dt) {
       makeEnemy(pickMix(W.mix), pos[0], pos[1]);
     }
   }
-  while (G.eventIdx < EVENTS.length && EVENTS[G.eventIdx].t <= G.t) runEvent(EVENTS[G.eventIdx++]);
+  const EV = G.events || EVENTS;
+  while (G.eventIdx < EV.length && EV[G.eventIdx].t <= G.t) runEvent(EV[G.eventIdx++]);
 }
 function runEvent(ev) {
   const G = GAME, p = G.p;
@@ -4137,10 +4423,12 @@ function runEvent(ev) {
   } else if (ev.kind === 'miniboss') {
     const pos = spawnPosAround(p.x, p.y);
     const e = makeEnemy('captain', pos[0], pos[1]);
+    if (!ev.text) UI.announce(e.def.name + ' erscheint!', 'boss');
     e.stT = 3; G.mini = e;
     sfx('roar');
   } else if (ev.kind === 'boss') {
     const e = makeEnemy('boss', p.x, p.y - VIEW.h * 0.55);
+    if (!ev.text) UI.announce(e.def.name + ' erscheint!', 'boss');
     e.stT = 2.5; e.state = 'intro';
     G.boss = e; G.bossAlive = true;
     sfx('bell'); sfx('roar'); shake(6);
@@ -4179,7 +4467,7 @@ function updateEnemies(dt) {
     dx /= d; dy /= d;
     let sp = e.spd * e.slowF;
     if (e.stunT > 0 || e.state === 'wind') sp = 0;
-    if (e.type === 'witch') {
+    if (e.role === 'witch') {
       // haelt Abstand und schiesst Seelenfeuer
       if (d < 170) sp *= -0.7; else if (d < 240) sp *= 0.15;
       e.shootT -= edt;
@@ -4191,13 +4479,13 @@ function updateEnemies(dt) {
         const n = e.elite ? 5 : 1;
         for (let i = 0; i < n; i++) {
           const a = Math.atan2(ay, ax) + (i - (n - 1) / 2) * 0.22;
-          enemyShot(e.x + e.face * 12, e.y - 26, Math.cos(a) * 128, Math.sin(a) * 128, e.dmg * 0.85, 'soul');
+          enemyShot(e.x + e.face * 12, e.y - 26, Math.cos(a) * 128, Math.sin(a) * 128, e.dmg * 0.85, e.def.shot || 'soul');
         }
         sfx('enemyShot', 0, 0.1);
       }
       if (e.atkT > 0) e.atkT -= edt;
     }
-    if (e.def.flier && e.type === 'bat') {
+    if (e.def.flier && e.role === 'bat') {
       const w = Math.sin(e.animT * 3 + e.wob) * 0.6;
       const ndx = dx - dy * w, ndy = dy + dx * w; dx = ndx; dy = ndy;
     }
@@ -4261,9 +4549,9 @@ function updateEnemyShots(dt) {
     s.x += s.vx * dt * ts; s.y += s.vy * dt * ts;
     if (s.life <= 0) continue;
     if (dist2(s.x, s.y, p.x, p.y - 14) < (s.r + 9) * (s.r + 9) && p.alive) {
-      if (damagePlayer(s.dmg, s)) { burstSparks(s.x, s.y, 6, s.kind === 'bell' ? '#ffb040' : '#7dff9a'); continue; }
+      if (damagePlayer(s.dmg, s)) { burstSparks(s.x, s.y, 6, SHOT_COL[s.kind] || '#7dff9a'); continue; }
     }
-    addLight(s.x, s.y, 60, s.kind === 'bell' ? '#ffa040' : '#7dff9a', 0.8);
+    addLight(s.x, s.y, 60, SHOT_COL[s.kind] || '#7dff9a', 0.8);
     G.eproj[w++] = s;
   }
   G.eproj.length = w;
@@ -4295,7 +4583,7 @@ function updateBoss(e, dt, rdt) {
   e.bell = Math.max(0, (e.bell || 0) - rdt);
   e.roar = Math.max(0, (e.roar || 0) - rdt * 1.5);
   const enr = e.hp < e.maxHp * 0.5;
-  if (enr && !e.enrage) { e.enrage = true; UI.announce('Vaelgor rast!', 'boss'); sfx('roar'); e.roar = 1; shake(6); }
+  if (enr && !e.enrage) { e.enrage = true; UI.announce(e.def.name.split(',')[0] + ' rast!', 'boss'); sfx('roar'); e.roar = 1; shake(6); }
   const spd = e.def.spd * (enr ? 1.35 : 1);
   const dx = p.x - e.x, dy = p.y - e.y, d = Math.hypot(dx, dy) || 1;
   if (e.stunT > 0) e.stunT -= dt;
@@ -4333,7 +4621,7 @@ function updateBoss(e, dt, rdt) {
         burstAsh(e.tx, e.ty, 16, '#5a4a44');
         for (let i = 0; i < 10; i++) { const a = Math.random() * TAU; spawnPart({ x: e.tx, y: e.ty, z: 5, vx: Math.cos(a) * rand(60, 200), vy: Math.sin(a) * rand(40, 140), vz: rand(100, 220), g: 500, life: 1, size: rand(3, 6), size1: 3, spr: tinted('ash', '#6a6064') }); }
         addDecal(e.tx, e.ty, PART.splat, 60, 0.35, 20);
-        if (enr) for (let i = 0; i < 10; i++) { const a = i / 10 * TAU; enemyShot(e.tx, e.ty - 10, Math.cos(a) * 170, Math.sin(a) * 170, 12, 'bell'); }
+        if (enr) for (let i = 0; i < 10; i++) { const a = i / 10 * TAU; enemyShot(e.tx, e.ty - 10, Math.cos(a) * 170, Math.sin(a) * 170, 12 * (GAME.diffDmg || 1), e.def.bellShot || 'bell'); }
       }
       break;
     }
@@ -4358,7 +4646,7 @@ function updateBoss(e, dt, rdt) {
         e.bells--; e.bellT = 0.7; e.bell = 0.6;
         sfx('bell'); shake(3);
         const n = enr ? 18 : 14, off = Math.random() * TAU;
-        for (let i = 0; i < n; i++) { const a = off + i / n * TAU; enemyShot(e.x + Math.cos(a) * 40, e.y - 60 + Math.sin(a) * 20, Math.cos(a) * 135, Math.sin(a) * 135, 13, 'bell'); }
+        for (let i = 0; i < n; i++) { const a = off + i / n * TAU; enemyShot(e.x + Math.cos(a) * 40, e.y - 60 + Math.sin(a) * 20, Math.cos(a) * 135, Math.sin(a) * 135, 13 * (GAME.diffDmg || 1), e.def.bellShot || 'bell'); }
         fxRing(e.x, e.y - 40, 20, 200, 0.6, '#ffc060', 5);
       }
       if (e.bells <= 0 && e.bellT <= 0) { e.state = 'walk'; e.stT = rand(1.4, 2.2); }
@@ -4400,9 +4688,11 @@ const SRC_NAMES = {
   blutsaat: 'Blutsaat-Explosion', kettenreaktion: 'Kettenreaktion', blutung: 'Blutung', verderbnis: 'Verderbnis', reaktion: 'Reaktionen', nebelgang: 'Nebelspur'
 };
 
-function newRun(heroId) {
+function newRun(heroId, opts) {
   const H = HEROES[heroId];
+  opts = opts || {};
   clearFX();
+  setTheme(opts.story ? opts.story.theme : 'friedhof');
   GAME = {
     state: 'play', t: 0, realT: 0, hero: heroId,
     enemies: [], eproj: [], pickups: [], images: [], timers: [],
@@ -4413,9 +4703,10 @@ function newRun(heroId) {
     boss: null, bossAlive: false, mini: null, won: false, overT: 0,
     rerolls: 1 + (SAVE.meta.wurf || 0), revive: (SAVE.meta.wiedergeburt || 0) > 0,
     stats: { dmg: {}, taken: 0, healed: 0, reactions: 0, ults: 0, fusions: [] },
-    diffHp: 1, diffCount: 1, diffBoss: 1,
+    diffHp: 1, diffCount: 1, diffBoss: 1, diffDmg: 1, crystals: 0,
     later(t, fn) { this.timers.push({ t, fn }); }
   };
+  if (opts.story && typeof storySetup === 'function') storySetup(GAME, opts.story);
   GAME.p = makePlayer(heroId);
   GAME.cam.x = 0; GAME.cam.y = 0;
   if (H.start) giveCard(H.start, true);
@@ -4456,6 +4747,7 @@ function recomputeStats() {
     lifesteal: (ps.lebensraub || 0) * 0.02 + (p.hero === 'liora' ? 0.03 : 0),
     cd: 1
   };
+  if (GAME.statMod) GAME.statMod(st);
   const old = p.st.maxHp;
   p.st = st;
   if (old && st.maxHp > old) p.hp += st.maxHp - old;
@@ -4569,12 +4861,16 @@ function killEnemy(e, src, school) {
   if (Math.random() < (e.elite ? 1 : e.mini ? 1 : 0.035)) dropPickup(e.x + rand(-8, 8), e.y + rand(-8, 8), 'soul', e.elite || e.mini ? 25 : 1);
   if (Math.random() < 0.012 || e.elite) dropPickup(e.x + 10, e.y, 'heal', 1);
   if (Math.random() < 0.0025) dropPickup(e.x, e.y + 10, 'magnet', 1);
-  if (e.mini) { G.miniKilled = true; dropPickup(e.x, e.y, 'chest', 1); G.mini = null; UI.announce('Hauptmann Kharn ist gefallen!', ''); sfx('roar'); shake(6); hitstop(0.08); }
+  if (G.onKill) G.onKill(e);
+  if (e.mini) { G.miniKilled = true; dropPickup(e.x, e.y, 'chest', 1); G.mini = null; UI.announce(e.def.name + ' ist gefallen!', ''); sfx('roar'); shake(6); hitstop(0.08); }
   // Todes-Effekte je nach Art
-  if (e.type === 'bat') { burstBlood(e.x, e.y - 20, 6, 0.7); splat(e.x, e.y, 14); }
-  else if (e.type === 'knight' || e.type === 'captain') { burstSparks(e.x, e.y - 20, 6, '#e8dcc0', 0.8); burstAsh(e.x, e.y - 10, 5, '#6a6258'); }
-  else if (e.type === 'witch') { burstQi(e.x, e.y - 24, 10, 0.8, '#7dff9a'); burstAsh(e.x, e.y - 10, 5, '#3a4a3a'); }
-  else if (e.type === 'brute') { burstBlood(e.x, e.y - 20, 22, 1.3); splat(e.x, e.y, 40); sfx('splat'); shake(2);
+  const gore = D.gore;
+  if (gore === 'light') { burstSparks(e.x, e.y - 20, 10, '#ffe6a0', 0.9); burstQi(e.x, e.y - 20, 6, 0.6, '#fff4d0'); }
+  else if (gore === 'void') { burstShadow(e.x, e.y, 6, 0.8); burstQi(e.x, e.y - 20, 6, 0.6, '#c08aff'); }
+  else if (e.role === 'bat') { burstBlood(e.x, e.y - 20, 6, 0.7); splat(e.x, e.y, 14); }
+  else if (e.role === 'knight' || e.role === 'captain') { burstSparks(e.x, e.y - 20, 6, '#e8dcc0', 0.8); burstAsh(e.x, e.y - 10, 5, '#6a6258'); }
+  else if (e.role === 'witch') { burstQi(e.x, e.y - 24, 10, 0.8, '#7dff9a'); burstAsh(e.x, e.y - 10, 5, '#3a4a3a'); }
+  else if (e.role === 'brute') { burstBlood(e.x, e.y - 20, 22, 1.3); splat(e.x, e.y, 40); sfx('splat'); shake(2);
     for (let i = 0; i < (D.splits || 0); i++) { const a = i / D.splits * TAU; const s = makeEnemy('ghoul', e.x + Math.cos(a) * 20, e.y + Math.sin(a) * 14); s.kvx = Math.cos(a) * 200; s.kvy = Math.sin(a) * 200; } }
   else { burstBlood(e.x, e.y - 16, 7, 0.9); if (Math.random() < 0.5) splat(e.x, e.y, 18); }
   if (school === 'shadow') burstShadow(e.x, e.y, 3, 0.6);
@@ -4605,9 +4901,10 @@ function bloodBurstAt(x, y, r, dmg, src, depth) {
 }
 function bossDefeated(e) {
   const G = GAME;
+  if (G.onKill) G.onKill(e);
   G.bossAlive = false; G.won = true;
   SAVE.stats.bossKills++;
-  UI.announce('VAELGOR IST GEFALLEN', 'boss');
+  UI.announce(e.def.name.split(',')[0].toUpperCase() + ' IST GEFALLEN', 'boss');
   sfx('roar'); sfx('bell'); shake(14); hitstop(0.25);
   G.slowmo = 2.5;
   for (let i = 0; i < 14; i++) GAME.later(i * 0.12, () => { const x = e.x + rand(-50, 50), y = e.y + rand(-100, 0); bloodBurstAt(x, y, 60, 0, 'reaktion'); fxFlash(x, y, 80, '#ff8a3a', 0.3); sfx('nova', 0, 0); });
@@ -4704,9 +5001,10 @@ function collect(q) {
     sfx('gem', Math.min(12, G.gemCombo), 0.03);
     while (G.xp >= G.xpNext) { G.xp -= G.xpNext; G.level++; G.xpNext = xpNeed(G.level); G.pendingLevels++; }
   } else if (q.kind === 'book') { finnEvolve(1); }
+  else if (q.kind === 'crystal') { G.crystals = (G.crystals || 0) + q.v; sfx('gem', 18, 0.03); }
   else if (q.kind === 'soul') { G.souls += q.v; sfx('gem', 14, 0.03); }
   else if (q.kind === 'heal') { healPlayer(p.st.maxHp * 0.3 * (p.hero === 'liora' ? 1.5 : 1)); burstBlood(p.x, p.y - 20, 6, 0.5); }
-  else if (q.kind === 'magnet') { G.magnetAll = true; for (const o of G.pickups) if (o.kind === 'xp') o.magnet = true; sfx('heal'); UI.toast('Mondstein: alle Seelensplitter fliegen zu dir'); }
+  else if (q.kind === 'magnet') { G.magnetAll = true; for (const o of G.pickups) if (o.kind === 'xp') o.magnet = true; sfx('heal'); UI.toast(GAME.story ? 'Mondstein: alle Kristalle und Splitter fliegen zu dir' : 'Mondstein: alle Seelensplitter fliegen zu dir'); }
   else if (q.kind === 'chest') {
     healPlayer(p.st.maxHp * 0.5); G.souls += 40;
     G.pendingLevels += 1; fxRing(p.x, p.y, 10, 140, 0.5, '#ffe6a0', 6); sfx('fusion');
@@ -4922,6 +5220,7 @@ function updateGame(rdt) {
   if (G.gemComboT > 0) { G.gemComboT -= rdt; if (G.gemComboT <= 0) G.gemCombo = 0; }
   AudioSys.musicTick(rdt, clamp(G.alive / 150, 0, 1) * 0.7 + (G.bossAlive ? 0.3 : 0));
   const HH = HEROES[G.hero]; if (HH.onUpdate) HH.onUpdate(dt);
+  if (G.quests && G.p.alive && !G.won) storyQuestTick();
   if (G.pendingLevels > 0 && G.p.alive && !G.won && G.state === 'play') { G.pendingLevels--; openLevelUp(); }
 }
 function openLevelUp() {
@@ -5116,7 +5415,7 @@ function renderLightmap(x0, y0, time, props) {
   g.setTransform(1, 0, 0, 1, 0, 0);
   g.globalCompositeOperation = 'source-over';
   g.globalAlpha = 1;
-  g.fillStyle = AMBIENT; g.fillRect(0, 0, w, h);
+  g.fillStyle = WORLD.ambient || AMBIENT; g.fillRect(0, 0, w, h);
   g.globalCompositeOperation = 'lighter';
   const L = FX.lights;
   for (let i = 0; i < L.length; i++) {
@@ -5179,9 +5478,9 @@ function drawPropGlows(g, props, time) {
 /* ------------------------------------------------------------ Gegner */
 function drawEnemy(g, e, time) {
   if (e.boss) return drawBossEntity(g, e, time);
-  const spr = ENEMY_SPR[e.def.art];
+  const spr = ensureArt(e.def.art);
   const A = ENEMY_ART[e.def.art];
-  const fps = e.type === 'bat' ? 12 : e.type === 'witch' ? 7 : 9 * (e.spd / e.def.spd);
+  const fps = e.role === 'bat' ? 12 : e.role === 'witch' ? 7 : 9 * (e.spd / e.def.spd);
   const frames = spr.frames;
   const fi = Math.floor(e.animT * fps) % frames.length;
   let img = frames[fi];
@@ -5241,13 +5540,13 @@ function drawEnemyGlows(g, G, time) {
       }
     }
     if (e.corruptT > 0 && Math.random() < 0.15 * FXQ) spawnPart({ x: e.x + rand(-6, 6), y: e.y, z: rand(10, 30), vx: 0, vy: 0, vz: 30, g: -10, drag: 1, life: 0.5, size: 5, size1: 9, spr: tinted('spark', '#c0306a'), layer: 1, alpha: 0.7 });
-    if (e.type === 'witch') { g.globalAlpha = 0.8; const s = 22; g.drawImage(glowSprite('#7dff9a'), e.x + e.face * 12 - s / 2, e.y - 22 - s / 2, s, s); }
+    if (e.role === 'witch') { g.globalAlpha = 0.8; const s = 22; g.drawImage(glowSprite(SHOT_COL[e.def.shot] || '#7dff9a'), e.x + e.face * 12 - s / 2, e.y - 22 - s / 2, s, s); }
   }
   g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
 }
 function drawEnemyShots(g, G, time) {
   for (const s of G.eproj) {
-    const col = s.kind === 'bell' ? '#ffa040' : '#7dff9a';
+    const col = SHOT_COL[s.kind] || '#7dff9a';
     const pulse = 1 + Math.sin(time * 20 + s.t * 10) * 0.12;
     const r = s.r * pulse;
     // dunkler Rand = auf jedem Untergrund erkennbar
@@ -5276,7 +5575,7 @@ function drawBossEntity(g, e, time) {
   rg0.setTransform(px, 0, 0, px, S / 2, S * 0.86);
   rg0.lineCap = 'round'; rg0.lineJoin = 'round';
   const dk = e.dead ? clamp(e.deathT / 2.5, 0, 1) : 0;
-  drawBoss(rg0, { t: time, run: e.run || 0, phase: e.phase || 0, slam: e.slam || 0, bell: e.bell || 0, roar: e.roar || 0, enrage: e.enrage, hurt: e.flash > 0 ? 0.3 : 0, dead: dk });
+  (e.def.bossDraw ? BOSS_ART[e.def.bossDraw] : drawBoss)(rg0, { t: time, run: e.run || 0, phase: e.phase || 0, slam: e.slam || 0, bell: e.bell || 0, roar: e.roar || 0, enrage: e.enrage, hurt: e.flash > 0 ? 0.3 : 0, dead: dk });
   rg0.setTransform(1, 0, 0, 1, 0, 0);
   finishSprite(BOSS_CANVAS.raw, { outline: 2.5, rim: e.enrage ? '#ff3a1a' : '#ff8a4a', rimW: 2.5, rimA: 0.7, moonW: 2 }, BOSS_CANVAS.out);
   g.save(); g.translate(e.x, e.y);
@@ -5452,6 +5751,12 @@ function drawPickups(g, G, time) {
       g.fillStyle = rg(g, q.x - 2, y - 2, 0, 8, [0, '#ffffff', 0.4, '#a8c8ff', 1, '#3a4a8a']);
       g.beginPath(); g.arc(q.x, y - 4, 7, 0, TAU); g.fill();
       addLight(q.x, q.y, 70, '#a8c8ff', 0.9);
+    } else if (q.kind === 'crystal') { // Bestienkristall
+      g.save(); g.translate(q.x, y - 2); g.rotate(0.2);
+      g.fillStyle = lg(g, -4, -8, 4, 4, [0, '#ffffff', 0.4, '#6ac8ff', 1, '#1a4a8a']);
+      g.beginPath(); g.moveTo(0, -9); g.lineTo(4, -2); g.lineTo(0, 5); g.lineTo(-4, -2); g.closePath(); g.fill();
+      g.strokeStyle = '#0a1a3a'; g.lineWidth = 1; g.stroke(); g.restore();
+      addLight(q.x, q.y, 50, '#6ac8ff', 0.8);
     } else if (q.kind === 'book') { // das Buch: schwebender Foliant mit Blutrunen und Lichtsaeule
       const by = y - 10 + Math.sin(time * 2) * 3;
       g.save(); g.globalCompositeOperation = 'lighter';
@@ -5957,7 +6262,7 @@ const UI = {
       <div class="setrow"><span>Bildschirmwackeln</span><input type="range" min="0" max="1.5" step="0.1" value="${s.shake}" id="rshk"></div>
       <div class="setrow"><span>Schadenszahlen</span><div class="toggle interactive ${s.dmgNumbers ? 'on' : ''}" data-act="toggle" data-k="dmgNumbers"></div></div>
       <div class="setrow"><span>Grafikqualität</span><button class="btn small" data-act="quality">${s.quality}</button></div>
-      <div class="setrow"><span>Testmodus: alle Helden frei<br><small style="color:var(--dim)">für die Probeversion. Aus = Helden durch Spielen freischalten.</small></span><div class="toggle interactive ${s.testUnlock ? 'on' : ''}" data-act="toggle" data-k="testUnlock"></div></div>
+      <div class="setrow"><span>Testmodus: alles frei<br><small style="color:var(--dim)">Helden, Kapitel und Finns Formen frei wählbar. Aus = alles durch Spielen freischalten.</small></span><div class="toggle interactive ${s.testUnlock ? 'on' : ''}" data-act="toggle" data-k="testUnlock"></div></div>
       <div class="btns"><button class="btn" data-act="title">Zurück</button><button class="btn ghost small" data-act="reset">Fortschritt löschen</button></div></div>`, 'settings', 'dim');
     const bind = (id, k) => d.querySelector('#' + id).addEventListener('input', (e) => { SAVE.settings[k] = +e.target.value; AudioSys.applyVolumes(); writeSave(); });
     bind('rsfx', 'sfx'); bind('rmus', 'music'); bind('rshk', 'shake');
@@ -6531,6 +6836,794 @@ function drawFinn(g, P, H) {
 HERO_ART.finn = { spec: SPEC_FINN, draw: drawFinn, rim: '#ff4a5a', h: 64 };
 HERO_PAL.finn = {};
 
+/* ---- src/14-story-art.js ---- */
+'use strict';
+/* ==========================================================================
+   STORY-GEGNER — Bestien (Vierbeiner in Stufen), Dalki (mit 1–8 Stacheln),
+   Vampire (umgefaerbte Heldenfiguren), Himmlische und Goetter.
+   Werden erst beim Kapitelstart vorgerendert (spart Ladezeit & Speicher).
+   ========================================================================== */
+
+/* ---------------------------------------------------------------- Vierbeiner */
+function drawQuad(g, ph, o, Q) {
+  const C = Q.cols;
+  const L = Q.L, H = Q.H, B = Q.bulk;
+  const rear = (o && o.rear) || 0;          // Aufbaeumen (Boss-Ausholen)
+  const atk = (o && o.atk) || 0;
+  const t = ph * TAU;
+  const bob = Math.abs(Math.sin(t)) * 1.2;
+  g.save();
+  g.translate(0, -bob);
+  if (rear) { g.translate(-L * 0.3, 0); g.rotate(-rear * 0.45); g.translate(L * 0.3, 0); }
+  const by = -H - B * 0.45;
+  const legs = [
+    { x: L * 0.3, p: t, near: true }, { x: -L * 0.32, p: t + Math.PI, near: true },
+    { x: L * 0.26, p: t + Math.PI, near: false }, { x: -L * 0.36, p: t, near: false }
+  ];
+  const leg = (lg0, front) => {
+    const dk = lg0.near ? 0 : -0.35;
+    const hx = lg0.x, hy = by + B * 0.25;
+    const stride = L * 0.16, lift = H * 0.35;
+    const fx = hx + Math.sin(lg0.p) * stride, fy = -Math.max(0, Math.cos(lg0.p)) * lift + (rear && front ? -H * rear * 0.8 : 0);
+    const k = ik(hx, hy, fx, fy, H * 0.62, H * 0.62, front ? 1 : -1);
+    limb(g, hx, hy, k[0], k[1], Q.legW, Q.legW * 0.8); paint(g, shade(C.body, dk), 'rgba(0,0,0,0.6)', 0.6);
+    limb(g, k[0], k[1], k[2], k[3], Q.legW * 0.8, Q.legW * 0.6); paint(g, shade(C.bodyD, dk), 'rgba(0,0,0,0.6)', 0.6);
+    g.fillStyle = shade(C.horn, dk);
+    for (let c = -1; c <= 1; c++) { g.beginPath(); g.moveTo(k[2] + c * 1.2, k[3]); g.lineTo(k[2] + c * 1.2 + 2.4, k[3] + 0.6); g.lineTo(k[2] + c * 1.2 + 0.6, k[3] - 1.4); g.fill(); }
+  };
+  leg(legs[2], true); leg(legs[3], false);
+  // Schwanz
+  if (Q.tail) {
+    const tp = []; for (let i = 0; i <= 5; i++) tp.push([-L * 0.5 - i * Q.tail * 0.2, by - B * 0.1 + Math.sin(t * 2 + i) * i * 0.6 - i * 0.8]);
+    ribbon(g, tp, (s) => B * 0.18 * (1 - s)); paint(g, C.bodyD, 'rgba(0,0,0,0.5)', 0.5);
+  }
+  // Koerper
+  g.beginPath(); g.ellipse(0, by, L * 0.55, B * 0.55, 0, 0, TAU);
+  paint(g, lg(g, 0, by - B * 0.55, 0, by + B * 0.55, [0, C.bodyL, 0.45, C.body, 1, C.bodyD]), 'rgba(0,0,0,0.6)', 0.8);
+  g.beginPath(); g.ellipse(L * 0.05, by + B * 0.3, L * 0.4, B * 0.22, 0, 0, TAU); g.fillStyle = rgba(C.belly, 0.7); g.fill();
+  // Panzerplatten
+  if (Q.plates) for (let i = 0; i < Q.plates; i++) {
+    const x = -L * 0.4 + i * (L * 0.8 / (Q.plates - 1 || 1));
+    g.beginPath(); g.ellipse(x, by - B * 0.35, L * 0.14, B * 0.28, 0, Math.PI, 0);
+    paint(g, lg(g, x, by - B * 0.6, x, by - B * 0.2, [0, shade(C.horn, 0.2), 1, shade(C.horn, -0.4)]), 'rgba(0,0,0,0.6)', 0.6);
+  }
+  // Rueckenstacheln
+  for (let i = 0; i < (Q.spikes || 0); i++) {
+    const x = -L * 0.35 + i * (L * 0.7 / Math.max(1, Q.spikes - 1)), y = by - B * 0.5 + Math.abs(x) * 0.08;
+    g.beginPath(); g.moveTo(x - 2, y + 1); g.lineTo(x - 1, y - B * 0.45 - (i % 2) * 2); g.lineTo(x + 2, y + 1); g.closePath();
+    g.fillStyle = lg(g, x, y, x, y - B * 0.5, [0, C.horn, 1, '#ffffff']); g.fill();
+  }
+  // leuchtende Flecken
+  if (C.glow) for (let i = 0; i < 4; i++) { const x = -L * 0.3 + i * L * 0.18, y = by - B * 0.1 + (i % 2) * 3; glowDot(g, x, y, 3.5, C.glow, 0.7); }
+  leg(legs[0], true); leg(legs[1], false);
+  // Kopf
+  g.save(); g.translate(L * 0.52, by - B * 0.2); g.rotate(-0.1 + Math.sin(t) * 0.05 - atk * 0.2);
+  const hs = Q.head, jaw = 1 + atk * 3 + Math.sin(t * 2) * 0.6;
+  if (hs === 'toad') {
+    g.beginPath(); g.ellipse(4, 0, B * 0.5, B * 0.36, 0, 0, TAU); paint(g, lg(g, 0, -B * 0.3, 0, B * 0.3, [0, C.bodyL, 1, C.body]), 'rgba(0,0,0,0.6)', 0.7);
+    g.fillStyle = '#2a0a0a'; g.beginPath(); g.ellipse(6, B * 0.12, B * 0.38, 1 + jaw * 0.8, 0, 0, TAU); g.fill();
+    eye(g, 2, -B * 0.3, 1.6, C.eye); eye(g, 8, -B * 0.28, 1.4, C.eye);
+  } else {
+    const len = hs === 'rhino' ? B * 0.75 : B * 0.95;
+    g.beginPath(); g.moveTo(-3, -B * 0.35); g.quadraticCurveTo(len * 0.5, -B * 0.42, len, -B * 0.08); g.lineTo(len, 0.5); g.lineTo(2, B * 0.25); g.closePath();
+    paint(g, lg(g, 0, -B * 0.4, 0, B * 0.2, [0, C.bodyL, 1, C.body]), 'rgba(0,0,0,0.6)', 0.7);
+    g.beginPath(); g.moveTo(2, B * 0.18); g.lineTo(len * 0.95, 0.5 + jaw); g.lineTo(len * 0.8, B * 0.16 + jaw); g.closePath(); paint(g, C.bodyD, 'rgba(0,0,0,0.6)', 0.5);
+    g.fillStyle = '#fff4e0'; for (let k = 0; k < 4; k++) { const x = len * 0.35 + k * len * 0.16; g.beginPath(); g.moveTo(x, 0.4); g.lineTo(x + 0.8, 2 + jaw * 0.3); g.lineTo(x + 1.6, 0.4); g.fill(); }
+    eye(g, len * 0.4, -B * 0.22, 1.3, C.eye);
+    if (hs === 'wolf' || hs === 'king') { g.beginPath(); g.moveTo(0, -B * 0.3); g.lineTo(-2, -B * 0.75); g.lineTo(4, -B * 0.36); g.closePath(); paint(g, C.bodyD, null); }
+    if (hs === 'rhino') { g.beginPath(); g.moveTo(len * 0.7, -B * 0.2); g.quadraticCurveTo(len * 0.95, -B * 0.7, len * 1.05, -B * 0.95); g.quadraticCurveTo(len * 0.9, -B * 0.4, len * 0.95, -B * 0.1); g.closePath(); paint(g, lg(g, 0, 0, 0, -B, [0, C.horn, 1, '#ffffff']), 'rgba(0,0,0,0.6)', 0.5); }
+    if (hs === 'king') { for (let k = 0; k < 3; k++) { g.beginPath(); g.moveTo(-1 + k * 4, -B * 0.35); g.quadraticCurveTo(-6 + k * 3, -B * 0.9, -10 + k * 4, -B * 1.1); g.quadraticCurveTo(-4 + k * 4, -B * 0.6, 2 + k * 4, -B * 0.33); g.closePath(); paint(g, lg(g, 0, 0, 0, -B, [0, C.horn, 1, '#ffffff']), 'rgba(0,0,0,0.6)', 0.5); } }
+  }
+  g.restore();
+  g.restore();
+}
+
+/* ---------------------------------------------------------------- Dalki */
+const SPEC_DALKI = { hipY: -27, torso: 22, headOff: 7.5, shoulderW: 15, legL: 13, legL2: 13.5, armL: 12, armL2: 12, stride: 7, lift: 3.5, lean: 0.18, shoulderDrop: 4, hipSpread: 1.4, stance: 1.4, armRest: 0.25 };
+function drawDalki(g, ph, o, D) {
+  const C = D.cols, n = D.spikes || 1;
+  const st = { t: ph * 2, run: o && o.idle ? 0.2 : 1, phase: ph * TAU, cast: o && o.atk ? 1 : 0, aim: -0.6 };
+  const P = makePose(SPEC_DALKI, st);
+  const spike = (x, y, a, len, w) => {
+    g.save(); g.translate(x, y); g.rotate(a);
+    g.beginPath(); g.moveTo(-w, 0); g.quadraticCurveTo(-w * 0.3, -len * 0.6, 0, -len); g.quadraticCurveTo(w * 0.3, -len * 0.6, w, 0); g.closePath();
+    paint(g, lg(g, -w, 0, w, -len, [0, C.spikeD, 0.6, C.spike, 1, '#ffffff']), 'rgba(0,0,0,0.7)', 0.5);
+    g.restore();
+  };
+  // Rueckenstacheln (hinter dem Koerper)
+  const back = [[-4, -18, -1.1, 14], [-5, -12, -1.3, 12], [-3, -6, -1.45, 10], [-5, -22, -0.8, 12]];
+  g.save(); g.translate(P.hipX, P.hipY); g.rotate(P.lean);
+  for (let i = 0; i < Math.min(n, 4); i++) spike(back[i][0], back[i][1], back[i][2], back[i][3] * (D.big ? 1.2 : 1), 2.4);
+  g.restore();
+  const leg = (L, dk) => {
+    limb(g, L.hx, L.hy, L.kx, L.ky, 4, 3.2); paint(g, lg(g, L.hx, L.hy, L.kx, L.ky, [0, shade(C.skinL, dk), 1, shade(C.skin, dk)]), 'rgba(0,0,0,0.6)', 0.7);
+    limb(g, L.kx, L.ky, L.fx, L.fy - 1.5, 3.2, 2.6); paint(g, shade(C.skinD, dk), 'rgba(0,0,0,0.6)', 0.7);
+    g.beginPath(); g.moveTo(L.fx - 3, L.fy - 2.5); g.lineTo(L.fx + 5, L.fy - 1); g.lineTo(L.fx + 5.5, L.fy + 0.2); g.lineTo(L.fx - 3.2, L.fy + 0.2); g.closePath(); paint(g, shade(C.skinD, dk - 0.1), null);
+  };
+  const arm = (A, dk, front) => {
+    limb(g, A.sx, A.sy, A.ex, A.ey, 4, 3.4); paint(g, lg(g, A.sx, A.sy, A.ex, A.ey, [0, shade(C.skinL, dk), 1, shade(C.skin, dk)]), 'rgba(0,0,0,0.6)', 0.7);
+    limb(g, A.ex, A.ey, A.hx, A.hy, 3.4, 3); paint(g, shade(C.skin, dk - 0.05), 'rgba(0,0,0,0.6)', 0.7);
+    g.beginPath(); g.arc(A.hx, A.hy, 3.2, 0, TAU); paint(g, shade(C.skinD, dk), 'rgba(0,0,0,0.6)', 0.6);
+    if (D.fur) { g.fillStyle = shade(C.horn || '#e8e0d0', dk); for (let k = -1; k <= 1; k++) { g.beginPath(); g.moveTo(A.hx + 2, A.hy + k * 1.5); g.lineTo(A.hx + 6, A.hy + k * 2.2 + 1); g.lineTo(A.hx + 2, A.hy + k * 1.5 + 1); g.fill(); } }
+    if (n >= 5 && front) spike(A.ex, A.ey, -2.2, 8, 1.6);
+  };
+  leg(P.legB, -0.35); arm(P.armB, -0.35, false);
+  g.save(); g.translate(P.hipX, P.hipY); g.rotate(P.lean);
+  const T = SPEC_DALKI.torso;
+  g.beginPath(); g.moveTo(-6.5, 1); g.bezierCurveTo(-10, -T * 0.4, -11, -T * 0.85, -7, -T - 1); g.lineTo(8, -T - 1); g.bezierCurveTo(12, -T * 0.7, 9, -T * 0.35, 6.5, 1); g.closePath();
+  paint(g, lg(g, -8, -T, 8, 0, [0, C.skinL, 0.4, C.skin, 1, C.skinD]), 'rgba(0,0,0,0.6)', 0.8);
+  // Muskelzeichnung
+  g.strokeStyle = rgba('#000000', 0.3); g.lineWidth = 0.7;
+  g.beginPath(); g.moveTo(1, -T + 2); g.lineTo(1, -4); g.moveTo(-5, -T * 0.62); g.quadraticCurveTo(1, -T * 0.52, 8, -T * 0.64); g.moveTo(-3, -T * 0.35); g.lineTo(6, -T * 0.35); g.stroke();
+  if (D.fur) { g.fillStyle = C.fur; for (let k = 0; k < 7; k++) { g.beginPath(); g.moveTo(-8 + k * 2.4, -T - 1); g.lineTo(-9 + k * 2.4, -T + 5 + (k % 2) * 2); g.lineTo(-6 + k * 2.4, -T - 1); g.fill(); } }
+  // Lendenschurz / Riemen
+  g.fillStyle = C.cloth; g.beginPath(); g.moveTo(-6.5, -2); g.lineTo(6.5, -2); g.lineTo(5, 8); g.lineTo(0, 6); g.lineTo(-5, 8); g.closePath(); g.fill();
+  if (D.armor) { g.strokeStyle = '#1a1414'; g.lineWidth = 1.6; g.beginPath(); g.moveTo(-7, -T + 1); g.lineTo(7, -4); g.stroke(); }
+  g.restore();
+  leg(P.legF, 0);
+  // Kopf: kahl, schwere Brauen, rote Augen, ab 3 Stacheln Kopfstachel
+  g.save(); g.translate(P.headX + 1, P.headY + 2); g.rotate(P.headA * 0.5);
+  if (n >= 3) spike(-2, -5, -0.7, 8 + n, 1.8);
+  if (D.fur) { g.beginPath(); g.moveTo(-5, 4); g.quadraticCurveTo(-8, -4, -2, -7); g.quadraticCurveTo(-8, -1, -6, 5); g.closePath(); paint(g, C.fur, null); }
+  g.beginPath(); g.moveTo(-4.5, -4); g.quadraticCurveTo(0, -7.5, 4, -4.8); g.lineTo(5.2, -1.2); g.lineTo(D.fur ? 9 : 5.5, D.fur ? 1 : 0.8); g.lineTo(4.5, 3.8); g.quadraticCurveTo(0, 6, -4, 3); g.closePath();
+  paint(g, lg(g, 0, -7, 0, 5, [0, C.skinL, 1, C.skin]), 'rgba(0,0,0,0.7)', 0.6);
+  g.fillStyle = rgba('#000000', 0.35); g.fillRect(0.5, -3.4, 5, 1.2);
+  eye(g, 3, -1.8, 0.95, C.eye);
+  g.fillStyle = '#f4ecd6'; for (let k = 0; k < 3; k++) { g.beginPath(); g.moveTo(1.5 + k * 1.3, 2.4); g.lineTo(2 + k * 1.3, 3.8); g.lineTo(2.5 + k * 1.3, 2.4); g.fill(); }
+  g.restore();
+  // Schulterstacheln
+  if (n >= 4) { spike(P.shF[0] - 1, P.shF[1] - 2, -0.4, 10, 2); }
+  if (n >= 6) { spike(P.shB[0], P.shB[1] - 2, -0.9, 10, 2); spike(P.shF[0] + 2, P.shF[1] - 1, 0.2, 9, 1.8); }
+  if (n >= 7) spike(P.neckX - 2, P.neckY - 2, -1.2, 13, 2.2);
+  if (n >= 8) spike(P.neckX + 1, P.neckY - 3, -0.2, 14, 2.4);
+  arm(P.armF, 0, true);
+}
+
+/* ---------------------------------------------------------------- Heldenfiguren als Gegner */
+function heroAsEnemy(heroId, look) {
+  return (g, ph, o) => {
+    const art = HERO_ART[heroId];
+    const P = makePose(art.spec, { t: ph * 2, run: o && o.idle ? 0.2 : 1, phase: ph * TAU, cast: o && o.atk ? 1 : 0, aim: 0.1 });
+    art.draw(g, P, look || {});
+  };
+}
+// Palettenwechsel waehrend des Malens (fuer Varianten derselben Figur)
+function withPal(pairs, fn) {
+  const saved = pairs.map(([obj, ov]) => { const old = {}; for (const k in ov) old[k] = obj[k]; Object.assign(obj, ov); return [obj, old]; });
+  try { return fn(); } finally { for (const [obj, old] of saved) Object.assign(obj, old); }
+}
+
+/* ---------------------------------------------------------------- Registrierung */
+const QCOL = {
+  grau: { body: '#6a6e62', bodyL: '#9aa08e', bodyD: '#3a3e34', belly: '#8a8a78', eye: '#ffd24a', horn: '#d8d0bc' },
+  panzer: { body: '#5a5048', bodyL: '#8a7c6a', bodyD: '#2e2822', belly: '#7a6a5a', eye: '#ff7a3a', horn: '#b0a490' },
+  kroete: { body: '#4a6a3a', bodyL: '#7a9a5a', bodyD: '#24361c', belly: '#b8c090', eye: '#ffea6a', horn: '#c8d0a0', glow: '#9aff5a' },
+  wolfK: { body: '#3a3440', bodyL: '#6a6070', bodyD: '#1a161e', belly: '#5a5060', eye: '#ff3a3a', horn: '#e8e0d0' },
+  alien: { body: '#3a2a5a', bodyL: '#6a4a9a', bodyD: '#1a1030', belly: '#5a4a7a', eye: '#5affe0', horn: '#c8b8ff', glow: '#5affe0' },
+  alienK: { body: '#2a3a5a', bodyL: '#4a6a9a', bodyD: '#10182e', belly: '#4a5a7a', eye: '#ff5ae0', horn: '#b8e8ff', glow: '#ff5ae0' },
+  gold: { body: '#b8a070', bodyL: '#f0e0b0', bodyD: '#6a5a30', belly: '#fff4d8', eye: '#ffffff', horn: '#fff0c0', glow: '#fff0a0' },
+  void: { body: '#2a2046', bodyL: '#5a4a8a', bodyD: '#100a20', belly: '#4a3a70', eye: '#c08aff', horn: '#e0d0ff', glow: '#9a6aff' }
+};
+const DCOL = {
+  grau: { skin: '#7c808e', skinL: '#aeb2c0', skinD: '#44475a', spike: '#c8cad8', spikeD: '#4a4c5a', eye: '#ff2a2a', cloth: '#1a1414' },
+  wolf: { skin: '#6e6a74', skinL: '#a09aa8', skinD: '#3a3640', spike: '#d8d0e0', spikeD: '#4a4250', eye: '#ffb02a', cloth: '#1a1010', fur: '#3a302c', horn: '#e8e0d0' }
+};
+function quadArt(Q, box, rim) { return { draw: (g, ph, o) => drawQuad(g, ph, o, Q), frames: 8, box, anchor: 0.86, rim, h: Q.H + Q.bulk * 1.2 }; }
+function dalkiArt(D, box, rim) { return { draw: (g, ph, o) => drawDalki(g, ph, o, D), frames: 8, box: box || 80, anchor: 0.82, rim: rim || '#ff5a5a', h: 60 }; }
+function heroArt(heroId, pal, look, rim, box) { return { draw: (g, ph, o) => withPal(pal, () => heroAsEnemy(heroId, look)(g, ph, o)), frames: 8, box: box || 120, anchor: 0.78, rim, h: 64 }; }
+function palArt(baseId, pal, rim) { const A = ENEMY_ART[baseId]; return Object.assign({}, A, { draw: (g, ph, o) => withPal(pal, () => A.draw(g, ph, o)), rim: rim || A.rim }); }
+
+Object.assign(ENEMY_ART, {
+  // Kapitel 1: Akademie — Basis- & Mittelstufen-Bestien
+  q_basis: quadArt({ L: 26, H: 12, bulk: 14, legW: 2.4, head: 'wolf', tail: 8, cols: QCOL.grau }, 64, '#c8ff9a'),
+  q_panzer: quadArt({ L: 34, H: 12, bulk: 20, legW: 3.6, head: 'rhino', plates: 3, cols: QCOL.panzer }, 84, '#ffb07a'),
+  q_kroete: quadArt({ L: 26, H: 8, bulk: 18, legW: 3, head: 'toad', cols: QCOL.kroete }, 68, '#c8ff7a'),
+  q_mutter: quadArt({ L: 40, H: 14, bulk: 26, legW: 4, head: 'toad', spikes: 5, cols: QCOL.kroete }, 96, '#c8ff7a'),
+  q_fort: quadArt({ L: 40, H: 18, bulk: 22, legW: 4, head: 'king', spikes: 4, tail: 12, cols: QCOL.wolfK }, 100, '#ff5a5a'),
+  bat_braun: palArt('bat', [[EPAL.bat, { fur: '#3a2a1a', furL: '#6a4a2a', wing: '#4a3a24', wingL: '#7a5a34', eye: '#ffd24a' }]], '#ffd27a'),
+  // Kapitel 2: Bestien-Planet
+  q_alien: quadArt({ L: 28, H: 13, bulk: 15, legW: 2.4, head: 'wolf', tail: 10, spikes: 3, cols: QCOL.alien }, 66, '#9a7aff'),
+  q_alienP: quadArt({ L: 36, H: 13, bulk: 22, legW: 3.8, head: 'rhino', plates: 4, cols: QCOL.alienK }, 90, '#7ac8ff'),
+  q_spore: quadArt({ L: 26, H: 8, bulk: 18, legW: 3, head: 'toad', spikes: 3, cols: QCOL.alien }, 70, '#b07aff'),
+  q_alienM: quadArt({ L: 42, H: 15, bulk: 27, legW: 4.2, head: 'toad', spikes: 6, cols: QCOL.alienK }, 100, '#7ac8ff'),
+  q_koenig: quadArt({ L: 46, H: 20, bulk: 26, legW: 4.6, head: 'king', spikes: 6, tail: 14, cols: QCOL.alienK }, 116, '#ff5ae0'),
+  bat_alien: palArt('bat', [[EPAL.bat, { fur: '#2a1a4a', furL: '#5a3a8a', wing: '#3a2a6a', wingL: '#6a4aaa', eye: '#5affe0' }]], '#9a7aff'),
+  // Kapitel 3 & 5: Dalki
+  dalki1: dalkiArt({ spikes: 1, cols: DCOL.grau }),
+  dalki2: dalkiArt({ spikes: 2, cols: DCOL.grau }),
+  dalki3: dalkiArt({ spikes: 3, cols: DCOL.grau, armor: true }),
+  dalki5: dalkiArt({ spikes: 5, cols: DCOL.grau, armor: true, big: true }, 90),
+  dalki6: dalkiArt({ spikes: 6, cols: DCOL.grau, armor: true, big: true }, 96),
+  dalkiW: dalkiArt({ spikes: 4, cols: DCOL.wolf, fur: true }, 84, '#ffb02a'),
+  bat_aas: palArt('bat', [[EPAL.bat, { fur: '#2a2420', furL: '#5a4a40', wing: '#3a302a', wingL: '#6a5a4a', eye: '#ff6a2a' }]], '#ff8a5a'),
+  // Kapitel 4: Vampir-Siedlung (Heldenfiguren umgefaerbt)
+  v_wache: heroArt('nyx', [[HERO_PAL.nyx, { cloak: '#2a1418', cloakL: '#5a2a32', cloakD: '#100608', scarf: '#6a0a18', scarfL: '#ff3a4e', eye: '#ff3a4e', rim: '#ff3a4e' }]], { flow: 0.2 }, '#ff3a4e', 110),
+  v_ritter: heroArt('vorian', [[HERO_PAL.vorian, { armor: '#2a2a32', armorL: '#5a5a66', red: '#6a0a1a', redL: '#c0183a', hair: '#1a1418' }]], { glow: 0.4 }, '#ff3a4e', 120),
+  v_magier: heroArt('liora', [[HERO_PAL.liora, { coat: '#3a0a2a', coatL: '#7a1a5a', coatD: '#1a0410', hair: '#e8e0e8', hairL: '#ffffff' }]], { rage: 0.5 }, '#ff5ab0', 110),
+  bat_blut: palArt('bat', [], '#ff5a6a'),
+  v_thrall: palArt('brute', [[EPAL.brute, { skin: '#9a8a90', skinL: '#d0c4c8', skinD: '#4a3a40', eye: '#ff2a3a' }]], '#ff5a6a'),
+  // Kapitel 6: Himmelsebene
+  h_juenger: heroArt('shen', [[HERO_PAL.shen, { robe: '#d8d0b8', robeL: '#ffffff', robeD: '#9a9278', sash: '#c9a24c', sashL: '#ffe6a0', hat: '#e8d8a0', hatL: '#fff4d0', hatD: '#9a8a50', eye: '#ffe6a0', rim: '#ffe6a0' }]], { qi: 0.6 }, '#ffe6a0', 110),
+  h_ritter: palArt('knight', [[EPAL.knight, { iron: '#b8a878', ironL: '#fff0c8', ironD: '#6a5a30', bone: '#ffffff', eye: '#ffe6a0', rust: '#d8b050', wood: '#e8d8b0' }]], '#ffe6a0'),
+  h_seherin: palArt('witch', [[EPAL.witch, { robe: '#d8d4e0', robeL: '#ffffff', robeD: '#8a8698', skin: '#fff0e0', flame: '#ffe6a0', eye: '#ffd27a' }]], '#ffe6a0'),
+  bat_licht: palArt('bat', [[EPAL.bat, { fur: '#d8d0b0', furL: '#ffffff', wing: '#e8d8a0', wingL: '#fff8e0', eye: '#ffb040' }]], '#ffe6a0'),
+  h_koloss: palArt('brute', [[EPAL.brute, { skin: '#d8c8a0', skinL: '#fff4d8', skinD: '#8a7a50', stitch: '#c9a24c', eye: '#ffffff' }]], '#ffe6a0'),
+  h_waechter: palArt('captain', [[EPAL.captain, { iron: '#c8b890', ironL: '#fff4d8', ironD: '#6a5a30', cape: '#f4eee4', capeD: '#b0a898', eye: '#ffe6a0', gold: '#ffe6a0' }]], '#ffe6a0'),
+  // Kapitel 7: Reich der Goetter
+  q_void: quadArt({ L: 30, H: 13, bulk: 16, legW: 2.6, head: 'wolf', tail: 12, spikes: 4, cols: QCOL.void }, 70, '#c08aff'),
+  q_voidP: quadArt({ L: 38, H: 14, bulk: 23, legW: 4, head: 'rhino', plates: 4, cols: QCOL.void }, 92, '#c08aff'),
+  g_seherin: palArt('witch', [[EPAL.witch, { robe: '#2a2046', robeL: '#5a4a8a', robeD: '#0a0614', skin: '#c8b8ff', flame: '#c08aff', eye: '#ffe6a0' }]], '#c08aff'),
+  bat_void: palArt('bat', [[EPAL.bat, { fur: '#1a1030', furL: '#4a3a7a', wing: '#2a1a5a', wingL: '#6a4aaa', eye: '#ffe6a0' }]], '#c08aff'),
+  g_ritter: palArt('knight', [[EPAL.knight, { iron: '#2a2046', ironL: '#6a5a9a', ironD: '#0a0616', eye: '#ffe6a0', bone: '#e0d8ff' }]], '#c08aff'),
+  g_diener: palArt('captain', [[EPAL.captain, { iron: '#2a2046', ironL: '#6a5a9a', ironD: '#0a0616', cape: '#4a2a8a', capeD: '#140a2a', eye: '#ffe6a0', gold: '#ffe6a0' }]], '#c08aff')
+});
+
+/* ---------------------------------------------------------------- Bosse (live gemalt) */
+const BOSS_ART = {
+  // Kapitel 1: Fortgeschrittene Bestie (gross)
+  bestieF: (g, st) => { g.scale(2.4, 2.4); drawQuad(g, (st.t * 0.9) % 1, { rear: Math.min(1, st.slam || 0), atk: st.roar || 0 }, { L: 40, H: 18, bulk: 22, legW: 4, head: 'king', spikes: 5, tail: 12, cols: QCOL.wolfK }); },
+  // Kapitel 2: Kaiserstufen-Bestie
+  bestieK: (g, st) => { g.scale(2.9, 2.9); drawQuad(g, (st.t * 0.8) % 1, { rear: Math.min(1, st.slam || 0), atk: st.roar || 0 }, { L: 48, H: 20, bulk: 28, legW: 5, head: 'king', spikes: 8, tail: 16, plates: 3, cols: QCOL.alienK }); },
+  // Kapitel 3: Dalki-Kommandant (7 Stacheln)
+  dalkiK: (g, st) => { g.scale(3, 3); drawDalki(g, (st.t * 0.6) % 1, { atk: st.slam > 0.2 ? 1 : 0, idle: !st.run }, { spikes: 7, cols: DCOL.grau, armor: true, big: true }); },
+  // Kapitel 4: Anfuehrer der Vampirfamilien
+  vampF: (g, st) => { g.scale(2.4, 2.4); withPal([[HERO_PAL.vorian, { armor: '#1a1418', armorL: '#4a3a44', red: '#8a0a1a', redL: '#ff2a40', hair: '#d8d0d8' }]], () => { const P = makePose(SPEC_VORIAN, { t: st.t, run: st.run || 0, phase: st.phase || 0, cast: Math.min(1, st.slam || 0), aim: -1.1, hurt: st.hurt || 0, dead: st.dead || 0 }); drawVorian(g, P, { glow: 1, crown: 2 }); }); },
+  // Kapitel 5: Graham — Dalki-Werwolf mit acht Stacheln
+  graham: (g, st) => { g.scale(3.4, 3.4); drawDalki(g, (st.t * 0.55) % 1, { atk: st.slam > 0.2 ? 1 : 0, idle: !st.run }, { spikes: 8, cols: Object.assign({}, DCOL.wolf, { eye: st.enrage ? '#ff2a1a' : '#ffb02a' }), fur: true, armor: true, big: true }); },
+  // Kapitel 6: der Himmlische Waechter (Lichtfluegel & Heiligenschein)
+  himmlisch: (g, st) => {
+    g.scale(2.4, 2.4);
+    // Fluegel aus Licht
+    for (const side of [-1, 1]) { g.save(); g.translate(-2, -52); g.scale(side, 1); g.rotate(-0.3 + Math.sin(st.t * 2) * 0.12); for (let f = 0; f < 6; f++) { g.save(); g.rotate(-0.4 - f * 0.22); g.beginPath(); g.moveTo(0, 0); g.quadraticCurveTo(14, -4, 34 - f * 3, -1); g.quadraticCurveTo(16, 4, 0, 3); g.closePath(); g.fillStyle = lg(g, 0, 0, 34, 0, [0, 'rgba(230,200,120,0.8)', 1, 'rgba(255,255,255,0.95)']); g.fill(); g.restore(); } g.restore(); }
+    g.strokeStyle = '#ffe6a0'; g.lineWidth = 1.8; g.beginPath(); g.ellipse(-2, -74, 9, 3.2, -0.2, 0, TAU); g.stroke(); glowDot(g, -2, -74, 12, '#ffe6a0', 0.5);
+    withPal([[HERO_PAL.shen, { robe: '#e8e0c8', robeL: '#ffffff', robeD: '#a8a088', sash: '#c9a24c', sashL: '#ffe6a0', hat: '#f4e8c0', hatL: '#ffffff', hatD: '#b0a060', skin: '#f0dcc8', eye: '#ffe6a0' }]], () => { const P = makePose(SPEC_SHEN, { t: st.t, run: st.run || 0, phase: st.phase || 0, cast: Math.min(1, st.slam || 0), aim: -1.2, rooted: st.run ? 0 : 0.6, hurt: st.hurt || 0, dead: st.dead || 0 }); drawShen(g, P, { qi: 1 }); });
+  },
+  // Kapitel 7: ein Gott — kosmischer Koloss mit Krone
+  gott: (g, st) => {
+    withPal([[BPAL, { skin: '#2a2046', skinL: '#5a4a8a', skinD: '#0a0616', bone: '#e8e0ff', boneD: '#8a7ab0', bell: '#4a3a8a', bellL: '#9a8ad0', heart: '#c08aff', iron: '#2a2440', ironL: '#6a5a9a' }]], () => drawBoss(g, st));
+    g.save(); g.translate(22, -112); g.fillStyle = lg(g, 0, -30, 0, 0, [0, '#ffffff', 1, '#e6b050']);
+    for (let k = -2; k <= 2; k++) { g.beginPath(); g.moveTo(k * 9 - 4, 0); g.lineTo(k * 9, -18 - (2 - Math.abs(k)) * 6); g.lineTo(k * 9 + 4, 0); g.fill(); }
+    g.restore();
+  }
+};
+
+/* ---- src/15-story.js ---- */
+'use strict';
+/* ==========================================================================
+   STORY-MODUS „Das Vampirsystem“ — Finn Müllers Weg in 7 Kapiteln.
+   Fan-Umsetzung, angelehnt an „My Vampire System“ (dt. Hörspiel „Das
+   Vampirsystem“). Nur fuer den privaten Gebrauch.
+   Alle Namen und Texte stehen hier gesammelt und lassen sich leicht aendern.
+   ========================================================================== */
+
+/* ---------------------------------------------------------------- Gegner je Kapitel */
+function defEnemy(id, role, art, name, o) {
+  ENEMIES[id] = Object.assign({}, ENEMIES[role], { name, art, role }, o || {});
+  return id;
+}
+function defBoss(id, draw, name, hp, o) {
+  ENEMIES[id] = Object.assign({}, ENEMIES.boss, { name, bossDraw: draw, hp, role: 'boss' }, o || {});
+  return id;
+}
+
+const CHAPTERS = [
+  {
+    n: 1, id: 'buch', title: 'Das Buch', place: 'Militärakademie — Übungsgelände bei Nacht', theme: 'akademie', tier: 1,
+    intro: [
+      'Finn Müller ist sechzehn, hat keine Fähigkeit und ist an der Militärakademie der Außenseiter.',
+      'In dieser Nacht brechen Bestien durch den Zaun des Übungsgeländes. Irgendwo hier liegt das alte Buch seiner Familie …'
+    ],
+    diff: { hp: 0.5, count: 0.8, dmg: 0.75 },
+    roles: {
+      ghoul: defEnemy('c1_basis', 'ghoul', 'q_basis', 'Basis-Bestie'),
+      bat: defEnemy('c1_flatter', 'bat', 'bat_braun', 'Flatterbestie'),
+      knight: defEnemy('c1_panzer', 'knight', 'q_panzer', 'Panzerbestie (Mittelstufe)', { armor: 1 }),
+      witch: defEnemy('c1_spucker', 'witch', 'q_kroete', 'Säurekröte', { shot: 'acid', flier: false }),
+      brute: defEnemy('c1_mutter', 'brute', 'q_mutter', 'Brutmutter'),
+      captain: defEnemy('c1_rudel', 'captain', 'q_fort', 'Rudelführer (Fortgeschritten)', { scale: 1.35, hp: 900 }),
+      boss: defBoss('c1_boss', 'bestieF', 'Fortgeschrittene Bestie', 2400, { bellShot: 'acid' })
+    },
+    texts: { swarm: 'Ein Schwarm Flatterbestien!', ring: 'Die Bestien kreisen dich ein …', boss: 'Das Heulen einer Fortgeschrittenen Bestie hallt über das Gelände.' },
+    quests: [
+      { type: 'kill', role: 'ghoul', n: 120, text: 'Besiege 120 Basis-Bestien', reward: { crystals: 15, bonus: 'level' } },
+      { type: 'survive', n: 240, text: 'Überlebe 4 Minuten', reward: { crystals: 15, bonus: 'heal' } },
+      { type: 'mini', text: 'Besiege den Rudelführer', reward: { crystals: 25, bonus: 'level' } }
+    ],
+    reward: { tier: 2, text: 'Evolution: Vampir' }
+  },
+  {
+    n: 2, id: 'mission', title: 'Die erste Mission', place: 'Bestien-Planet', theme: 'bestienplanet', tier: 2,
+    intro: [
+      'Ein Einsatz auf einem Bestien-Planeten. Hier ist jede Bestie stärker als alles auf dem Übungsgelände.',
+      'Tief im leuchtenden Dschungel wartet eine Bestie der Kaiserstufe.'
+    ],
+    diff: { hp: 0.9, count: 0.9, dmg: 1 },
+    roles: {
+      ghoul: defEnemy('c2_laeufer', 'ghoul', 'q_alien', 'Schattenläufer'),
+      bat: defEnemy('c2_gleiter', 'bat', 'bat_alien', 'Gleiter'),
+      knight: defEnemy('c2_panzer', 'knight', 'q_alienP', 'Panzerbestie (Königsstufe)', { armor: 2 }),
+      witch: defEnemy('c2_spore', 'witch', 'q_spore', 'Sporenbestie', { shot: 'acid', flier: false }),
+      brute: defEnemy('c2_mutter', 'brute', 'q_alienM', 'Bestienmutter'),
+      captain: defEnemy('c2_koenig', 'captain', 'q_koenig', 'Königsstufen-Bestie', { scale: 1.3, hp: 1600 }),
+      boss: defBoss('c2_boss', 'bestieK', 'Kaiserstufen-Bestie', 7500, { bellShot: 'acid' })
+    },
+    texts: { swarm: 'Gleiter stürzen aus den Baumkronen!', ring: 'Der Dschungel schließt sich um dich …', boss: 'Der Boden bebt. Eine Kaiserstufen-Bestie erhebt sich.' },
+    quests: [
+      { type: 'kill', role: 'knight', n: 25, text: 'Besiege 25 Panzerbestien', reward: { crystals: 30, bonus: 'level' } },
+      { type: 'crystals', n: 20, text: 'Sammle 20 Bestienkristalle', reward: { crystals: 20, bonus: 'heal' } },
+      { type: 'mini', text: 'Besiege die Königsstufen-Bestie', reward: { crystals: 40, bonus: 'level' } }
+    ],
+    reward: { tier: 3, text: 'Evolution: Vampiradliger — die Schatten erwachen' }
+  },
+  {
+    n: 3, id: 'dalki', title: 'Der Dalki-Krieg', place: 'Schlachtfeld', theme: 'schlachtfeld', tier: 3,
+    intro: [
+      'Die Dalki greifen an: graue Krieger mit Stacheln. Je mehr Stacheln, desto gefährlicher.',
+      'Halte die Linie. Irgendwo hinter der Front führt ein Dalki mit sieben Stacheln den Angriff.'
+    ],
+    diff: { hp: 1.2, count: 1, dmg: 1.15 },
+    roles: {
+      ghoul: defEnemy('c3_d1', 'ghoul', 'dalki1', 'Dalki (1 Stachel)', { hp: 16 }),
+      bat: defEnemy('c3_aas', 'bat', 'bat_aas', 'Aasflieger'),
+      knight: defEnemy('c3_d3', 'knight', 'dalki3', 'Dalki (3 Stacheln)', { armor: 3 }),
+      witch: defEnemy('c3_speer', 'witch', 'dalki2', 'Dalki-Speerwerfer (2 Stacheln)', { shot: 'spike', flier: false }),
+      brute: defEnemy('c3_d5', 'brute', 'dalki5', 'Dalki (5 Stacheln)', { splits: 0, hp: 150 }),
+      captain: defEnemy('c3_d6', 'captain', 'dalki6', 'Dalki (6 Stacheln)', { scale: 1.45, hp: 2400 }),
+      boss: defBoss('c3_boss', 'dalkiK', 'Dalki-Kommandant (7 Stacheln)', 11500, { bellShot: 'spike' })
+    },
+    texts: { swarm: 'Aasflieger kreisen über dem Schlachtfeld!', ring: 'Die Dalki umzingeln deine Stellung!', boss: 'Der Dalki-Kommandant tritt vor.' },
+    quests: [
+      { type: 'kill', role: 'ghoul', n: 200, text: 'Besiege 200 Dalki', reward: { crystals: 40, bonus: 'level' } },
+      { type: 'level', n: 20, text: 'Erreiche Stufe 20', reward: { crystals: 30, bonus: 'heal' } },
+      { type: 'mini', text: 'Besiege den Dalki mit sechs Stacheln', reward: { crystals: 50, bonus: 'level' } }
+    ],
+    reward: { tier: 4, text: 'Evolution: Vampirlord — Qi und gewaltige Blutkräfte' }
+  },
+  {
+    n: 4, id: 'siedlung', title: 'Die Vampir-Siedlung', place: 'Siedlung der Vampirfamilien', theme: 'siedlung', tier: 4,
+    intro: [
+      'Unter falschem Namen betritt Finn die Welt der Vampirfamilien. Ihre Anführer verteidigen ihre Gesetze mit Blut.',
+      'Wer die Siedlung führen will, muss sich ihrem Stärksten stellen.'
+    ],
+    diff: { hp: 1.55, count: 1.05, dmg: 1.3 },
+    roles: {
+      ghoul: defEnemy('c4_wache', 'ghoul', 'v_wache', 'Vampir-Wache', { hp: 18 }),
+      bat: defEnemy('c4_fleder', 'bat', 'bat_blut', 'Blutfledermaus'),
+      knight: defEnemy('c4_ritter', 'knight', 'v_ritter', 'Vampirritter', { armor: 3 }),
+      witch: defEnemy('c4_magier', 'witch', 'v_magier', 'Blutmagierin', { shot: 'blood', flier: false }),
+      brute: defEnemy('c4_thrall', 'brute', 'v_thrall', 'Thrall-Koloss'),
+      captain: defEnemy('c4_ober', 'captain', 'v_ritter', 'Familienoberhaupt', { scale: 1.4, hp: 3200 }),
+      boss: defBoss('c4_boss', 'vampF', 'Der Anführer der Familien', 16500, { bellShot: 'blood' })
+    },
+    texts: { swarm: 'Blutfledermäuse aus den Türmen!', ring: 'Die Wachen der Familien schließen den Kreis.', boss: 'Der Anführer der Familien erhebt sich von seinem Thron.' },
+    quests: [
+      { type: 'kill', role: 'knight', n: 40, text: 'Besiege 40 Vampirritter', reward: { crystals: 50, bonus: 'level' } },
+      { type: 'survive', n: 420, text: 'Überlebe 7 Minuten', reward: { crystals: 40, bonus: 'heal' } },
+      { type: 'mini', text: 'Besiege das Familienoberhaupt', reward: { crystals: 60, bonus: 'level' } }
+    ],
+    reward: { king: true, text: 'Titel: Vampirkönig (+10 % Leben und Schaden, dauerhaft)' }
+  },
+  {
+    n: 5, id: 'graham', title: 'Graham', place: 'Die brennenden Ruinen', theme: 'ruinen', tier: 4,
+    intro: [
+      'Graham, der Anführer der Dalki: acht Stacheln und der Hunger eines Werwolfs, der seine Beute frisst und dadurch wächst.',
+      'Um ihn zu besiegen, braucht Finn die Macht eines Nest-Kristalls.'
+    ],
+    diff: { hp: 1.8, count: 1.1, dmg: 1.4 },
+    roles: {
+      ghoul: defEnemy('c5_d2', 'ghoul', 'dalki2', 'Dalki (2 Stacheln)', { hp: 20 }),
+      bat: defEnemy('c5_aas', 'bat', 'bat_aas', 'Aasflieger'),
+      knight: defEnemy('c5_wolf', 'knight', 'dalkiW', 'Dalki-Werwolf', { armor: 3, spd: 46 }),
+      witch: defEnemy('c5_speer', 'witch', 'dalki3', 'Dalki-Speerwerfer (3 Stacheln)', { shot: 'spike', flier: false }),
+      brute: defEnemy('c5_d5', 'brute', 'dalki5', 'Dalki (5 Stacheln)', { splits: 0, hp: 170 }),
+      captain: defEnemy('c5_d6', 'captain', 'dalki6', 'Dalki-General', { scale: 1.6, hp: 4200 }),
+      boss: defBoss('c5_boss', 'graham', 'Graham', 20000, { bellShot: 'spike', r: 48 })
+    },
+    texts: { swarm: 'Aasflieger über den Ruinen!', ring: 'Grahams Armee umzingelt dich!', boss: 'Graham ist hier.' },
+    quests: [
+      { type: 'kill', role: 'knight', n: 50, text: 'Besiege 50 Dalki-Werwölfe', reward: { crystals: 60, bonus: 'level' } },
+      { type: 'level', n: 28, text: 'Erreiche Stufe 28', reward: { crystals: 50, bonus: 'heal' } },
+      { type: 'mini', text: 'Besiege den Dalki-General', reward: { crystals: 70, bonus: 'level' } }
+    ],
+    reward: { tier: 5, text: 'Nest-Kristall aufgenommen — Evolution: Himmlischer Vampirlord' }
+  },
+  {
+    n: 6, id: 'himmel', title: 'Die Himmlischen', place: 'Die Himmelsebene', theme: 'himmel', tier: 5,
+    intro: [
+      'Als erster Vampir hat Finn himmlischen Rang erreicht. Seine Macht wächst jetzt mit denen, die an ihn glauben.',
+      'Die Diener des Himmels prüfen, ob er würdig ist.'
+    ],
+    diff: { hp: 2.5, count: 1.15, dmg: 1.6 },
+    roles: {
+      ghoul: defEnemy('c6_juenger', 'ghoul', 'h_juenger', 'Lichtjünger', { hp: 20, gore: 'light' }),
+      bat: defEnemy('c6_funke', 'bat', 'bat_licht', 'Lichtfunke', { gore: 'light' }),
+      knight: defEnemy('c6_ritter', 'knight', 'h_ritter', 'Himmelsritter', { armor: 4, gore: 'light' }),
+      witch: defEnemy('c6_seherin', 'witch', 'h_seherin', 'Himmelsseherin', { shot: 'light', gore: 'light' }),
+      brute: defEnemy('c6_koloss', 'brute', 'h_koloss', 'Lichtkoloss', { gore: 'light' }),
+      captain: defEnemy('c6_waechter', 'captain', 'h_waechter', 'Erster Wächter', { hp: 5200, gore: 'light' }),
+      boss: defBoss('c6_boss', 'himmlisch', 'Der Himmlische Richter', 33000, { bellShot: 'light' })
+    },
+    texts: { swarm: 'Ein Regen aus Lichtfunken!', ring: 'Die Jünger des Lichts umringen dich.', boss: 'Der Himmlische Richter steigt herab.' },
+    quests: [
+      { type: 'kill', role: 'ghoul', n: 400, text: 'Besiege 400 Lichtjünger', reward: { crystals: 70, bonus: 'level' } },
+      { type: 'survive', n: 480, text: 'Überlebe 8 Minuten', reward: { crystals: 60, bonus: 'heal' } },
+      { type: 'mini', text: 'Besiege den Ersten Wächter', reward: { crystals: 80, bonus: 'level' } }
+    ],
+    reward: { tier: 6, text: 'Evolution: Reiner Himmlischer' }
+  },
+  {
+    n: 7, id: 'goetter', title: 'Gottbezwinger', place: 'Das Reich der Götter', theme: 'goetter', tier: 6,
+    intro: [
+      'Götter sind keine Legende. Und Erins Kristall trägt die Macht, sie zu bezwingen.',
+      'Um die Macht zu tragen, muss Finn einen Gott besiegen.'
+    ],
+    diff: { hp: 3.1, count: 1.2, dmg: 1.8 },
+    roles: {
+      ghoul: defEnemy('c7_bestie', 'ghoul', 'q_void', 'Götterbestie', { hp: 22, gore: 'void' }),
+      bat: defEnemy('c7_schwinge', 'bat', 'bat_void', 'Leerenschwinge', { gore: 'void' }),
+      knight: defEnemy('c7_ritter', 'knight', 'g_ritter', 'Götterritter', { armor: 5, gore: 'void' }),
+      witch: defEnemy('c7_priesterin', 'witch', 'g_seherin', 'Priesterin der Leere', { shot: 'void', gore: 'void' }),
+      brute: defEnemy('c7_titan', 'brute', 'q_voidP', 'Titanbestie', { splits: 2, gore: 'void' }),
+      captain: defEnemy('c7_diener', 'captain', 'g_diener', 'Auserwählter eines Gottes', { hp: 6500, gore: 'void' }),
+      boss: defBoss('c7_boss', 'gott', 'Ein Gott', 46000, { bellShot: 'void' })
+    },
+    texts: { swarm: 'Leerenschwingen verdunkeln den Himmel!', ring: 'Die Diener der Götter schließen den Kreis.', boss: 'Ein Gott wendet sich dir zu.' },
+    quests: [
+      { type: 'kill', role: 'knight', n: 60, text: 'Besiege 60 Götterritter', reward: { crystals: 90, bonus: 'level' } },
+      { type: 'level', n: 35, text: 'Erreiche Stufe 35', reward: { crystals: 80, bonus: 'heal' } },
+      { type: 'mini', text: 'Besiege den Auserwählten', reward: { crystals: 100, bonus: 'level' } }
+    ],
+    reward: { tier: 7, text: 'Erins Kristall — Evolution: Vampir-Gottbezwinger' }
+  }
+];
+
+/* ---------------------------------------------------------------- Bestienausruestung (dauerhaft) */
+const GEAR = {
+  handschuhe: { name: 'Bestienhandschuhe', desc: '+8 % Schaden je Stufe', max: 5, cost: [30, 80, 160, 300, 500] },
+  stiefel: { name: 'Bestienstiefel', desc: '+5 % Tempo, −6 % Ausweich-Abklingzeit je Stufe', max: 5, cost: [30, 80, 160, 300, 500] },
+  panzer: { name: 'Bestienpanzer', desc: '+10 % Leben je Stufe', max: 5, cost: [40, 100, 200, 360, 600] },
+  amulett: { name: 'Kristallamulett', desc: '+12 % Sammelradius, +5 % Erfahrung je Stufe', max: 5, cost: [25, 60, 120, 240, 420] }
+};
+function storySave() {
+  if (!SAVE.story) SAVE.story = {};
+  const S = SAVE.story;
+  S.cleared = S.cleared || {}; S.gear = S.gear || {}; S.best = S.best || {};
+  if (S.crystals === undefined) S.crystals = 0;
+  return S;
+}
+
+/* ---------------------------------------------------------------- Lauf einrichten */
+function storySetup(G, ch) {
+  G.story = ch;
+  G.roles = ch.roles;
+  G.diffHp = ch.diff.hp; G.diffCount = ch.diff.count; G.diffDmg = ch.diff.dmg;
+  G.events = EVENTS.map((ev) => {
+    const e2 = Object.assign({}, ev);
+    if (ev.kind === 'swarm') e2.text = ch.texts.swarm;
+    else if (ev.kind === 'ring') e2.text = ch.texts.ring;
+    else if (ev.kind === 'boss') e2.text = ch.texts.boss;
+    else if (ev.kind === 'miniboss') e2.text = null;
+    return e2;
+  });
+  G.quests = ch.quests.map((q) => ({ q, prog: 0, done: false }));
+  G.questRoleKills = {};
+  G.onKill = storyOnKill;
+  const S = storySave(), gr = S.gear;
+  G.statMod = (st) => {
+    st.might *= 1 + 0.08 * (gr.handschuhe || 0) + (S.king ? 0.1 : 0);
+    st.speed *= 1 + 0.05 * (gr.stiefel || 0);
+    st.dodgeCdMul *= Math.pow(0.94, gr.stiefel || 0);
+    st.maxHp *= 1 + 0.1 * (gr.panzer || 0) + (S.king ? 0.1 : 0);
+    st.pickup *= 1 + 0.12 * (gr.amulett || 0);
+    st.xpMul *= 1 + 0.05 * (gr.amulett || 0);
+  };
+  // Kristalle vorrendern, damit waehrend des Laufs nichts ruckelt
+  for (const r in ch.roles) { const d = ENEMIES[ch.roles[r]]; if (d.art && ENEMY_ART[d.art]) ensureArt(d.art); }
+}
+function storyOnKill(e) {
+  const G = GAME, ch = G.story, n = ch.n;
+  // Bestienkristalle
+  let c = 0;
+  if (e.boss) c = 40 * n; else if (e.mini) c = 15 * n; else if (e.elite) c = 5 * n; else if (Math.random() < 0.03) c = Math.ceil(n / 2);
+  if (c) { const k = Math.min(8, c); for (let i = 0; i < k; i++) dropPickup(e.x + rand(-20, 20), e.y + rand(-14, 14), 'crystal', Math.round(c / k)); }
+  G.questRoleKills[e.role] = (G.questRoleKills[e.role] || 0) + 1;
+  if (e.mini) G.miniKilled = true;
+}
+function storyQuestTick() {
+  const G = GAME;
+  if (!G.quests) return;
+  for (const Q of G.quests) {
+    if (Q.done) continue;
+    const q = Q.q;
+    if (q.type === 'kill') Q.prog = G.questRoleKills[q.role] || 0;
+    else if (q.type === 'survive') Q.prog = Math.floor(G.t);
+    else if (q.type === 'level') Q.prog = G.level;
+    else if (q.type === 'crystals') Q.prog = G.crystals || 0;
+    else if (q.type === 'mini') Q.prog = G.miniKilled ? 1 : 0;
+    const goal = q.type === 'mini' ? 1 : q.n;
+    if (Q.prog >= goal) {
+      Q.done = true;
+      G.crystals = (G.crystals || 0) + q.reward.crystals;
+      if (q.reward.bonus === 'level') G.pendingLevels++;
+      if (q.reward.bonus === 'heal') healPlayer(G.p.st.maxHp * 0.4);
+      sfx('level');
+      UI.sysWindow('QUEST ABGESCHLOSSEN', q.text, `Belohnung: ${q.reward.crystals} Bestienkristalle${q.reward.bonus === 'level' ? ' · Stufenaufstieg' : ' · Heilung'}`);
+    }
+  }
+}
+
+/* ---------------------------------------------------------------- Laufende */
+function storyEnd(won) {
+  const G = GAME, ch = G.story, S = storySave(), F = finnSave();
+  const res = { story: true, ch, crystals: G.crystals || 0, firstClear: false, reward: null, test: !!G.finnTest };
+  S.crystals += res.crystals;
+  S.best[ch.n] = Math.max(S.best[ch.n] || 0, G.t);
+  if (won) {
+    if (!S.cleared[ch.n]) { S.cleared[ch.n] = true; res.firstClear = true; }
+    const R = ch.reward;
+    if (!G.finnTest) {
+      if (R.tier && F.tier < R.tier) { F.tier = R.tier; res.reward = R; res.evolved = FINN_TIERS[R.tier]; }
+      if (R.king && !S.king) { S.king = true; res.reward = R; }
+    }
+  }
+  return res;
+}
+// Finn: im Story-Modus zaehlt das Kapitel, nicht mehr die Essenz
+const _finnEndOld = HEROES.finn.onEnd;
+HEROES.finn.onEnd = function (won) { return GAME.story ? storyEnd(won) : _finnEndOld(won); };
+HEROES.finn.mech.desc = 'Finn beginnt als Mensch ohne jede Fähigkeit — im ersten Kapitel findet er das Buch und wird zum Halbling. Jede weitere Evolution erhält er dauerhaft, wenn er den Boss des passenden Kapitels besiegt. Im Lauf kämpft er mit den Kräften seiner aktuellen Form; Bestienkristalle aus den Läufen werden zu dauerhafter Ausrüstung.';
+
+// Finn gehoert in den Story-Modus, nicht in die Arcade-Heldenwahl
+(function () { const i = HERO_ORDER.indexOf('finn'); if (i >= 0) HERO_ORDER.splice(i, 1); })();
+
+function storyStart(chN) {
+  const ch = CHAPTERS[chN - 1];
+  const F = finnSave();
+  // Form: gespeicherte Form (Testmodus: frei waehlbar); Mensch nur im ersten Kapitel
+  let tier = UI.finnPick !== undefined && SAVE.settings.testUnlock ? UI.finnPick : F.tier;
+  if (tier === 0 && ch.n > 1) tier = 1;
+  UI.finnPick = tier;
+  startGame('finn', { story: ch });
+}
+
+/* ---- src/16-story-ui.js ---- */
+'use strict';
+/* ==========================================================================
+   STORY-OBERFLAECHE — Hauptmenue mit zwei Modi, Kapitelwahl, System-Fenster
+   (Kapitelstart, Quests, Status, Evolution), Bestienausruestung, Kapitelende.
+   ========================================================================== */
+
+const _ui = { showTitle: UI.showTitle, act: UI.act, showEnd: UI.showEnd, showPause: UI.showPause, showHud: UI.showHud, updateHud: UI.updateHud, showLevelUp: UI.showLevelUp };
+
+UI.showTitle = function () {
+  if (GAME && GAME.state !== 'menu') GAME.state = 'menu';
+  this.hideHud();
+  MENU = null; setTheme('friedhof'); menuScene();
+  const S = storySave(), F = finnSave();
+  this.show(`
+    <div class="logo"><h1>NACHTFALL</h1><div class="sub"><b>BLUT</b> · <i>SCHATTEN</i> · <u>QI</u></div></div>
+    <div class="menu">
+      <button class="btn primary sysbtn" data-act="story"><span class="syst">[ SYSTEM ]</span><br>Das Vampirsystem<br><small>Story · Finn Müller · ${FINN_TIERS[F.tier].name}</small></button>
+      <button class="btn" data-act="play">Nachtfall · Arcade<br><small>4 Helden · Seelen: ${SAVE.souls}</small></button>
+      <div class="row" style="gap:10px"><button class="btn small" style="flex:1" data-act="gear">Ausrüstung · ${S.crystals} ◆</button><button class="btn small" style="flex:1" data-act="altar">Altar (Arcade)</button></div>
+      <div class="row" style="gap:10px"><button class="btn small ghost" style="flex:1" data-act="codex">Chronik</button><button class="btn small ghost" style="flex:1" data-act="settings">Einstellungen</button></div>
+      <div class="foot">Offline spielbar · keine Käufe · Version 0.3<br>„Das Vampirsystem“ ist eine private Fan-Umsetzung.</div>
+    </div>`, 'title');
+};
+
+UI.act = function (a, ds, e) {
+  switch (a) {
+    case 'story': return this.showStory();
+    case 'chapter': this.selChapter = +ds.n; return this.showStory();
+    case 'chapterGo': return this.showChapterIntro(this.selChapter);
+    case 'chapterStart': return storyStart(this.selChapter);
+    case 'storyform': this.finnPick = +ds.t; return this.showStory();
+    case 'gear': return this.showGear();
+    case 'buygear': {
+      const S = storySave(), G0 = GEAR[ds.id], lv = S.gear[ds.id] || 0;
+      if (lv < G0.max && S.crystals >= G0.cost[lv]) { S.crystals -= G0.cost[lv]; S.gear[ds.id] = lv + 1; writeSave(); sfx('level'); }
+      return this.showGear();
+    }
+    case 'again': if (GAME && GAME.story) return storyStart(GAME.story.n); break;
+    case 'nextch': return (this.selChapter = Math.min(7, GAME.story.n + 1), this.showStory());
+  }
+  return _ui.act.call(this, a, ds, e);
+};
+
+/* ---------------------------------------------------------------- Kapitelwahl */
+function chapterOpen(n) { const S = storySave(); return n === 1 || S.cleared[n - 1] || SAVE.settings.testUnlock; }
+UI.showStory = function () {
+  const S = storySave(), F = finnSave();
+  if (!this.selChapter) { this.selChapter = 1; for (let n = 1; n <= 7; n++) if (chapterOpen(n) && !S.cleared[n]) { this.selChapter = n; break; } }
+  const ch = CHAPTERS[this.selChapter - 1];
+  MENU = null; setTheme(ch.theme); menuScene();
+  const test = SAVE.settings.testUnlock;
+  if (this.finnPick === undefined || !test) this.finnPick = F.tier;
+  const cards = CHAPTERS.map((c) => {
+    const open = chapterOpen(c.n), done = S.cleared[c.n];
+    return `<div class="chap ${c.n === this.selChapter ? 'sel' : ''} ${open ? '' : 'locked'}" data-act="chapter" data-n="${c.n}">
+      <canvas data-boss="${c.n}"></canvas>
+      <div class="cn"><span class="cnum">${c.n}</span> ${c.title}</div>
+      <div class="cs">${done ? '✔ geschafft' : open ? 'offen' : '🔒'}</div></div>`;
+  }).join('');
+  const openSel = chapterOpen(ch.n);
+  const chips = FINN_TIERS.map((T, i) => `<button class="btn small ${i === this.finnPick ? 'primary' : 'ghost'}" data-act="storyform" data-t="${i}" style="padding:5px 8px;min-height:30px;font-size:10.5px">${T.name}</button>`).join('');
+  const d = this.show(`
+    <div class="syswin" style="width:min(560px,100%)">
+      <div class="syshead">[ SYSTEM ] · STATUS</div>
+      <div class="statusrow"><canvas id="finnprev" width="180" height="200"></canvas>
+        <div class="kv" style="flex:1;margin:0">
+          <span>Name</span><span>Finn Müller</span>
+          <span>Form</span><span style="color:${FINN_TIERS[F.tier].col}">${FINN_TIERS[F.tier].name}</span>
+          <span>Titel</span><span>${S.king ? 'Vampirkönig' : '—'}</span>
+          <span>Kapitel</span><span>${Object.keys(S.cleared).length} / 7</span>
+          <span>Bestienkristalle</span><span style="color:#8ad8ff">${S.crystals} ◆</span>
+        </div></div>
+      ${test ? `<div class="sysnote">Testmodus: Form für den Lauf frei wählbar (zählt dann nicht für die Evolution)</div><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">${chips}</div>` : ''}
+    </div>
+    <div class="chaps">${cards}</div>
+    <div class="syswin" style="width:min(560px,100%)">
+      <div class="syshead">KAPITEL ${ch.n} · ${ch.title.toUpperCase()}</div>
+      <div class="sysplace">${ch.place}</div>
+      <p class="sysp">${ch.intro[0]}</p>
+      <div class="sysnote">Empfohlene Form: <b style="color:${FINN_TIERS[ch.tier].col}">${FINN_TIERS[ch.tier].name}</b> · Boss: <b>${ENEMIES[ch.roles.boss].name}</b></div>
+      <div class="sysnote">Belohnung beim ersten Sieg: <b style="color:#ffe6a0">${ch.reward.text}</b>${S.cleared[ch.n] ? ' (erhalten)' : ''}</div>
+      ${S.best[ch.n] ? `<div class="sysnote">Beste Zeit: ${fmtTime(S.best[ch.n])}</div>` : ''}
+    </div>
+    <div class="selbar"><button class="btn ghost" data-act="title">Zurück</button><button class="btn primary" data-act="chapterGo" ${openSel ? '' : 'disabled'}>${openSel ? 'Kapitel starten' : 'Gesperrt'}</button></div>`, 'story', 'dim');
+  // Boss-Silhouetten auf den Kapitelkarten
+  d.querySelectorAll('canvas[data-boss]').forEach((c) => {
+    const n = +c.dataset.boss, C2 = CHAPTERS[n - 1];
+    const r = c.getBoundingClientRect(); c.width = Math.round(r.width * VIEW.dpr); c.height = Math.round(r.height * VIEW.dpr);
+    const g = c.getContext('2d');
+    const th = THEMES[C2.theme];
+    g.fillStyle = rg(g, c.width / 2, c.height * 0.7, 2, c.width, [0, th.ambient.replace('rgb', 'rgba').replace(')', ',0.9)'), 1, 'rgba(0,0,0,0)']);
+    g.fillRect(0, 0, c.width, c.height);
+    g.setTransform(c.height / 330, 0, 0, c.height / 330, c.width / 2, c.height * 0.94);
+    g.lineCap = 'round'; g.lineJoin = 'round';
+    try { BOSS_ART[ENEMIES[C2.roles.boss].bossDraw](g, { t: 1.2, run: 0 }); } catch (err) { /* egal */ }
+    if (!chapterOpen(n)) { g.setTransform(1, 0, 0, 1, 0, 0); g.globalCompositeOperation = 'source-atop'; g.fillStyle = 'rgba(0,0,0,0.9)'; g.fillRect(0, 0, c.width, c.height); }
+  });
+  this.previews = [{ c: $('#finnprev'), id: 'finn', t: 0, finn: true }];
+};
+// Finn-Vorschau im Statusfenster (ueberschreibt die Heldenvorschau nur fuer diese Leinwand)
+const _tickPrev = UI.tickPreviews;
+UI.tickPreviews = function (dt) {
+  const pv = this.previews[0];
+  if (pv && pv.finn) {
+    pv.t += dt;
+    const g = pv.c.getContext('2d'), w = pv.c.width, h = pv.c.height;
+    g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, w, h);
+    const tier = this.finnPick !== undefined ? this.finnPick : finnSave().tier;
+    g.fillStyle = rg(g, w / 2, h * 0.7, 4, w * 0.8, [0, rgba(FINN_TIERS[tier].rim, 0.35), 1, 'rgba(0,0,0,0)']); g.fillRect(0, 0, w, h);
+    pv.spr = renderHero('finn', { t: pv.t, run: 0, phase: 0, cast: (pv.t % 4) > 3.2 ? Math.sin(((pv.t % 4) - 3.2) / 0.8 * Math.PI) : 0, aim: 0.2 }, { tier, rim: FINN_TIERS[tier].rim }, h / 90, pv.spr, { glow: true });
+    g.drawImage(pv.spr.out, w / 2 - pv.spr.S / 2, h * 0.92 - pv.spr.anchorY);
+    return;
+  }
+  _tickPrev.call(this, dt);
+};
+
+/* ---------------------------------------------------------------- Kapitelstart (System-Fenster) */
+UI.showChapterIntro = function (n) {
+  const ch = CHAPTERS[n - 1];
+  const F = finnSave();
+  const firstBook = n === 1 && F.tier === 0;
+  this.show(`
+    <div class="syswin big" style="width:min(520px,100%);margin:auto 0">
+      <div class="syshead">[ SYSTEM ] · KAPITEL ${ch.n}</div>
+      <div class="systitle">${ch.title}</div>
+      <div class="sysplace">${ch.place}</div>
+      ${ch.intro.map((l) => `<p class="sysp">${l}</p>`).join('')}
+      ${firstBook ? '<p class="sysp" style="color:#ffb0b0">Du hast noch keine Kräfte. Lauf zum leuchtenden Buch!</p>' : ''}
+      <div class="syshead" style="margin-top:10px">QUESTS</div>
+      ${ch.quests.map((q) => `<div class="questline">▸ ${q.text} <span>+${q.reward.crystals} ◆</span></div>`).join('')}
+      <div class="syshead" style="margin-top:10px">ZIEL</div>
+      <div class="questline">▸ Besiege ${ENEMIES[ch.roles.boss].name}</div><div class="sysnote" style="color:#ffe6a0">Belohnung: ${ch.reward.text}</div>
+      <div class="btns"><button class="btn primary" data-act="chapterStart">Annehmen</button><button class="btn ghost" data-act="story">Zurück</button></div>
+    </div>`, 'intro', 'dim');
+};
+
+/* ---------------------------------------------------------------- System-Meldungen im Lauf */
+UI.sysWindow = function (title, line, line2) {
+  const hud = this.hud; if (!hud) return;
+  const old = hud.querySelectorAll('.sysmsg'); if (old.length >= 2) old[0].remove();
+  const el = document.createElement('div'); el.className = 'sysmsg';
+  el.innerHTML = `<div class="syshead">[ ${title} ]</div><div>${line}</div>${line2 ? `<div class="sysnote">${line2}</div>` : ''}`;
+  hud.appendChild(el);
+  const others = hud.querySelectorAll('.sysmsg'); el.style.top = `calc(${Math.round(VIEW.cssH * 0.3) + (others.length - 1) * 78}px + var(--safe-t))`;
+  setTimeout(() => el.classList.add('out'), 3200); setTimeout(() => el.remove(), 3800);
+};
+UI.showHud = function () {
+  _ui.showHud.call(this);
+  if (!GAME.story) return;
+  const q = document.createElement('div'); q.className = 'questbox'; q.id = 'questbox';
+  this.hud.appendChild(q);
+  this.cache.quests = null;
+  setTimeout(() => this.sysWindow('KAPITEL ' + GAME.story.n, GAME.story.title, GAME.story.place), 400);
+};
+UI.updateHud = function () {
+  _ui.updateHud.call(this);
+  const G = GAME;
+  if (!G || !G.story || !this.hud) return;
+  const key = G.quests.map((Q) => Q.prog + (Q.done ? 'd' : '')).join('|') + '|' + (G.crystals || 0);
+  if (this.cache.quests === key) return;
+  this.cache.quests = key;
+  const box = $('#questbox'); if (!box) return;
+  box.innerHTML = `<div class="qh">QUESTS · <span style="color:#8ad8ff">${G.crystals || 0} ◆</span></div>` + G.quests.map((Q) => {
+    const q = Q.q, goal = q.type === 'mini' ? 1 : q.n;
+    const pr = q.type === 'survive' ? fmtTime(Math.min(Q.prog, goal)) + '/' + fmtTime(goal) : Math.min(Q.prog, goal) + '/' + goal;
+    return `<div class="ql ${Q.done ? 'done' : ''}">${Q.done ? '✔' : '▸'} ${q.text}${q.type === 'mini' ? '' : ' <b>' + pr + '</b>'}</div>`;
+  }).join('');
+};
+UI.showLevelUp = function (offers) {
+  _ui.showLevelUp.call(this, offers);
+  if (GAME.story && this.cur) { this.cur.classList.add('sysmode'); const h = this.cur.querySelector('h2'); if (h) h.innerHTML = `<span class="syst">[ SYSTEM ]</span><br>Stufenaufstieg · Stufe ${GAME.level}`; }
+};
+
+/* ---------------------------------------------------------------- Statusfenster (Pause) */
+UI.showPause = function () {
+  if (!GAME.story) return _ui.showPause.call(this);
+  _ui.showPause.call(this);
+  const G = GAME, p = G.p, T = FINN_TIERS[p.tier || 0], S = storySave();
+  const box = this.cur.querySelector('.box');
+  const st = document.createElement('div'); st.className = 'syswin'; st.style.marginBottom = '10px';
+  st.innerHTML = `<div class="syshead">[ SYSTEM ] · STATUS</div>
+    <div class="kv" style="margin:4px 0">
+      <span>Name</span><span>Finn Müller</span><span>Rasse</span><span style="color:${T.col}">${T.name}</span>
+      <span>Titel</span><span>${S.king ? 'Vampirkönig' : '—'}</span><span>Stufe</span><span>${G.level}</span>
+      <span>Leben</span><span>${Math.round(p.hp)} / ${Math.round(p.st.maxHp)}</span>
+      <span>Stärke</span><span>${Math.round(p.st.might * 10 * T.might)}</span><span>Geschick</span><span>${Math.round(p.st.speed / 10)}</span>
+      <span>Ausdauer</span><span>${Math.round(p.st.maxHp / 10)}</span><span>Kristalle (Lauf)</span><span>${G.crystals || 0} ◆</span>
+    </div>
+    <div class="syshead">QUESTS</div>${G.quests.map((Q) => `<div class="questline ${Q.done ? 'done' : ''}">${Q.done ? '✔' : '▸'} ${Q.q.text}</div>`).join('')}`;
+  box.insertBefore(st, box.children[1]);
+};
+
+/* ---------------------------------------------------------------- Kapitelende */
+UI.showEnd = function (won, souls, newly, extra) {
+  if (!extra || !extra.story) return _ui.showEnd.call(this, won, souls, newly, extra);
+  this.hideHud();
+  const G = GAME, ch = extra.ch, S = storySave();
+  const tot = Object.values(G.stats.dmg).reduce((a, b) => a + b, 0) || 1;
+  const top = Object.entries(G.stats.dmg).sort((a, b) => b[1] - a[1]).slice(0, 6);
+  const max = top.length ? top[0][1] : 1;
+  const dm = top.map(([k, v]) => `<div class="dmgrow"><span>${SRC_NAMES[k] || k}</span><div class="bar"><i style="width:${(v / max * 100).toFixed(0)}%;background:#6ac8ff"></i></div><span class="n">${Math.round(v / tot * 100)}%</span></div>`).join('');
+  let rew = '';
+  if (extra.test) rew = '<div class="sysnote">Testform — Belohnungen der Form werden nicht vergeben.</div>';
+  if (extra.evolved) rew += `<div style="text-align:center;margin:10px 0"><div class="syshead">[ SYSTEM ] · EVOLUTION</div><div class="cinzel" style="font-size:26px;font-weight:800;color:${extra.evolved.col};text-shadow:0 0 18px currentColor">${extra.evolved.name}</div><p class="sysp">${extra.evolved.desc}</p></div>`;
+  else if (extra.reward && extra.reward.king) rew += `<div style="text-align:center;margin:10px 0"><div class="syshead">[ SYSTEM ] · TITEL ERHALTEN</div><div class="cinzel" style="font-size:24px;font-weight:800;color:#ffe6a0">Vampirkönig</div><p class="sysp">+10 % Leben und Schaden, dauerhaft.</p></div>`;
+  const hasNext = won && ch.n < 7;
+  this.show(`<div class="syswin big" style="width:min(540px,100%);margin:auto 0">
+    <div class="syshead">[ SYSTEM ] · KAPITEL ${ch.n}</div>
+    <div class="bigres ${won ? 'win' : 'lose'}" style="font-size:clamp(26px,8vw,40px)">${won ? 'KAPITEL GESCHAFFT' : 'GESCHEITERT'}</div>
+    <div class="sysplace" style="text-align:center">${ch.title} · ${fmtTime(G.t)} · Stufe ${G.level} · ${G.kills} besiegt</div>
+    ${rew}
+    <div class="kv"><span>Bestienkristalle</span><span style="color:#8ad8ff">+${extra.crystals} ◆ (gesamt ${S.crystals})</span>
+      <span>Quests</span><span>${G.quests.filter((Q) => Q.done).length} / ${G.quests.length}</span></div>
+    ${won ? '' : '<p class="sysp">Tipp: Mit Bestienkristallen verbesserst du im Menü „Ausrüstung“ Handschuhe, Stiefel, Panzer und Amulett — dauerhaft.</p>'}
+    <div class="syshead" style="margin-top:6px">SCHADEN</div>${dm}
+    <div class="btns">${hasNext ? '<button class="btn primary" data-act="nextch">Nächstes Kapitel</button>' : ''}
+      <button class="btn ${hasNext ? '' : 'primary'}" data-act="again">${won ? 'Kapitel wiederholen' : 'Nochmal versuchen'}</button>
+      <button class="btn" data-act="gear">Ausrüstung</button><button class="btn ghost" data-act="story">Kapitelübersicht</button></div>
+  </div>`, 'end', 'dim');
+};
+
+/* ---------------------------------------------------------------- Ausruestung */
+UI.showGear = function () {
+  const S = storySave();
+  const rows = Object.keys(GEAR).map((id) => {
+    const G0 = GEAR[id], lv = S.gear[id] || 0, max = lv >= G0.max;
+    return `<div class="mrow"><div class="mt"><b>${G0.name}</b><small>${G0.desc}</small><div class="pips">${'◆'.repeat(lv)}${'◇'.repeat(G0.max - lv)}</div></div>
+      <button class="btn small" data-act="buygear" data-id="${id}" ${max || S.crystals < G0.cost[lv] ? 'disabled' : ''}>${max ? 'Max' : G0.cost[lv] + ' ◆'}</button></div>`;
+  }).join('');
+  this.show(`<div class="syswin big" style="width:min(520px,100%);margin:auto 0">
+    <div class="syshead">[ SYSTEM ] · BESTIENAUSRÜSTUNG</div>
+    <p class="sysp">Aus den Kristallen besiegter Bestien fertigst du Ausrüstung. Sie gilt dauerhaft in allen Kapiteln.</p>
+    <div class="souls" style="color:#8ad8ff">Bestienkristalle: <b>${S.crystals} ◆</b></div>
+    <div class="meta">${rows}</div>
+    <div class="btns"><button class="btn primary" data-act="story">Zu den Kapiteln</button><button class="btn ghost" data-act="title">Hauptmenü</button></div></div>`, 'gear', 'dim');
+};
+
 /* ---- src/12-main.js ---- */
 'use strict';
 /* ==========================================================================
@@ -6591,13 +7684,13 @@ function updateMenuScene(dt) {
   updateFX(dt);
 }
 
-function startGame(hero) {
+function startGame(hero, opts) {
   AudioSys.init();
   MENU = null;
   UI.clear();
   applyQuality();
   PENDING_FINN = hero === 'finn' ? (UI.finnPick !== undefined ? UI.finnPick : finnSave().tier) : undefined;
-  newRun(hero);
+  newRun(hero, opts);
   UI.showHud();
 }
 function togglePause(on) {

@@ -1,3 +1,4 @@
+const SHOT_COL = { soul: '#7dff9a', bell: '#ffa040', acid: '#b8ff3a', spike: '#d8dce8', blood: '#ff3a4e', light: '#ffe6a0', void: '#c08aff' };
 'use strict';
 /* ==========================================================================
    GEGNER — Raster fuer schnelle Abfragen, Nachschub & Wellen, KI,
@@ -68,15 +69,17 @@ function randomEnemyNear(x, y, r) {
 /* -------------------------------------------------------- Erzeugen */
 let _eid = 1;
 function makeEnemy(type, x, y, opts) {
+  const role = type;
+  if (GAME.roles && GAME.roles[type]) type = GAME.roles[type];
   const D = ENEMIES[type];
   opts = opts || {};
   const hs = hpScale(GAME.t) * (GAME.diffHp || 1);
   const elite = !!opts.elite;
   const e = {
-    id: _eid++, type, def: D, x, y, kvx: 0, kvy: 0,
+    id: _eid++, type, role: D.role || role, def: D, x, y, kvx: 0, kvy: 0,
     hp: 0, maxHp: 0,
     spd: D.spd * rand(0.9, 1.1) * (1 + Math.min(0.25, GAME.t / 2400)),
-    r: D.r * (elite ? 1.45 : 1), dmg: D.dmg * (1 + GAME.t / 540) * (elite ? 1.5 : 1),
+    r: D.r * (elite ? 1.45 : 1), dmg: D.dmg * (1 + GAME.t / 540) * (elite ? 1.5 : 1) * (GAME.diffDmg || 1),
     mass: D.mass * (elite ? 6 : 1), armor: (D.armor || 0) * (1 + GAME.t / 600),
     scale: D.scale * (elite ? 1.5 : 1), elite,
     face: 1, animT: Math.random() * 10, flash: 0, dead: false, deathT: 0,
@@ -126,7 +129,8 @@ function updateSpawns(dt) {
       makeEnemy(pickMix(W.mix), pos[0], pos[1]);
     }
   }
-  while (G.eventIdx < EVENTS.length && EVENTS[G.eventIdx].t <= G.t) runEvent(EVENTS[G.eventIdx++]);
+  const EV = G.events || EVENTS;
+  while (G.eventIdx < EV.length && EV[G.eventIdx].t <= G.t) runEvent(EV[G.eventIdx++]);
 }
 function runEvent(ev) {
   const G = GAME, p = G.p;
@@ -152,10 +156,12 @@ function runEvent(ev) {
   } else if (ev.kind === 'miniboss') {
     const pos = spawnPosAround(p.x, p.y);
     const e = makeEnemy('captain', pos[0], pos[1]);
+    if (!ev.text) UI.announce(e.def.name + ' erscheint!', 'boss');
     e.stT = 3; G.mini = e;
     sfx('roar');
   } else if (ev.kind === 'boss') {
     const e = makeEnemy('boss', p.x, p.y - VIEW.h * 0.55);
+    if (!ev.text) UI.announce(e.def.name + ' erscheint!', 'boss');
     e.stT = 2.5; e.state = 'intro';
     G.boss = e; G.bossAlive = true;
     sfx('bell'); sfx('roar'); shake(6);
@@ -194,7 +200,7 @@ function updateEnemies(dt) {
     dx /= d; dy /= d;
     let sp = e.spd * e.slowF;
     if (e.stunT > 0 || e.state === 'wind') sp = 0;
-    if (e.type === 'witch') {
+    if (e.role === 'witch') {
       // haelt Abstand und schiesst Seelenfeuer
       if (d < 170) sp *= -0.7; else if (d < 240) sp *= 0.15;
       e.shootT -= edt;
@@ -206,13 +212,13 @@ function updateEnemies(dt) {
         const n = e.elite ? 5 : 1;
         for (let i = 0; i < n; i++) {
           const a = Math.atan2(ay, ax) + (i - (n - 1) / 2) * 0.22;
-          enemyShot(e.x + e.face * 12, e.y - 26, Math.cos(a) * 128, Math.sin(a) * 128, e.dmg * 0.85, 'soul');
+          enemyShot(e.x + e.face * 12, e.y - 26, Math.cos(a) * 128, Math.sin(a) * 128, e.dmg * 0.85, e.def.shot || 'soul');
         }
         sfx('enemyShot', 0, 0.1);
       }
       if (e.atkT > 0) e.atkT -= edt;
     }
-    if (e.def.flier && e.type === 'bat') {
+    if (e.def.flier && e.role === 'bat') {
       const w = Math.sin(e.animT * 3 + e.wob) * 0.6;
       const ndx = dx - dy * w, ndy = dy + dx * w; dx = ndx; dy = ndy;
     }
@@ -276,9 +282,9 @@ function updateEnemyShots(dt) {
     s.x += s.vx * dt * ts; s.y += s.vy * dt * ts;
     if (s.life <= 0) continue;
     if (dist2(s.x, s.y, p.x, p.y - 14) < (s.r + 9) * (s.r + 9) && p.alive) {
-      if (damagePlayer(s.dmg, s)) { burstSparks(s.x, s.y, 6, s.kind === 'bell' ? '#ffb040' : '#7dff9a'); continue; }
+      if (damagePlayer(s.dmg, s)) { burstSparks(s.x, s.y, 6, SHOT_COL[s.kind] || '#7dff9a'); continue; }
     }
-    addLight(s.x, s.y, 60, s.kind === 'bell' ? '#ffa040' : '#7dff9a', 0.8);
+    addLight(s.x, s.y, 60, SHOT_COL[s.kind] || '#7dff9a', 0.8);
     G.eproj[w++] = s;
   }
   G.eproj.length = w;
@@ -310,7 +316,7 @@ function updateBoss(e, dt, rdt) {
   e.bell = Math.max(0, (e.bell || 0) - rdt);
   e.roar = Math.max(0, (e.roar || 0) - rdt * 1.5);
   const enr = e.hp < e.maxHp * 0.5;
-  if (enr && !e.enrage) { e.enrage = true; UI.announce('Vaelgor rast!', 'boss'); sfx('roar'); e.roar = 1; shake(6); }
+  if (enr && !e.enrage) { e.enrage = true; UI.announce(e.def.name.split(',')[0] + ' rast!', 'boss'); sfx('roar'); e.roar = 1; shake(6); }
   const spd = e.def.spd * (enr ? 1.35 : 1);
   const dx = p.x - e.x, dy = p.y - e.y, d = Math.hypot(dx, dy) || 1;
   if (e.stunT > 0) e.stunT -= dt;
@@ -348,7 +354,7 @@ function updateBoss(e, dt, rdt) {
         burstAsh(e.tx, e.ty, 16, '#5a4a44');
         for (let i = 0; i < 10; i++) { const a = Math.random() * TAU; spawnPart({ x: e.tx, y: e.ty, z: 5, vx: Math.cos(a) * rand(60, 200), vy: Math.sin(a) * rand(40, 140), vz: rand(100, 220), g: 500, life: 1, size: rand(3, 6), size1: 3, spr: tinted('ash', '#6a6064') }); }
         addDecal(e.tx, e.ty, PART.splat, 60, 0.35, 20);
-        if (enr) for (let i = 0; i < 10; i++) { const a = i / 10 * TAU; enemyShot(e.tx, e.ty - 10, Math.cos(a) * 170, Math.sin(a) * 170, 12, 'bell'); }
+        if (enr) for (let i = 0; i < 10; i++) { const a = i / 10 * TAU; enemyShot(e.tx, e.ty - 10, Math.cos(a) * 170, Math.sin(a) * 170, 12 * (GAME.diffDmg || 1), e.def.bellShot || 'bell'); }
       }
       break;
     }
@@ -373,7 +379,7 @@ function updateBoss(e, dt, rdt) {
         e.bells--; e.bellT = 0.7; e.bell = 0.6;
         sfx('bell'); shake(3);
         const n = enr ? 18 : 14, off = Math.random() * TAU;
-        for (let i = 0; i < n; i++) { const a = off + i / n * TAU; enemyShot(e.x + Math.cos(a) * 40, e.y - 60 + Math.sin(a) * 20, Math.cos(a) * 135, Math.sin(a) * 135, 13, 'bell'); }
+        for (let i = 0; i < n; i++) { const a = off + i / n * TAU; enemyShot(e.x + Math.cos(a) * 40, e.y - 60 + Math.sin(a) * 20, Math.cos(a) * 135, Math.sin(a) * 135, 13 * (GAME.diffDmg || 1), e.def.bellShot || 'bell'); }
         fxRing(e.x, e.y - 40, 20, 200, 0.6, '#ffc060', 5);
       }
       if (e.bells <= 0 && e.bellT <= 0) { e.state = 'walk'; e.stT = rand(1.4, 2.2); }

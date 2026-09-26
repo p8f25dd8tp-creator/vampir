@@ -57,13 +57,13 @@ function updateMenuScene(dt) {
   updateFX(dt);
 }
 
-function startGame(hero) {
+function startGame(hero, opts) {
   AudioSys.init();
   MENU = null;
   UI.clear();
   applyQuality();
   PENDING_FINN = hero === 'finn' ? (UI.finnPick !== undefined ? UI.finnPick : finnSave().tier) : undefined;
-  newRun(hero);
+  newRun(hero, opts);
   UI.showHud();
 }
 function togglePause(on) {

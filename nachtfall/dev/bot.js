@@ -59,3 +59,14 @@ window.simRun = function (hero, maxT) {
   const dmg = Object.entries(G.stats.dmg).sort((a, b) => b[1] - a[1]).map(([k, v]) => k + ':' + Math.round(v)).slice(0, 8).join(' ');
   return { hero, t: Math.round(G.t), won: G.won, lvl: G.level, kills: G.kills, hp: Math.round(G.p.hp), boss: G.boss ? Math.round(G.boss.hp) + '/' + Math.round(G.boss.maxHp) : '-', fus: G.stats.fusions.join(','), reac: G.stats.reactions, dmg, ab: Object.keys(G.p.ab).map((k) => k + G.p.ab[k].lvl).join(' '), pas: Object.keys(G.p.passives).map((k) => k + G.p.passives[k]).join(' '), taken: JSON.stringify(Object.fromEntries(Object.entries(G.stats.takenBy||{}).map(([k,v])=>[k,Math.round(v)]))), healed: Math.round(G.stats.healed), log: BOT.log.filter((x) => x[0] === '@').join(' | ') };
 };
+
+window.simStory = function (ch, tier, maxT, gear, king) {
+  const S = storySave(); S.gear = { handschuhe: gear || 0, stiefel: gear || 0, panzer: gear || 0, amulett: gear || 0 }; S.king = !!king;
+  UI.showLevelUp = function () {}; UI.hideLevelUp = function () {}; UI.showEnd = function () {}; UI.announce = function () {}; UI.toast = function () {}; UI.hurtFlash = function () {}; UI.sysWindow = function () {}; UI.evolution = function () {};
+  SAVE.settings.testUnlock = true; UI.finnPick = tier; storyStart(ch);
+  AudioSys.stopMusic();
+  let steps = 0;
+  while (GAME.state !== 'over' && GAME.t < maxT && steps < 60 * 900) { if (GAME.state === 'levelup') botPick(); if (GAME.state === 'play') updateGame(1 / 30); steps++; }
+  const G = GAME;
+  return { ch, tier, t: Math.round(G.t), won: G.won, lvl: G.level, kills: G.kills, boss: G.boss ? Math.round(G.boss.hp) + '/' + Math.round(G.boss.maxHp) : '-', q: G.quests.filter(q => q.done).length, cr: G.crystals, taken: Math.round(G.stats.taken) };
+};

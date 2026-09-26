@@ -20,9 +20,11 @@ const SRC_NAMES = {
   blutsaat: 'Blutsaat-Explosion', kettenreaktion: 'Kettenreaktion', blutung: 'Blutung', verderbnis: 'Verderbnis', reaktion: 'Reaktionen', nebelgang: 'Nebelspur'
 };
 
-function newRun(heroId) {
+function newRun(heroId, opts) {
   const H = HEROES[heroId];
+  opts = opts || {};
   clearFX();
+  setTheme(opts.story ? opts.story.theme : 'friedhof');
   GAME = {
     state: 'play', t: 0, realT: 0, hero: heroId,
     enemies: [], eproj: [], pickups: [], images: [], timers: [],
@@ -33,9 +35,10 @@ function newRun(heroId) {
     boss: null, bossAlive: false, mini: null, won: false, overT: 0,
     rerolls: 1 + (SAVE.meta.wurf || 0), revive: (SAVE.meta.wiedergeburt || 0) > 0,
     stats: { dmg: {}, taken: 0, healed: 0, reactions: 0, ults: 0, fusions: [] },
-    diffHp: 1, diffCount: 1, diffBoss: 1,
+    diffHp: 1, diffCount: 1, diffBoss: 1, diffDmg: 1, crystals: 0,
     later(t, fn) { this.timers.push({ t, fn }); }
   };
+  if (opts.story && typeof storySetup === 'function') storySetup(GAME, opts.story);
   GAME.p = makePlayer(heroId);
   GAME.cam.x = 0; GAME.cam.y = 0;
   if (H.start) giveCard(H.start, true);
@@ -76,6 +79,7 @@ function recomputeStats() {
     lifesteal: (ps.lebensraub || 0) * 0.02 + (p.hero === 'liora' ? 0.03 : 0),
     cd: 1
   };
+  if (GAME.statMod) GAME.statMod(st);
   const old = p.st.maxHp;
   p.st = st;
   if (old && st.maxHp > old) p.hp += st.maxHp - old;
@@ -189,12 +193,16 @@ function killEnemy(e, src, school) {
   if (Math.random() < (e.elite ? 1 : e.mini ? 1 : 0.035)) dropPickup(e.x + rand(-8, 8), e.y + rand(-8, 8), 'soul', e.elite || e.mini ? 25 : 1);
   if (Math.random() < 0.012 || e.elite) dropPickup(e.x + 10, e.y, 'heal', 1);
   if (Math.random() < 0.0025) dropPickup(e.x, e.y + 10, 'magnet', 1);
-  if (e.mini) { G.miniKilled = true; dropPickup(e.x, e.y, 'chest', 1); G.mini = null; UI.announce('Hauptmann Kharn ist gefallen!', ''); sfx('roar'); shake(6); hitstop(0.08); }
+  if (G.onKill) G.onKill(e);
+  if (e.mini) { G.miniKilled = true; dropPickup(e.x, e.y, 'chest', 1); G.mini = null; UI.announce(e.def.name + ' ist gefallen!', ''); sfx('roar'); shake(6); hitstop(0.08); }
   // Todes-Effekte je nach Art
-  if (e.type === 'bat') { burstBlood(e.x, e.y - 20, 6, 0.7); splat(e.x, e.y, 14); }
-  else if (e.type === 'knight' || e.type === 'captain') { burstSparks(e.x, e.y - 20, 6, '#e8dcc0', 0.8); burstAsh(e.x, e.y - 10, 5, '#6a6258'); }
-  else if (e.type === 'witch') { burstQi(e.x, e.y - 24, 10, 0.8, '#7dff9a'); burstAsh(e.x, e.y - 10, 5, '#3a4a3a'); }
-  else if (e.type === 'brute') { burstBlood(e.x, e.y - 20, 22, 1.3); splat(e.x, e.y, 40); sfx('splat'); shake(2);
+  const gore = D.gore;
+  if (gore === 'light') { burstSparks(e.x, e.y - 20, 10, '#ffe6a0', 0.9); burstQi(e.x, e.y - 20, 6, 0.6, '#fff4d0'); }
+  else if (gore === 'void') { burstShadow(e.x, e.y, 6, 0.8); burstQi(e.x, e.y - 20, 6, 0.6, '#c08aff'); }
+  else if (e.role === 'bat') { burstBlood(e.x, e.y - 20, 6, 0.7); splat(e.x, e.y, 14); }
+  else if (e.role === 'knight' || e.role === 'captain') { burstSparks(e.x, e.y - 20, 6, '#e8dcc0', 0.8); burstAsh(e.x, e.y - 10, 5, '#6a6258'); }
+  else if (e.role === 'witch') { burstQi(e.x, e.y - 24, 10, 0.8, '#7dff9a'); burstAsh(e.x, e.y - 10, 5, '#3a4a3a'); }
+  else if (e.role === 'brute') { burstBlood(e.x, e.y - 20, 22, 1.3); splat(e.x, e.y, 40); sfx('splat'); shake(2);
     for (let i = 0; i < (D.splits || 0); i++) { const a = i / D.splits * TAU; const s = makeEnemy('ghoul', e.x + Math.cos(a) * 20, e.y + Math.sin(a) * 14); s.kvx = Math.cos(a) * 200; s.kvy = Math.sin(a) * 200; } }
   else { burstBlood(e.x, e.y - 16, 7, 0.9); if (Math.random() < 0.5) splat(e.x, e.y, 18); }
   if (school === 'shadow') burstShadow(e.x, e.y, 3, 0.6);
@@ -225,9 +233,10 @@ function bloodBurstAt(x, y, r, dmg, src, depth) {
 }
 function bossDefeated(e) {
   const G = GAME;
+  if (G.onKill) G.onKill(e);
   G.bossAlive = false; G.won = true;
   SAVE.stats.bossKills++;
-  UI.announce('VAELGOR IST GEFALLEN', 'boss');
+  UI.announce(e.def.name.split(',')[0].toUpperCase() + ' IST GEFALLEN', 'boss');
   sfx('roar'); sfx('bell'); shake(14); hitstop(0.25);
   G.slowmo = 2.5;
   for (let i = 0; i < 14; i++) GAME.later(i * 0.12, () => { const x = e.x + rand(-50, 50), y = e.y + rand(-100, 0); bloodBurstAt(x, y, 60, 0, 'reaktion'); fxFlash(x, y, 80, '#ff8a3a', 0.3); sfx('nova', 0, 0); });
@@ -324,9 +333,10 @@ function collect(q) {
     sfx('gem', Math.min(12, G.gemCombo), 0.03);
     while (G.xp >= G.xpNext) { G.xp -= G.xpNext; G.level++; G.xpNext = xpNeed(G.level); G.pendingLevels++; }
   } else if (q.kind === 'book') { finnEvolve(1); }
+  else if (q.kind === 'crystal') { G.crystals = (G.crystals || 0) + q.v; sfx('gem', 18, 0.03); }
   else if (q.kind === 'soul') { G.souls += q.v; sfx('gem', 14, 0.03); }
   else if (q.kind === 'heal') { healPlayer(p.st.maxHp * 0.3 * (p.hero === 'liora' ? 1.5 : 1)); burstBlood(p.x, p.y - 20, 6, 0.5); }
-  else if (q.kind === 'magnet') { G.magnetAll = true; for (const o of G.pickups) if (o.kind === 'xp') o.magnet = true; sfx('heal'); UI.toast('Mondstein: alle Seelensplitter fliegen zu dir'); }
+  else if (q.kind === 'magnet') { G.magnetAll = true; for (const o of G.pickups) if (o.kind === 'xp') o.magnet = true; sfx('heal'); UI.toast(GAME.story ? 'Mondstein: alle Kristalle und Splitter fliegen zu dir' : 'Mondstein: alle Seelensplitter fliegen zu dir'); }
   else if (q.kind === 'chest') {
     healPlayer(p.st.maxHp * 0.5); G.souls += 40;
     G.pendingLevels += 1; fxRing(p.x, p.y, 10, 140, 0.5, '#ffe6a0', 6); sfx('fusion');
@@ -542,6 +552,7 @@ function updateGame(rdt) {
   if (G.gemComboT > 0) { G.gemComboT -= rdt; if (G.gemComboT <= 0) G.gemCombo = 0; }
   AudioSys.musicTick(rdt, clamp(G.alive / 150, 0, 1) * 0.7 + (G.bossAlive ? 0.3 : 0));
   const HH = HEROES[G.hero]; if (HH.onUpdate) HH.onUpdate(dt);
+  if (G.quests && G.p.alive && !G.won) storyQuestTick();
   if (G.pendingLevels > 0 && G.p.alive && !G.won && G.state === 'play') { G.pendingLevels--; openLevelUp(); }
 }
 function openLevelUp() {

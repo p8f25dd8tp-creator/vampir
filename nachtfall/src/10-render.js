@@ -139,7 +139,7 @@ function renderLightmap(x0, y0, time, props) {
   g.setTransform(1, 0, 0, 1, 0, 0);
   g.globalCompositeOperation = 'source-over';
   g.globalAlpha = 1;
-  g.fillStyle = AMBIENT; g.fillRect(0, 0, w, h);
+  g.fillStyle = WORLD.ambient || AMBIENT; g.fillRect(0, 0, w, h);
   g.globalCompositeOperation = 'lighter';
   const L = FX.lights;
   for (let i = 0; i < L.length; i++) {
@@ -202,9 +202,9 @@ function drawPropGlows(g, props, time) {
 /* ------------------------------------------------------------ Gegner */
 function drawEnemy(g, e, time) {
   if (e.boss) return drawBossEntity(g, e, time);
-  const spr = ENEMY_SPR[e.def.art];
+  const spr = ensureArt(e.def.art);
   const A = ENEMY_ART[e.def.art];
-  const fps = e.type === 'bat' ? 12 : e.type === 'witch' ? 7 : 9 * (e.spd / e.def.spd);
+  const fps = e.role === 'bat' ? 12 : e.role === 'witch' ? 7 : 9 * (e.spd / e.def.spd);
   const frames = spr.frames;
   const fi = Math.floor(e.animT * fps) % frames.length;
   let img = frames[fi];
@@ -264,13 +264,13 @@ function drawEnemyGlows(g, G, time) {
       }
     }
     if (e.corruptT > 0 && Math.random() < 0.15 * FXQ) spawnPart({ x: e.x + rand(-6, 6), y: e.y, z: rand(10, 30), vx: 0, vy: 0, vz: 30, g: -10, drag: 1, life: 0.5, size: 5, size1: 9, spr: tinted('spark', '#c0306a'), layer: 1, alpha: 0.7 });
-    if (e.type === 'witch') { g.globalAlpha = 0.8; const s = 22; g.drawImage(glowSprite('#7dff9a'), e.x + e.face * 12 - s / 2, e.y - 22 - s / 2, s, s); }
+    if (e.role === 'witch') { g.globalAlpha = 0.8; const s = 22; g.drawImage(glowSprite(SHOT_COL[e.def.shot] || '#7dff9a'), e.x + e.face * 12 - s / 2, e.y - 22 - s / 2, s, s); }
   }
   g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
 }
 function drawEnemyShots(g, G, time) {
   for (const s of G.eproj) {
-    const col = s.kind === 'bell' ? '#ffa040' : '#7dff9a';
+    const col = SHOT_COL[s.kind] || '#7dff9a';
     const pulse = 1 + Math.sin(time * 20 + s.t * 10) * 0.12;
     const r = s.r * pulse;
     // dunkler Rand = auf jedem Untergrund erkennbar
@@ -299,7 +299,7 @@ function drawBossEntity(g, e, time) {
   rg0.setTransform(px, 0, 0, px, S / 2, S * 0.86);
   rg0.lineCap = 'round'; rg0.lineJoin = 'round';
   const dk = e.dead ? clamp(e.deathT / 2.5, 0, 1) : 0;
-  drawBoss(rg0, { t: time, run: e.run || 0, phase: e.phase || 0, slam: e.slam || 0, bell: e.bell || 0, roar: e.roar || 0, enrage: e.enrage, hurt: e.flash > 0 ? 0.3 : 0, dead: dk });
+  (e.def.bossDraw ? BOSS_ART[e.def.bossDraw] : drawBoss)(rg0, { t: time, run: e.run || 0, phase: e.phase || 0, slam: e.slam || 0, bell: e.bell || 0, roar: e.roar || 0, enrage: e.enrage, hurt: e.flash > 0 ? 0.3 : 0, dead: dk });
   rg0.setTransform(1, 0, 0, 1, 0, 0);
   finishSprite(BOSS_CANVAS.raw, { outline: 2.5, rim: e.enrage ? '#ff3a1a' : '#ff8a4a', rimW: 2.5, rimA: 0.7, moonW: 2 }, BOSS_CANVAS.out);
   g.save(); g.translate(e.x, e.y);
@@ -475,6 +475,12 @@ function drawPickups(g, G, time) {
       g.fillStyle = rg(g, q.x - 2, y - 2, 0, 8, [0, '#ffffff', 0.4, '#a8c8ff', 1, '#3a4a8a']);
       g.beginPath(); g.arc(q.x, y - 4, 7, 0, TAU); g.fill();
       addLight(q.x, q.y, 70, '#a8c8ff', 0.9);
+    } else if (q.kind === 'crystal') { // Bestienkristall
+      g.save(); g.translate(q.x, y - 2); g.rotate(0.2);
+      g.fillStyle = lg(g, -4, -8, 4, 4, [0, '#ffffff', 0.4, '#6ac8ff', 1, '#1a4a8a']);
+      g.beginPath(); g.moveTo(0, -9); g.lineTo(4, -2); g.lineTo(0, 5); g.lineTo(-4, -2); g.closePath(); g.fill();
+      g.strokeStyle = '#0a1a3a'; g.lineWidth = 1; g.stroke(); g.restore();
+      addLight(q.x, q.y, 50, '#6ac8ff', 0.8);
     } else if (q.kind === 'book') { // das Buch: schwebender Foliant mit Blutrunen und Lichtsaeule
       const by = y - 10 + Math.sin(time * 2) * 3;
       g.save(); g.globalCompositeOperation = 'lighter';
