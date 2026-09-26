@@ -11,7 +11,7 @@
 const FINN_TIERS = [
   { id: 'mensch', name: 'Mensch', hp: 80, speed: 150, armor: 0, might: 1, req: null, slots: 0, rim: '#b8b8c8', col: '#c8c8d8',
     grants: [], unlocks: [], desc: 'Keine Kräfte. Finde das Buch!' },
-  { id: 'halbling', name: 'Halbling', hp: 100, speed: 158, armor: 0, might: 1, req: { text: 'Finde das Buch (erster Lauf).' }, slots: 2, rim: '#ff4a5a', col: '#ff4a5a',
+  { id: 'halbling', name: 'Halbling', hp: 100, speed: 158, armor: 0, might: 1, req: { text: 'Finde das Buch (erster Lauf).' }, slots: 4, rim: '#ff4a5a', col: '#ff4a5a',
     grants: ['blutwisch', 'blutspray'], unlocks: ['blutwisch', 'blutspray', 'lebensraub', 'vampirblut', 'nebelgang', 'grabesmacht', 'seelenmagnet'],
     desc: 'Das Buch erwacht. Blutwisch und Blutspray.' },
   { id: 'vampir', name: 'Vampir', hp: 125, speed: 168, armor: 1, might: 1.1, req: { essence: 600, text: 'Überlebe 5 Minuten', check: (r) => r.t >= 300 }, slots: 6, rim: '#ff2a40', col: '#ff2a40',

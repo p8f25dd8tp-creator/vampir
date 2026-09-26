@@ -6,7 +6,7 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
   const errs = []; p.on('pageerror', e => errs.push(e.message + '\n' + e.stack));
   await p.goto('http://localhost:8765/index.html'); await p.waitForTimeout(2500);
   await p.addScriptTag({ path: 'dev/bot.js' });
-  const tiers = [1,2,2,2,2,3,3,4,4,4,5,6];
+  const tiers = [1,1,2,2,2,3,3,4,4,4,5,6];
   for (let ch = 1; ch <= 12; ch++) {
     const r = await p.evaluate(([ch, tier]) => {
       UI.showLevelUp = function () {};

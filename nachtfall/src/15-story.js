@@ -16,230 +16,230 @@ function defBoss(id, draw, name, hp, o) {
   return id;
 }
 
-// Kapitel 1–10 folgen den zehn Akten des Storybooks „Vampirsystem Basis Zwei“
-// (Vorlage Kapitel 1–1572), Kapitel 11–12 spielen nach dem Zeitsprung.
+// Kapitel folgen dem Recherche-Dossier (story/story-bible.json, 80 Missionen).
+// Kapitelzahlen „Vorlage“ = englischer Webroman. Originalnamen, wo kein deutscher Name belegt ist.
 const CHAPTERS = [
   {
-    n: 1, id: 'basis', title: 'Militärbasis 2', src: 'Kapitel 1–75', place: 'Militärbasis 2 — Übungsgelände bei Nacht', theme: 'akademie', tier: 1,
+    n: 1, id: 'aula', title: 'Die Aula', src: 'Kapitel 1–64', missions: [1, 6], place: 'Zweite Militärbasis — Akademie', theme: 'akademie', tier: 1,
     intro: [
-      'Kampfwert 1. Keine verwertbare Fähigkeit. Finn Müller ist sechzehn, seine Eltern sind tot — geblieben ist nur ein Buch, das sich nicht öffnen lässt.',
-      'Nachts brechen Bestien aus Stahlmanns Container. Irgendwo auf dem Gelände liegt das Buch …'
+      'Finn Müller ist sechzehn, Waise und gilt als fähigkeitslos. Sein Blut öffnet das schwarze Buch seiner Eltern — das System erwacht.',
+      'In der Aula steht Fabian Schneider gefesselt vor hundert Erstjährigen. Mono, Stufe sechs, will zeigen, was Rang bedeutet.'
     ],
     diff: { hp: 0.5, count: 0.8, dmg: 0.75 },
     roles: {
-      ghoul: defEnemy('c1_kanal', 'ghoul', 'q_kanal', 'Kanalisationsbestie'),
+      ghoul: defEnemy('c1_gruen', 'ghoul', 'q_kanal', 'Grünzonen-Bestie'),
       bat: defEnemy('c1_flatter', 'bat', 'bat_braun', 'Flatterbestie'),
-      knight: defEnemy('c1_panzer', 'knight', 'q_panzer', 'Panzerbestie (Mittelstufe)', { armor: 1 }),
-      witch: defEnemy('c1_spucker', 'witch', 'q_kroete', 'Säurekröte', { shot: 'acid', flier: false }),
+      knight: defEnemy('c1_zweit', 'knight', 'h_schueler', 'Zweitjähriger (Stufe 2)', { armor: 1 }),
+      witch: defEnemy('c1_wasser', 'witch', 'h_truedream', 'Wasser-Anwender', { shot: 'soul', flier: false }),
       brute: defEnemy('c1_mutter', 'brute', 'q_mutter', 'Brutmutter'),
-      captain: defEnemy('c1_laeufer', 'captain', 'h_laeufer', 'Stahlmanns Läufer', { scale: 1.2, hp: 900 }),
-      boss: defBoss('c1_boss', 'container', 'Das Ding aus dem Container', 2400, { bellShot: 'acid' })
+      captain: defEnemy('c1_vier', 'captain', 'h_schueler', 'Monos Vertrauter (Stufe 4)', { scale: 1.2, hp: 900 }),
+      boss: defBoss('c1_boss', 'mono', 'Mono (Stufe 6)', 2400, { bellShot: 'soul' })
     },
-    texts: { swarm: 'Ein Schwarm Flatterbestien!', ring: 'Die Bestien kreisen dich ein …', boss: 'Der überzählige Container bricht auf.' },
+    texts: { swarm: 'Flatterbestien aus dem Übungsportal!', ring: 'Die Älteren kreisen dich ein …', boss: 'Mono zieht den Vorhang weg. Er sieht zwei Sekunden in die Zukunft.' },
     quests: [
-      { type: 'kill', role: 'ghoul', n: 120, text: 'Besiege 120 Kanalisationsbestien', reward: { crystals: 15, bonus: 'level' } },
+      { type: 'kill', role: 'knight', n: 30, text: 'Besiege 30 Zweitjährige', reward: { crystals: 15, bonus: 'level' } },
       { type: 'survive', n: 240, text: 'Überlebe 4 Minuten', reward: { crystals: 15, bonus: 'heal' } },
-      { type: 'mini', text: 'Besiege Stahlmanns Läufer', reward: { crystals: 25, bonus: 'level' } }
+      { type: 'mini', text: 'Besiege Monos Vertrauten', reward: { crystals: 25, bonus: 'level' } }
     ],
-    reward: { tier: 2, text: 'Evolution: Vampir — „Es ist Zeit zu fressen“' }
+    reward: { skills: ['technik'], text: 'Hammerschlag und Blitzschritt (Hammer Strike & Flash Step)' }
   },
   {
-    n: 2, id: 'portal', title: 'Das rote Portal', src: 'Kapitel 76–110', place: 'Rote Zone — keine Sonne, kein Schatten', theme: 'rotezone', tier: 2,
+    n: 2, id: 'portal', title: 'Das rote Portal', src: 'Kapitel 65–110', missions: [7, 8], place: 'Roter Portalplanet (Pioletic)', theme: 'rotezone', tier: 1,
     intro: [
-      'Stahlmanns Läufer stoßen Fabian Skala ins rote Portal. Finn springt hinterher.',
-      'Kein Sonnenlicht: zum ersten Mal arbeitet sein Körper mit voller Kraft. Im Zentrum der Zone wartet der Blutsauger.'
+      'Unter Druck von Dukes Leuten stößt Peter Finn durch ein rotes Portal. Fabian springt hinterher.',
+      'Rattaclaws, verlassene Militäranlagen — und ein Reisender namens Ian. Hier wird Finn zum Vampir und findet das Schattenbuch.'
     ],
-    diff: { hp: 0.85, count: 0.9, dmg: 0.95 },
+    diff: { hp: 0.72, count: 0.85, dmg: 0.88 },
     roles: {
-      ghoul: defEnemy('c2_rot', 'ghoul', 'q_rot', 'Rotzonen-Bestie'),
-      bat: defEnemy('c2_gleiter', 'bat', 'bat_blut', 'Blutflatterer'),
-      knight: defEnemy('c2_panzer', 'knight', 'q_rotP', 'Panzerbestie (Fortgeschritten)', { armor: 2 }),
+      ghoul: defEnemy('c2_ratta', 'ghoul', 'q_rot', 'Rattaclaw'),
+      bat: defEnemy('c2_flatter', 'bat', 'bat_blut', 'Blutflatterer'),
+      knight: defEnemy('c2_panzer', 'knight', 'q_rotP', 'Panzer-Rattaclaw', { armor: 2 }),
       witch: defEnemy('c2_spore', 'witch', 'q_spore', 'Sporenbestie', { shot: 'acid', flier: false }),
       brute: defEnemy('c2_mutter', 'brute', 'q_alienM', 'Bestienmutter'),
-      captain: defEnemy('c2_orange', 'captain', 'q_orange', 'Mittelstufen-Bestie', { scale: 1.3, hp: 1400 }),
-      boss: defBoss('c2_boss', 'blutsauger', 'Blutsauger (Rote Zone)', 6000, { bellShot: 'blood' })
+      captain: defEnemy('c2_alpha', 'captain', 'q_orange', 'Rattaclaw-Alpha', { scale: 1.3, hp: 1200 }),
+      boss: defBoss('c2_boss', 'ian', 'Ian, der Reisende', 4500, { bellShot: 'spike' })
     },
-    texts: { swarm: 'Blutflatterer aus dem roten Himmel!', ring: 'Die rote Zone schließt sich um dich …', boss: 'Dünn wie ein Skelett, zu lang für seine Haut: der Blutsauger.' },
+    texts: { swarm: 'Blutflatterer aus dem roten Himmel!', ring: 'Die Rattaclaws kreisen dich ein …', boss: 'Ian stellt sich dir in den Weg.' },
     quests: [
-      { type: 'kill', role: 'knight', n: 25, text: 'Besiege 25 Panzerbestien', reward: { crystals: 30, bonus: 'level' } },
+      { type: 'kill', role: 'ghoul', n: 150, text: 'Besiege 150 Rattaclaws', reward: { crystals: 25, bonus: 'level' } },
       { type: 'crystals', n: 20, text: 'Sammle 20 Bestienkristalle', reward: { crystals: 20, bonus: 'heal' } },
-      { type: 'mini', text: 'Besiege die Mittelstufen-Bestie', reward: { crystals: 40, bonus: 'level' } }
+      { type: 'mini', text: 'Besiege den Rattaclaw-Alpha', reward: { crystals: 35, bonus: 'level' } }
     ],
-    reward: { skills: ['schatten', 'qi'], text: 'Schatten freigeschaltet — „Diese Fähigkeit ist älter als du“ · Leo lehrt dich Qi' }
+    reward: { tier: 2, skills: ['schatten'], text: 'Evolution: Vampir (Kap. 86) · das Schattenbuch' }
   },
   {
-    n: 3, id: 'caladi', title: 'Caladi und die Dalki', src: 'Kapitel 111–140', place: 'Planet Caladi — der Vorposten', theme: 'caladi', tier: 2,
+    n: 3, id: 'caladi', title: 'Caladi', src: 'Kapitel 111–138', missions: [9, 10], place: 'Planet Caladi — Shelter und rote Zone', theme: 'caladi', tier: 2,
     intro: [
-      'Bewertungsreise nach Caladi: zwei Sonnen, lange Tage, vierhundert Namen auf der Rangliste — Finn auf Platz 397.',
-      'Der Gleiter stürzt ab. Im zerstörten Vorposten steht etwas, das es nicht mehr geben dürfte: ein Dalki.'
+      'Die Gruppenexkursion führt zum Shelter von Caladi und in die rote Zone. Dort wartet etwas, das es nicht geben dürfte: ein Dalki.',
+      'Peter wird tödlich verletzt. Finn hat nur einen Weg, ihn zu retten.'
     ],
     diff: { hp: 0.92, count: 0.92, dmg: 0.98 },
     roles: {
-      ghoul: defEnemy('c3_laeufer', 'ghoul', 'q_caladi', 'Caladi-Läufer'),
+      ghoul: defEnemy('c3_laeufer', 'ghoul', 'q_caladi', 'Caladi-Bestie'),
       bat: defEnemy('c3_aas', 'bat', 'bat_aas', 'Aasflieger'),
-      knight: defEnemy('c3_panzer', 'knight', 'q_panzer', 'Grubenbestie', { armor: 2 }),
+      knight: defEnemy('c3_panzer', 'knight', 'q_panzer', 'Panzerbestie der roten Zone', { armor: 2 }),
       witch: defEnemy('c3_spucker', 'witch', 'q_kroete', 'Säurekröte', { shot: 'acid', flier: false }),
-      brute: defEnemy('c3_koenig', 'brute', 'q_fort', 'Grubenkönig'),
-      captain: defEnemy('c3_torres', 'captain', 'h_torres', 'Torres — Rang A, Feuer', { scale: 1.2, hp: 1800 }),
-      boss: defBoss('c3_boss', 'dalki1', 'Dalki (Ein Stachel)', 7000, { bellShot: 'spike' })
+      brute: defEnemy('c3_koenig', 'brute', 'q_fort', 'Grubenbestie'),
+      captain: defEnemy('c3_koenigB', 'captain', 'q_koenig', 'Königsstufen-Bestie', { scale: 1.25, hp: 1800 }),
+      boss: defBoss('c3_boss', 'dalki1', 'Dalki', 7000, { bellShot: 'spike' })
     },
-    texts: { swarm: 'Aasflieger über der Ebene!', ring: 'Die Bestien von Caladi umzingeln euch!', boss: '„Dalki.“ Fabian sagt es so leise, dass es fast untergeht.' },
+    texts: { swarm: 'Aasflieger über der roten Zone!', ring: 'Die Bestien von Caladi umzingeln euch!', boss: 'Ein Dalki. Der Krieg ist seit Jahren vorbei — und trotzdem steht er da.' },
     quests: [
-      { type: 'kill', role: 'ghoul', n: 180, text: 'Besiege 180 Caladi-Läufer', reward: { crystals: 35, bonus: 'level' } },
+      { type: 'kill', role: 'ghoul', n: 180, text: 'Besiege 180 Caladi-Bestien', reward: { crystals: 35, bonus: 'level' } },
       { type: 'level', n: 18, text: 'Erreiche Stufe 18', reward: { crystals: 25, bonus: 'heal' } },
-      { type: 'mini', text: 'Gewinne das Duell gegen Torres', reward: { crystals: 45, bonus: 'level' } }
+      { type: 'mini', text: 'Besiege die Königsstufen-Bestie', reward: { crystals: 45, bonus: 'level' } }
     ],
-    reward: { skills: ['qi2', 'ghoul'], text: 'Grünes Blut: Peter wird Ghoul · Qi-Kette und Eisenmeridiane' }
+    reward: { skills: ['ghoul', 'blut'], text: 'Blutritual: Peter wird Ghoul (Cursed Family) · Blutnova und Bluternte' }
   },
   {
-    n: 4, id: 'nachtdaemon', title: 'Der Nachtdämon', src: 'Kapitel 141–382', place: 'Militärbasis 2 — nach der Sperrstunde', theme: 'basisnacht', tier: 2,
+    n: 4, id: 'nachtdaemon', title: 'Der Nachtdämon', src: 'Kapitel 139–383', missions: [11, 19], place: 'Zweite Militärbasis — bei Nacht', theme: 'basisnacht', tier: 2,
     intro: [
-      'Fex Sanguini hat Finn gerochen — und ihn nicht verraten. Leander baut ihm eine Maske: kein Gesicht, kein Geruch, keine Stimme.',
-      'Unter der Maske geht Finn gegen General Viktor Stahlmann vor, Rang S, Kommandant von Basis 2.'
+      'Fex Sanguini, Ausreißer der dreizehnten Familie, kommt an die Akademie. Peter wird zum Wight, Jack Truedream nimmt Menschen ihre Fähigkeiten, Leo lehrt Qi.',
+      'Nachts schützt der Nachtdämon die Schwachen. Am Ende steht die Konfrontation mit Duke.'
     ],
-    diff: { hp: 1.0, count: 0.95, dmg: 1.02 },
+    diff: { hp: 0.94, count: 0.93, dmg: 0.96 },
     roles: {
-      ghoul: defEnemy('c4_kanal', 'ghoul', 'q_kanal', 'Container-Bestie', { hp: 16 }),
+      ghoul: defEnemy('c4_bestie', 'ghoul', 'q_kanal', 'Portalbestie', { hp: 16 }),
       bat: defEnemy('c4_flatter', 'bat', 'bat_braun', 'Flatterbestie'),
-      knight: defEnemy('c4_wache', 'knight', 'h_wache', 'Stahlmanns Leibwache', { armor: 2 }),
+      knight: defEnemy('c4_wache', 'knight', 'h_wache', 'Dukes Leute', { armor: 2 }),
       witch: defEnemy('c4_agent', 'witch', 'h_truedream', 'Truedream-Agent', { shot: 'soul', flier: false }),
       brute: defEnemy('c4_mutter', 'brute', 'q_orange', 'Bestie aus dem orangen Portal', { splits: 0, hp: 130 }),
       captain: defEnemy('c4_jack', 'captain', 'h_jack', 'Jack Truedream', { scale: 1.2, hp: 2200 }),
-      boss: defBoss('c4_boss', 'stahlmann', 'General Viktor Stahlmann (Rang S)', 7800, { bellShot: 'spike' })
+      boss: defBoss('c4_boss', 'stahlmann', 'Duke', 7000, { bellShot: 'spike' })
     },
-    texts: { swarm: 'Flatterbestien über dem Kasernenhof!', ring: 'Stahlmanns Leute schließen den Kreis.', boss: '„Endlich“, sagt General Stahlmann und zieht das Jackett aus.' },
+    texts: { swarm: 'Flatterbestien über dem Kasernenhof!', ring: 'Dukes Leute schließen den Kreis.', boss: 'Duke erwartet dich.' },
     quests: [
-      { type: 'kill', role: 'knight', n: 35, text: 'Besiege 35 Leibwächter', reward: { crystals: 40, bonus: 'level' } },
+      { type: 'kill', role: 'knight', n: 35, text: 'Besiege 35 von Dukes Leuten', reward: { crystals: 40, bonus: 'level' } },
       { type: 'survive', n: 360, text: 'Überlebe 6 Minuten', reward: { crystals: 30, bonus: 'heal' } },
       { type: 'mini', text: 'Widersetze dich Jack Truedream', reward: { crystals: 50, bonus: 'level' } }
     ],
-    reward: { skills: ['blut'], text: 'Der Nachtdämon: Blutnova und Bluternte' }
+    reward: { skills: ['qi'], text: 'Leo lehrt dich Qi (Kap. 333–351): Qi-Hand und Eisenmeridiane' }
   },
   {
-    n: 5, id: 'lintarnia', title: 'Die Vampirsiedlung', src: 'Kapitel 383–510', place: 'Lintarnia — der Blutdom', theme: 'siedlung', tier: 2,
+    n: 5, id: 'siedlung', title: 'Die Vampirsiedlung', src: 'Kapitel 384–534', missions: [20, 29], place: 'Vampirsiedlung — Schule, Rat und zehnte Burg', theme: 'siedlung', tier: 2,
     intro: [
-      'Die Heimatwelt der Vampire: dreizehn Burgen, ein Rat, und ein Todesurteil gegen Fex — an seinem Geburtstag, im Blutdom.',
-      '„Beanspruche den zehnten Sitz.“ Doch zuerst steht Silva Sanguini zwischen Finn und seinem Freund.'
+      'Unter Decknamen schleicht sich die Gruppe in die Vampirschule. Fex droht die Hinrichtung, Peter ist ein nicht registrierter Wight.',
+      'Finns Schatten verweist auf die verbannten Punisher — und die zehnte Familie hat keinen Leiter.'
     ],
     diff: { hp: 1.1, count: 0.98, dmg: 1.08 },
     roles: {
-      ghoul: defEnemy('c5_hase', 'ghoul', 'q_hase', 'Schwarzer Hase', { hp: 18 }),
-      bat: defEnemy('c5_fleder', 'bat', 'bat_blut', 'Todesfledermaus'),
-      knight: defEnemy('c5_ritter', 'knight', 'v_ritter', 'Vampirritter der Achten', { armor: 3 }),
+      ghoul: defEnemy('c5_wache', 'ghoul', 'v_wache', 'Vampirwache', { hp: 18 }),
+      bat: defEnemy('c5_fleder', 'bat', 'bat_blut', 'Blutfledermaus'),
+      knight: defEnemy('c5_ritter', 'knight', 'v_ritter', 'Vampirritter', { armor: 3 }),
       witch: defEnemy('c5_magier', 'witch', 'v_magier', 'Blutmagierin', { shot: 'blood', flier: false }),
-      brute: defEnemy('c5_wache', 'brute', 'v_thrall', 'Wache des Rates', { splits: 0, hp: 150 }),
-      captain: defEnemy('c5_xander', 'captain', 'h_xander', 'Xander', { scale: 1.2, hp: 2600 }),
-      boss: defBoss('c5_boss', 'silva', 'Silva Sanguini (Vampirritterin)', 9000, { bellShot: 'blood' })
+      brute: defEnemy('c5_thrall', 'brute', 'v_thrall', 'Thrall', { splits: 0, hp: 150 }),
+      captain: defEnemy('c5_boneclaw', 'captain', 'boneclaw', 'Boneclaw', { scale: 1.3, hp: 2600 }),
+      boss: defBoss('c5_boss', 'silva', 'Vollstrecker des Vampirrats', 9000, { bellShot: 'blood' })
     },
-    texts: { swarm: 'Zehn Todesfledermäuse — ein Wetterphänomen!', ring: 'Die Wachen des Rates schließen den Kreis.', boss: 'Silva Sanguini erfüllt eine Vorschrift. Das macht es schlimmer.' },
+    texts: { swarm: 'Blutfledermäuse aus den Türmen!', ring: 'Die Wachen des Rates schließen den Kreis.', boss: 'Der Rat schickt seinen Vollstrecker.' },
     quests: [
       { type: 'kill', role: 'knight', n: 40, text: 'Besiege 40 Vampirritter', reward: { crystals: 50, bonus: 'level' } },
       { type: 'survive', n: 420, text: 'Überlebe 7 Minuten', reward: { crystals: 40, bonus: 'heal' } },
-      { type: 'mini', text: 'Besiege Xander vor der Vampirschule', reward: { crystals: 60, bonus: 'level' } }
+      { type: 'mini', text: 'Überstehe die Begegnung mit Boneclaw', reward: { crystals: 60, bonus: 'level' } }
     ],
-    reward: { tier: 3, text: 'Oberhaupt der zehnten Familie — Evolution: Vampiradliger' }
+    reward: { tier: 3, text: 'Zehnter Familienleiter (Kap. 497) — Evolution: Vampiradliger' }
   },
   {
-    n: 6, id: 'verfluchte', title: 'Die Verfluchten', src: 'Kapitel 511–611', place: 'Cudenti — der Außenposten der Crows', theme: 'ruinen', tier: 3,
+    n: 6, id: 'blade', title: 'Die Verfluchten', src: 'Kapitel 535–668', missions: [30, 33], place: 'Blade Island', theme: 'ruinen', tier: 3,
     intro: [
-      'Elf Mutterschiffe: der zweite Dalki-Krieg. Die Freunde trennen sich, Finn geht mit Leander und 31 Überlebenden zu den Crows.',
-      'Sunshield greift den Außenposten an — dreißig Traveller ohne Kampfrang. Ihr Kommandant ist Rang S.'
+      'Aus Überlebenden und Ausgestoßenen wächst die Cursed Faction; Sam gibt ihr Struktur.',
+      'Auf Blade Island hält Hilston Blade Kinder als Träger von Fähigkeiten. Fabian und Raten opfern ihren Platz im gemeinsamen Körper, damit Sil und die Kinder frei werden.'
     ],
     diff: { hp: 1.25, count: 1.02, dmg: 1.18 },
     roles: {
-      ghoul: defEnemy('c6_d1', 'ghoul', 'dalki1', 'Dalki (1 Stachel)', { hp: 18 }),
+      ghoul: defEnemy('c6_bestie', 'ghoul', 'q_caladi', 'Inselbestie', { hp: 18 }),
       bat: defEnemy('c6_aas', 'bat', 'bat_aas', 'Aasflieger'),
-      knight: defEnemy('c6_sun', 'knight', 'h_sunshield', 'Sunshield-Sturmsoldat', { armor: 3 }),
-      witch: defEnemy('c6_speer', 'witch', 'dalki2', 'Dalki-Speerwerfer (2 Stacheln)', { shot: 'spike', flier: false }),
+      knight: defEnemy('c6_blade', 'knight', 'h_blade', 'Blade-Wächter', { armor: 3 }),
+      witch: defEnemy('c6_kopie', 'witch', 'h_pure', 'Fähigkeitsträger', { shot: 'soul', flier: false }),
       brute: defEnemy('c6_koenig', 'brute', 'q_koenig', 'Königsstufen-Bestie', { splits: 0, hp: 170 }),
-      captain: defEnemy('c6_d2', 'captain', 'dalki3', 'Dalki (Zwei Stacheln)', { scale: 1.5, hp: 3000 }),
-      boss: defBoss('c6_boss', 'sunshield', 'Sunshield-Kommandant (Rang S)', 10000, { bellShot: 'spike' })
+      captain: defEnemy('c6_champ', 'captain', 'h_blade', 'Champion des Blade-Turniers', { scale: 1.25, hp: 3000 }),
+      boss: defBoss('c6_boss', 'hagon', 'Hilston Blade', 10000, { bellShot: 'spike' })
     },
-    texts: { swarm: 'Aasflieger über dem Außenposten!', ring: 'Sunshield kreist den Posten ein!', boss: 'Für ihn sind Traveller kein Gegner, sondern Gelände.' },
+    texts: { swarm: 'Aasflieger über der Insel!', ring: 'Die Blade-Wächter kreisen dich ein!', boss: 'Hilston Blade — fünf vorbereitete Fähigkeiten.' },
     quests: [
-      { type: 'kill', role: 'knight', n: 45, text: 'Besiege 45 Sunshield-Soldaten', reward: { crystals: 55, bonus: 'level' } },
+      { type: 'kill', role: 'knight', n: 45, text: 'Besiege 45 Blade-Wächter', reward: { crystals: 55, bonus: 'level' } },
       { type: 'level', n: 24, text: 'Erreiche Stufe 24', reward: { crystals: 45, bonus: 'heal' } },
-      { type: 'mini', text: 'Besiege den Dalki mit zwei Stacheln', reward: { crystals: 65, bonus: 'level' } }
+      { type: 'mini', text: 'Besiege den Champion des Blade-Turniers', reward: { crystals: 65, bonus: 'level' } }
     ],
-    reward: { skills: ['fraktion'], text: 'Die Verfluchten sind gegründet — ab jetzt bis zu 3 Begleiter' }
+    reward: { skills: ['fraktion'], text: 'Die Cursed Faction — ab jetzt bis zu 3 Begleiter' }
   },
   {
-    n: 7, id: 'weltmacht', title: 'Weltmacht', src: 'Kapitel 612–811', place: 'Kolonie Vermill — die Front', theme: 'schlachtfeld', tier: 3,
+    n: 7, id: 'buergerkrieg', title: 'Bürgerkrieg', src: 'Kapitel 669–808', missions: [34, 38], place: 'Fronten des Menschenbürgerkriegs', theme: 'schlachtfeld', tier: 3,
     intro: [
-      'Peter kehrt als Wight zurück. Die Verfluchten sitzen am Tisch der Weltmächte — elf Monate nach ihrer Gründung.',
-      'Hagon Skala, der stärkste Mensch der Welt, hat Sil in sein Labor gesperrt. Er kopiert alles, was er sieht.'
+      'Truedream, Blade, Militär und Pure treiben die Menschen in einen Bürgerkrieg. Die zehnte Burg wird angegriffen, Fraktionsführer verhandeln.',
+      'Emma trägt als Dhampir gelbe Augen — eine Kraft, die besonders Vampire verletzt.'
     ],
     diff: { hp: 1.4, count: 1.05, dmg: 1.26 },
     roles: {
-      ghoul: defEnemy('c7_d2', 'ghoul', 'dalki2', 'Dalki (2 Stacheln)', { hp: 20 }),
+      ghoul: defEnemy('c7_d1', 'ghoul', 'dalki1', 'Dalki (1 Stachel)', { hp: 20 }),
       bat: defEnemy('c7_aas', 'bat', 'bat_aas', 'Aasflieger'),
-      knight: defEnemy('c7_d3', 'knight', 'dalki3', 'Dalki (3 Stacheln)', { armor: 3 }),
-      witch: defEnemy('c7_pure', 'witch', 'h_pure', 'Agent der Wahrhaftigen', { shot: 'soul', flier: false }),
+      knight: defEnemy('c7_sold', 'knight', 'h_sunshield', 'Fraktionssoldat', { armor: 3 }),
+      witch: defEnemy('c7_pure', 'witch', 'h_pure', 'Agent von Pure', { shot: 'soul', flier: false }),
       brute: defEnemy('c7_d5', 'brute', 'dalki5', 'Dalki (5 Stacheln)', { splits: 0, hp: 170 }),
-      captain: defEnemy('c7_drei', 'captain', 'dalki4', 'Dreistachler von Vermill', { scale: 1.55, hp: 3400 }),
-      boss: defBoss('c7_boss', 'hagon', 'Hagon Skala (Stärkster Mensch)', 12500, { bellShot: 'light' })
+      captain: defEnemy('c7_sauger', 'captain', 'q_orange', 'Bloodsucker', { scale: 1.3, hp: 3400 }),
+      boss: defBoss('c7_boss', 'sunshield', 'Jack Truedream', 12500, { bellShot: 'light' })
     },
-    texts: { swarm: 'Aasflieger über Vermill!', ring: 'Die Dalki umzingeln die Kolonie!', boss: '„Ich werde mir deine Kräfte ansehen, während du sie benutzt.“' },
+    texts: { swarm: 'Aasflieger über der Front!', ring: 'Fraktionssoldaten umzingeln dich!', boss: 'Jack Truedream streckt die Hand aus.' },
     quests: [
-      { type: 'kill', role: 'ghoul', n: 250, text: 'Besiege 250 Dalki', reward: { crystals: 60, bonus: 'level' } },
+      { type: 'kill', role: 'ghoul', n: 250, text: 'Besiege 250 Gegner an der Front', reward: { crystals: 60, bonus: 'level' } },
       { type: 'survive', n: 450, text: 'Halte die Linie 7:30 Minuten', reward: { crystals: 50, bonus: 'heal' } },
-      { type: 'mini', text: 'Stelle den Dreistachler allein', reward: { crystals: 70, bonus: 'level' } }
+      { type: 'mini', text: 'Besiege den Bloodsucker', reward: { crystals: 70, bonus: 'level' } }
     ],
-    reward: { tier: 4, text: 'Evolution: Vampirlord — der Sonnenmalus ist herausgewachsen' }
+    reward: { tier: 4, text: 'Evolution: Vampirlord (Kap. 785–808)' }
   },
   {
-    n: 8, id: 'krone', title: 'Die Krone', src: 'Kapitel 812–1000', place: 'Die zehnte Burg', theme: 'burg', tier: 4,
+    n: 8, id: 'krone', title: 'Kampf um den Thron', src: 'Kapitel 809–945', missions: [39, 45], place: 'Vampirsiedlung — der Rat brennt', theme: 'burg', tier: 4,
     intro: [
-      'Samuel Eno hat die Dalki erschaffen — und er stirbt nicht richtig. Sechs Familienoberhäupter kommen gleichzeitig in die zehnte Burg.',
-      'In der Nacht bricht etwas durch das Haupttor, das älter ist als die dreizehn Familien: ein Original.'
+      'Fex entdeckt die innere Blutwaffe. Cindy Cha manipuliert die Thronfolge, stiehlt das Wissen um die Absolute Blutkontrolle und lässt Bloodsucker auf die Siedlung los.',
+      'Finn muss ihre Pläne aufdecken, bevor die Siedlung fällt.'
     ],
     diff: { hp: 1.8, count: 1.1, dmg: 1.42 },
     roles: {
-      ghoul: defEnemy('c8_rot', 'ghoul', 'h_rotvamp', 'Roter Vampir', { hp: 20 }),
+      ghoul: defEnemy('c8_sauger', 'ghoul', 'q_hase', 'Bloodsucker', { hp: 20 }),
       bat: defEnemy('c8_fleder', 'bat', 'bat_blut', 'Blutfledermaus'),
-      knight: defEnemy('c8_ritter', 'knight', 'v_ritter', 'Ritter der Achten', { armor: 4 }),
-      witch: defEnemy('c8_magier', 'witch', 'v_magier', 'Blutmagierin', { shot: 'blood', flier: false }),
-      brute: defEnemy('c8_thrall', 'brute', 'v_thrall', 'Diener des Untoten Königs', { splits: 0, hp: 180 }),
-      captain: defEnemy('c8_klon', 'captain', 'h_klon', 'Samuel Eno — Klon', { scale: 1.2, hp: 3800 }),
-      boss: defBoss('c8_boss', 'original', 'Ein Original', 17500, { bellShot: 'blood' })
+      knight: defEnemy('c8_ritter', 'knight', 'v_ritter', 'Ritter einer Familie', { armor: 4 }),
+      witch: defEnemy('c8_magier', 'witch', 'v_magier', 'Cindys Blutmagierin', { shot: 'blood', flier: false }),
+      brute: defEnemy('c8_thrall', 'brute', 'v_thrall', 'Thrall', { splits: 0, hp: 180 }),
+      captain: defEnemy('c8_alpha', 'captain', 'q_orange', 'Bloodsucker-Alpha', { scale: 1.4, hp: 3800 }),
+      boss: defBoss('c8_boss', 'cindy', 'Cindy Cha', 17500, { bellShot: 'blood' })
     },
-    texts: { swarm: 'Blutfledermäuse aus den Türmen!', ring: 'Rote Vampire umzingeln die Burg!', boss: 'Signatur unbekannt. Älter als die Gesetze.' },
+    texts: { swarm: 'Blutfledermäuse aus den Türmen!', ring: 'Bloodsucker fallen über die Siedlung her!', boss: 'Cindy Cha greift selbst nach dem Thron.' },
     quests: [
-      { type: 'kill', role: 'knight', n: 50, text: 'Besiege 50 Ritter der Achten', reward: { crystals: 65, bonus: 'level' } },
+      { type: 'kill', role: 'knight', n: 50, text: 'Besiege 50 Ritter', reward: { crystals: 65, bonus: 'level' } },
       { type: 'level', n: 28, text: 'Erreiche Stufe 28', reward: { crystals: 55, bonus: 'heal' } },
-      { type: 'mini', text: 'Töte den Klon von Samuel Eno', reward: { crystals: 75, bonus: 'level' } }
+      { type: 'mini', text: 'Töte den Bloodsucker-Alpha', reward: { crystals: 75, bonus: 'level' } }
     ],
-    reward: { skills: ['absolut'], text: 'Absoluter Schatten & Absolute Blutkontrolle (+25 % Blut- und Schattenschaden)' }
+    reward: { skills: ['absolut'], text: 'Absolute Blutkontrolle (+25 % Blut- und Schattenschaden)' }
   },
   {
-    n: 9, id: 'krieg', title: 'Der lange Krieg', src: 'Kapitel 1001–1400', place: 'Welt Kadar — achtzehn Fronten', theme: 'ruinen', tier: 4,
+    n: 9, id: 'krieg', title: 'Der König mit Bedingungen', src: 'Kapitel 946–1408', missions: [46, 54], place: 'Jagdplaneten und Vampirsiedlung', theme: 'ruinen', tier: 4,
     intro: [
-      'Achtzehn Welten, derselbe Tag. Das rote Mal breitet sich aus, die Familie Skala erlischt, Menschen und Vampire kämpfen in derselben Linie.',
-      'Auf einem Hügel wartet ein Dalki, der spricht: Arian, sechs Stacheln. „Ich wollte sehen, ob du interessant bist.“'
+      'Finn unterrichtet an der alten Akademie. Auf einer Jagd lehrt ihn Chris die zweite Qi-Stufe. Laxmus kehrt als Gefahr zurück.',
+      'Danach nimmt Finn die Krone an — unter einer Bedingung: Vampire behandeln Menschen als gleichwertig.'
     ],
     diff: { hp: 2.0, count: 1.12, dmg: 1.5 },
     roles: {
-      ghoul: defEnemy('c9_mark', 'ghoul', 'h_markiert', 'Markierter', { hp: 22 }),
+      ghoul: defEnemy('c9_d2', 'ghoul', 'dalki2', 'Dalki (2 Stacheln)', { hp: 22 }),
       bat: defEnemy('c9_aas', 'bat', 'bat_aas', 'Aasflieger'),
-      knight: defEnemy('c9_d3', 'knight', 'dalki3', 'Dalki-Horde (3 Stacheln)', { armor: 4 }),
-      witch: defEnemy('c9_rot', 'witch', 'h_rotvamp', 'Roter Vampir', { shot: 'blood', flier: false }),
+      knight: defEnemy('c9_d3', 'knight', 'dalki3', 'Dalki (3 Stacheln)', { armor: 4 }),
+      witch: defEnemy('c9_rot', 'witch', 'h_rotvamp', 'Anhänger von Laxmus', { shot: 'blood', flier: false }),
       brute: defEnemy('c9_d5', 'brute', 'dalki5', 'Dalki (5 Stacheln)', { splits: 0, hp: 190 }),
-      captain: defEnemy('c9_daemon', 'captain', 'q_daemon', 'Bestie der Dämonenstufe', { scale: 1.3, hp: 4200 }),
-      boss: defBoss('c9_boss', 'arian', 'Arian (Sechs Stacheln)', 20000, { bellShot: 'spike', r: 46 })
+      captain: defEnemy('c9_daemon', 'captain', 'q_daemon', 'Dämonenbestie', { scale: 1.3, hp: 4200 }),
+      boss: defBoss('c9_boss', 'original', 'Laxmus', 20000, { bellShot: 'blood' })
     },
-    texts: { swarm: 'Aasflieger über Kadar!', ring: 'Die Markierten umzingeln dich — ihre Augen glühen rot.', boss: '„Du bist der, der die Schiffe aufmacht.“' },
+    texts: { swarm: 'Aasflieger über dem Jagdplaneten!', ring: 'Die Dalki kreisen dich ein!', boss: 'Laxmus ist zurück.' },
     quests: [
-      { type: 'kill', role: 'ghoul', n: 350, text: 'Halte 350 Markierte auf', reward: { crystals: 70, bonus: 'level' } },
+      { type: 'kill', role: 'ghoul', n: 350, text: 'Besiege 350 Dalki', reward: { crystals: 70, bonus: 'level' } },
       { type: 'survive', n: 480, text: 'Überlebe 8 Minuten', reward: { crystals: 60, bonus: 'heal' } },
-      { type: 'mini', text: 'Töte die Bestie der Dämonenstufe', reward: { crystals: 80, bonus: 'level' } }
+      { type: 'mini', text: 'Töte die Dämonenbestie', reward: { crystals: 80, bonus: 'level' } }
     ],
-    reward: { king: true, skills: ['handschuh'], text: 'Vampirkönig (+10 % Leben und Schaden) · Leanders Bluthandschuh (+10 % Schaden)' }
+    reward: { king: true, skills: ['qi2'], text: 'Vampirkönig (Kap. 1371) · zweite Qi-Stufe von Chris' }
   },
   {
-    n: 10, id: 'atemzug', title: 'Der letzte Atemzug', src: 'Kapitel 1401–1572', place: 'Die letzte Linie — roter Himmel', theme: 'roterhimmel', tier: 4,
+    n: 10, id: 'graham', title: 'Graham', src: 'Kapitel 1409–1572', missions: [55, 57], place: 'Grahams Front', theme: 'roterhimmel', tier: 4,
     intro: [
-      'Zwölf Jahre Krieg. Alle neun Mutterschiffe sind zerstört. Was übrig ist, steht an einem Ort — und Arian kommt allein. Sieben Stacheln.',
-      'Wenn alles nicht reicht, wird der Himmel rot.'
+      'Vampire und Menschen kämpfen offen zusammen. Finn infiltriert Mutterschiffe, Emma geht ins Exil.',
+      'An der entscheidenden Front stellt sich Finn dem Anführer der Dalki — mit einer Belastung, die sein eigenes Überleben gefährdet.'
     ],
     diff: { hp: 2.25, count: 1.15, dmg: 1.6 },
     roles: {
@@ -248,83 +248,83 @@ const CHAPTERS = [
       knight: defEnemy('c10_elite', 'knight', 'dalki4', 'Dalki-Elite (4 Stacheln)', { armor: 5 }),
       witch: defEnemy('c10_speer', 'witch', 'dalki5', 'Dalki-Speerwerfer (5 Stacheln)', { shot: 'spike', flier: false }),
       brute: defEnemy('c10_d6', 'brute', 'dalki6', 'Dalki (6 Stacheln)', { splits: 0, hp: 210 }),
-      captain: defEnemy('c10_klon', 'captain', 'h_klon', 'Samuel Enos letzter Klon', { scale: 1.2, hp: 4800 }),
-      boss: defBoss('c10_boss', 'arianF', 'Arian (Letzte Form)', 24000, { bellShot: 'spike', r: 50 })
+      captain: defEnemy('c10_general', 'captain', 'dalkiW', 'Grahams General', { scale: 1.6, hp: 4800 }),
+      boss: defBoss('c10_boss', 'graham', 'Graham', 24000, { bellShot: 'spike', r: 48 })
     },
-    texts: { swarm: 'Aasflieger verdunkeln den roten Himmel!', ring: 'Die Dalki-Elite schließt den Kreis!', boss: '„Ich habe gewartet. Du warst es wert.“' },
+    texts: { swarm: 'Aasflieger verdunkeln den Himmel!', ring: 'Grahams Armee umzingelt dich!', boss: 'Graham ist hier.' },
     quests: [
       { type: 'kill', role: 'knight', n: 60, text: 'Besiege 60 Dalki der Elite', reward: { crystals: 80, bonus: 'level' } },
       { type: 'level', n: 32, text: 'Erreiche Stufe 32', reward: { crystals: 70, bonus: 'heal' } },
-      { type: 'mini', text: 'Beende Samuel Enos letzten Klon', reward: { crystals: 90, bonus: 'level' } }
+      { type: 'mini', text: 'Besiege Grahams General', reward: { crystals: 90, bonus: 'level' } }
     ],
-    reward: { tier: 5, text: 'Herrscher des Blutes — Evolution: Himmlischer Vampirlord' }
+    reward: { tier: 5, text: 'Tausend Jahre Schlaf — du erwachst als Himmlischer Vampirlord (Celestial Vampire System)' }
   },
   {
-    n: 11, id: 'rueckkehr', title: 'Die Rückkehr einer Legende', src: 'ab Kapitel 1573', place: 'Die Himmelsebene', theme: 'himmel', tier: 5,
+    n: 11, id: 'legende', title: 'Die Rückkehr einer Legende', src: 'Kapitel 1573–1985', missions: [58, 66], place: 'Celestial Space und die Welt nach tausend Jahren', theme: 'himmel', tier: 5,
     intro: [
-      'Leander hatte sich geirrt: Finn schläft nicht ein paar Jahre, sondern über tausend. Peter hat die ganze Zeit vor der Gruft gewacht.',
-      'Finn erwacht in einer veränderten Welt. Seine himmlische Kraft wächst mit denen, die an ihn glauben — die Diener des Himmels prüfen, ob er würdig ist.'
+      'Nach einem Jahrtausend ist Finn eine Legende. Peter hat an seiner Gruft gewacht; Leo ist tot. Unter dem Decknamen BB misstraut Finn den Celestials.',
+      'Emma Wagner ist als Dhampir-Königin zur Gefahr für alle Vampire geworden. Es gibt keinen anderen Ausgang.'
     ],
     diff: { hp: 2.6, count: 1.15, dmg: 1.65 },
     roles: {
-      ghoul: defEnemy('c11_juenger', 'ghoul', 'h_juenger', 'Lichtjünger', { hp: 20, gore: 'light' }),
+      ghoul: defEnemy('c11_dhampir', 'ghoul', 'h_dhampir', 'Dhampir', { hp: 20, gore: 'light' }),
       bat: defEnemy('c11_funke', 'bat', 'bat_licht', 'Lichtfunke', { gore: 'light' }),
-      knight: defEnemy('c11_ritter', 'knight', 'h_ritter', 'Himmelsritter', { armor: 4, gore: 'light' }),
-      witch: defEnemy('c11_seherin', 'witch', 'h_seherin', 'Himmelsseherin', { shot: 'light', gore: 'light' }),
+      knight: defEnemy('c11_ritter', 'knight', 'h_ritter', 'Celestial-Wächter', { armor: 4, gore: 'light' }),
+      witch: defEnemy('c11_seherin', 'witch', 'h_seherin', 'Celestial-Seherin', { shot: 'light', gore: 'light' }),
       brute: defEnemy('c11_koloss', 'brute', 'h_koloss', 'Lichtkoloss', { gore: 'light' }),
-      captain: defEnemy('c11_waechter', 'captain', 'h_waechter', 'Erster Wächter', { hp: 5200, gore: 'light' }),
-      boss: defBoss('c11_boss', 'himmlisch', 'Der Himmlische Richter', 33000, { bellShot: 'light' })
+      captain: defEnemy('c11_waechter', 'captain', 'h_waechter', 'Vertrautenkönig', { hp: 5200, gore: 'light' }),
+      boss: defBoss('c11_boss', 'erin', 'Emma Wagner (Dhampir-Königin)', 33000, { bellShot: 'light' })
     },
-    texts: { swarm: 'Ein Regen aus Lichtfunken!', ring: 'Die Jünger des Lichts umringen dich.', boss: 'Der Himmlische Richter steigt herab.' },
+    texts: { swarm: 'Ein Regen aus Lichtfunken!', ring: 'Die Dhampire umringen dich.', boss: 'Emmas Augen leuchten gelb.' },
     quests: [
-      { type: 'kill', role: 'ghoul', n: 400, text: 'Besiege 400 Lichtjünger', reward: { crystals: 90, bonus: 'level' } },
+      { type: 'kill', role: 'ghoul', n: 400, text: 'Halte 400 Dhampire auf', reward: { crystals: 90, bonus: 'level' } },
       { type: 'survive', n: 480, text: 'Überlebe 8 Minuten', reward: { crystals: 80, bonus: 'heal' } },
-      { type: 'mini', text: 'Besiege den Ersten Wächter', reward: { crystals: 100, bonus: 'level' } }
+      { type: 'mini', text: 'Besiege den Vertrautenkönig', reward: { crystals: 100, bonus: 'level' } }
     ],
-    reward: { tier: 6, text: 'Evolution: Reiner Himmlischer' }
+    reward: { tier: 6, text: 'Emma Wagners Kristall bleibt zurück · Reiner Himmlischer (eigene Auslegung des Spiels)' }
   },
   {
-    n: 12, id: 'goetter', title: 'Gottbezwinger', src: 'spätere Kapitel', place: 'Das Reich der Götter', theme: 'goetter', tier: 6,
+    n: 12, id: 'letzter', title: 'Der letzte Vampir', src: 'Kapitel 1986–2545', missions: [67, 80], place: 'Red Space', theme: 'redspace', tier: 6,
     intro: [
-      'Götter sind keine Legende. Und Emma Wagners Gottbezwinger-Kristall trägt die Macht, sie zu bezwingen.',
-      'Um diese Macht zu tragen, muss Finn einen Gott besiegen.'
+      'Finn verlässt die Celestial-Ordnung und geht den Weg des Gottbezwingers. Mit Emmas Kristall, Blut, Schatten und Qi stellt er sich den Dämonenkönigen.',
+      'Im Red Space wartet Immortui — der Ursprung aller Vampirmacht.'
     ],
     diff: { hp: 3.1, count: 1.2, dmg: 1.8 },
     roles: {
-      ghoul: defEnemy('c12_bestie', 'ghoul', 'q_void', 'Götterbestie', { hp: 22, gore: 'void' }),
+      ghoul: defEnemy('c12_daemon', 'ghoul', 'q_void', 'Dämon', { hp: 22, gore: 'void' }),
       bat: defEnemy('c12_schwinge', 'bat', 'bat_void', 'Leerenschwinge', { gore: 'void' }),
-      knight: defEnemy('c12_ritter', 'knight', 'g_ritter', 'Götterritter', { armor: 5, gore: 'void' }),
-      witch: defEnemy('c12_priesterin', 'witch', 'g_seherin', 'Priesterin der Leere', { shot: 'void', gore: 'void' }),
-      brute: defEnemy('c12_titan', 'brute', 'q_voidP', 'Titanbestie', { splits: 2, gore: 'void' }),
-      captain: defEnemy('c12_diener', 'captain', 'g_diener', 'Auserwählter eines Gottes', { hp: 6500, gore: 'void' }),
-      boss: defBoss('c12_boss', 'gott', 'Ein Gott', 46000, { bellShot: 'void' })
+      knight: defEnemy('c12_champion', 'knight', 'g_ritter', 'Champion des Red Space', { armor: 5, gore: 'void' }),
+      witch: defEnemy('c12_rot', 'witch', 'h_rotvamp', 'Roter Vampir', { shot: 'blood' }),
+      brute: defEnemy('c12_titan', 'brute', 'q_voidP', 'Dämonenbestie', { splits: 2, gore: 'void' }),
+      captain: defEnemy('c12_koenig', 'captain', 'q_daemon', 'Dämonenkönig', { scale: 1.4, hp: 6500 }),
+      boss: defBoss('c12_boss', 'immortui', 'Immortui', 46000, { bellShot: 'void' })
     },
-    texts: { swarm: 'Leerenschwingen verdunkeln den Himmel!', ring: 'Die Diener der Götter schließen den Kreis.', boss: 'Ein Gott wendet sich dir zu.' },
+    texts: { swarm: 'Leerenschwingen verdunkeln den roten Himmel!', ring: 'Die Dämonen schließen den Kreis.', boss: 'Immortui erscheint.' },
     quests: [
-      { type: 'kill', role: 'knight', n: 60, text: 'Besiege 60 Götterritter', reward: { crystals: 110, bonus: 'level' } },
+      { type: 'kill', role: 'knight', n: 60, text: 'Besiege 60 Champions', reward: { crystals: 110, bonus: 'level' } },
       { type: 'level', n: 35, text: 'Erreiche Stufe 35', reward: { crystals: 100, bonus: 'heal' } },
-      { type: 'mini', text: 'Besiege den Auserwählten', reward: { crystals: 120, bonus: 'level' } }
+      { type: 'mini', text: 'Besiege einen Dämonenkönig', reward: { crystals: 120, bonus: 'level' } }
     ],
-    reward: { tier: 7, text: 'Emma Wagners Kristall — Evolution: Vampir-Gottbezwinger' }
+    reward: { tier: 7, text: 'Evolution: Gottbezwinger (God Slayer, Kap. 1992)' }
   }
 ];
 
 /* ---------------------------------------------------------------- Kräfte (dauerhaft, pro Kapitel) */
-// Unabhaengig von der Evolution: Kraefte kommen dort, wo sie in der Geschichte auftauchen.
+// Unabhaengig von der Evolution: Kraefte kommen dort, wo sie laut Dossier auftauchen.
 const FINN_SKILLS = {
+  technik: { name: 'Kampftechniken', cards: ['hammerschlag', 'blitzschritt'], desc: 'Hammerschlag und Blitzschritt erscheinen als Karten.' },
   schatten: { name: 'Schatten', cards: ['schattenflammen', 'nachtschlund', 'nachbilder'], desc: 'Schattenschritt statt Ausweichen; Schattenflammen, Nachtschlund und Nachbilder erscheinen als Karten.' },
-  qi: { name: 'Qi (Leo)', cards: ['qihand'], desc: 'Leos Grundform: die Qi-Hand erscheint als Karte.' },
-  qi2: { name: 'Qi vertieft', cards: ['qikette', 'eisenmeridiane'], desc: 'Qi-Kette und Eisenmeridiane erscheinen als Karten.' },
-  ghoul: { name: 'Peter, der Ghoul', cards: [], desc: 'Peter Kraus kämpft deutlich stärker.' },
+  ghoul: { name: 'Cursed Family', cards: [], desc: 'Peter Kraus kämpft deutlich stärker.' },
   blut: { name: 'Blutkräfte', cards: ['blutnova', 'bluternte'], desc: 'Blutnova und Bluternte erscheinen als Karten.' },
-  fraktion: { name: 'Die Verfluchten', cards: [], desc: 'Bis zu 3 Begleiter gleichzeitig.' },
-  absolut: { name: 'Absolute Kontrolle', cards: [], desc: '+25 % Blut- und Schattenschaden.' },
-  handschuh: { name: 'Bluthandschuh', cards: [], desc: '+10 % Schaden.' }
+  qi: { name: 'Qi (Leo)', cards: ['qihand', 'eisenmeridiane'], desc: 'Qi stärkt den Körper: Qi-Hand und Eisenmeridiane erscheinen als Karten.' },
+  fraktion: { name: 'Cursed Faction', cards: [], desc: 'Bis zu 3 Begleiter gleichzeitig.' },
+  absolut: { name: 'Absolute Blutkontrolle', cards: [], desc: '+25 % Blut- und Schattenschaden.' },
+  qi2: { name: 'Zweite Qi-Stufe (Chris)', cards: ['qikette'], desc: 'Qi außerhalb des Körpers: die Qi-Kette erscheint als Karte.' }
 };
 // welche Kraefte eine Form mindestens voraussetzt (Testmodus / alte Spielstaende)
-const SKILLS_BY_TIER = { 3: ['schatten', 'qi', 'qi2', 'ghoul', 'blut'], 4: ['fraktion'], 5: ['absolut', 'handschuh'] };
+const SKILLS_BY_TIER = { 2: ['technik', 'schatten'], 3: ['ghoul', 'blut', 'qi'], 4: ['fraktion'], 5: ['absolut', 'qi2'] };
 function finnSkills() {
-  const S = storySave(), F = finnSave(), out = new Set(S.skills || []);
+  const S = storySave(), F = finnSave(), out = new Set((S.skills || []).filter((k) => FINN_SKILLS[k]));
   const tier = GAME && GAME.p && GAME.p.hero === 'finn' ? (GAME.p.tier || 0) : F.tier;
   for (const t in SKILLS_BY_TIER) if (tier >= +t || F.tier >= +t) SKILLS_BY_TIER[t].forEach((k) => out.add(k));
   if (SAVE.settings.testUnlock && (UI.finnPick || 0) >= 2) Object.keys(FINN_SKILLS).forEach((k) => out.add(k));
@@ -343,12 +343,11 @@ function storySave() {
   const S = SAVE.story;
   S.cleared = S.cleared || {}; S.gear = S.gear || {}; S.best = S.best || {}; S.skills = S.skills || [];
   if (S.crystals === undefined) S.crystals = 0;
-  if (!S.v2) { // Spielstand aus der 7-Kapitel-Fassung: nach erreichter Form umrechnen
-    S.v2 = true;
-    const t = (SAVE.finn && SAVE.finn.tier) || 0, old = Object.keys(S.cleared).length;
-    const upTo = old ? [0, 0, 1, 5, 7, 10, 11, 12][Math.min(7, t)] : 0;
-    S.cleared = {};
-    for (let n = 1; n <= upTo; n++) { S.cleared[n] = true; (CHAPTERS[n - 1].reward.skills || []).forEach((k) => { if (!S.skills.includes(k)) S.skills.push(k); }); }
+  if (!S.v3) { // Kapitelgrenzen nach dem Recherche-Dossier: Kraefte aus geschafften Kapiteln neu berechnen
+    S.v2 = S.v3 = true;
+    if (!Object.keys(S.cleared).length && (SAVE.finn && SAVE.finn.tier) >= 2) { const t = SAVE.finn.tier; for (let n = 1; n <= [0, 0, 2, 5, 7, 10, 11, 12][Math.min(7, t)]; n++) S.cleared[n] = true; }
+    S.skills = [];
+    for (let n = 1; n <= CHAPTERS.length; n++) if (S.cleared[n]) (CHAPTERS[n - 1].reward.skills || []).forEach((k) => { if (!S.skills.includes(k)) S.skills.push(k); });
   }
   return S;
 }
@@ -373,8 +372,7 @@ function storySetup(G, ch) {
   spawnCompanions(G);
   const S = storySave(), gr = S.gear;
   G.statMod = (st) => {
-    const sk = finnSkills();
-    st.might *= 1 + 0.08 * (gr.handschuhe || 0) + (S.king ? 0.1 : 0) + (sk.has('handschuh') ? 0.1 : 0);
+    st.might *= 1 + 0.08 * (gr.handschuhe || 0) + (S.king ? 0.1 : 0);
     st.speed *= 1 + 0.05 * (gr.stiefel || 0);
     st.dodgeCdMul *= Math.pow(0.94, gr.stiefel || 0);
     st.maxHp *= 1 + 0.1 * (gr.panzer || 0) + (S.king ? 0.1 : 0);

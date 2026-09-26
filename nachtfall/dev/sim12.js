@@ -12,7 +12,7 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
   await p.addScriptTag({ path: 'dev/bot.js' });
   for (const ch of chs) for (let r = 0; r < runs; r++) {
     const res = await p.evaluate(([ch, gear, party]) => {
-      const tierAt = [1, 2, 2, 2, 2, 3, 3, 4, 4, 4, 5, 6][ch - 1];
+      const tierAt = [1, 1, 2, 2, 2, 3, 3, 4, 4, 4, 5, 6][ch - 1];
       const S = storySave(), F = finnSave();
       S.cleared = {}; S.skills = []; S.king = false;
       for (let n = 1; n < ch; n++) { S.cleared[n] = true; (CHAPTERS[n - 1].reward.skills || []).forEach((k) => S.skills.push(k)); if (CHAPTERS[n - 1].reward.king) S.king = true; }

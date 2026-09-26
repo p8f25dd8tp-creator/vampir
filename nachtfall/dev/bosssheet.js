@@ -7,8 +7,8 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
   await p.evaluate(() => {
     document.body.innerHTML = ''; const c = document.createElement('canvas'); c.width = 1400; c.height = 900; document.body.appendChild(c);
     const g = c.getContext('2d'); g.fillStyle = '#556'; g.fillRect(0, 0, 1400, 900);
-    const ids = ['container','blutsauger','dalki1','stahlmann','silva','sunshield','hagon','original','arian','arianF'];
-    ids.forEach((id, i) => { g.save(); g.translate(90 + (i % 5) * 270, 330 + Math.floor(i / 5) * 400); BOSS_ART[id](g, { t: 1.3, run: 0 }); g.restore(); g.fillStyle = '#fff'; g.font = '16px sans-serif'; g.fillText(id, 40 + (i % 5) * 270, 360 + Math.floor(i / 5) * 400); });
+    const ids = ['mono','ian','dalki1','stahlmann','silva','hagon','sunshield','cindy','original','graham','erin','immortui'];
+    ids.forEach((id, i) => { g.save(); g.translate(90 + (i % 6) * 225, 330 + Math.floor(i / 6) * 400); BOSS_ART[id](g, { t: 1.3, run: 0 }); g.restore(); g.fillStyle = '#fff'; g.font = '16px sans-serif'; g.fillText(id, 40 + (i % 6) * 225, 360 + Math.floor(i / 6) * 400); });
   });
   await p.screenshot({ path: '/tmp/claude-0/bosses.png' });
   await p.goto('http://localhost:8765/index.html'); await p.waitForTimeout(2000);

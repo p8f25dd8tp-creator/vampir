@@ -93,6 +93,13 @@ const THEMES = {
     props: [['wreck', 3.5], ['spikes', 3], ['rock', 2.5], ['brazier', 1.2], ['bones', 2]],
     cluster: 'wreck'
   },
+  redspace: {
+    name: 'Red Space', ambient: 'rgb(120,56,64)', fog: [200, 50, 60], fogA: 1.2,
+    ground: { base: [26, 8, 12], vary: [14, 6, 8], moss: [50, 10, 16], mossVar: [14, 6, 6], detail: 'stars', grass: ['#6a1a24'], pebble: [70, 30, 36], leaves: null, cracks: 'rgba(255,60,60,0.3)', glowCracks: '#ff2a2a' },
+    patches: ['blood', 'nebula', 'crater'],
+    props: [['obelisk', 2.5], ['spikes', 3], ['crystal', 2], ['bones', 2], ['rock', 2]],
+    cluster: 'spikes'
+  },
   goetter: {
     name: 'Das Reich der Götter', ambient: 'rgb(96,92,146)', fog: [150, 130, 230], fogA: 1,
     ground: { base: [20, 20, 36], vary: [10, 10, 20], moss: [30, 24, 56], mossVar: [10, 8, 20], detail: 'stars', grass: ['#6a5aa0'], pebble: [60, 56, 90], leaves: null, cracks: 'rgba(160,120,255,0.35)', glowCracks: '#8a6aff' },

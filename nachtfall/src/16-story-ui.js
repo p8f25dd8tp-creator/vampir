@@ -77,12 +77,13 @@ UI.showStory = function () {
     <div class="chaps">${cards}</div>
     <div class="syswin" style="width:min(560px,100%);margin-bottom:10px">
       <div class="syshead">BEGLEITER (bis zu ${partyMax()})</div>
-      <div class="comps">${COMP_ORDER.map((id) => { const C0 = COMPANIONS[id], open = companionOpen(id), on = companionParty().includes(id); return `<button class="comp ${on ? 'on' : ''}" data-act="${open ? 'comp' : ''}" data-id="${id}" ${open ? '' : 'disabled'}><b style="color:${C0.col}">${open ? '' : '🔒 '}${C0.name}</b><small>${open ? C0.role : 'nach Kapitel ' + C0.unlock}</small></button>`; }).join('')}</div>
+      <div class="comps">${COMP_ORDER.map((id) => { const C0 = COMPANIONS[id], open = companionOpen(id), on = companionParty().includes(id); return `<button class="comp ${on ? 'on' : ''}" data-act="${open ? 'comp' : ''}" data-id="${id}" ${open ? '' : 'disabled'}><b style="color:${C0.col}">${open ? '' : '🔒 '}${compName(id)}</b><small>${!open ? 'nach Kapitel ' + C0.unlock : companionFits(id, ch.n) ? C0.role : 'nicht in diesem Kapitel'}</small></button>`; }).join('')}</div>
       ${companionParty().length ? `<div class="sysnote">${companionParty().map((id) => COMPANIONS[id].desc).join('<br>')}</div>` : '<div class="sysnote">Finn kämpft allein.</div>'}
     </div>
     <div class="syswin" style="width:min(560px,100%)">
       <div class="syshead">KAPITEL ${ch.n} · ${ch.title.toUpperCase()}</div>
       <div class="sysplace">${ch.place} · <span style="opacity:.7">Vorlage ${ch.src}</span></div>
+      ${ch.missions && typeof STORY_MISSIONS !== 'undefined' ? `<div class="sysnote">Storymissionen ${ch.missions[0]}–${ch.missions[1]}: ${STORY_MISSIONS.slice(ch.missions[0] - 1, ch.missions[1]).map((m) => m[1]).join(' · ')}</div>` : ''}
       <p class="sysp">${ch.intro[0]}</p>
       <div class="sysnote">Empfohlene Form: <b style="color:${FINN_TIERS[ch.tier].col}">${FINN_TIERS[ch.tier].name}</b> · Boss: <b>${ENEMIES[ch.roles.boss].name}</b></div>
       <div class="sysnote">Belohnung beim ersten Sieg: <b style="color:#ffe6a0">${ch.reward.text}</b>${S.cleared[ch.n] ? ' (erhalten)' : ''}</div>

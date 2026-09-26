@@ -7,19 +7,19 @@
 
 const COMPANIONS = {
   peter: {
-    name: 'Peter Kraus', role: 'Leibwächter · später Ghoul und Wight', unlock: 1, col: '#9aff9a',
-    desc: 'Kampfwert F — und der Erste, der sich dazwischenwirft. Zieht Gegner auf sich; wird nach Caladi zum Ghoul und später zum Wight.',
+    name: 'Peter Kraus', role: 'Erd-Fähigkeit · später Ghoul und Wight', unlock: 2, col: '#9aff9a',
+    desc: 'Erpresst, schuldig, und dann der loyalste von allen. Zieht Gegner auf sich und schlägt die Erde auf; wird auf Caladi zum Ghoul, danach zum Wight.',
     hero: 'vorian', pal: [[HERO_PAL.vorian, { skin: '#9ab09a', skinD: '#5a6a5a', armor: '#2a3028', armorL: '#5a6a58', armorD: '#101410', red: '#3a5a3a', redL: '#8aff8a', redD: '#142014', hair: '#1a1a14', eye: '#9aff9a', rim: '#9aff9a' }]],
     look: { glow: 0.3 }, speed: 150, range: 60, cd: 1.6
   },
   lena: {
-    name: 'Lena Grimm', role: 'Bogenschützin · Die Wahrhaftigen', unlock: 1, col: '#c8a0ff',
-    desc: 'Sie weiß mehr, als sie sagt. Trifft aus großer Entfernung, ihre Pfeile durchschlagen mehrere Gegner.',
+    name: 'Lena Grimm', role: 'Bogen & Telekinese · Pure-Agentin 83', unlock: 1, col: '#c8a0ff',
+    desc: 'Sie hütet Finns Geheimnis, obwohl es niemandem nützt außer ihm. Trifft aus großer Entfernung, ihre Pfeile durchschlagen mehrere Gegner.',
     hero: 'liora', pal: [[HERO_PAL.liora, { coat: '#3a2a5a', coatL: '#6a4a9a', coatD: '#1a1028', hair: '#2a1a3a', hairL: '#8a5aba', eye: '#c8a0ff', rim: '#c8a0ff' }]],
     look: { weapon: 'bow' }, speed: 165, range: 320, cd: 1.1
   },
   leo: {
-    name: 'Leo', role: 'Blinder Qi-Meister', unlock: 2, col: '#5ff0d0',
+    name: 'Leo', role: 'Blinder Schwert- und Qi-Meister', unlock: 4, until: 10, col: '#5ff0d0',
     desc: 'Er sieht nichts und merkt alles. Finns Lehrmeister im Qi — seine Qi-Wellen schleudern ganze Horden zurück.',
     hero: 'shen', pal: [[HERO_PAL.shen, { robe: '#e0dcd0', robeL: '#ffffff', robeD: '#8a867a', sash: '#2a6a5a', sashL: '#5ff0d0', hat: '#5a4a3a', hatL: '#8a7a5a', hatD: '#2a2014', beard: '#2a2420', rim: '#5ff0d0' }]],
     look: { qi: 0 }, speed: 150, range: 100, cd: 2.4
@@ -31,21 +31,24 @@ const COMPANIONS = {
     look: { flow: 0.4 }, speed: 180, range: 260, cd: 1.3
   },
   emma: {
-    name: 'Emma Wagner', role: 'Rang A · Eis und Schwert', unlock: 3, col: '#9ad8ff',
-    desc: 'Rechnet alles nach. Ihr Eisschwert zerteilt alles in einem weiten Bogen und lässt Gegner erstarren.',
+    name: 'Emma Wagner', role: 'Eis und Schwert · später Dhampir', unlock: 1, until: 10, col: '#9ad8ff',
+    desc: 'Diszipliniert seit dem Verlust durch die Dalki. Erst Eis und Schwert (Gegner erstarren), nach Truedream Qi und Schwert, als Dhampir gelbe Energie.',
     hero: 'liora', pal: [[HERO_PAL.liora, { coat: '#2a3a5a', coatL: '#5a7aaa', coatD: '#101828', hair: '#e8e8f0', hairL: '#ffffff', eye: '#9ad8ff', rim: '#9ad8ff', band: '#c8d8e8' }]],
     look: { weapon: 'sword' }, speed: 175, range: 90, cd: 1.2
   }
 };
 COMPANIONS.fabian = {
-  name: 'Fabian Skala', role: 'Drei in einem Körper · Ratan', unlock: 2, col: '#ffd27a',
-  desc: 'Fabian, Ratan — und Sil. Wenn es ernst wird, übernimmt Ratan: blitzschnelle Schlagfolgen mitten in die Gegner.',
+  name: 'Fabian Schneider', role: 'Kopiert Fähigkeiten · Raten · Sil', unlock: 1, col: '#ffd27a',
+  desc: 'Stellt sich offen vor die Schwachen. Im selben Körper leben Raten und Sil — wenn es ernst wird, übernimmt Raten: schnelle Schlagfolgen mitten in die Gegner. Ab Kapitel 7 kämpft Sil.',
   hero: 'vorian', pal: [[HERO_PAL.vorian, { skin: '#ecd8c8', skinD: '#a88878', armor: '#1a2436', armorL: '#3a4a6a', armorD: '#080c14', red: '#2a3a6a', redL: '#ffd27a', redD: '#10182a', hair: '#e8cf7a', eye: '#ffd27a', rim: '#ffd27a' }]],
   look: { glow: 0, plain: true }, speed: 190, range: 70, cd: 1.0
 };
 const COMP_ORDER = ['peter', 'lena', 'fabian', 'leo', 'emma', 'fex'];
 function partyMax() { return typeof finnSkills === 'function' && finnSkills().has('fraktion') ? 3 : 2; }
 function companionOpen(id) { const S = storySave(); return SAVE.settings.testUnlock || !!S.cleared[COMPANIONS[id].unlock]; }
+// Figuren, die in spaeteren Kapiteln nicht mehr an Finns Seite stehen (Leo stirbt, Emma wird zur Gegnerin)
+function companionFits(id, chN) { const u = COMPANIONS[id].until; return !u || !chN || chN <= u; }
+function compName(id) { return id === 'fabian' && storySave().cleared[6] ? 'Sil' : COMPANIONS[id].name; }
 function companionParty() {
   const S = storySave();
   if (!S.party) S.party = [];
@@ -55,10 +58,10 @@ function companionParty() {
 
 /* ---------------------------------------------------------------- im Lauf */
 function spawnCompanions(G) {
-  G.comps = companionParty().map((id, i) => ({ id, def: COMPANIONS[id], x: [-40, 40, 0][i], y: [20, 20, 44][i], vx: 0, vy: 0, face: 1, t: rand(0, 1), cd: 1 + i * 0.5, castT: 0, aim: 0, phase: 0, run: 0, spr: null, slot: i }));
+  G.comps = companionParty().filter((id) => companionFits(id, G.story && G.story.n)).map((id, i) => ({ id, def: COMPANIONS[id], x: [-40, 40, 0][i], y: [20, 20, 44][i], vx: 0, vy: 0, face: 1, t: rand(0, 1), cd: 1 + i * 0.5, castT: 0, aim: 0, phase: 0, run: 0, spr: null, slot: i }));
 }
 function compPower(G) { return Math.pow(G.story ? G.story.diff.hp : 1, 0.85) * (1 + G.level * 0.035); }
-function peterPower() { const S = storySave(); return S.cleared[9] ? 2.2 : S.cleared[7] ? 1.7 : S.cleared[3] ? 1.3 : 1; }
+function peterPower() { const S = storySave(); return S.cleared[10] ? 2.2 : S.cleared[4] ? 1.7 : S.cleared[3] ? 1.3 : 1; }
 function updateCompanions(dt) {
   const G = GAME;
   if (!G.comps) return;
@@ -130,16 +133,18 @@ function compAttack(c, tgt, pw) {
   } else if (id === 'emma') { // weiter Schwertbogen
     sfx('whip', 0, 0.1);
     const a = c.aim, R = 95, hit = new Set();
-    forEnemiesInRadius(x, y, R, (en) => { if (!inArc(en.x, en.y, x, y, a, 1.4) || hit.has(en.id)) return; hit.add(en.id); dealDamage(en, 26 * pw, 'none', 'emma', { kb: 140, kx: en.x - x, ky: en.y - y, norm: true, noMark: true }); en.slowT = Math.max(en.slowT, 1.2); en.slowF = Math.min(en.slowF || 1, 0.5); burstSparks(en.x, en.y - 10, 2, '#cfe8ff'); });
+    forEnemiesInRadius(x, y, R, (en) => { if (!inArc(en.x, en.y, x, y, a, 1.4) || hit.has(en.id)) return; hit.add(en.id); dealDamage(en, 26 * pw * [1, 1.15, 1.4][emmaStage()], emmaStage() === 1 ? 'qi' : 'none', 'emma', { kb: 140, kx: en.x - x, ky: en.y - y, norm: true, noMark: true }); if (emmaStage() === 0) { en.slowT = Math.max(en.slowT, 1.2); en.slowF = Math.min(en.slowF || 1, 0.5); } burstSparks(en.x, en.y - 10, 2, EMMA_COL[emmaStage()]); });
     addEffect({ x, y, dur: 0.22, layer: 1, draw(g, e, k) {
       g.save(); g.translate(x, y - 16); g.scale(1, 0.7); g.globalCompositeOperation = 'lighter';
-      g.globalAlpha = 1 - k; g.strokeStyle = '#cfe8ff'; g.lineWidth = 8 * (1 - k) + 1;
+      g.globalAlpha = 1 - k; g.strokeStyle = EMMA_COL[emmaStage()]; g.lineWidth = 8 * (1 - k) + 1;
       g.beginPath(); g.arc(0, 0, R * 0.85, a - 1.3 + k * 0.4, a + 1.3); g.stroke();
       g.strokeStyle = '#ffffff'; g.lineWidth = 2 * (1 - k); g.stroke();
       g.restore();
     } });
   }
 }
+const EMMA_COL = ['#cfe8ff', '#5ff0d0', '#ffd23a'];
+function emmaStage() { const S = storySave(); return S.cleared[5] ? 2 : S.cleared[4] ? 1 : 0; }
 function drawCompanion(g, c, time) {
   const D = c.def, px = heroPx();
   const castK = c.castT > 0 ? Math.sin(Math.PI * (1 - c.castT / 0.3)) : 0;
@@ -151,7 +156,8 @@ function drawCompanion(g, c, time) {
   g.restore();
   // Namensschild
   g.font = '700 9px Cinzel, serif'; g.textAlign = 'center';
-  g.lineWidth = 3; g.strokeStyle = 'rgba(0,0,0,0.8)'; g.strokeText(D.name, c.x, c.y + 14);
-  g.fillStyle = D.col; g.fillText(D.name, c.x, c.y + 14);
+  const nm = compName(c.id);
+  g.lineWidth = 3; g.strokeStyle = 'rgba(0,0,0,0.8)'; g.strokeText(nm, c.x, c.y + 14);
+  g.fillStyle = D.col; g.fillText(nm, c.x, c.y + 14);
 }
-Object.assign(SRC_NAMES, { fabian: 'Fabian Skala', peter: 'Peter Kraus', lena: 'Lena Grimm', leo: 'Leo', fex: 'Fex Sanguini', emma: 'Emma Wagner' });
+Object.assign(SRC_NAMES, { fabian: 'Fabian Schneider', peter: 'Peter Kraus', lena: 'Lena Grimm', leo: 'Leo', fex: 'Fex Sanguini', emma: 'Emma Wagner' });
