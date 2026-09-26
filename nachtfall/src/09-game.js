@@ -41,6 +41,7 @@ function newRun(heroId) {
   if (H.start) giveCard(H.start, true);
   recomputeStats();
   GAME.p.hp = GAME.p.st.maxHp;
+  if (heroId === 'finn' && typeof PENDING_FINN === 'number') { GAME.finnTier = PENDING_FINN; GAME.finnTest = PENDING_FINN !== finnSave().tier; }
   if (H.onStart) H.onStart();
   AudioSys.startMusic();
   sfx('bell');
@@ -188,7 +189,7 @@ function killEnemy(e, src, school) {
   if (Math.random() < (e.elite ? 1 : e.mini ? 1 : 0.035)) dropPickup(e.x + rand(-8, 8), e.y + rand(-8, 8), 'soul', e.elite || e.mini ? 25 : 1);
   if (Math.random() < 0.012 || e.elite) dropPickup(e.x + 10, e.y, 'heal', 1);
   if (Math.random() < 0.0025) dropPickup(e.x, e.y + 10, 'magnet', 1);
-  if (e.mini) { dropPickup(e.x, e.y, 'chest', 1); G.mini = null; UI.announce('Hauptmann Kharn ist gefallen!', ''); sfx('roar'); shake(6); hitstop(0.08); }
+  if (e.mini) { G.miniKilled = true; dropPickup(e.x, e.y, 'chest', 1); G.mini = null; UI.announce('Hauptmann Kharn ist gefallen!', ''); sfx('roar'); shake(6); hitstop(0.08); }
   // Todes-Effekte je nach Art
   if (e.type === 'bat') { burstBlood(e.x, e.y - 20, 6, 0.7); splat(e.x, e.y, 14); }
   else if (e.type === 'knight' || e.type === 'captain') { burstSparks(e.x, e.y - 20, 6, '#e8dcc0', 0.8); burstAsh(e.x, e.y - 10, 5, '#6a6258'); }
@@ -583,9 +584,11 @@ function endRun(won) {
   // neue Freischaltungen pruefen
   const newly = [];
   for (const id of HERO_ORDER) if (!SAVE.unlocked[id] && HEROES[id].unlock.check(SAVE)) { SAVE.unlocked[id] = true; newly.push(id); }
+  const HE = HEROES[G.hero];
+  const extra = HE.onEnd ? HE.onEnd(won) : null;
   writeSave();
   if (won) sfx('win');
-  UI.showEnd(won, soulsEarned, newly);
+  UI.showEnd(won, soulsEarned, newly, extra);
 }
 
 function dodgeKind(p) { return p.dodgeKind || HEROES[p.hero].dodge; }

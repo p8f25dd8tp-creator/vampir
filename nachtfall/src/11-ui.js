@@ -87,6 +87,7 @@ const UI = {
       case 'settings': return this.showSettings();
       case 'hero': this.selHero = ds.id; return this.renderSelectDetail();
       case 'start': return startGame(this.selHero);
+      case 'finnform': this.finnPick = +ds.t; return this.renderSelectDetail();
       case 'buyhero': {
         const H = HEROES[this.selHero];
         if (SAVE.souls >= H.unlock.cost) { SAVE.souls -= H.unlock.cost; SAVE.unlocked[this.selHero] = true; writeSave(); sfx('fusion'); this.showSelect(); }
@@ -155,8 +156,8 @@ const UI = {
         <div class="stat"><div class="k">RÜSTUNG</div><div class="v">${H.armor}</div></div>
         <div class="stat"><div class="k">AUSWEICHEN</div><div class="v">${H.dodgeCd}s</div></div>
       </div>
-      ${H.start ? `<div class="blk"><b class="lbl">START: ${CARDS[H.start].name.toUpperCase()}</b><p>${CARDS[H.start].lv[0]}</p></div>` : `<div class="blk"><b class="lbl">START: NICHTS</b><p>Kein Angriff, keine Kraft. Lauf zum leuchtenden Buch.</p></div>`}
-      ${H.evo ? `<div class="blk"><b class="lbl">EVOLUTIONEN</b><div class="builds">${FINN_TIERS.slice(1).map((T) => `<div><span>${T.name}${T.level ? ' (Stufe ' + T.level + ')' : ' (Buch)'}:</span> ${T.desc}</div>`).join('')}</div></div>` : ''}
+      ${H.start ? `<div class="blk"><b class="lbl">START: ${CARDS[H.start].name.toUpperCase()}</b><p>${CARDS[H.start].lv[0]}</p></div>` : (finnSave().tier === 0 ? `<div class="blk"><b class="lbl">START: NICHTS</b><p>Kein Angriff, keine Kraft. Lauf zum leuchtenden Buch.</p></div>` : `<div class="blk"><b class="lbl">START</b><p>Mit allen Kräften seiner aktuellen Form.</p></div>`)}
+      ${H.evo ? finnSelectHtml() : ''}
       <div class="blk"><b class="lbl" style="color:${sc.col}">MECHANIK: ${H.mech.name.toUpperCase()}</b><p>${H.mech.desc}</p></div>
       <div class="blk"><b class="lbl">ULTIMATIV: ${H.ult.name.toUpperCase()}</b><p>${H.ult.desc}</p></div>
       <div class="blk two"><div><b class="lbl">STÄRKEN</b><ul class="plus">${H.strengths.map((s) => `<li>${s}</li>`).join('')}</ul></div>
@@ -185,7 +186,7 @@ const UI = {
       const cyc = pv.t % 6;
       const st = { t: pv.t, run: sel ? 1 : 0, phase: pv.t * 9, cast: sel && cyc > 4.2 && cyc < 5 ? Math.sin((cyc - 4.2) / 0.8 * Math.PI) : 0, aim: 0.1, rooted: pv.id === 'shen' && !sel ? 1 : 0 };
       const look = { glow: 0.6, rage: 0.4, flow: sel ? 0.8 : 0.2, qi: 0.6, crown: 1 };
-      if (pv.id === 'finn') { pv.tier = sel ? Math.floor(pv.t / 1.6) % FINN_TIERS.length : 0; look.tier = pv.tier; look.rim = FINN_TIERS[pv.tier].rim; }
+      if (pv.id === 'finn') { pv.tier = sel && UI.finnPick !== undefined ? UI.finnPick : finnSave().tier; look.tier = pv.tier; look.rim = FINN_TIERS[pv.tier].rim; }
       pv.spr = renderHero(pv.id, st, look, px, pv.spr, { glow: sel });
       g.drawImage(pv.spr.out, w / 2 - pv.spr.S / 2, h * 0.86 - pv.spr.anchorY);
     }
@@ -258,7 +259,7 @@ const UI = {
     if (p.hero === 'vorian') { let n = 0; for (const e of G.enemies) if (!e.dead && e.bstack > 0) n += e.bstack; mv = Math.min(1, n / 60); mt = 'Blutmale: ' + n; }
     if (p.hero === 'liora') { mv = clamp((1 - p.hp / p.st.maxHp) / 0.72, 0, 1); mt = 'Blutrausch +' + Math.round(clamp((1 - p.hp / p.st.maxHp) * 1.25, 0, 0.9) * 100) + '%' + (p.buffAder > 0 ? ' · ADERLASS' : ''); }
     if (p.hero === 'nyx') { mv = p.flow; mc = '#a77bff'; mt = 'Schattenfluss +' + Math.round(p.flow * 45) + '%' + (p.ultT > 0 ? ' · MITTERNACHT' : ''); }
-    if (p.hero === 'finn') { const T = FINN_TIERS[p.tier || 0], N = FINN_TIERS[(p.tier || 0) + 1]; mc = T.col; if (!p.tier) { mv = 0; mt = 'Mensch · finde das Buch!'; } else if (N) { const prev = T.level || 1; mv = clamp((G.level - prev + G.xp / G.xpNext) / (N.level - prev), 0, 1); mt = T.name + ' · nächste Form ab St. ' + N.level; } else { mv = 1; mt = T.name.toUpperCase(); } }
+    if (p.hero === 'finn') { const T = FINN_TIERS[p.tier || 0], F = finnSave(), N = FINN_TIERS[F.tier + 1]; mc = T.col; const run = finnRunEssence(G, false); if (!p.tier) { mv = 0; mt = 'Mensch · finde das Buch!'; } else if (G.finnTest) { mv = 1; mt = T.name + ' (Testform)'; } else if (N && N.req.essence) { mv = clamp((F.essence + run) / N.req.essence, 0, 1); mt = T.name + ' · Essenz +' + run; } else { mv = 1; mt = T.name + ' · Essenz +' + run; } }
     if (p.hero === 'shen') { mv = p.qi / 5; mc = '#4ff0cc'; mt = 'Qi ' + Math.floor(p.qi) + '/5' + (p.rooted > 0.5 ? ' · Wurzelstand' : ''); }
     this.set('mfill', (mv * 100).toFixed(0) + '%', 'width');
     this.set('mfill', mc, 'background');
@@ -362,7 +363,7 @@ const UI = {
   },
 
   /* ---------------------------------------------- Ende */
-  showEnd(won, souls, newly) {
+  showEnd(won, souls, newly, extra) {
     this.hideHud();
     const G = GAME;
     const tot = Object.values(G.stats.dmg).reduce((a, b) => a + b, 0) || 1;
@@ -376,6 +377,7 @@ const UI = {
       <div style="text-align:center;color:var(--dim);margin-bottom:6px">${won ? 'Vaelgor ist gefallen. Der Morgen graut über Varn.' : 'Die Nacht hat dich verschlungen.'}</div>
       <div class="kv"><span>Held</span><span>${HEROES[G.hero].name}</span><span>Überlebt</span><span>${fmtTime(G.t)}</span><span>Stufe</span><span>${G.level}</span><span>Besiegt</span><span>${G.kills}</span>
       <span>Reaktionen</span><span>${G.stats.reactions}</span><span>Fusionen</span><span>${G.stats.fusions.map((f) => FUSIONS[f].name).join(', ') || '—'}</span><span>Seelen erhalten</span><span style="color:#d8c0ff">+${souls}</span></div>
+      ${extra && G.hero === 'finn' ? finnEndHtml(extra) : ''}
       <div class="codex"><h3>Schaden nach Quelle</h3></div>${dm}${nl}
       <div class="btns"><button class="btn primary" data-act="again">Noch eine Nacht</button><button class="btn" data-act="play">Helden wechseln</button><button class="btn ghost" data-act="title">Hauptmenü</button></div></div>`, 'end', 'dim');
   },
@@ -436,3 +438,37 @@ const ENEMY_DESC = {
 function metaIcon(id) { return { vitae: 'vampirblut', macht: 'grabesmacht', eile: 'nebelgang', magnet: 'seelenmagnet', gier: 'soulgift', wurf: 'qikette', wiedergeburt: 'lebensraub' }[id]; }
 function isUnlocked(id) { return !!SAVE.unlocked[id] || SAVE.settings.testUnlock; }
 function fmtTime(t) { t = Math.max(0, Math.floor(t)); return String(Math.floor(t / 60)).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0'); }
+
+/* -------------------------------------------------------- Finn: Formwahl & Fortschritt */
+function finnReqHtml(T, F) {
+  if (!T.req) return '';
+  if (!T.req.essence) return T.req.text;
+  const ok = F.essence >= T.req.essence;
+  return `${T.req.text} · Blutessenz <b style="color:${ok ? '#7dff9a' : '#ffb0b0'}">${Math.min(F.essence, T.req.essence)} / ${T.req.essence}</b>`;
+}
+function finnSelectHtml() {
+  const F = finnSave(), cur = FINN_TIERS[F.tier], N = FINN_TIERS[F.tier + 1];
+  const test = SAVE.settings.testUnlock;
+  if (UI.finnPick === undefined || (!test && UI.finnPick !== F.tier)) UI.finnPick = F.tier;
+  const chips = FINN_TIERS.map((T, i) => {
+    const own = i <= F.tier, can = own && i === F.tier || test;
+    return `<button class="btn small ${i === UI.finnPick ? 'primary' : 'ghost'}" data-act="finnform" data-t="${i}" ${can ? '' : 'disabled'} style="padding:6px 8px;min-height:32px;font-size:11px">${own ? '' : '🔒 '}${T.name}</button>`;
+  }).join('');
+  const bar = N && N.req.essence ? `<div class="mbar" style="width:100%;height:9px;border-radius:5px;background:rgba(0,0,0,.6);border:1px solid #5a3a3a;overflow:hidden;margin:4px 0"><div style="height:100%;width:${Math.min(100, F.essence / N.req.essence * 100).toFixed(0)}%;background:linear-gradient(90deg,#6a0a2a,#ff3a4e)"></div></div>` : '';
+  return `<div class="blk"><b class="lbl">DAUERHAFTE FORM: <span style="color:${cur.col}">${cur.name.toUpperCase()}</span></b>
+      <p>${cur.desc}</p>
+      ${N ? `<p style="margin-top:4px">Nächste Form: <b style="color:${N.col}">${N.name}</b> — ${finnReqHtml(N, F)}</p>${bar}` : '<p>Höchste Form erreicht.</p>'}
+      <div style="color:var(--dim);font-size:13.5px">Blutessenz gesamt: ${F.essence} · Läufe: ${F.runs} · Siege: ${F.wins}</div></div>
+    <div class="blk"><b class="lbl">FORM FÜR DIESEN LAUF${test ? ' (TESTMODUS)' : ''}</b><div style="display:flex;flex-wrap:wrap;gap:5px">${chips}</div>
+      ${test && UI.finnPick !== F.tier ? '<div style="color:#ffd27a;font-size:13.5px;margin-top:4px">Testform: dieser Lauf zählt nicht für Essenz und Evolution.</div>' : ''}</div>
+    <div class="blk"><b class="lbl">DER WEG</b><div class="builds">${FINN_TIERS.slice(1).map((T) => `<div><span style="color:${T.col}">${T.name}:</span> ${T.desc}<br><small style="color:var(--dim)">Bedingung: ${T.req.essence ? T.req.essence + ' Blutessenz + ' : ''}${T.req.text}</small></div>`).join('')}</div></div>`;
+}
+function finnEndHtml(x) {
+  const F = finnSave();
+  if (x.test) return `<div class="codex"><h3>Evolution</h3><p>${x.note}</p></div>`;
+  let h = `<div class="codex"><h3>Evolution</h3><p>Blutessenz: <b style="color:#ff8a96">+${x.gain}</b> (gesamt ${F.essence})</p>`;
+  if (x.evolved) h += `<div style="text-align:center;margin:8px 0"><div class="cinzel" style="font-size:12px;letter-spacing:.4em;color:var(--gold2)">DAUERHAFTE EVOLUTION</div><div class="cinzel" style="font-size:24px;font-weight:800;color:${x.evolved.col};text-shadow:0 0 16px currentColor">${x.evolved.name}</div><p>${x.evolved.desc}</p></div>`;
+  const N = x.next;
+  if (N && N.req.essence) h += `<p>Nächste Form <b style="color:${N.col}">${N.name}</b>:<br>Prüfung: ${N.req.text} ${x.evolved ? '' : x.trial ? '<b style="color:#7dff9a">✓ bestanden</b>' : '<b style="color:#ffb0b0">✗ noch nicht</b>'}<br>Blutessenz ${Math.min(F.essence, N.req.essence)} / ${N.req.essence}</p>`;
+  return h + '</div>';
+}

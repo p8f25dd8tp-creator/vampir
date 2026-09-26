@@ -9,27 +9,27 @@
 
 /* ------------------------------------------------------------- Evolutionen */
 const FINN_TIERS = [
-  { id: 'mensch', name: 'Mensch', level: 0, hp: 80, speed: 150, armor: 0, might: 1, slots: 0, rim: '#b8b8c8', col: '#c8c8d8',
+  { id: 'mensch', name: 'Mensch', hp: 80, speed: 150, armor: 0, might: 1, req: null, slots: 0, rim: '#b8b8c8', col: '#c8c8d8',
     grants: [], unlocks: [], desc: 'Keine Kräfte. Finde das Buch!' },
-  { id: 'halbling', name: 'Halbling', level: 0, hp: 100, speed: 158, armor: 0, might: 1, slots: 2, rim: '#ff4a5a', col: '#ff4a5a',
+  { id: 'halbling', name: 'Halbling', hp: 100, speed: 158, armor: 0, might: 1, req: { text: 'Finde das Buch (erster Lauf).' }, slots: 2, rim: '#ff4a5a', col: '#ff4a5a',
     grants: ['blutwisch', 'blutspray'], unlocks: ['blutwisch', 'blutspray', 'lebensraub', 'vampirblut', 'nebelgang', 'grabesmacht', 'seelenmagnet'],
     desc: 'Das Buch erwacht. Blutwisch und Blutspray.' },
-  { id: 'vampir', name: 'Vampir', level: 5, hp: 125, speed: 168, armor: 1, might: 1.1, slots: 4, rim: '#ff2a40', col: '#ff2a40',
+  { id: 'vampir', name: 'Vampir', hp: 125, speed: 168, armor: 1, might: 1.1, req: { essence: 600, text: 'Überlebe 5 Minuten', check: (r) => r.t >= 300 }, slots: 4, rim: '#ff2a40', col: '#ff2a40',
     grants: ['hammerschlag', 'blitzschritt'], unlocks: ['hammerschlag', 'blitzschritt', 'kettenreaktion'],
     desc: 'Hammerschlag und Blitzschritt. Ausweichen wird zum Blitz-Teleport.' },
-  { id: 'adliger', name: 'Vampiradliger', level: 10, hp: 150, speed: 175, armor: 1, might: 1.22, slots: 5, rim: '#b07bff', col: '#a77bff',
+  { id: 'adliger', name: 'Vampiradliger', hp: 150, speed: 175, armor: 1, might: 1.22, req: { essence: 2500, text: 'Erreiche Stufe 22 in einem Lauf', check: (r) => r.level >= 22 }, slots: 6, rim: '#b07bff', col: '#a77bff',
     grants: ['schattenflammen'], unlocks: ['schattenflammen', 'nachtschlund', 'nachbilder'],
     desc: 'Die Schatten gehorchen: Schattenflammen, Nachtschlund, Nachbilder.' },
-  { id: 'lord', name: 'Vampirlord', level: 16, hp: 180, speed: 180, armor: 2, might: 1.38, slots: 6, rim: '#ff3a4e', col: '#4ff0cc',
+  { id: 'lord', name: 'Vampirlord', hp: 180, speed: 180, armor: 2, might: 1.38, req: { essence: 6000, text: 'Besiege Hauptmann Kharn', check: (r) => r.miniKilled }, slots: 8, rim: '#ff3a4e', col: '#4ff0cc',
     grants: ['qihand', 'blutnova'], unlocks: ['qihand', 'qikette', 'blutnova', 'bluternte', 'eisenmeridiane'],
     desc: 'Qi erwacht — und mit ihm gewaltige Blutkräfte.' },
-  { id: 'himmelslord', name: 'Himmlischer Vampirlord', level: 22, hp: 210, speed: 186, armor: 2, might: 1.55, slots: 7, rim: '#ffd27a', col: '#ffd27a',
+  { id: 'himmelslord', name: 'Himmlischer Vampirlord', hp: 210, speed: 186, armor: 2, might: 1.55, req: { essence: 11000, text: 'Besiege Vaelgor, den Gruftkoloss', check: (r) => r.won }, slots: 9, rim: '#ffd27a', col: '#ffd27a',
     grants: ['himmelsstrahl'], unlocks: [],
     desc: 'Himmelslicht: Lichtsäulen strafen die Toten. Blut, Schatten und Qi verschmelzen.' },
-  { id: 'rein', name: 'Reiner Himmlischer', level: 28, hp: 245, speed: 192, armor: 3, might: 1.75, slots: 8, rim: '#fff4d0', col: '#fff4d0',
+  { id: 'rein', name: 'Reiner Himmlischer', hp: 245, speed: 192, armor: 3, might: 1.75, req: { essence: 18000, text: 'Besiege Vaelgor — insgesamt 3 Siege mit Finn', check: (r) => r.won && r.wins >= 3 }, slots: 9, rim: '#fff4d0', col: '#fff4d0',
     grants: ['siegel'], unlocks: [],
     desc: 'Alle Kräfte vereint: das Dreifaltige Siegel.' },
-  { id: 'gott', name: 'Gottbezwinger', level: 34, hp: 300, speed: 200, armor: 4, might: 2.05, slots: 9, rim: '#ffb040', col: '#ffb040',
+  { id: 'gott', name: 'Gottbezwinger', hp: 300, speed: 200, armor: 4, might: 2.05, req: { essence: 28000, text: 'Besiege Vaelgor in der Form des Reinen Himmlischen mit über 50 % Leben', check: (r) => r.won && r.hpFrac > 0.5 }, slots: 10, rim: '#ffb040', col: '#ffb040',
     grants: ['goetterfall'], unlocks: [],
     desc: 'Götterfall: Speere aus Gold und Blut regnen vom Himmel.' }
 ];
@@ -40,7 +40,7 @@ HEROES.finn = {
   role: 'Evolution · beginnt ohne Kräfte · wird immer stärker',
   hp: 80, speed: 150, armor: 0, dodgeCd: 2.6, dodge: 'roll',
   start: null, slots: 0, evo: true,
-  mech: { name: 'Evolution', desc: 'Finn beginnt als Mensch ohne jede Fähigkeit. Das Buch liegt in der Nähe — lauf hin! Es macht ihn zum Halbling. Danach entwickelt er sich mit seiner Stufe weiter: Vampir (5), Vampiradliger (10), Vampirlord (16), Himmlischer Vampirlord (22), Reiner Himmlischer (28), Gottbezwinger (34). Jede Evolution bringt neue Kräfte, mehr Plätze und ein neues Aussehen.' },
+  mech: { name: 'Evolution', desc: 'Im allerersten Lauf ist Finn ein Mensch ohne jede Fähigkeit und muss das Buch finden — danach ist er dauerhaft Halbling. Jede weitere Evolution ist dauerhaft und muss über viele Läufe verdient werden: Jeder Lauf bringt Blutessenz (Kills, Zeit, Stufe, Sieg). Hat Finn genug Essenz UND besteht im Lauf die Prüfung seiner Form, entwickelt er sich nach dem Lauf weiter. Im Lauf selbst kämpft er nur mit den Kräften seiner aktuellen Form und verbessert sie über Karten.' },
   ult: { id: 'erwachen', name: 'Erwachen', cd: 17, desc: 'Entfesselt alles, was Finn bisher gelernt hat: Blut, ab Adliger Schatten, ab Lord Qi, ab Himmlischer Licht — und als Gottbezwinger alles zugleich.' },
   strengths: ['Wächst am stärksten von allen', 'Lernt Blut, Schatten, Qi und Licht', 'Späte Formen sind übermächtig'],
   weaknesses: ['Anfangs völlig wehrlos', 'Früher Abschnitt ist gefährlich', 'Muss die Stufen schnell erreichen'],
@@ -277,28 +277,46 @@ ULTS.erwachen = function (p) {
   fxFlash(p.x, p.y - 40, 120 + T * 20, T >= 5 ? '#ffe6a0' : '#ff2a40', 0.35);
 };
 
-/* ------------------------------------------------------------- Buch & Evolution */
-function finnStart() {
-  const G = GAME, p = G.p;
-  p.tier = 0;
-  const a = Math.random() * TAU;
-  G.pickups.push({ kind: 'book', x: Math.cos(a) * 150, y: Math.sin(a) * 120, v: 1, magnet: false, vx: 0, vy: 0, t: 0, z: 0, vz: 0 });
-  p.ultCd = 0;
-  GAME.later(0.8, () => UI.announce('Finde das Buch!', ''));
+/* ------------------------------------------------------------- Buch & Evolution
+   Die Form ist DAUERHAFT (Speicherstand). Im Lauf kaempft Finn nur mit den
+   Kraeften seiner Form; die naechste Form wird nach dem Lauf verdient. */
+function finnSave() {
+  if (!SAVE.finn) SAVE.finn = { tier: 0, essence: 0, wins: 0, runs: 0 };
+  return SAVE.finn;
 }
+function finnGrant(p, tier) {
+  for (const c of FINN_TIERS[tier].grants) {
+    if (p.ab[c]) continue;
+    if (!CARDS[c]) { p.ab[c] = { lvl: 1, t: 0.5, fusion: c === 'siegel' }; continue; }
+    if (Object.keys(FUSIONS).some((f) => p.ab[f] && FUSIONS[f].consumes.includes(c))) continue;
+    p.ab[c] = { lvl: 1, t: 0.4 }; p.order.push(c);
+  }
+}
+function finnStart() {
+  const G = GAME, p = G.p, F = finnSave();
+  const tier = clamp(G.finnTier !== undefined ? G.finnTier : F.tier, 0, FINN_TIERS.length - 1);
+  p.tier = tier;
+  G.finnStartTier = tier;
+  for (let t = 1; t <= tier; t++) finnGrant(p, t);
+  if (tier >= 2) p.dodgeKind = 'blink';
+  recomputeStats(); p.hp = p.st.maxHp;
+  if (tier === 0) {
+    const a = Math.random() * TAU;
+    G.pickups.push({ kind: 'book', x: Math.cos(a) * 150, y: Math.sin(a) * 120, v: 1, magnet: false, vx: 0, vy: 0, t: 0, z: 0, vz: 0 });
+    GAME.later(0.8, () => UI.announce('Finde das Buch!', ''));
+  } else GAME.later(0.8, () => UI.announce(FINN_TIERS[tier].name.toUpperCase(), ''));
+}
+// nur fuer das Buch: die Verwandlung Mensch -> Halbling passiert im Lauf
 function finnEvolve(tier) {
   const G = GAME, p = G.p, T = FINN_TIERS[tier];
   p.tier = tier;
-  for (const c of T.grants) {
-    if (c === 'siegel' || c === 'himmelsstrahl' || c === 'goetterfall') { if (!p.ab[c]) p.ab[c] = { lvl: 1, t: 0.5, fusion: c === 'siegel' }; continue; }
-    if (p.ab[c]) p.ab[c].lvl = Math.min(CARDS[c].max, p.ab[c].lvl + 1);
-    else if (!Object.keys(FUSIONS).some((f) => p.ab[f] && FUSIONS[f].consumes.includes(c))) { p.ab[c] = { lvl: 1, t: 0.4 }; p.order.push(c); }
-  }
+  finnGrant(p, tier);
   if (tier >= 2) p.dodgeKind = 'blink';
   recomputeStats();
   p.hp = p.st.maxHp;
   p.iframes = Math.max(p.iframes, 1.5);
-  // Kinoreifer Moment: Lichtsaeule, Druckwelle, Zeitlupe
+  const F = finnSave();
+  if (tier === 1 && F.tier < 1 && !G.finnTest) { F.tier = 1; writeSave(); }
   sfx('fusion'); shake(10); hitstop(0.2); G.slowmo = Math.max(G.slowmo, 1.2);
   const col = T.col;
   addEffect({ x: p.x, y: p.y, dur: 1.2, layer: 1, draw(g, e, k) {
@@ -312,19 +330,32 @@ function finnEvolve(tier) {
   fxRing(p.x, p.y, 10, 280, 0.7, col, 12); fxRing(p.x, p.y, 10, 200, 0.6, '#ffffff', 4);
   forEnemiesInRadius(p.x, p.y, 240, (en) => { if (!en.boss) { const a = Math.atan2(en.y - p.y, en.x - p.x); en.kvx += Math.cos(a) * 500 / Math.sqrt(en.mass); en.kvy += Math.sin(a) * 500 / Math.sqrt(en.mass); } });
   burstBlood(p.x, p.y, 24, 1.5);
-  if (tier >= 3) burstShadow(p.x, p.y, 20, 1.5);
-  if (tier >= 4) burstQi(p.x, p.y, 24, 1.5);
-  if (tier >= 5) burstSparks(p.x, p.y, 30, '#ffe6a0', 1.5);
   UI.evolution(T, FINN_TIERS[tier + 1]);
 }
-function finnUpdate() {
-  const G = GAME, p = G.p;
-  if (!p.alive || !p.tier) return;
-  const next = FINN_TIERS[p.tier + 1];
-  if (next && G.level >= next.level && G.state === 'play') finnEvolve(p.tier + 1);
+// Essenz dieses Laufs (wird laufend im HUD gezeigt)
+function finnRunEssence(G, won) {
+  return Math.round(G.kills * 0.25 + G.t * 0.9 + G.level * 12 + (G.miniKilled ? 150 : 0) + (won ? 500 : 0));
 }
+// nach dem Lauf: Essenz gutschreiben, Pruefung auswerten, evtl. dauerhaft entwickeln
+function finnEndRun(won) {
+  const G = GAME, p = G.p, F = finnSave();
+  const res = { gain: finnRunEssence(G, won), evolved: null, test: !!G.finnTest };
+  if (G.finnTest) { res.note = 'Testform gewählt — dieser Lauf zählt nicht für die Evolution.'; return res; }
+  F.runs++; F.essence += res.gain; if (won) F.wins++;
+  const N = FINN_TIERS[F.tier + 1];
+  res.next = N;
+  if (N && F.tier >= 1) {
+    const r = { t: G.t, level: G.level, won, miniKilled: !!G.miniKilled, wins: F.wins, hpFrac: p.hp / p.st.maxHp, tier: G.finnStartTier };
+    const formOk = G.finnStartTier === F.tier;          // Pruefung muss in der aktuellen Form bestanden werden
+    res.trial = formOk && N.req.check(r);
+    res.enough = F.essence >= N.req.essence;
+    if (res.trial && res.enough) { F.tier++; res.evolved = N; res.next = FINN_TIERS[F.tier + 1]; }
+  }
+  return res;
+}
+SAVE.unlocked.finn = true;
 HEROES.finn.onStart = finnStart;
-HEROES.finn.onUpdate = finnUpdate;
+HEROES.finn.onEnd = finnEndRun;
 
 /* ============================================================ FINN (Figur)
    Aussehen haengt von der Evolutionsstufe ab: Kapuzenpulli & Brille ->

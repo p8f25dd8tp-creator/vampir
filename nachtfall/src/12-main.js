@@ -3,7 +3,8 @@
    START & HAUPTSCHLEIFE
    ========================================================================== */
 
-let MENU = null;           // Hintergrundszene fuer die Menues
+let MENU = null;
+let PENDING_FINN;           // Hintergrundszene fuer die Menues
 let lastT = 0, perfAcc = 0, perfN = 0, perfSlow = 0;
 
 function applyQuality() {
@@ -61,6 +62,7 @@ function startGame(hero) {
   MENU = null;
   UI.clear();
   applyQuality();
+  PENDING_FINN = hero === 'finn' ? (UI.finnPick !== undefined ? UI.finnPick : finnSave().tier) : undefined;
   newRun(hero);
   UI.showHud();
 }

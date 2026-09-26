@@ -55,6 +55,7 @@ const DEFAULT_SAVE = {
   stats: { runs: 0, kills: 0, bestTime: 0, bossKills: 0, maxLevel: 0, fusions: 0 },
   heroStats: {},       // heroId -> { runs, best, wins }
   seenFusions: {},
+  finn: { tier: 0, essence: 0, wins: 0, runs: 0 },
   settings: { sfx: 0.8, music: 0.5, shake: 1, quality: 'auto', testUnlock: true, dmgNumbers: true }
 };
 let SAVE = loadSave();

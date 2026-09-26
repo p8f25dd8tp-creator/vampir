@@ -86,25 +86,29 @@ Angriffe laufen **automatisch**. Bei jedem Stufenaufstieg wählst du **eine von 
 *Fan-Figur, angelehnt an „My Vampire System“ — nur für den privaten Gebrauch. Vor einer
 Veröffentlichung (App Store, öffentliche Seite) Namen und Anlehnung ändern.*
 
-Finn beginnt als **Mensch ohne jede Fähigkeit**. In der Nähe leuchtet **das Buch** (Pfeil am
-Bildrand) — wer es erreicht, wird zum Halbling. Danach entwickelt er sich mit seiner Stufe:
+Finns Evolutionen sind **dauerhaft** und werden **über viele Läufe** verdient. Im Lauf selbst
+kämpft er nur mit den Kräften seiner aktuellen Form und verbessert sie über Karten.
 
-| Form | Wann | Neu | Aussehen |
+* **Erster Lauf:** Mensch ohne jede Fähigkeit. Das Buch leuchtet in der Nähe (Pfeil am Rand) —
+  wer es erreicht, wird Halbling, und zwar dauerhaft.
+* Jeder Finn-Lauf bringt **Blutessenz** (Kills, Zeit, Stufe, Hauptmann, Sieg).
+* Die nächste Form braucht genug Essenz **und** eine bestandene **Prüfung** in der aktuellen
+  Form. Die Evolution passiert am Ende des Laufs (höchstens eine Stufe pro Lauf).
+
+| Form | Bedingung | Kräfte (fest im Lauf) | Aussehen |
 |---|---|---|---|
-| Mensch | Start | nichts | Kapuzenpulli, Brille |
-| Halbling | Buch | Blutwisch, Blutspray | rote Augen, Blutflecken |
-| Vampir | Stufe 5 | Hammerschlag, Blitzschritt; Ausweichen wird Blitz-Teleport | Lederjacke, Fangzähne |
-| Vampiradliger | Stufe 10 | Schattenflammen; Nachtschlund & Nachbilder als Karten | langer Adelsmantel, Stehkragen |
-| Vampirlord | Stufe 16 | Qi-Handfläche, Blutnova; Qi-Kette, Bluternte, Eiserne Meridiane als Karten | Umhang, Krone, Qi-Tattoos |
-| Himmlischer Vampirlord | Stufe 22 | Himmelsstrahl (Lichtsäulen setzen alle drei Male) | Heiligenschein, Lichtflügel |
-| Reiner Himmlischer | Stufe 28 | Dreifaltiges Siegel | weißes Gewand, silbernes Haar |
-| Gottbezwinger | Stufe 34 | Götterfall (Speerregen) | schwarz-goldene Rüstung, große Flügel, zerbrochener Heiligenschein |
+| Mensch | Start | keine | Kapuzenpulli, Brille |
+| Halbling | Buch finden | Blutwisch, Blutspray | rote Augen, Blutflecken |
+| Vampir | 600 Essenz + 5 Min. überleben | + Hammerschlag, Blitzschritt, Blitz-Teleport | Lederjacke, Fangzähne |
+| Vampiradliger | 2 500 + Stufe 22 | + Schattenflammen; Nachtschlund/Nachbilder als Karten | Adelsmantel, Stehkragen |
+| Vampirlord | 6 000 + Hauptmann Kharn besiegen | + Qi-Handfläche, Blutnova; Qi-Kette/Bluternte als Karten | Umhang, Krone, Qi-Tattoos |
+| Himmlischer Vampirlord | 11 000 + Vaelgor besiegen | + Himmelsstrahl | Heiligenschein, Lichtflügel |
+| Reiner Himmlischer | 18 000 + insgesamt 3 Siege | + Dreifaltiges Siegel | weißes Gewand, silbernes Haar |
+| Gottbezwinger | 28 000 + Sieg mit über 50 % Leben | + Götterfall | schwarz-goldene Rüstung, große Flügel |
 
-Jede Form bringt mehr Leben, Tempo, Schaden und **mehr Fähigkeiten-Plätze** (2 → 9).
-Die Ultimative **Erwachen** wächst mit: Blut, ab Adliger Schatten, ab Lord Qi, ab
-Himmlischer Licht, als Gottbezwinger alles zugleich plus Zeitlupe.
-Neue Karten: **Blutspray** (Fächer aus Blutgeschossen), **Hammerschlag** (Einschlag mit
-Betäubung, Schockwelle, Erdspalt), **Blitzschritt** (ein Abbild blitzt durch mehrere Gegner).
+Ein guter Lauf bringt etwa 1 000–3 000 Essenz — bis zum Gottbezwinger sind es rund ein Dutzend
+starke Läufe. Im **Testmodus** lässt sich jede Form in der Heldenauswahl direkt wählen; solche
+Läufe zählen nicht für Essenz und Evolution.
 
 **Freischaltung** (alles durch Spielen, keine Käufe):
 Vorian von Anfang an · Liora: Stufe 12 in einem Lauf (oder 400 Seelen) ·

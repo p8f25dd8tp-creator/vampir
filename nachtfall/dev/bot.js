@@ -43,6 +43,7 @@ window.botPick = function () {
   chooseCard(i);
 };
 window.simRun = function (hero, maxT) {
+  if (hero.startsWith('finn:')) { UI.finnPick = +hero.split(':')[1]; hero = 'finn'; }
   UI.showLevelUp = function () {}; UI.hideLevelUp = function () {}; UI.showEnd = function () {}; UI.announce = function () {}; UI.toast = function () {}; UI.hurtFlash = function () {};
   startGame(hero);
   AudioSys.stopMusic();
