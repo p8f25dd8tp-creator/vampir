@@ -409,3 +409,5 @@ Object.assign(MISSIONS, {
 });
 MISSION_ORDER.push('caladi', 'zahnwurm', 'echsen', 'berg', 'schattenleere', 'absturz', 'dalki', 'ghul');
 const E7_CHAIN = ['caladi', 'zahnwurm', 'echsen', 'berg', 'schattenleere', 'absturz', 'dalki', 'ghul'];
+// Caladi: 72 Stunden Sonne, deutlich staerker als auf der Erde (Kap. 111: −70 %)
+for (const id of ['zahnwurm', 'echsen', 'dalki']) if (MISSIONS[id] && MISSIONS[id].fight) MISSIONS[id].fight.sunMul = 0.3;

@@ -193,15 +193,15 @@ function tryDodge(p, dir) {
 
 function updateFighter(p, dt, mx, my) {
   if (p.state === 'down') { p.vx *= Math.exp(-dt * 6); p.vy *= Math.exp(-dt * 6); return; }
-  p.stateT += dt;
+  p.stateT += p.state === 'attack' ? dt * fxOf(p).atk : dt; // Agilitaet: schnellere Angriffe
   p.counterT = Math.max(0, p.counterT - dt);
   p.buffer = Math.max(0, p.buffer - dt);
   p.stamDelay -= dt;
-  if (p.stamDelay <= 0 && p.state !== 'charge') p.stam = Math.min(p.maxStam, p.stam + 42 * dt);
+  if (p.stamDelay <= 0 && p.state !== 'charge') p.stam = Math.min(p.maxStam, p.stam + 42 * fxOf(p).regen * dt);
   if (p.maxMc && !G.opt.leere) p.mc = Math.min(p.maxMc, p.mc + 2.5 * dt); // in der Schattenleere laedt MC nicht // MC (Schatten) laedt im Spiel schneller als im Roman
   if (p === G.player) G.inSun = p.char === 'quinn' && inSun(p);
   const sunK = sunFactor(p);
-  const spd = 120 * Math.pow(p.agi * sunK / 10, 0.35);
+  const spd = 120 * fxOf(p).move;
   // Blutbank: heilt Quinn automatisch unter 5 HP (10 ml = 5 HP)
   if (p.char === 'quinn' && !G.opt.vr && hasSkill('bloodbank') && p.hp < 5 && p.hp > 0 && SAVE.quinn.bank >= 10) {
     SAVE.quinn.bank -= 10; p.hp = Math.min(p.maxHp, p.hp + 5); floatText(p.x, p.y - 80, '+5 Blutbank', '#ff8a9a'); sfx('heal'); burst(p.x, p.y - 30, 8, '#ff3a4e');
@@ -232,7 +232,7 @@ function updateFighter(p, dt, mx, my) {
     const k = p.stateT / 0.3;
     p.ghostT = (p.ghostT || 0) - dt;
     if (p.ghostT <= 0 && p.spr) { p.ghostT = 0.045; const c = mkCanvas(p.spr.out.width, p.spr.out.height); c.getContext('2d').drawImage(p.spr.out, 0, 0); G.fx.push({ k: 'ghost', x: p.x, y: p.y, face: p.face, img: c, S: p.spr.S, ay: p.spr.anchorY, px: figPx(), life: 0.28, t: 0, col: p.counterT > 0 ? '#ffd070' : '#8ad8ff' }); }
-    const v = 330 * Math.pow(p.agi / 10, 0.3) * (1 - k * 0.7);
+    const v = 330 * fxOf(p).dodge * (1 - k * 0.7);
     tvx = Math.cos(p.dodgeA) * v; tvy = Math.sin(p.dodgeA) * v;
     p.anim.dodge = Math.sin(Math.min(1, k) * Math.PI);
     if (p.stateT >= 0.3) { setState(p, 'idle'); p.anim.dodge = 0; if (p.buffer > 0) { p.buffer = 0; startAttack(p, 0); } }
@@ -251,7 +251,8 @@ function nearestFoe(p, maxD) {
 }
 function inArc(ex, ey, x, y, ang, half) { return Math.abs(angDiff(ang, Math.atan2(ey - y, ex - x))) <= half; }
 
-function sunFactor(p) { return p.char === 'quinn' && inSun(p) ? 0.5 : 1; }
+function sunFactor(p) { return p.char === 'quinn' && inSun(p) ? (G.opt.sunMul || 0.5) : 1; }
+function fxOf(p) { const k = sunFactor(p); return statFx(p.str * k, p.agi * k, p.char === 'quinn' ? SAVE.quinn.stats.sta : 10); }
 function playerHit(p, A) {
   let hitAny = false;
   if (A.proj) { fireProj(p, A); return; }
@@ -266,7 +267,8 @@ function playerHit(p, A) {
     const counter = p.counterT > 0;
     if (counter) { dmg *= 2; p.counterT = 0; }
     hitAny = true;
-    damageFoe(e, dmg, { kb: A.kb * (counter ? 1.6 : 1), ang: p.aim, poise: (A.poise || 1) + (counter ? 3 : 0), heavy: A.kick || p.charged || counter, counter, hammer: A.hammer });
+    const SF = fxOf(p);
+    damageFoe(e, dmg, { kb: A.kb * (counter ? 1.6 : 1) * SF.kb, ang: p.aim, poise: ((A.poise || 1) + (counter ? 3 : 0)) * SF.poise, heavy: A.kick || p.charged || counter, counter, hammer: A.hammer });
     if (A.ice) { e.slowT = 2.5; burst(e.x, e.y - 30, 8, '#bfe8ff'); floatText(e.x, e.y - 88, 'EIS', '#bfe8ff'); }
     if (A.hammer) { setState(e, 'stagger'); G.shake = 10; dust(e.x, e.y, 10, 1.4); }
   }
@@ -320,10 +322,11 @@ function damageAlly(p, src, dmg, ang, kb) {
   if (p.iframes > 0) {
     if (p !== G.player) return 'dodged';
     // perfektes Ausweichen: der Treffer kam kurz nach Beginn des Ausweichens
-    const win = SAVE.settings.wideDodge ? 0.3 : 0.2;
+    const win = (SAVE.settings.wideDodge ? 0.3 : 0.2) + fxOf(p).perfect;
     if (p.state === 'dodge' && G.t - p.dodgeStart <= win && !p.perfectUsed) perfectDodge(p, src);
     return 'dodged';
   }
+  if (p.char === 'quinn' && src && src.team === 1) dmg *= foeDmgScale();
   if (p.char === 'quinn' && SAVE.quinn.gear.hands) dmg = Math.max(0.5, dmg * 0.8); // Verteidigung +2 der Handschuhe
   p.hp = Math.max(G.opt.noDeath ? 1 : 0, p.hp - dmg);
   G.stats.taken += dmg;
@@ -629,4 +632,21 @@ function castHammer(p) {
   if (p.stam < 30) { tired(p); return; }
   p.hammerCd = G.t + 2.5;
   startAttack(p, 0, false, HAMMER);
+}
+
+/* ------------------------------------------------------------ Kraftkurve: Gegner-Schaden je Etappe
+   Quinns HP wachsen nach Roman mit der Stufe (5 je Stufe). Damit Kaempfe fordernd bleiben,
+   waechst der Schaden der Gegner mit der Etappe – gemessen an der dort typischen Stufe.
+   Wer weiter gelevelt hat, haelt spuerbar mehr aus. */
+const ETAPPE_OF = {};
+[['prolog', 'test', 'kyle', 'nacht', 'training', 'test3d'], ['mono', 'credits', 'rylee', 'dan', 'biss'], ['bande', 'waffen', 'brandon', 'leo', 'dach'], ['tutorial', 'aula', 'aula2'],
+ ['vrintro', 'windklinge', 'nate', 'sonne', 'portalteam', 'logan', 'earl', 'vrfree'],
+ ['portalsturz', 'rattaclaw', 'lagerhaus', 'scordana', 'dom', 'bloodsucker', 'evolution', 'schatten', 'rettung', 'kiefer', 'systemshop', 'hammerspray', 'vrerde', 'logan2'],
+ ['caladi', 'zahnwurm', 'echsen', 'berg', 'schattenleere', 'absturz', 'dalki', 'ghul']].forEach((l, i) => l.forEach((id) => { ETAPPE_OF[id] = i + 1; }));
+const FOE_DMG = { 1: 1.0, 2: 1.15, 3: 1.5, 4: 1.9, 5: 2.2, 6: 2.6, 7: 2.1 };
+function foeDmgScale() {
+  if (G.opt.test) return 1;
+  const et = (typeof MISSION !== 'undefined' && MISSION && ETAPPE_OF[MISSION.id]) || 1;
+  if (et === 6 && SAVE.quinn.race === 'Vampir') return 2.0;
+  return FOE_DMG[et] || 1;
 }

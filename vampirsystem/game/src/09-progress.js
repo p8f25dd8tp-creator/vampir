@@ -24,21 +24,43 @@ function addExp(n) {
 // abgeleitete Werte
 function quinnStats() {
   const S = SAVE.quinn.stats;
-  const race = SAVE.quinn.race === 'Vampir' ? 15 : SAVE.quinn.race === 'Halbling' ? 5 : 0;
   const H = SAVE.quinn.gear.hands, gear = H === 'gauntlets' ? 3 : H === 'standard' ? 6 : 0; // Schwarzhorn-Handschuhe +3, Beste Standard-Handschuhe +6
   const feet = SAVE.quinn.gear.feet === 'wolf' ? 4 : 0; // Schwarzhorn-Wolfsstiefel: Agilitaet +4
-  return { maxHp: 10 + race + (S.sta - 10), maxStam: 100 + (S.sta - 10) * 4, str: S.str + gear, agi: S.agi + feet };
+  // HP nach Roman: Stufe 1 = 10, Stufe 2 = 15, Stufe 4 = 25, Vampir Stufe 10 mit Ausdauer 15 = 60 (Kap. 17, 54, 86)
+  const lv = SAVE.quinn.level;
+  return { maxHp: 5 + 5 * lv + (S.sta - 10), maxStam: 100 + (S.sta - 10) * 6, str: S.str + gear, agi: S.agi + feet };
+}
+// spuerbare Wirkung der Werte (fuer Kampf und Statusvorschau)
+function statFx(str, agi, sta) {
+  return {
+    dmg: str / 10,                                   // +10 % Schaden je Punkt
+    poise: 1 + Math.max(0, str - 10) * 0.06,         // Gegner taumeln frueher
+    kb: Math.sqrt(str / 10),                         // mehr Rueckstoss
+    move: Math.max(0.6, 1 + (agi - 10) * 0.03),      // +3 % Lauftempo
+    atk: clamp(1 + (agi - 10) * 0.022, 0.8, 1.7),    // +2,2 % Angriffstempo
+    dodge: Math.max(0.7, 1 + (agi - 10) * 0.03),     // weiter ausweichen
+    perfect: clamp((agi - 10) * 0.006, 0, 0.1),      // groesseres Perfekt-Fenster
+    regen: 1 + Math.max(0, sta - 10) * 0.04          // schnellere Ausdauer-Erholung
+  };
 }
 const STAT_INFO = {
-  str: { name: 'Stärke', desc: 'mehr Schaden pro Schlag' },
-  agi: { name: 'Agilität', desc: 'schneller laufen und ausweichen' },
-  sta: { name: 'Ausdauer', desc: '+1 HP und mehr Ausdauer' }
+  str: { name: 'Stärke', desc: '+10 % Schaden, mehr Wucht, Gegner taumeln früher' },
+  agi: { name: 'Agilität', desc: '+3 % Tempo, +2 % Angriffstempo, weiter und genauer ausweichen' },
+  sta: { name: 'Ausdauer', desc: '+1 HP, +6 Ausdauer, schnellere Erholung' }
 };
+// Vorschau: was bringt der naechste Punkt?
+function statPreview(k) {
+  const Q = SAVE.quinn, D = quinnStats(), F = statFx(D.str, D.agi, Q.stats.sta);
+  const pct = (v) => Math.round((v - 1) * 100);
+  if (k === 'str') { const N = statFx(D.str + 1, D.agi, Q.stats.sta); return `Schaden ×${F.dmg.toFixed(2)} → ×${N.dmg.toFixed(2)} · Taumeln +${pct(F.poise)} % → +${pct(N.poise)} %`; }
+  if (k === 'agi') { const N = statFx(D.str, D.agi + 1, Q.stats.sta); return `Tempo ${pct(F.move) >= 0 ? '+' : ''}${pct(F.move)} % → +${pct(N.move)} % · Angriffe +${pct(F.atk)} % → +${pct(N.atk)} %`; }
+  return `HP ${D.maxHp} → ${D.maxHp + 1} · Ausdauer ${D.maxStam} → ${D.maxStam + 6}`;
+}
 
 /* ------------------------------------------------------------ Status-Fenster */
 function statusHtml() {
   const Q = SAVE.quinn, S = Q.stats, D = quinnStats();
-  const rows = Object.keys(STAT_INFO).map((k) => `<div class="strow"><span>${STAT_INFO[k].name}<small>${STAT_INFO[k].desc}</small></span><b>${S[k]}</b>
+  const rows = Object.keys(STAT_INFO).map((k) => `<div class="strow"><span>${STAT_INFO[k].name}<small>${STAT_INFO[k].desc}</small><small style="color:#9ad8ff">${statPreview(k)}</small></span><b>${S[k]}</b>
     <button class="plus" data-stat="${k}" ${Q.points ? '' : 'disabled'}>+</button></div>`).join('');
   return `<div class="sys statuswin"><div class="head">[ STATUS ]</div>
     <div class="kv"><span>Name</span><span>Quinn Talen</span><span>Rasse</span><span>${Q.race || 'Mensch'}</span>
