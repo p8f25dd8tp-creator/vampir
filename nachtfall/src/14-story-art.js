@@ -250,6 +250,71 @@ function humanBoss(g, st, hero, pal, look, sc) {
   const DR = { vorian: drawVorian, liora: drawLiora, nyx: drawNyx, shen: drawShen }[hero];
   withPal(pal, () => { const P = makePose(SP, { t: st.t, run: st.run || 0, phase: st.phase || 0, cast: Math.min(1, st.slam || 0), aim: -1.1, hurt: st.hurt || 0, dead: st.dead || 0 }); DR(g, P, look || {}); });
 }
+// Eigener Drache: schwarze Schuppen, goldene Glut, vier Beine, Schwingen, langer Hals
+function drawDrache(g, st) {
+  const t = st.t, run = st.run || 0, flap = Math.sin(t * 3.2), atk = Math.min(1, (st.slam || 0) + (st.roar || 0));
+  const dk = st.hurt || 0, dead = st.dead || 0;
+  const S = '#1a1210', SL = '#4a3024', SD = '#080404', GL = '#ffb02a', GD = '#c0500a', BELLY = '#6a4a2a';
+  glowDot(g, 0, -110, 190, '#ff7a1a', 0.3);
+  g.save(); g.globalAlpha = 1 - dead * 0.6;
+  // Schwingen (hinten)
+  const wing = (side, back) => {
+    g.save(); g.translate(-18 - 4 * side, -104); g.scale(side * 0.72, 0.72); g.rotate(-0.45 - flap * 0.28);
+    const tips = [[150, -120], [175, -40], [150, 20], [110, 50]];
+    g.fillStyle = lg(g, 0, 0, 170, -60, [0, back ? '#2a0e08' : '#4a160c', 1, back ? '#140604' : '#8a2a10']);
+    g.beginPath(); g.moveTo(0, 0);
+    tips.forEach(([x, y], i) => { const [px, py] = i ? tips[i - 1] : [0, 0]; if (i === 0) g.lineTo(x, y); else g.quadraticCurveTo((px + x) / 2 - 12, (py + y) / 2 - 4, x, y); });
+    g.quadraticCurveTo(50, 40, 0, 16); g.closePath(); g.fill();
+    g.strokeStyle = back ? '#3a1a10' : SL; g.lineWidth = 4;
+    g.beginPath(); g.moveTo(0, 0); g.lineTo(150, -120); g.stroke();
+    g.lineWidth = 2; tips.slice(1).forEach(([x, y]) => { g.beginPath(); g.moveTo(8, -6); g.lineTo(x, y); g.stroke(); });
+    g.restore();
+  };
+  wing(-1, true);
+  // Schwanz
+  g.strokeStyle = S; g.lineCap = 'round';
+  const tp = []; for (let i = 0; i <= 8; i++) tp.push([-40 - i * 16, -58 + i * 4 + Math.sin(t * 2.4 + i * 0.7) * i * 1.6]);
+  for (let i = 0; i < 8; i++) { g.lineWidth = 26 - i * 2.8; g.beginPath(); g.moveTo(tp[i][0], tp[i][1]); g.lineTo(tp[i + 1][0], tp[i + 1][1]); g.stroke(); }
+  g.fillStyle = GL; g.beginPath(); const [ex, ey] = tp[8]; g.moveTo(ex, ey - 8); g.lineTo(ex - 20, ey); g.lineTo(ex, ey + 8); g.fill();
+  // Beine
+  const leg = (x, ph, far) => {
+    const sw = Math.sin(t * 5 * (run > 0.1 ? 1 : 0) + ph) * 10 * run;
+    g.strokeStyle = far ? SD : S; g.lineWidth = 16;
+    g.beginPath(); g.moveTo(x, -64); g.lineTo(x + 8 + sw, -30); g.lineTo(x + sw, 0); g.stroke();
+    g.fillStyle = '#e8d8b0'; for (let k = 0; k < 3; k++) { g.beginPath(); g.moveTo(x + sw + 4 + k * 5, -2); g.lineTo(x + sw + 12 + k * 5, 2); g.lineTo(x + sw + 3 + k * 5, 3); g.fill(); }
+  };
+  leg(-30, 0, true); leg(34, 2, true);
+  // Rumpf
+  g.fillStyle = lg(g, 0, -120, 0, -40, [0, SL, 0.5, S, 1, SD]);
+  g.beginPath(); g.ellipse(0, -80, 62, 36, -0.08, 0, TAU); g.fill();
+  g.fillStyle = BELLY; g.beginPath(); g.ellipse(6, -60, 44, 14, -0.05, 0, Math.PI); g.fill();
+  g.strokeStyle = 'rgba(255,176,42,0.35)'; g.lineWidth = 1.2;
+  for (let k = -3; k <= 3; k++) { g.beginPath(); g.arc(k * 14, -86, 9, 0.2, Math.PI - 0.2); g.stroke(); }
+  // Rueckenstacheln
+  g.fillStyle = GD; for (let k = 0; k < 6; k++) { const x = -44 + k * 16; g.beginPath(); g.moveTo(x - 5, -110 + Math.abs(k - 2.5) * 2); g.lineTo(x, -128 + Math.abs(k - 2.5) * 3); g.lineTo(x + 5, -110 + Math.abs(k - 2.5) * 2); g.fill(); }
+  leg(-24, 3.1, false); leg(40, 5.2, false);
+  wing(1, false);
+  // Hals
+  const hx = 70 + atk * 16, hy = -178 + atk * 22 + Math.sin(t * 1.6) * 4;
+  g.strokeStyle = S; g.lineWidth = 30; g.beginPath(); g.moveTo(40, -96); g.quadraticCurveTo(84, -120, hx - 6, hy + 14); g.stroke();
+  g.strokeStyle = BELLY; g.lineWidth = 10; g.beginPath(); g.moveTo(46, -86); g.quadraticCurveTo(92, -112, hx + 2, hy + 22); g.stroke();
+  // Kopf
+  g.save(); g.translate(hx, hy); g.rotate(0.15 + atk * 0.25);
+  g.fillStyle = lg(g, 0, -14, 0, 14, [0, SL, 1, SD]);
+  g.beginPath(); g.moveTo(-18, -12); g.quadraticCurveTo(10, -18, 40, -4); g.lineTo(42, 2); g.quadraticCurveTo(10, 4, -16, 10); g.closePath(); g.fill();
+  const jaw = 4 + atk * 14;
+  g.fillStyle = SD; g.beginPath(); g.moveTo(-14, 8); g.quadraticCurveTo(12, 8 + jaw, 36, 6 + jaw * 0.7); g.lineTo(34, 10 + jaw * 0.7); g.quadraticCurveTo(8, 16 + jaw, -14, 14); g.closePath(); g.fill();
+  if (atk > 0.1) { g.save(); g.globalCompositeOperation = 'lighter'; g.fillStyle = lg(g, 36, 4, 120, 20, [0, 'rgba(255,230,140,0.95)', 1, 'rgba(255,90,20,0)']); g.beginPath(); g.moveTo(38, 2); g.lineTo(130, -10 + jaw); g.lineTo(130, 30 + jaw); g.lineTo(38, 8 + jaw * 0.6); g.fill(); g.restore(); }
+  g.fillStyle = '#f0e0c0'; for (let k = 0; k < 4; k++) { g.beginPath(); g.moveTo(8 + k * 7, 3); g.lineTo(11 + k * 7, 8); g.lineTo(14 + k * 7, 3); g.fill(); }
+  // Hoerner
+  g.fillStyle = '#e8d8b0';
+  g.beginPath(); g.moveTo(-10, -10); g.quadraticCurveTo(-30, -26, -40, -20); g.quadraticCurveTo(-26, -18, -4, -4); g.fill();
+  g.beginPath(); g.moveTo(-2, -12); g.quadraticCurveTo(-16, -34, -26, -34); g.quadraticCurveTo(-12, -26, 4, -8); g.fill();
+  eye(g, 12, -6, 2.6, GL); glowDot(g, 12, -6, 10, GL, 0.6);
+  g.restore();
+  if (dk) { g.globalCompositeOperation = 'source-atop'; g.fillStyle = 'rgba(255,255,255,' + dk + ')'; g.fillRect(-260, -320, 520, 340); }
+  g.restore();
+}
 const BOSS_ART = {
   // Kapitel 1: Fortgeschrittene Bestie (gross)
   bestieF: (g, st) => { g.scale(2.4, 2.4); drawQuad(g, (st.t * 0.9) % 1, { rear: Math.min(1, st.slam || 0), atk: st.roar || 0 }, { L: 40, H: 18, bulk: 22, legW: 4, head: 'king', spikes: 5, tail: 12, cols: QCOL.wolfK }); },
@@ -308,13 +373,14 @@ const BOSS_ART = {
   // Spaete Kapitel ---------------------------------------------------------
   // Jim Eno: bleicher Gelehrter im Laborkittel, Blut glueht durch die Adern
   jim: (g, st) => { glowDot(g, 0, -60, 80, '#b01a3a', 0.3); humanBoss(g, st, 'nyx', [[HERO_PAL.nyx, { cloak: '#d8d4cc', cloakL: '#f4f0e8', cloakD: '#7a766e', scarf: '#3a0a1a', scarfL: '#c0204a', mask: '#e0d0c8', maskD: '#8a7a70', eye: '#ff2a5a', rim: '#c0204a' }]], { flow: 0.6 }, 2.5); },
-  // Ray: schwarz-rote Ruestung, Phoenixmaske mit Flammenkamm
-  ray: (g, st) => {
-    glowDot(g, 0, -70, 110, '#ff7a1a', 0.3);
-    g.save(); g.globalCompositeOperation = 'lighter';
-    for (let k = 0; k < 5; k++) { const w = Math.sin(st.t * 6 + k) * 3; g.fillStyle = k % 2 ? 'rgba(255,170,60,0.7)' : 'rgba(255,90,30,0.6)'; g.beginPath(); g.moveTo(-16 + k * 8, -178); g.quadraticCurveTo(-14 + k * 8 + w, -200 - (2 - Math.abs(k - 2)) * 9, -9 + k * 8, -178); g.fill(); }
-    g.restore();
-    humanBoss(g, st, 'vorian', [[HERO_PAL.vorian, { skin: '#d8c0b0', skinD: '#8a6a58', armor: '#1a0c0c', armorL: '#5a2420', armorD: '#060202', red: '#a02a10', redL: '#ffb040', redD: '#3a0a04', hair: '#1a1010', eye: '#ffb040', rim: '#ff7a1a' }]], { glow: 1, crown: 1 }, 2.6);
+  // Sen Draco: Mensch in dunkler Schuppenruestung; ab halber Kraft ein Drache
+  sendraco: (g, st) => {
+    if (!st.enrage) {
+      glowDot(g, 0, -70, 110, '#ffb02a', 0.28);
+      humanBoss(g, st, 'vorian', [[HERO_PAL.vorian, { skin: '#d8c0b0', skinD: '#8a6a58', armor: '#14100c', armorL: '#4a3a24', armorD: '#060402', red: '#8a5a10', redL: '#ffc040', redD: '#3a2204', hair: '#1a1010', eye: '#ffc040', rim: '#ffb02a' }]], { glow: 0.8 }, 2.6);
+      return;
+    }
+    drawDrache(g, st);
   },
   // Kronker: massiger Daemonenkoenig, violette Kristallstacheln aus Brust und Ruecken
   kronker: (g, st) => {

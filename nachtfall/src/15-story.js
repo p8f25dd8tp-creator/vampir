@@ -311,7 +311,7 @@ const CHAPTERS = [
     n: 13, id: 'godslayer', title: 'Gottbezwinger', src: 'Kapitel 2108–2305', missions: [71, 72], place: 'Mundus’ Prüfungswelten und Jims Kriegsplaneten', theme: 'goetter', tier: 6,
     intro: [
       'Mundus schickt Finn gegen die Stärksten ferner Welten. Seine Seelenwaffe erwacht zum Schattennebel, und mit Amra, Penswi und Mermerials zieht er gegen Jims Armee.',
-      'Dann steht ihm Ray gegenüber — in Rüstung und Phönixmaske. Nur mit der Kraft der Asura kann Finn ihn Faust gegen Faust niederringen. Der Sieg kostet viele Freunde das Leben.'
+      'Dann stellt sich ihm Sen Draco entgegen: ein Mensch, der sich in einen Drachen verwandeln kann — das stärkste Wesen überhaupt. Mit voller Kraft wäre er selbst für Finn unbesiegbar. Nur weil er nicht alles entfesselt, kann Finn ihn mit der Kraft der Asura niederringen. Der Sieg kostet viele Freunde das Leben.'
     ],
     diff: { hp: 2.95, count: 1.18, dmg: 1.76 },
     roles: {
@@ -321,9 +321,9 @@ const CHAPTERS = [
       witch: defEnemy('c13_magier', 'witch', 'v_magier', 'Jims Blutmagier', { shot: 'blood', flier: false }),
       brute: defEnemy('c13_d6', 'brute', 'dalki6', 'Dalki (6 Stacheln)', { splits: 0, hp: 230 }),
       captain: defEnemy('c13_h', 'captain', 'dalkiW', 'H (zehn Stacheln)', { scale: 1.6, hp: 6200 }),
-      boss: defBoss('c13_boss', 'ray', 'Ray (Phönixmaske)', 42000, { bellShot: 'light' })
+      boss: defBoss('c13_boss', 'sendraco', 'Sen Draco', 44000, { bellShot: 'light', enrageText: 'Sen Draco wird zum Drachen!' })
     },
-    texts: { swarm: 'Leerenschwingen über Jims Planeten!', ring: 'Jims Kapsel-Vampire greifen ohne Pause an!', boss: 'Ray setzt die Phönixmaske auf.' },
+    texts: { swarm: 'Leerenschwingen über Jims Planeten!', ring: 'Jims Kapsel-Vampire greifen ohne Pause an!', boss: 'Sen Draco tritt vor — noch in Menschengestalt.' },
     quests: [
       { type: 'kill', role: 'knight', n: 70, text: 'Besiege 70 Dalki mit Fähigkeiten', reward: { crystals: 110, bonus: 'level' } },
       { type: 'level', n: 36, text: 'Erreiche Stufe 36', reward: { crystals: 100, bonus: 'heal' } },

@@ -106,7 +106,7 @@ sind dauerhaft und kommen dort, wo sie im Roman auftauchen — beim ersten Sieg 
 | 10 Graham | 1409–1572 | 55–57 | Graham | Himmlischer Vampirlord (Kap. 1565) |
 | 11 Die Rückkehr einer Legende | 1573–1985 | 58–66 | Emma Wagner (Dhampir-Königin) | Gottbezwinger (Kap. 1688) |
 | 12 Die vergessene Legende | 1986–2107 | 67–70 | Jim Eno | Minny wird Begleiterin |
-| 13 Gottbezwinger | 2108–2305 | 71–72 | Ray (Phönixmaske) | God-Slayer-Rüstung & Asura-Handschuhe |
+| 13 Gottbezwinger | 2108–2305 | 71–72 | Sen Draco (Mensch, ab halber Kraft Drache) | God-Slayer-Rüstung & Asura-Handschuhe |
 | 14 Dämonenkönige | 2306–2470 | 73–76 | Kronker | Dämonenform |
 | 15 Der letzte Vampir | 2471–2545 | 77–80 | Immortui | Der letzte Vampir (Kap. 2537) + Epilog |
 

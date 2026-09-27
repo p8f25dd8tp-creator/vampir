@@ -316,7 +316,7 @@ function updateBoss(e, dt, rdt) {
   e.bell = Math.max(0, (e.bell || 0) - rdt);
   e.roar = Math.max(0, (e.roar || 0) - rdt * 1.5);
   const enr = e.hp < e.maxHp * 0.5;
-  if (enr && !e.enrage) { e.enrage = true; UI.announce(e.def.name.split(',')[0] + ' rast!', 'boss'); sfx('roar'); e.roar = 1; shake(6); }
+  if (enr && !e.enrage) { e.enrage = true; UI.announce(e.def.enrageText || e.def.name.split(',')[0] + ' rast!', 'boss'); sfx('roar'); e.roar = 1; shake(6); }
   const spd = e.def.spd * (enr ? 1.35 : 1);
   const dx = p.x - e.x, dy = p.y - e.y, d = Math.hypot(dx, dy) || 1;
   if (e.stunT > 0) e.stunT -= dt;
