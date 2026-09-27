@@ -747,7 +747,7 @@ function hubTick(G, dt) {
   G.hint = null;
   G.hubInfo = { goal: hubGoal(), sun: G.inSun };
 }
-function leaveHub(fn) { G = null; writeSave(); fn(); }
+function leaveHub(fn) { if (G && G.opt.hub && G.player) SAVE.hubPos = { x: G.player.x, y: G.player.y + 24 }; G = null; writeSave(); fn(); }
 function sleep() {
   const D = SAVE.day, sunOk = D.sun < 6, lines = [];
   let ep = 0;

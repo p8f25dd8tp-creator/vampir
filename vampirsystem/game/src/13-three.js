@@ -176,7 +176,7 @@ function render3d(rdt) {
   r3Ghosts(rdt); r3Tele(); r3Fx(rdt); r3Proj(); r3Impacts(rdt); r3Pois();
   if (R3.motes) r3Motes(rdt);
   // Verdeckendes ausblenden (z. B. Dach ueber dem Weg), wenn die Figur darunter ist
-  for (const F of R3.fade) { const px = G.player.x * S3, pz = G.player.y * S3, inside = px > F.x0 && px < F.x1 && pz > F.z0 && pz < F.z1; F.mat.opacity = lerpA(F.mat.opacity, inside ? 0.18 : 1, 1 - Math.exp(-rdt * 8)); F.mat.depthWrite = F.mat.opacity > 0.9; }
+  for (const F of R3.fade) { const px = G.player.x * S3, pz = G.player.y * S3, inside = px > F.x0 && px < F.x1 && pz > F.z0 && pz < F.z1; F.mat.opacity = lerpA(F.mat.opacity, inside ? 0.05 : 1, 1 - Math.exp(-rdt * 8)); F.mat.depthWrite = F.mat.opacity > 0.9; }
   const p = G.player;
   R3.playerLight.position.set(p.x * S3, 2.2, p.y * S3); R3.playerLight.intensity = G.arena.night ? 6 : 0;
   r3Camera(rdt);

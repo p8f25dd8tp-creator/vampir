@@ -2987,7 +2987,7 @@ function hubTick(G, dt) {
   G.hint = null;
   G.hubInfo = { goal: hubGoal(), sun: G.inSun };
 }
-function leaveHub(fn) { G = null; writeSave(); fn(); }
+function leaveHub(fn) { if (G && G.opt.hub && G.player) SAVE.hubPos = { x: G.player.x, y: G.player.y + 24 }; G = null; writeSave(); fn(); }
 function sleep() {
   const D = SAVE.day, sunOk = D.sun < 6, lines = [];
   let ep = 0;
@@ -4677,7 +4677,7 @@ function render3d(rdt) {
   r3Ghosts(rdt); r3Tele(); r3Fx(rdt); r3Proj(); r3Impacts(rdt); r3Pois();
   if (R3.motes) r3Motes(rdt);
   // Verdeckendes ausblenden (z. B. Dach ueber dem Weg), wenn die Figur darunter ist
-  for (const F of R3.fade) { const px = G.player.x * S3, pz = G.player.y * S3, inside = px > F.x0 && px < F.x1 && pz > F.z0 && pz < F.z1; F.mat.opacity = lerpA(F.mat.opacity, inside ? 0.18 : 1, 1 - Math.exp(-rdt * 8)); F.mat.depthWrite = F.mat.opacity > 0.9; }
+  for (const F of R3.fade) { const px = G.player.x * S3, pz = G.player.y * S3, inside = px > F.x0 && px < F.x1 && pz > F.z0 && pz < F.z1; F.mat.opacity = lerpA(F.mat.opacity, inside ? 0.05 : 1, 1 - Math.exp(-rdt * 8)); F.mat.depthWrite = F.mat.opacity > 0.9; }
   const p = G.player;
   R3.playerLight.position.set(p.x * S3, 2.2, p.y * S3); R3.playerLight.intensity = G.arena.night ? 6 : 0;
   r3Camera(rdt);
@@ -5668,7 +5668,7 @@ function lampPost3d(scene, x, z, on) {
 }
 function building3d(scene0, b, night) {
   const scene = new THREE.Group(); scene0.add(scene);
-  const T = THREE, x = (b.x + b.w / 2) * S3, z = (b.y + b.h / 2) * S3, w = b.w * S3, d = b.h * S3, h = 6.2;
+  const T = THREE, x = (b.x + b.w / 2) * S3, z = (b.y + b.h / 2) * S3, w = b.w * S3, d = b.h * S3, h = b.w > 250 ? 8.2 : 6.2;
   box3(scene, w, h, d, '#7e889c', x, h / 2, z);
   box3(scene, w + 0.3, 0.3, d + 0.3, '#4a5264', x, h + 0.1, z);
   box3(scene, w + 0.1, 0.5, d + 0.1, '#3a4252', x, 0.25, z, { noOutline: true });
@@ -5743,11 +5743,12 @@ ARENA3D.hof = function (A, scene) {
   for (const r of A.paths || []) { const t = stone.clone(); t.needsUpdate = true; t.repeat.set(r.w * S3 / 1.9, r.h * S3 / 1.9); const m = new T.Mesh(new T.PlaneGeometry(r.w * S3, r.h * S3), new T.MeshLambertMaterial({ map: t })); m.rotation.x = -Math.PI / 2; m.position.set((r.x + r.w / 2) * S3, 0.012, (r.y + r.h / 2) * S3); m.receiveShadow = true; scene.add(m); }
   for (const b of A.buildings || []) building3d(scene, b, night);
   // ueberdachter Hauptweg (wirft den Schatten, in dem Quinn sicher ist)
-  const px = 220 * S3, z0 = 130 * S3, z1 = H;
+  const hk = A.w / 440, mp = (A.paths && A.paths[0]) || { x: 192 * hk, y: 130 * hk, w: 56 * hk, h: A.h - 130 * hk };
+  const px = (mp.x + mp.w / 2) * S3, z0 = mp.y * S3, z1 = (mp.y + mp.h) * S3, pw = mp.w * S3;
   if (!A.noRoof) {
-  const roof = new T.Mesh(new T.BoxGeometry(56 * S3 + 0.4, 0.1, z1 - z0), toonMat(night ? '#3a3a44' : '#8a3a3a', { transparent: true })); roof.position.set(px, 2.8, (z0 + z1) / 2); roof.castShadow = true; scene.add(roof);
-  R3.fade.push({ mat: roof.material, x0: px - 1.2, x1: px + 1.2, z0: z0 - 1, z1: z1 + 2 });
-  for (let z = z0 + 1; z < z1; z += 3) for (const s of [-1, 1]) part(fgeo('pillar', () => new T.CylinderGeometry(0.06, 0.06, 2.8, 6)), toonMat('#2a2a30'), scene, px + s * (28 * S3 + 0.15), 1.4, z);
+  const roof = new T.Mesh(new T.BoxGeometry(pw + 0.4, 0.1, z1 - z0), toonMat(night ? '#3a3a44' : '#8a3a3a', { transparent: true })); roof.position.set(px, 2.8, (z0 + z1) / 2); roof.castShadow = true; scene.add(roof);
+  R3.fade.push({ mat: roof.material, x0: px - pw / 2 - 0.3, x1: px + pw / 2 + 0.3, z0: z0 - 1, z1: z1 + 2 });
+  for (let z = z0 + 1; z < z1; z += 3) for (const s of [-1, 1]) part(fgeo('pillar', () => new T.CylinderGeometry(0.06, 0.06, 2.8, 6)), toonMat('#2a2a30'), scene, px + s * (pw / 2 + 0.15), 1.4, z);
   }
   for (const [x, y] of A.trees || []) tree3d(scene, x * S3, y * S3, 1.1, night);
   for (const [x, y] of A.benches || []) bench3d(scene, x * S3, y * S3, 0);
@@ -5757,7 +5758,7 @@ ARENA3D.hof = function (A, scene) {
     scene.background = new T.Color('#070b18'); scene.fog = new T.Fog('#070b18', 14, 34);
     scene.add(new T.HemisphereLight('#3a4a88', '#10141a', 0.8));
     sunLight(scene, W / 2, H / 2, 16, '#8aa0ff', 1.2, [-5, 18, -8]);
-    for (const [x, z] of [[190 * S3, 200 * S3], [250 * S3, 420 * S3], [190 * S3, 560 * S3], [60 * S3, 470 * S3]]) { lampPost3d(scene, x, z, true); const pl = new T.PointLight('#ffd890', 7, 8, 1.6); pl.position.set(x, 3, z); scene.add(pl); }
+    for (const [x, z] of [[190 * S3 * hk, 200 * S3 * hk], [250 * S3 * hk, 420 * S3 * hk], [190 * S3 * hk, 560 * S3 * hk], [60 * S3 * hk, 470 * S3 * hk]]) { lampPost3d(scene, x, z, true); const pl = new T.PointLight('#ffd890', 7, 8, 1.6); pl.position.set(x, 3, z); scene.add(pl); }
     const moon = glowSprite3('#dfe8ff', 6, 0.9); moon.position.set(W * 0.8, 16, -14); scene.add(moon);
   } else {
     scene.background = new T.Color('#8ec4f0'); scene.fog = new T.Fog('#b4d8f4', 24, 60);
@@ -5854,6 +5855,44 @@ function r3Harden(e, R) {
   R.shield.rotation.y = worldYaw - R.root.rotation.y + Math.PI / 2;
   R.shield.material.emissiveIntensity = 0.6 + Math.min(1, e.flash * 10) * 2;
 }
+
+/* ---- src/20-hub.js ---- */
+'use strict';
+/* ==========================================================================
+   AKADEMIEHOF: groesser und weitlaeufiger, Rueckkehr an die Tuer
+   Die ganze Hof-Karte (Gebaeude, Wege, Schatten, Ziele, Figuren) wird
+   gleichmaessig auseinandergezogen; mehr Baeume und Baenke fuellen die Flaeche.
+   Wer ein Gebaeude verlaesst, steht danach wieder vor dessen Tuer.
+   ========================================================================== */
+
+const HUB_SCALE = 1.6;
+function scaleArenaOpt(opt, k) {
+  const A = opt.arena, rect = (o) => { o.x *= k; o.y *= k; if (o.w !== undefined) { o.w *= k; o.h *= k; } if (o.door) o.door *= k; };
+  A.w *= k; A.h *= k;
+  for (const key of ['buildings', 'blocks', 'paths', 'sun', 'shade']) (A[key] || []).forEach(rect);
+  (A.pois || []).forEach((P) => { P.x *= k; P.y *= k; });
+  A.trees = (A.trees || []).map(([x, y]) => [x * k, y * k]);
+  A.benches = (A.benches || []).map(([x, y]) => [x * k, y * k]);
+  opt.playerAt = opt.playerAt.map((v) => v * k);
+  (opt.npcs || []).forEach((n) => { n.at = n.at.map((v) => v * k); if (n.path) n.path = n.path.map((q) => q.map((v) => v * k)); if (n.speed) n.speed *= 1.2; });
+}
+const _hubSetupBase = hubSetup;
+hubSetup = function () {
+  const opt = _hubSetupBase();
+  const A = opt.arena;
+  // zusaetzliche Baeume und Baenke auf den Rasenflaechen (in alten Koordinaten, vor dem Skalieren)
+  A.trees = (A.trees || []).concat([[18, 240], [425, 235], [150, 520], [290, 530], [80, 690], [360, 690], [165, 560], [275, 250]]);
+  A.benches = (A.benches || []).concat([[60, 600], [380, 600], [120, 250], [330, 250]]);
+  scaleArenaOpt(opt, HUB_SCALE);
+  // Rueckkehr: vor die Tuer, durch die man zuletzt gegangen ist
+  const H = SAVE.hubPos;
+  if (H && H.x > 10 && H.x < A.w - 10 && H.y > 30 && H.y < A.h - 10) {
+    let x = H.x, y = H.y;
+    for (const b of A.blocks || []) if (x > b.x - 12 && x < b.x + b.w + 12 && y > b.y - 12 && y < b.y + b.h + 12) y = b.y + b.h + 24;
+    opt.playerAt = [x, y];
+  }
+  return opt;
+};
 
 /* ---- src/08-main.js ---- */
 'use strict';
