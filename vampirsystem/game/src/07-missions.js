@@ -617,7 +617,7 @@ function stepDone(id) { SAVE.flags[id] = true; SAVE.flags[id + 'Day'] = SAVE.day
 function story4State() {
   const F = SAVE.flags, D = SAVE.day;
   if (!F.biss) return null;
-  const st = STORY4.find((x) => !F[x.id]);
+  const st = STORY4.concat(typeof STORY5 !== 'undefined' ? STORY5 : []).find((x) => !F[x.id]);
   if (!st) return null;
   if (st.newDay && D.n <= (F[st.need + 'Day'] || 0)) return { st, need: 'sleep' };
   if (st.night && !D.night) return { st, need: 'wait' };
@@ -692,7 +692,9 @@ function hubSetup() {
   // Wasserspender (Tagesquest)
   pois.push({ x: 175, y: 440, label: 'Wasser trinken', col: '#6ec8ff', hidden: () => night || D.water, action: () => { D.water = true; writeSave(); sfx('heal'); sysMsg({ head: 'TAGESQUEST ERFÜLLT', lines: ['2 Liter Wasser getrunken.'], kv: [['EP', '+5']] }); addExp(5); } });
   // Trainingshalle tagsueber: freies Training fuer EP
-  pois.push({ x: 335, y: 420, label: 'Training (EP)', col: '#9ad8ff', hidden: () => night || D.n < 2, action: go('training') });
+  pois.push({ x: 335, y: 420, label: 'Training (EP)', col: '#9ad8ff', hidden: () => night || D.n < 2 || F.vrintro, action: go('training') });
+  // Power Fighter: VR-Raum, frei spielbar (Kap. 51)
+  pois.push({ x: 290, y: 445, label: 'VR-Raum · Power Fighter', col: '#5ff0ff', hidden: () => night || !F.vrintro, action: () => { G.paused = true; showVrMenu(() => { if (G) G.paused = false; }); } });
   // Trainingshalle nachts (Kap. 12)
   pois.push({ x: 335, y: 420, label: 'Trainingshalle', col: '#c8a0ff', hidden: () => !(night && F.kyle && !F.nacht), action: go('nacht') });
   const blocks = buildings.map((b) => ({ x: b.x, y: b.y, w: b.w, h: b.h - 8, invisible: true }));

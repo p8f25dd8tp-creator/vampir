@@ -57,7 +57,7 @@ function newFight(opt) {
   (opt.party || ['quinn']).forEach((cid, i) => {
     const C = CHARS[cid], e = mkEnt(cid, LOOKS[C.look], opt.playerAt[0] + (i ? (i % 2 ? -34 : 34) : 0), opt.playerAt[1] + (i ? 22 : 0));
     e.team = 0; e.char = cid; e.kit = C.kit; e.range = C.range || 30;
-    if (cid === 'quinn') { applyStats(e); e.hp = Math.max(1, e.maxHp - (SAVE.quinn.thirst || 0)); if (opt.mask) e.extra = { mask: true }; if (SAVE.quinn.gear.hands) e.extra = Object.assign({}, e.extra, { gauntlets: true }); }
+    if (cid === 'quinn') { applyStats(e); if (opt.vr) e.look = LOOKS.bloodevolver; e.hp = Math.max(1, e.maxHp - (SAVE.quinn.thirst || 0)); if (opt.mask) e.extra = { mask: true }; if (SAVE.quinn.gear.hands) e.extra = Object.assign({}, e.extra, { gauntlets: true }); }
     else { e.maxHp = e.hp = C.hp; e.str = C.str; e.agi = C.agi; e.maxStam = 100; }
     e.stam = e.maxStam; e.stamDelay = 0; e.counterT = 0; e.combo = 0; e.buffer = 0; e.holdT = 0; e.dodgeStart = -9; e.aiCd = rand(0.3, 0.8);
     G.party.push(e);
@@ -200,7 +200,7 @@ function updateFighter(p, dt, mx, my) {
   const sunK = sunFactor(p);
   const spd = 120 * Math.pow(p.agi * sunK / 10, 0.35);
   // Blutbank: heilt Quinn automatisch unter 5 HP (10 ml = 5 HP)
-  if (p.char === 'quinn' && SAVE.quinn.skills.includes('bloodbank') && p.hp < 5 && p.hp > 0 && SAVE.quinn.bank >= 10) {
+  if (p.char === 'quinn' && !G.opt.vr && SAVE.quinn.skills.includes('bloodbank') && p.hp < 5 && p.hp > 0 && SAVE.quinn.bank >= 10) {
     SAVE.quinn.bank -= 10; p.hp = Math.min(p.maxHp, p.hp + 5); floatText(p.x, p.y - 80, '+5 Blutbank', '#ff8a9a'); sfx('heal'); burst(p.x, p.y - 30, 8, '#ff3a4e');
   }
   let tvx = 0, tvy = 0;
@@ -263,7 +263,7 @@ function playerHit(p, A) {
     const counter = p.counterT > 0;
     if (counter) { dmg *= 2; p.counterT = 0; }
     hitAny = true;
-    damageFoe(e, dmg, { kb: A.kb * (counter ? 1.6 : 1), ang: p.aim, poise: (A.poise || 1) + (counter ? 3 : 0), heavy: A.kick || p.charged || counter, counter });
+    damageFoe(e, dmg, { kb: A.kb * (counter ? 1.6 : 1), ang: p.aim, poise: (A.poise || 1) + (counter ? 3 : 0), heavy: A.kick || p.charged || counter, counter, hammer: A.hammer });
     if (A.ice) { e.slowT = 2.5; burst(e.x, e.y - 30, 8, '#bfe8ff'); floatText(e.x, e.y - 88, 'EIS', '#bfe8ff'); }
     if (A.hammer) { setState(e, 'stagger'); G.shake = 10; dust(e.x, e.y, 10, 1.4); }
   }
@@ -271,6 +271,8 @@ function playerHit(p, A) {
 }
 
 function damageFoe(e, dmg, o) {
+  // Metall-Verhaertung (Hardsteely): nur Hammer Strike (innerer Schlag) und Konter wirken voll
+  if (e.ai && e.ai.steel && !o.hammer && !o.counter) { dmg *= 0.15; if (Math.random() < 0.5) floatText(e.x, e.y - 90, 'METALL', '#c8d0dc'); sfx('chain', 0, 0.05); }
   if (e.ai && e.ai.harden && e.state !== 'stagger') {
     const from = Math.atan2(-Math.sin(o.ang), -Math.cos(o.ang)); // Richtung, aus der der Treffer kommt
     if (Math.abs(angDiff(e.hardDir || 0, from)) < 1.05) {
@@ -524,13 +526,13 @@ function castBloodSwipe(p) {
   if (p.char !== 'quinn' || !SAVE.quinn.skills.includes('bloodswipe') || p.state === 'down' || p.state === 'hurt') return;
   if ((p.swipeCd || 0) > 0) return;
   if (p.hp <= 1) { floatText(p.x, p.y - 72, 'Zu wenig HP', '#ff8a8a'); return; }
-  p.hp -= 1; p.swipeCd = 0.35; G.stats.swipes = (G.stats.swipes || 0) + 1;
+  if (!G.opt.vr) p.hp -= 1; p.swipeCd = 0.35; G.stats.swipes = (G.stats.swipes || 0) + 1;
   const f = nearestFoe(p, 200);
   const [mx, my] = readMove();
   const a = f ? Math.atan2(f.y - p.y, f.x - p.x) : (mx || my) ? Math.atan2(my, mx) : (p.face > 0 ? 0 : Math.PI);
   p.face = Math.cos(a) >= 0 ? 1 : -1; p.anim.cast = 1; p.anim.aim = p.face > 0 ? a : Math.PI - a;
   G.proj.push({ x: p.x + Math.cos(a) * 12, y: p.y + Math.sin(a) * 12, a, sp: 300, dist: 0, max: 70, dmg: 2 * (SAVE.quinn.gear.hands ? 1.05 : 1) * (p.str * sunFactor(p) / 10), hit: new Set(), col: '#ff3a4e', kind: 'blood' });
-  floatText(p.x, p.y - 72, '-1 HP', '#ff5a6a');
+  if (!G.opt.vr) floatText(p.x, p.y - 72, '-1 HP', '#ff5a6a');
   sfx('whip', 0, 0.03); sfx('splat', 0, 0.05);
 }
 function updateProj(dt) {
@@ -545,6 +547,7 @@ function updateProj(dt) {
       if (Math.hypot(e.x - P.x, e.y - P.y) < e.r + 12) {
         P.hit.add(e.id);
         if (e.ai && e.ai.foresight && !P.double && e.state !== 'stagger') { foresee(e, P); continue; }
+        if (e.ai && e.ai.cloak && P.kind === 'blood') { floatText(e.x, e.y - 86, 'UMHANG', '#d0c0a0'); burst(e.x, e.y - 30, 6, '#d0c0a0'); gone = true; break; }
         damageFoe(e, P.dmg, { kb: P.kb || 90, ang: P.a, poise: P.poise || 1, heavy: !!P.heavy });
         if (!P.pierce && P.kind === 'arrow') { gone = true; break; }
       }

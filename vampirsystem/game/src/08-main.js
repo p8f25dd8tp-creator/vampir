@@ -16,7 +16,7 @@ function showTitle() {
     <button class="btn" id="tNew">${started ? 'Von vorn beginnen' : 'Spiel starten'}</button>
     ${started ? '<button class="btn" id="tCont">Fortsetzen</button>' : ''}
     <button class="btn ghost" id="tSet">Einstellungen</button>
-    <div class="foot">Private Fan-Umsetzung von „My Vampire System“.<br>Frühe Testversion · Etappe 4</div>`, '');
+    <div class="foot">Private Fan-Umsetzung von „My Vampire System“.<br>Frühe Testversion · Etappe 5</div>`, '');
   el.querySelector('#tNew').onclick = () => { AudioSys.init(); if (started) resetSave(); startMission('prolog'); };
   if (started) el.querySelector('#tCont').onclick = () => { AudioSys.init(); startMission(nextMission()); };
   el.querySelector('#tSet').onclick = showSettings;
@@ -24,7 +24,7 @@ function showTitle() {
 function nextMission() {
   if (!SAVE.progress.prolog) return 'prolog';
   if (!SAVE.progress.test) return 'test';
-  return SAVE.flags.aula ? 'ende' : 'akademie';
+  return SAVE.flags.earl ? 'ende' : 'akademie';
 }
 function showSettings() {
   const S = SAVE.settings;
@@ -71,6 +71,7 @@ function finishMission(M, won, G0) {
   const P = SAVE.progress[M.id] || (SAVE.progress[M.id] = {});
   const first = !P.done;
   P.done = true;
+  if (M.onWinExtra) M.onWinExtra();
   const rep = G0 ? fightReport(G0, true) : null;
   if (first && M.reward) {
     const Q = SAVE.quinn;
@@ -107,9 +108,9 @@ function showEnd() {
   G = null; SCENE_BG.cur = 'nacht';
   const Q = SAVE.quinn;
   const el = uiShow(`${sysBox({ head: 'STATUS', kv: [['Name', 'Quinn Talen'], ['Rasse', Q.race || 'Mensch'], ['Stufe', Q.level], ['EP', Q.exp + ' / ' + expNeed(Q.level)], ['Fähigkeiten', Q.skills.map((k) => SKILL_NAMES[k] || k).join(', ') || '—']], quests: ['Hauptquest: Erreiche Stufe 10'] })}
-    <div class="subtitle">Etappe 4 geschafft · Fortsetzung folgt</div>
+    <div class="subtitle">Etappe 5 geschafft · Fortsetzung folgt</div>
     <div class="subtitle" style="font-size:13px">Kämpfe wiederholen (für EP):</div>
-    <button class="btn" id="eK">Kyle</button><button class="btn" id="eM">Mono</button><button class="btn" id="eR">Rylee im Park</button><button class="btn" id="eB">Brandon</button><button class="btn" id="eA">Aula</button><button class="btn" id="eA2">Raten gegen Mono</button><button class="btn" id="eT">Training</button>
+    <button class="btn" id="eK">Kyle</button><button class="btn" id="eM">Mono</button><button class="btn" id="eR">Rylee im Park</button><button class="btn" id="eB">Brandon</button><button class="btn" id="eA">Aula</button><button class="btn" id="eA2">Raten gegen Mono</button><button class="btn" id="eT">Power Fighter (VR)</button>
     <button class="btn ghost" id="eStat">Status${SAVE.quinn.points ? ' · +' + SAVE.quinn.points : ''}</button><button class="btn ghost" id="eMenu">Hauptmenü</button>`, 'dim');
   el.querySelector('#eK').onclick = () => startMission('kyle', true, true);
   el.querySelector('#eM').onclick = () => startMission('mono', true, true);
@@ -117,7 +118,7 @@ function showEnd() {
   el.querySelector('#eB').onclick = () => startMission('brandon', true, true);
   el.querySelector('#eA').onclick = () => startMission('aula', true, true);
   el.querySelector('#eA2').onclick = () => startMission('aula2', true, true);
-  el.querySelector('#eT').onclick = () => startMission('training', true, true);
+  el.querySelector('#eT').onclick = () => showVrMenu(showEnd);
   el.querySelector('#eStat').onclick = () => showStatus(showEnd);
   el.querySelector('#eMenu').onclick = showTitle;
 }
