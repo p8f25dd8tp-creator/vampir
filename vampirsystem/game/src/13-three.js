@@ -102,7 +102,7 @@ function r3Build() {
   const T = THREE;
   R3.slams = []; R3.poiMeshes = null; R3.rigs.clear(); R3.fx.clear(); R3.tele.clear(); R3.proj.clear(); R3.ghosts.length = 0; R3.impacts.length = 0;
   const scene = new T.Scene();
-  R3.motes = null; R3.fade = []; R3.occ = [];
+  R3.motes = null; R3.fade = []; R3.occ = []; R3.vrCubes = null;
   ARENA3D[G.arena.art](G.arena, scene);
   const mkPts = (n, add, size) => {
     const geo = new T.BufferGeometry(); geo.setAttribute('position', new T.BufferAttribute(new Float32Array(n * 3), 3)); geo.setAttribute('color', new T.BufferAttribute(new Float32Array(n * 3), 3));
@@ -164,7 +164,7 @@ function render3d(rdt) {
     if (typeof r3Harden === 'function') r3Harden(e, R);
     if (typeof r3Extras === 'function') r3Extras(e, R, rdt);
     const f = Math.min(1, e.flash * 9);
-    for (const m of R.mats) m.emissive.setRGB(f, f * 0.95, f * 0.9);
+    if (!R.chrome) for (const m of R.mats) m.emissive.setRGB(f, f * 0.95, f * 0.9);
     const sq = 1 + f * 0.1; R.body.scale.set(sq, 1 / sq, sq);
     R.blob.material.opacity = e.state === 'down' ? 0.6 : 1;
     if (R.eyeGlow) R.eyeGlow.material.opacity = 0.35 + Math.sin(G.t * 8) * 0.15;
