@@ -154,7 +154,7 @@ const AI_BOLZEN = { params: () => ({ range: 150, speed: 70, cd: 1.6 }), choose: 
 const MESSER = { type: 'swipe', wind: 0.35, act: 0.08, rec: 0.4, reach: 36, arc: 0.9, dmg: 1.5, col: '#e0e0e8', chain: { type: 'swipe', wind: 0.2, act: 0.08, rec: 0.5, reach: 36, arc: 0.9, dmg: 1.5, col: '#e0e0e8' } };
 const AI_MESSER = { params: () => ({ range: 34, speed: 110, cd: 1.0 }), choose: (e, d) => (d < 52 ? MESSER : null) };
 const DALKI_ATK = {
-  punch: { type: 'swipe', wind: 0.5, act: 0.1, rec: 0.45, reach: 44, arc: 1.0, dmg: 3, col: '#b8e060' },
+  punch: { type: 'swipe', wind: 0.5, act: 0.1, rec: 0.45, reach: 44, arc: 1.0, dmg: 2.5, col: '#b8e060' },
   kick: { type: 'lunge', wind: 0.55, act: 0.24, rec: 0.6, speed: 340, dmg: 3, shout: '!' },
   spear: { type: 'beam', wind: 0.6, act: 0.12, rec: 0.6, len: 240, width: 16, dmg: 3, col: '#c8d0dc', shout: 'Speer' }
 };
@@ -349,18 +349,18 @@ Object.assign(MISSIONS, {
     fight: {
       arena: sunArena({ seed: 75, brunnen: [300, 120] }), playerAt: [190, 480], inspect: true,
       npcs: [{ id: 'peter', at: [320, 520], pose: 'cower', watch: 'foe' }, { id: 'layla', at: [60, 520], watch: 'foe' }],
-      foes: [{ id: 'dalki', name: 'Dalki · 1 Stachel', hp: 70, poise: 6, at: [190, 230], ai: AI_DALKI, expRate: 1, info: { name: 'Dalki', race: 'Dalki · 1 Stachel', ability: 'Stärke, harte Haut', blood: 'grün' } }],
+      foes: [{ id: 'dalki', name: 'Dalki · 1 Stachel', hp: 60, poise: 6, at: [190, 230], ai: AI_DALKI, expRate: 1, info: { name: 'Dalki', race: 'Dalki · 1 Stachel', ability: 'Stärke, harte Haut', blood: 'grün' } }],
       onTick: (G) => {
         const d = G.foe, p = G.player;
         if (!G.init) { G.init = true; G.arena.sun = [{ x: 0, y: 0, w: G.arena.w, h: G.arena.h }]; G.arena.night = false; }
-        if (!G.drank && d.hp <= d.maxHp * 0.6) { // Sil haelt ihn fest, Quinn trinkt das Blut der anderen (Kap. 132–133)
+        if (!G.drank && d.hp <= d.maxHp * 0.75) { // Sil haelt ihn fest, Quinn trinkt das Blut der anderen (Kap. 132–133)
           G.drank = true; d.rootT = 3; G.tele.length = 0; setState(d, 'idle');
           p.hp = p.maxHp; SAVE.quinn.bank = 100; if (!SAVE.flags.dalkiBlut) { SAVE.flags.dalkiBlut = true; SAVE.quinn.stats.agi += 2; } learn('sense'); applyStats(p);
           G.arena.sun = []; G.arena.night = true; G.whiteFlash = 0.3;
           sysMsg({ head: 'BLUT', lines: ['Sil hält den Dalki mit Telekinese fest. Layla sammelt Blut von allen.', 'HP voll · Blutbank voll · Agilität +2', 'Die Sonne geht unter.', 'Neu: Schattensense – SCHATTEN trifft jetzt auch.'] }, 5200);
           banner('NACHT');
         }
-        if (d.hp <= d.maxHp * 0.25 && G.state === 'play') { G.state = 'won'; G.tele.length = 0; banner('PETER!'); later(1.4, () => G.opt.onWin(G)); }
+        if (d.hp <= d.maxHp * 0.3 && G.state === 'play') { G.state = 'won'; G.tele.length = 0; banner('PETER!'); later(1.4, () => G.opt.onWin(G)); }
         G.hint = G.t < 6 ? { text: 'Blutskills prallen ab · <b>HAMMER</b> und Konter' } : null;
       }
     },
