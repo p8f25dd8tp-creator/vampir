@@ -2,7 +2,7 @@
 /* ==========================================================================
    FINN MUELLER — der Held, der mit nichts beginnt.
    Mensch -> (Buch) Halbling -> Vampir -> Vampiradliger -> Vampirlord ->
-   Himmlischer Vampirlord -> Reiner Himmlischer -> Gottbezwinger.
+   Himmlischer Vampirlord -> Gottbezwinger -> Der letzte Vampir.
    Jede Evolution veraendert Aussehen, Werte und Faehigkeiten.
    Fan-Figur (angelehnt an "My Vampire System") — nur fuer den privaten Gebrauch.
    ========================================================================== */
@@ -26,12 +26,12 @@ const FINN_TIERS = [
   { id: 'himmelslord', name: 'Himmlischer Vampirlord', hp: 210, speed: 186, armor: 2, might: 1.55, req: { essence: 11000, text: 'Besiege Vaelgor, den Gruftkoloss', check: (r) => r.won }, slots: 9, rim: '#ffd27a', col: '#ffd27a',
     grants: ['himmelsstrahl'], unlocks: [],
     desc: 'Himmelslicht: Lichtsäulen strafen die Toten. Blut, Schatten und Qi verschmelzen.' },
-  { id: 'rein', name: 'Reiner Himmlischer', hp: 245, speed: 192, armor: 3, might: 1.75, req: { essence: 18000, text: 'Besiege Vaelgor — insgesamt 3 Siege mit Finn', check: (r) => r.won && r.wins >= 3 }, slots: 9, rim: '#fff4d0', col: '#fff4d0',
+  { id: 'rein', name: 'Gottbezwinger', hp: 245, speed: 192, armor: 3, might: 1.75, req: { essence: 18000, text: 'Besiege Vaelgor — insgesamt 3 Siege mit Finn', check: (r) => r.won && r.wins >= 3 }, slots: 9, rim: '#fff4d0', col: '#fff4d0',
     grants: ['siegel'], unlocks: [],
-    desc: 'Alle Kräfte vereint: das Dreifaltige Siegel.' },
-  { id: 'gott', name: 'Gottbezwinger', hp: 300, speed: 200, armor: 4, might: 2.05, req: { essence: 28000, text: 'Besiege Vaelgor in der Form des Reinen Himmlischen mit über 50 % Leben', check: (r) => r.won && r.hpFrac > 0.5 }, slots: 10, rim: '#ffb040', col: '#ffb040',
+    desc: 'Die Kräfte des Gottbezwingers (Kap. 1688): das Dreifaltige Siegel vereint Blut, Schatten und Qi.' },
+  { id: 'gott', name: 'Der letzte Vampir', hp: 300, speed: 200, armor: 4, might: 2.05, req: { essence: 28000, text: 'Besiege Vaelgor in der Form des Gottbezwingers mit über 50 % Leben', check: (r) => r.won && r.hpFrac > 0.5 }, slots: 10, rim: '#ffb040', col: '#ffb040',
     grants: ['goetterfall'], unlocks: [],
-    desc: 'Götterfall: Speere aus Gold und Blut regnen vom Himmel.' }
+    desc: 'Das Blut aller dreizehn Familien (Kap. 2537): Götterfall — Speere aus Gold und Blut regnen vom Himmel.' }
 ];
 
 /* ------------------------------------------------------------- Held */
@@ -47,7 +47,7 @@ HEROES.finn = {
   builds: [
     { name: 'Blutkämpfer', desc: 'Blutwisch + Hammerschlag + Lebensraub: nah ran, zuschlagen, heilen.' },
     { name: 'Schattenadliger', desc: 'Blitzschritt + Schattenflammen + Nachbilder: schnell, unberührbar.' },
-    { name: 'Gottbezwinger', desc: 'Alles sammeln — ab Reiner Himmlischer kombiniert das Siegel jede Kraft.' }
+    { name: 'Gottbezwinger', desc: 'Alles sammeln — ab dem Gottbezwinger kombiniert das Siegel jede Kraft.' }
   ],
   pool: [],
   unlock: { desc: 'Von Anfang an verfügbar.', cost: 0, check: () => true },
@@ -490,7 +490,7 @@ function drawFinn(g, P, H) {
     g.beginPath(); g.rect(1.2, -2.8, 3.4, 2.4); g.moveTo(1.2, -1.8); g.lineTo(-2, -2.4); g.stroke();
     g.fillStyle = 'rgba(200,220,255,0.25)'; g.fillRect(1.2, -2.8, 3.4, 2.4);
   }
-  // Haar (strubbelig, ab Reiner Himmlischer silberweiss)
+  // Haar (strubbelig, ab Gottbezwinger silberweiss)
   g.beginPath();
   g.moveTo(-5, 0); g.quadraticCurveTo(-6.5, -5, -3.5, -7.6); g.lineTo(-2, -9); g.lineTo(-0.5, -7.8); g.lineTo(1.5, -9.2); g.lineTo(2.6, -7.6);
   g.quadraticCurveTo(5.4, -7.2, 4.8, -4); g.quadraticCurveTo(3, -5.6, 0.5, -5.2); g.quadraticCurveTo(-1.5, -4, -2.5, -1); g.closePath();

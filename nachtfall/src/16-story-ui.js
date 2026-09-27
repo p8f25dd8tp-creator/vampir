@@ -37,7 +37,7 @@ UI.act = function (a, ds, e) {
       return this.showGear();
     }
     case 'again': if (GAME && GAME.story) return storyStart(GAME.story.n); break;
-    case 'nextch': return (this.selChapter = Math.min(7, GAME.story.n + 1), this.showStory());
+    case 'nextch': return (this.selChapter = Math.min(CHAPTERS.length, GAME.story.n + 1), this.showStory());
   }
   return _ui.act.call(this, a, ds, e);
 };
@@ -214,6 +214,7 @@ UI.showEnd = function (won, souls, newly, extra) {
   if (extra.skills) rew += `<div style="text-align:center;margin:10px 0"><div class="syshead">[ SYSTEM ] · NEUE KRAFT</div>${extra.skills.map((k) => `<div class="cinzel" style="font-size:20px;font-weight:800;color:#8ad8ff">${FINN_SKILLS[k].name}</div><p class="sysp">${FINN_SKILLS[k].desc}</p>`).join('')}</div>`;
   const neuC = won && extra.firstClear ? COMP_ORDER.filter((id) => COMPANIONS[id].unlock === ch.n) : [];
   if (neuC.length) rew += `<div class="sysnote" style="text-align:center">Neue Begleiter: ${neuC.map((id) => `<b style="color:${COMPANIONS[id].col}">${COMPANIONS[id].name}</b>`).join(', ')}</div>`;
+  if (won && ch.outro) rew += `<div class="syshead" style="margin-top:10px">[ SYSTEM ] · EPILOG</div>${ch.outro.map((l) => `<p class="sysp">${l}</p>`).join('')}`;
   const hasNext = won && ch.n < CHAPTERS.length;
   this.show(`<div class="syswin big" style="width:min(540px,100%);margin:auto 0">
     <div class="syshead">[ SYSTEM ] · KAPITEL ${ch.n}</div>

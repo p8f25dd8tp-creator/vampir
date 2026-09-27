@@ -100,14 +100,18 @@ sind dauerhaft und kommen dort, wo sie im Roman auftauchen — beim ersten Sieg 
 | 4 Der Nachtdämon | 139–383 | 11–19 | Duke | Qi von Leo |
 | 5 Die Vampirsiedlung | 384–534 | 20–29 | Vollstrecker des Rates | Vampiradliger (Kap. 428) |
 | 6 Die Verfluchten | 535–668 | 30–33 | Hilston Blade | 3 Begleiter |
-| 7 Bürgerkrieg | 669–808 | 34–38 | Jack Truedream | Vampirlord |
+| 7 Bürgerkrieg | 669–808 | 34–38 | Diamantkrabbe (Dämonenstufe) | Vampirlord (Kap. 805–807) |
 | 8 Kampf um den Thron | 809–945 | 39–45 | Cindy Cha | Absolute Blutkontrolle |
 | 9 Der König mit Bedingungen | 946–1408 | 46–54 | Laxmus | Vampirkönig + 2. Qi-Stufe |
 | 10 Graham | 1409–1572 | 55–57 | Graham | Himmlischer Vampirlord (Kap. 1565) |
-| 11 Die Rückkehr einer Legende | 1573–1985 | 58–66 | Emma Wagner (Dhampir-Königin) | Emmas Kristall, Reiner Himmlischer* |
-| 12 Der letzte Vampir | 1986–2545 | 67–80 | Immortui | Gottbezwinger |
+| 11 Die Rückkehr einer Legende | 1573–1985 | 58–66 | Emma Wagner (Dhampir-Königin) | Gottbezwinger (Kap. 1688) |
+| 12 Die vergessene Legende | 1986–2107 | 67–70 | Jim Eno | Minny wird Begleiterin |
+| 13 Gottbezwinger | 2108–2305 | 71–72 | Ray (Phönixmaske) | God-Slayer-Rüstung & Asura-Handschuhe |
+| 14 Dämonenkönige | 2306–2470 | 73–76 | Kronker | Dämonenform |
+| 15 Der letzte Vampir | 2471–2545 | 77–80 | Immortui | Der letzte Vampir (Kap. 2537) + Epilog |
 
-\* „Reiner Himmlischer“ kommt im Roman nicht vor (geprüft am Volltext) — eigene Auslegung.
+Die Kapitel sind am vollständig gelesenen Roman geprüft (Kapitelnotizen in
+`vampirsystem/story/kapitel-notizen.md`).
 
 * **Quests des Systems:** je Kapitel drei (z. B. „Besiege 200 Dalki“), Belohnung Kristalle
   plus Stufenaufstieg oder Heilung.
@@ -115,7 +119,7 @@ sind dauerhaft und kommen dort, wo sie im Roman auftauchen — beim ersten Sieg 
   dauerhafte Bestienhandschuhe (+Schaden), Stiefel (+Tempo), Panzer (+Leben) und ein
   Kristallamulett (+Sammelradius/Erfahrung).
 * **Schwierigkeit:** Kapitel 1–2 sind ohne Ausrüstung machbar, danach wächst der Bedarf
-  langsam (Richtwert: Kapitel 5 Ausrüstung Stufe 2, Kapitel 9 Stufe 4, Kapitel 12 Stufe 5).
+  langsam (Richtwert: Kapitel 5 Ausrüstung Stufe 2, Kapitel 9 Stufe 4, ab Kapitel 12 Stufe 5).
 * Kein Blutdurst, keine Sonnen-Schwäche.
 
 **Freischaltung** (alles durch Spielen, keine Käufe):
@@ -137,6 +141,7 @@ Im Kapitelmenü wählst du bis zu zwei Begleiter (ab Kapitel 6 drei). Sie folgen
 | Leo | blinder Qi-Meister · Qi-Welle mit Rückstoß | Kapitel 2 |
 | Emma Wagner | Rang A · Eisschwert, verlangsamt Gegner | Kapitel 3 |
 | Fex Sanguini | Vampir · springende Blutfäden | Kapitel 4 |
+| Minny Talen | Finns Tochter · Lichtsäulen aus Himmelsenergie | Kapitel 12 |
 
 Sobald Finn die Schatten hat (Kapitel 2), wird sein Ausweichen zum **Schattenschritt**.
 

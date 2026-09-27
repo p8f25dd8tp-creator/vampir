@@ -294,6 +294,36 @@ const BOSS_ART = {
     for (let k = -3; k <= 3; k++) { g.beginPath(); g.moveTo(k * 8 - 4, 0); g.lineTo(k * 8, -14 - (3 - Math.abs(k)) * 6); g.lineTo(k * 8 + 4, 0); g.fill(); }
     g.restore();
   },
+  // Kapitel 7: Daemonen-Krabbe mit Diamantruecken
+  krabbe: (g, st) => {
+    g.scale(2.7, 2.7);
+    drawQuad(g, (st.t * 0.7) % 1, { rear: Math.min(1, st.slam || 0), atk: st.roar || 0 }, { L: 52, H: 12, bulk: 22, legW: 3.4, head: 'toad', spikes: 0, tail: 0, plates: 4, cols: { body: '#3a2a3a', bodyL: '#7a5a74', bodyD: '#140a14', belly: '#5a4a58', eye: '#8ad8ff', horn: '#e8f4ff', glow: '#8ad8ff' } });
+    const by = -30;
+    g.fillStyle = lg(g, -20, by - 20, 20, by, [0, '#ffffff', 0.45, '#bfe8ff', 1, '#4a8ac8']);
+    g.beginPath(); g.moveTo(-24, by + 2); g.lineTo(-14, by - 16); g.lineTo(0, by - 24); g.lineTo(14, by - 16); g.lineTo(24, by + 2); g.closePath(); g.fill();
+    g.strokeStyle = 'rgba(255,255,255,0.7)'; g.lineWidth = 0.7;
+    g.beginPath(); g.moveTo(-14, by - 16); g.lineTo(0, by + 2); g.lineTo(14, by - 16); g.moveTo(0, by - 24); g.lineTo(0, by + 2); g.stroke();
+    glowDot(g, 0, by - 10, 22, '#bfe8ff', 0.35);
+  },
+  // Spaete Kapitel ---------------------------------------------------------
+  // Jim Eno: bleicher Gelehrter im Laborkittel, Blut glueht durch die Adern
+  jim: (g, st) => { glowDot(g, 0, -60, 80, '#b01a3a', 0.3); humanBoss(g, st, 'nyx', [[HERO_PAL.nyx, { cloak: '#d8d4cc', cloakL: '#f4f0e8', cloakD: '#7a766e', scarf: '#3a0a1a', scarfL: '#c0204a', mask: '#e0d0c8', maskD: '#8a7a70', eye: '#ff2a5a', rim: '#c0204a' }]], { flow: 0.6 }, 2.5); },
+  // Ray: schwarz-rote Ruestung, Phoenixmaske mit Flammenkamm
+  ray: (g, st) => {
+    glowDot(g, 0, -70, 110, '#ff7a1a', 0.3);
+    g.save(); g.globalCompositeOperation = 'lighter';
+    for (let k = 0; k < 5; k++) { const w = Math.sin(st.t * 6 + k) * 3; g.fillStyle = k % 2 ? 'rgba(255,170,60,0.7)' : 'rgba(255,90,30,0.6)'; g.beginPath(); g.moveTo(-16 + k * 8, -178); g.quadraticCurveTo(-14 + k * 8 + w, -200 - (2 - Math.abs(k - 2)) * 9, -9 + k * 8, -178); g.fill(); }
+    g.restore();
+    humanBoss(g, st, 'vorian', [[HERO_PAL.vorian, { skin: '#d8c0b0', skinD: '#8a6a58', armor: '#1a0c0c', armorL: '#5a2420', armorD: '#060202', red: '#a02a10', redL: '#ffb040', redD: '#3a0a04', hair: '#1a1010', eye: '#ffb040', rim: '#ff7a1a' }]], { glow: 1, crown: 1 }, 2.6);
+  },
+  // Kronker: massiger Daemonenkoenig, violette Kristallstacheln aus Brust und Ruecken
+  kronker: (g, st) => {
+    glowDot(g, 0, -100, 140, '#b05aff', 0.3);
+    g.scale(3.5, 3.5);
+    drawDalki(g, (st.t * 0.5) % 1, { atk: st.slam > 0.2 ? 1 : 0, idle: !st.run }, { spikes: 9, cols: { skin: '#2a1a34', skinL: '#6a4a80', skinD: '#0e0614', spike: '#d8a8ff', spikeD: '#6a2aa0', eye: st.enrage ? '#ffffff' : '#e08aff', cloth: '#14061e' }, armor: true, big: true });
+    g.fillStyle = lg(g, 0, -40, 0, -20, [0, '#f4e0ff', 1, '#8a3ad0']);
+    for (let k = -2; k <= 2; k++) { g.beginPath(); g.moveTo(k * 3.2 - 1.4, -24); g.lineTo(k * 3.6, -33 - (2 - Math.abs(k)) * 2.5); g.lineTo(k * 3.2 + 1.4, -24); g.fill(); }
+  },
   // Kapitel 7: ein Gott — kosmischer Koloss mit Krone
   gott: (g, st) => {
     withPal([[BPAL, { skin: '#2a2046', skinL: '#5a4a8a', skinD: '#0a0616', bone: '#e8e0ff', boneD: '#8a7ab0', bell: '#4a3a8a', bellL: '#9a8ad0', heart: '#c08aff', iron: '#2a2440', ironL: '#6a5a9a' }]], () => drawBoss(g, st));

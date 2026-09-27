@@ -13,7 +13,7 @@ const COMPANIONS = {
     look: { glow: 0.3 }, speed: 150, range: 60, cd: 1.6
   },
   lena: {
-    name: 'Lena Grimm', role: 'Bogen & Telekinese · Pure-Agentin 83', unlock: 1, col: '#c8a0ff',
+    name: 'Lena Grimm', role: 'Bogen & Telekinese · Pure-Agentin 84', unlock: 1, col: '#c8a0ff',
     desc: 'Sie hütet Finns Geheimnis, obwohl es niemandem nützt außer ihm. Trifft aus großer Entfernung, ihre Pfeile durchschlagen mehrere Gegner.',
     hero: 'liora', pal: [[HERO_PAL.liora, { coat: '#3a2a5a', coatL: '#6a4a9a', coatD: '#1a1028', hair: '#2a1a3a', hairL: '#8a5aba', eye: '#c8a0ff', rim: '#c8a0ff' }]],
     look: { weapon: 'bow' }, speed: 165, range: 320, cd: 1.1
@@ -43,7 +43,13 @@ COMPANIONS.fabian = {
   hero: 'vorian', pal: [[HERO_PAL.vorian, { skin: '#ecd8c8', skinD: '#a88878', armor: '#1a2436', armorL: '#3a4a6a', armorD: '#080c14', red: '#2a3a6a', redL: '#ffd27a', redD: '#10182a', hair: '#e8cf7a', eye: '#ffd27a', rim: '#ffd27a' }]],
   look: { glow: 0, plain: true }, speed: 190, range: 70, cd: 1.0
 };
-const COMP_ORDER = ['peter', 'lena', 'fabian', 'leo', 'emma', 'fex'];
+COMPANIONS.minny = {
+  name: 'Minny Talen', role: 'Tochter · Himmelsenergie', unlock: 12, col: '#f4f0ff',
+  desc: 'Finns Tochter: frech, stärker als jeder in ihrem Alter und die Einzige, die ihn nie vergessen hat. Ihre weiße Himmelsenergie schlägt als Lichtsäule ein.',
+  hero: 'liora', pal: [[HERO_PAL.liora, { skin: '#8a5a40', coat: '#1a1420', coatL: '#4a3a5a', coatD: '#08060c', hair: '#1a100c', hairL: '#4a3024', eye: '#f4f0ff', rim: '#f4f0ff' }]],
+  look: {}, speed: 185, range: 200, cd: 1.5
+};
+const COMP_ORDER = ['peter', 'lena', 'fabian', 'leo', 'emma', 'fex', 'minny'];
 function partyMax() { return typeof finnSkills === 'function' && finnSkills().has('fraktion') ? 3 : 2; }
 function companionOpen(id) { const S = storySave(); return SAVE.settings.testUnlock || !!S.cleared[COMPANIONS[id].unlock]; }
 // Figuren, die in spaeteren Kapiteln nicht mehr an Finns Seite stehen (Leo stirbt, Emma wird zur Gegnerin)
@@ -130,6 +136,19 @@ function compAttack(c, tgt, pw) {
       forEnemiesInRadius(c.x + Math.cos(a) * 26, c.y + Math.sin(a) * 18, 44, (en) => dealDamage(en, 11 * pw, 'none', 'fabian', { kb: 70, kx: Math.cos(a), ky: Math.sin(a), norm: true, noMark: true }));
       burstSparks(c.x + Math.cos(a) * 26, c.y - 12 + Math.sin(a) * 18, 3, '#ffd27a'); sfx('whip', 0, 0.06);
     });
+  } else if (id === 'minny') { // Lichtsaeule aus Himmelsenergie
+    const tx = tgt.x, ty = tgt.y, r = 64;
+    sfx('palm', 0, 0.12);
+    GAME.later(0.15, () => {
+      forEnemiesInRadius(tx, ty, r, (en) => dealDamage(en, 30 * pw, 'none', 'minny', { kb: 120, kx: en.x - tx, ky: en.y - ty, norm: true, noMark: true }));
+      fxRing(tx, ty, 6, r, 0.3, '#f4f0ff', 5); burstSparks(tx, ty - 20, 6, '#ffffff');
+    });
+    addEffect({ x: tx, y: ty, dur: 0.45, layer: 2, draw(g, e, k) {
+      g.save(); g.globalCompositeOperation = 'lighter'; g.globalAlpha = (1 - k) * 0.85;
+      g.fillStyle = lg(g, tx - 14, 0, tx + 14, 0, [0, 'rgba(255,255,255,0)', 0.5, '#ffffff', 1, 'rgba(255,255,255,0)']);
+      g.fillRect(tx - 14 * (1 - k * 0.5), ty - 260, 28 * (1 - k * 0.5), 260);
+      g.restore();
+    } });
   } else if (id === 'emma') { // weiter Schwertbogen
     sfx('whip', 0, 0.1);
     const a = c.aim, R = 95, hit = new Set();
@@ -160,4 +179,4 @@ function drawCompanion(g, c, time) {
   g.lineWidth = 3; g.strokeStyle = 'rgba(0,0,0,0.8)'; g.strokeText(nm, c.x, c.y + 14);
   g.fillStyle = D.col; g.fillText(nm, c.x, c.y + 14);
 }
-Object.assign(SRC_NAMES, { fabian: 'Fabian Schneider', peter: 'Peter Kraus', lena: 'Lena Grimm', leo: 'Leo', fex: 'Fex Sanguini', emma: 'Emma Wagner' });
+Object.assign(SRC_NAMES, { fabian: 'Fabian Schneider', peter: 'Peter Kraus', lena: 'Lena Grimm', leo: 'Leo', fex: 'Fex Sanguini', emma: 'Emma Wagner', minny: 'Minny Talen' });

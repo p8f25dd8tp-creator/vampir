@@ -1,6 +1,6 @@
 'use strict';
 /* ==========================================================================
-   STORY-MODUS „Das Vampirsystem“ — Finn Müllers Weg in 12 Kapiteln.
+   STORY-MODUS „Das Vampirsystem“ — Finn Müllers Weg in 15 Kapiteln.
    Fan-Umsetzung, angelehnt an „My Vampire System“ (dt. Hörspiel „Das
    Vampirsystem“). Nur fuer den privaten Gebrauch.
    Alle Namen und Texte stehen hier gesammelt und lassen sich leicht aendern.
@@ -166,8 +166,8 @@ const CHAPTERS = [
   {
     n: 7, id: 'buergerkrieg', title: 'Bürgerkrieg', src: 'Kapitel 669–808', missions: [34, 38], place: 'Fronten des Menschenbürgerkriegs', theme: 'schlachtfeld', tier: 3,
     intro: [
-      'Truedream, Blade, Militär und Pure treiben die Menschen in einen Bürgerkrieg. Die zehnte Burg wird angegriffen, Fraktionsführer verhandeln.',
-      'Emma trägt als Dhampir gelbe Augen — eine Kraft, die besonders Vampire verletzt.'
+      'Truedream, Blade, Militär und Pure treiben die Menschen in einen Bürgerkrieg. Bloodsucker fallen über die zehnte Burg her, Emma trägt als Dhampir gelbe Augen.',
+      'Auf einem fernen Planeten gräbt sich eine Bestie der Dämonenstufe ein: eine Krabbe mit einem Rücken aus Diamant. Ihr Kristall ist der Schlüssel zu Finns nächster Evolution.'
     ],
     diff: { hp: 1.4, count: 1.05, dmg: 1.26 },
     roles: {
@@ -177,15 +177,15 @@ const CHAPTERS = [
       witch: defEnemy('c7_pure', 'witch', 'h_pure', 'Agent von Pure', { shot: 'soul', flier: false }),
       brute: defEnemy('c7_d5', 'brute', 'dalki5', 'Dalki (5 Stacheln)', { splits: 0, hp: 170 }),
       captain: defEnemy('c7_sauger', 'captain', 'q_orange', 'Bloodsucker', { scale: 1.3, hp: 3400 }),
-      boss: defBoss('c7_boss', 'sunshield', 'Jack Truedream', 12500, { bellShot: 'light' })
+      boss: defBoss('c7_boss', 'krabbe', 'Diamantkrabbe (Dämonenstufe)', 12500, { bellShot: 'spike', r: 50 })
     },
-    texts: { swarm: 'Aasflieger über der Front!', ring: 'Fraktionssoldaten umzingeln dich!', boss: 'Jack Truedream streckt die Hand aus.' },
+    texts: { swarm: 'Aasflieger über der Front!', ring: 'Fraktionssoldaten umzingeln dich!', boss: 'Die Diamantkrabbe bricht aus dem Schlamm.' },
     quests: [
       { type: 'kill', role: 'ghoul', n: 250, text: 'Besiege 250 Gegner an der Front', reward: { crystals: 60, bonus: 'level' } },
       { type: 'survive', n: 450, text: 'Halte die Linie 7:30 Minuten', reward: { crystals: 50, bonus: 'heal' } },
       { type: 'mini', text: 'Besiege den Bloodsucker', reward: { crystals: 70, bonus: 'level' } }
     ],
-    reward: { tier: 4, text: 'Evolution: Vampirlord (Kap. 785–808)' }
+    reward: { tier: 4, text: 'Evolution: Vampirlord aus dem Kristall der Krabbe (Kap. 805–807)' }
   },
   {
     n: 8, id: 'krone', title: 'Kampf um den Thron', src: 'Kapitel 809–945', missions: [39, 45], place: 'Vampirsiedlung — der Rat brennt', theme: 'burg', tier: 4,
@@ -281,31 +281,108 @@ const CHAPTERS = [
       { type: 'survive', n: 480, text: 'Überlebe 8 Minuten', reward: { crystals: 80, bonus: 'heal' } },
       { type: 'mini', text: 'Besiege den Vertrautenkönig', reward: { crystals: 100, bonus: 'level' } }
     ],
-    reward: { tier: 6, text: 'Emma Wagners Kristall bleibt zurück · Reiner Himmlischer (eigene Auslegung — kommt im Roman nicht vor)' }
+    reward: { tier: 6, text: 'Evolution: Gottbezwinger (Kap. 1688) · Emma Wagners Kristall bleibt zurück' }
   },
   {
-    n: 12, id: 'letzter', title: 'Der letzte Vampir', src: 'Kapitel 1986–2545', missions: [67, 80], place: 'Red Space', theme: 'redspace', tier: 6,
+    n: 12, id: 'vergessen', title: 'Die vergessene Legende', src: 'Kapitel 1986–2107', missions: [67, 70], place: 'Vampirsiedlung und der Dschungel des Daisy-Planeten', theme: 'bestienplanet', tier: 6,
     intro: [
-      'Finn verlässt die Celestial-Ordnung und geht den Weg des Gottbezwingers. Mit Emmas Kristall, Blut, Schatten und Qi stellt er sich den Dämonenkönigen.',
-      'Im Red Space wartet Immortui — der Ursprung aller Vampirmacht.'
+      'Das Portal ist geschlossen, doch der Preis ist hoch: Kaum jemand erinnert sich noch an Finn — nur Minny. Unerkannt dient er als einfacher Wachmann der neunten Familie, trainiert Ronkin und wird Vater: Galen kommt zur Welt.',
+      'Auf dem Daisy-Planeten brechen Dämonen-Bestien aus dem Dschungel. Und Jim Eno ist zurück — gestärkt durch fremdes Blut, das ihn unheimlich mächtig macht.'
     ],
-    diff: { hp: 3.1, count: 1.2, dmg: 1.8 },
+    diff: { hp: 2.75, count: 1.16, dmg: 1.7 },
     roles: {
-      ghoul: defEnemy('c12_daemon', 'ghoul', 'q_void', 'Dämon', { hp: 22, gore: 'void' }),
-      bat: defEnemy('c12_schwinge', 'bat', 'bat_void', 'Leerenschwinge', { gore: 'void' }),
-      knight: defEnemy('c12_champion', 'knight', 'g_ritter', 'Champion des Red Space', { armor: 5, gore: 'void' }),
-      witch: defEnemy('c12_rot', 'witch', 'h_rotvamp', 'Roter Vampir', { shot: 'blood' }),
-      brute: defEnemy('c12_titan', 'brute', 'q_voidP', 'Dämonenbestie', { splits: 2, gore: 'void' }),
-      captain: defEnemy('c12_koenig', 'captain', 'q_daemon', 'Dämonenkönig', { scale: 1.4, hp: 6500 }),
-      boss: defBoss('c12_boss', 'immortui', 'Immortui', 46000, { bellShot: 'void' })
+      ghoul: defEnemy('c12_ranke', 'ghoul', 'q_caladi', 'Dschungelbestie', { hp: 22 }),
+      bat: defEnemy('c12_aas', 'bat', 'bat_aas', 'Aasflieger'),
+      knight: defEnemy('c12_wache', 'knight', 'v_ritter', 'Söldner der dritten Familie', { armor: 5 }),
+      witch: defEnemy('c12_xblut', 'witch', 'v_magier', 'Vampir mit X-Blut', { shot: 'blood', flier: false }),
+      brute: defEnemy('c12_horde', 'brute', 'q_koenig', 'Dämonen-Bestie', { splits: 0, hp: 220 }),
+      captain: defEnemy('c12_nest', 'captain', 'q_daemon', 'Hordenmutter mit Nestkristall', { scale: 1.4, hp: 5600 }),
+      boss: defBoss('c12_boss', 'jim', 'Jim Eno', 38000, { bellShot: 'blood' })
     },
-    texts: { swarm: 'Leerenschwingen verdunkeln den roten Himmel!', ring: 'Die Dämonen schließen den Kreis.', boss: 'Immortui erscheint.' },
+    texts: { swarm: 'Aasflieger über dem leuchtenden Dschungel!', ring: 'Drei Hordenwellen zugleich!', boss: 'Jim Eno spürt deine Aura — und kommt selbst.' },
     quests: [
-      { type: 'kill', role: 'knight', n: 60, text: 'Besiege 60 Champions', reward: { crystals: 110, bonus: 'level' } },
-      { type: 'level', n: 35, text: 'Erreiche Stufe 35', reward: { crystals: 100, bonus: 'heal' } },
-      { type: 'mini', text: 'Besiege einen Dämonenkönig', reward: { crystals: 120, bonus: 'level' } }
+      { type: 'kill', role: 'ghoul', n: 400, text: 'Halte 400 Dschungelbestien auf', reward: { crystals: 100, bonus: 'level' } },
+      { type: 'survive', n: 480, text: 'Beschütze die Schüler 8 Minuten', reward: { crystals: 90, bonus: 'heal' } },
+      { type: 'mini', text: 'Zerschlage die Hordenmutter', reward: { crystals: 110, bonus: 'level' } }
     ],
-    reward: { tier: 7, text: 'Evolution: Gottbezwinger (God Slayer, Kap. 1992)' }
+    reward: { text: 'Minny Talen kämpft ab jetzt an deiner Seite' }
+  },
+  {
+    n: 13, id: 'godslayer', title: 'Gottbezwinger', src: 'Kapitel 2108–2305', missions: [71, 72], place: 'Mundus’ Prüfungswelten und Jims Kriegsplaneten', theme: 'goetter', tier: 6,
+    intro: [
+      'Mundus schickt Finn gegen die Stärksten ferner Welten. Seine Seelenwaffe erwacht zum Schattennebel, und mit Amra, Penswi und Mermerials zieht er gegen Jims Armee.',
+      'Dann steht ihm Ray gegenüber — in Rüstung und Phönixmaske. Nur mit der Kraft der Asura kann Finn ihn Faust gegen Faust niederringen. Der Sieg kostet viele Freunde das Leben.'
+    ],
+    diff: { hp: 2.95, count: 1.18, dmg: 1.76 },
+    roles: {
+      ghoul: defEnemy('c13_kapsel', 'ghoul', 'v_wache', 'Kapsel-Vampir (Stufe-5-Blut)', { hp: 22 }),
+      bat: defEnemy('c13_schwinge', 'bat', 'bat_void', 'Leerenschwinge', { gore: 'void' }),
+      knight: defEnemy('c13_d4', 'knight', 'dalki4', 'Dalki mit Fähigkeiten (4 Stacheln)', { armor: 5 }),
+      witch: defEnemy('c13_magier', 'witch', 'v_magier', 'Jims Blutmagier', { shot: 'blood', flier: false }),
+      brute: defEnemy('c13_d6', 'brute', 'dalki6', 'Dalki (6 Stacheln)', { splits: 0, hp: 230 }),
+      captain: defEnemy('c13_h', 'captain', 'dalkiW', 'H (zehn Stacheln)', { scale: 1.6, hp: 6200 }),
+      boss: defBoss('c13_boss', 'ray', 'Ray (Phönixmaske)', 42000, { bellShot: 'light' })
+    },
+    texts: { swarm: 'Leerenschwingen über Jims Planeten!', ring: 'Jims Kapsel-Vampire greifen ohne Pause an!', boss: 'Ray setzt die Phönixmaske auf.' },
+    quests: [
+      { type: 'kill', role: 'knight', n: 70, text: 'Besiege 70 Dalki mit Fähigkeiten', reward: { crystals: 110, bonus: 'level' } },
+      { type: 'level', n: 36, text: 'Erreiche Stufe 36', reward: { crystals: 100, bonus: 'heal' } },
+      { type: 'mini', text: 'Besiege H', reward: { crystals: 120, bonus: 'level' } }
+    ],
+    reward: { skills: ['asura'], text: 'God-Slayer-Rüstung und Asura-Handschuhe (Kap. 2257–2294)' }
+  },
+  {
+    n: 14, id: 'koenige', title: 'Dämonenkönige', src: 'Kapitel 2306–2470', missions: [73, 76], place: 'Zeathun — der Red Space', theme: 'redspace', tier: 6,
+    intro: [
+      'Magnus zeichnet Menschen mit Immortuis Mal und öffnet mit Jessicas Blut ein Portal. Finn geht hindurch — allein in den Red Space, wo Dämonenkönige über Champions und Horden herrschen.',
+      'Der erste König, der sich ihm stellt, ist Kronker: ein Riese, aus dessen Brust Kristallstacheln wachsen.'
+    ],
+    diff: { hp: 3.15, count: 1.2, dmg: 1.82 },
+    roles: {
+      ghoul: defEnemy('c14_daemon', 'ghoul', 'q_void', 'Dämon', { hp: 24, gore: 'void' }),
+      bat: defEnemy('c14_schwinge', 'bat', 'bat_void', 'Leerenschwinge', { gore: 'void' }),
+      knight: defEnemy('c14_chrono', 'knight', 'g_ritter', 'Chrono-Krieger', { armor: 5, gore: 'void' }),
+      witch: defEnemy('c14_rot', 'witch', 'g_seherin', 'Dämonenseherin', { shot: 'void', gore: 'void' }),
+      brute: defEnemy('c14_wolf', 'brute', 'q_voidP', 'Glutton-Wolf', { splits: 2, gore: 'void' }),
+      captain: defEnemy('c14_shinto', 'captain', 'g_diener', 'Champion Shinto', { scale: 1.4, hp: 6800 }),
+      boss: defBoss('c14_boss', 'kronker', 'Kronker, Dämonenkönig', 46000, { bellShot: 'void' })
+    },
+    texts: { swarm: 'Leerenschwingen verdunkeln den roten Himmel!', ring: 'Die Horden des Königs schließen den Kreis.', boss: 'Kronker hebt seine Klinge.' },
+    quests: [
+      { type: 'kill', role: 'knight', n: 70, text: 'Besiege 70 Chrono-Krieger', reward: { crystals: 120, bonus: 'level' } },
+      { type: 'survive', n: 480, text: 'Überlebe 8 Minuten im Red Space', reward: { crystals: 110, bonus: 'heal' } },
+      { type: 'mini', text: 'Bezwinge den Champion Shinto', reward: { crystals: 130, bonus: 'level' } }
+    ],
+    reward: { skills: ['daemon'], text: 'Dämonenform (Kap. 2388) · Kronkers Blut' }
+  },
+  {
+    n: 15, id: 'letzter', title: 'Der letzte Vampir', src: 'Kapitel 2471–2545', missions: [77, 80], place: 'Red Space — Immortuis Reich', theme: 'roterhimmel', tier: 6,
+    intro: [
+      'Finn fällt im Kampf gegen Immortui — und die Flamme des Phönix erschafft ihn neu. Seine Freunde stellen sich den übrigen Königen, während die Divine Brigade überall zugleich angreift.',
+      'Gegen Immortuis letzte Form hilft nur noch das Blut aller dreizehn Familien. Doch stirbt Immortui, verliert jeder Vampir seine Kraft.'
+    ],
+    diff: { hp: 3.35, count: 1.22, dmg: 1.9 },
+    roles: {
+      ghoul: defEnemy('c15_daemon', 'ghoul', 'q_void', 'Dämon', { hp: 26, gore: 'void' }),
+      bat: defEnemy('c15_funke', 'bat', 'bat_licht', 'Divine-Späher', { gore: 'light' }),
+      knight: defEnemy('c15_divine', 'knight', 'h_ritter', 'Krieger der Divine Brigade', { armor: 5, gore: 'light' }),
+      witch: defEnemy('c15_rot', 'witch', 'h_rotvamp', 'Gezeichneter Vampir', { shot: 'blood' }),
+      brute: defEnemy('c15_titan', 'brute', 'q_voidP', 'Dämonenbestie', { splits: 2, gore: 'void' }),
+      captain: defEnemy('c15_koenig', 'captain', 'q_daemon', 'Tenbris, Dämonenkönig', { scale: 1.45, hp: 7400 }),
+      boss: defBoss('c15_boss', 'immortui', 'Immortui', 52000, { bellShot: 'void' })
+    },
+    texts: { swarm: 'Divine-Späher stürzen vom Himmel!', ring: 'Gezeichnete Vampire kreisen dich ein.', boss: 'Immortui nimmt seine letzte Form an.' },
+    quests: [
+      { type: 'kill', role: 'knight', n: 70, text: 'Halte 70 Krieger der Divine Brigade auf', reward: { crystals: 130, bonus: 'level' } },
+      { type: 'level', n: 38, text: 'Erreiche Stufe 38', reward: { crystals: 120, bonus: 'heal' } },
+      { type: 'mini', text: 'Besiege Tenbris', reward: { crystals: 140, bonus: 'level' } }
+    ],
+    reward: { tier: 7, text: 'Der letzte Vampir — das Blut aller dreizehn Familien (Kap. 2537–2540)' },
+    outro: [
+      'Immortui ist gefallen, der rote Nebel verschwunden. Mit ihm ist alle Kraft vergangen, die er je verliehen hat: Dämonen werden zu Menschen — und alle Vampire ebenso. Peter spürt zum ersten Mal wieder seinen Herzschlag. Finns Kraft aber gehört jetzt ihm allein. Er ist der letzte Vampir.',
+      'Die Jahre vergehen. Freunde gründen Familien, die Erde wird neu aufgebaut, das Bündnis der Völker hält. Nur Finn altert nicht.',
+      'Als Layla alt geworden ist, nimmt er Abschied von seiner Familie und legt sich in der Gruft der Siedlung zum ewigen Schlaf. Eine Quest steht noch offen: Finde etwas über die Familie Talen heraus. Er wird wieder gebraucht werden.'
+    ]
   }
 ];
 
@@ -319,10 +396,12 @@ const FINN_SKILLS = {
   qi: { name: 'Qi (Leo)', cards: ['qihand', 'eisenmeridiane'], desc: 'Qi stärkt den Körper: Qi-Hand und Eisenmeridiane erscheinen als Karten.' },
   fraktion: { name: 'Cursed Faction', cards: [], desc: 'Bis zu 3 Begleiter gleichzeitig.' },
   absolut: { name: 'Absolute Blutkontrolle', cards: [], desc: '+25 % Blut- und Schattenschaden.' },
-  qi2: { name: 'Zweite Qi-Stufe (Chris)', cards: ['qikette'], desc: 'Qi außerhalb des Körpers: die Qi-Kette erscheint als Karte.' }
+  qi2: { name: 'Zweite Qi-Stufe (Chris)', cards: ['qikette'], desc: 'Qi außerhalb des Körpers: die Qi-Kette erscheint als Karte.' },
+  asura: { name: 'Asura-Handschuhe', cards: [], desc: 'God-Slayer-Rüstung: +15 % Schaden und +15 % Leben.' },
+  daemon: { name: 'Dämonenform', cards: [], desc: 'Die beherrschte Dämonenform: weitere +15 % Schaden.' }
 };
 // welche Kraefte eine Form mindestens voraussetzt (Testmodus / alte Spielstaende)
-const SKILLS_BY_TIER = { 2: ['technik', 'schatten'], 3: ['ghoul', 'blut', 'qi'], 4: ['fraktion'], 5: ['absolut', 'qi2'] };
+const SKILLS_BY_TIER = { 2: ['technik', 'schatten'], 3: ['ghoul', 'blut', 'qi'], 4: ['fraktion'], 5: ['absolut', 'qi2'], 7: ['asura', 'daemon'] };
 function finnSkills() {
   const S = storySave(), F = finnSave(), out = new Set((S.skills || []).filter((k) => FINN_SKILLS[k]));
   const tier = GAME && GAME.p && GAME.p.hero === 'finn' ? (GAME.p.tier || 0) : F.tier;
@@ -370,9 +449,11 @@ function storySetup(G, ch) {
   G.onKill = storyOnKill;
   G.schoolMul = finnSkills().has('absolut') ? { blood: 1.25, shadow: 1.25 } : null;
   spawnCompanions(G);
-  const S = storySave(), gr = S.gear;
+  const S = storySave(), gr = S.gear, sk = finnSkills();
+  const asura = sk.has('asura') ? 1.15 : 1, daemon = sk.has('daemon') ? 1.15 : 1;
   G.statMod = (st) => {
-    st.might *= 1 + 0.08 * (gr.handschuhe || 0) + (S.king ? 0.1 : 0);
+    st.might *= (1 + 0.08 * (gr.handschuhe || 0) + (S.king ? 0.1 : 0)) * asura * daemon;
+    st.maxHp *= asura;
     st.speed *= 1 + 0.05 * (gr.stiefel || 0);
     st.dodgeCdMul *= Math.pow(0.94, gr.stiefel || 0);
     st.maxHp *= 1 + 0.1 * (gr.panzer || 0) + (S.king ? 0.1 : 0);

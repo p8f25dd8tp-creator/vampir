@@ -1,9 +1,9 @@
 // Bot spielt Kapitel mit realistischem Fortschritt (Form, Kraefte, Begleiter, Ausruestung)
 const { chromium } = require('/opt/node22/lib/node_modules/playwright');
 (async () => {
-  const chs = (process.argv[2] || '1,2,3,4,5,6,7,8,9,10,11,12').split(',').map(Number);
+  const chs = (process.argv[2] || '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15').split(',').map(Number);
   const runs = +(process.argv[3] || 1);
-  const gearBy = JSON.parse(process.env.GEAR || '[0,0,1,1,2,2,3,3,4,4,4,5]');
+  const gearBy = JSON.parse(process.env.GEAR || '[0,0,1,1,2,2,3,3,4,4,4,5,5,5,5]');
   const party = (process.env.PARTY || 'peter,lena').split(',').filter(Boolean);
   const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
   const p = await b.newPage({ viewport: { width: 390, height: 844 } });
@@ -12,7 +12,7 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
   await p.addScriptTag({ path: 'dev/bot.js' });
   for (const ch of chs) for (let r = 0; r < runs; r++) {
     const res = await p.evaluate(([ch, gear, party]) => {
-      const tierAt = [1, 1, 2, 2, 2, 3, 3, 4, 4, 4, 5, 6][ch - 1];
+      const tierAt = [1, 1, 2, 2, 2, 3, 3, 4, 4, 4, 5, 6, 6, 6, 6][ch - 1];
       const S = storySave(), F = finnSave();
       S.cleared = {}; S.skills = []; S.king = false;
       for (let n = 1; n < ch; n++) { S.cleared[n] = true; (CHAPTERS[n - 1].reward.skills || []).forEach((k) => S.skills.push(k)); if (CHAPTERS[n - 1].reward.king) S.king = true; }
