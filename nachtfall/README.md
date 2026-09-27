@@ -68,17 +68,17 @@ Angriffe laufen **automatisch**. Bei jedem Stufenaufstieg wählst du **eine von 
 
 ---
 
-## Die vier Helden
+## Die fünf Helden
 
-| | Graf Vorian | Liora | Nyx | Meister Shen |
-|---|---|---|---|---|
-| Titel | Der Blutgraf | Die Aderlasserin | Der Schattenläufer | Hüter der drei Kräfte |
-| Silhouette | massig, Stachelkrone, Stehkragen-Umhang | schlank, langer Gehrock, Knochensichel | geduckt, Spitzkapuze, endloser Schal | breiter Strohhut, weite Ärmel, Bart |
-| Start | Blutnova | Blutwisch | Schattenflammen | Qi-Handfläche |
-| Mechanik | **Blutsaat**: Blut-Treffer setzen Blutmale (bis 5). Gegner mit 3+ Malen platzen beim Tod, Explosionen heilen ihn | **Blutrausch**: je weniger Leben, desto mehr Schaden (bis +90 %) und Tempo; 3 % Lebensraub ab Start | **Schattenfluss**: Bewegung lädt bis +45 % Schaden / +15 % Krit; Stillstand verliert ihn. Ausweichen = **Schattenschritt** (Teleport, schneidet, hinterlässt Köder) | **Qi-Kreislauf**: Stillstehen = Wurzelstand, sammelt Qi-Perlen (bis 5, je +5 % Schaden, −30 % erlittener Schaden) |
-| Ultimativ | **Karminsturm**: zündet alle Blutmale gleichzeitig + Riesennova | **Aderlass**: 20 % Leben opfern → 6 s +60 % Schaden, 3× Lebensraub, doppelte Wische | **Mitternacht**: 4 s unverwundbare Schattengestalt, schneidet bei Berührung | **Harmonie**: verbraucht alle Perlen; Druckwelle + Heilung, ab 3 Perlen Schatten-Klone, bei 5 **Vollkommene Harmonie** (Zeitlupe + alle Fähigkeiten sofort bereit) |
-| Stärken | Horden, zäh, Kettenreaktionen | Einzelschaden, heilt sich | schnellster Held, kurzes Ausweichen | alle drei Schulen, höchstes Kombo-Potenzial |
-| Schwächen | langsam, kurze Reichweite | wenig Leben, keine Regeneration | zerbrechlich, schwach im Stillstand | langsamer Start, muss stillstehen; Blut/Schatten nur 85 % |
+| | Graf Vorian | Liora | Nyx | Meister Shen | Sen Draco |
+|---|---|---|---|---|---|
+| Titel | Der Blutgraf | Die Aderlasserin | Der Schattenläufer | Hüter der drei Kräfte | Der Drachenmensch |
+| Silhouette | massig, Stachelkrone, Stehkragen-Umhang | schlank, langer Gehrock, Knochensichel | geduckt, Spitzkapuze, endloser Schal | breiter Strohhut, weite Ärmel, Bart | dunkle Schuppenrüstung, goldene Glut |
+| Start | Blutnova | Blutwisch | Schattenflammen | Qi-Handfläche | Hammerschlag |
+| Mechanik | **Blutsaat**: Blut-Treffer setzen Blutmale (bis 5). Gegner mit 3+ Malen platzen beim Tod, Explosionen heilen ihn | **Blutrausch**: je weniger Leben, desto mehr Schaden (bis +90 %) und Tempo; 3 % Lebensraub ab Start | **Schattenfluss**: Bewegung lädt bis +45 % Schaden / +15 % Krit; Stillstand verliert ihn. Ausweichen = **Schattenschritt** (Teleport, schneidet, hinterlässt Köder) | **Qi-Kreislauf**: Stillstehen = Wurzelstand, sammelt Qi-Perlen (bis 5, je +5 % Schaden, −30 % erlittener Schaden) | **Drachenblut**: alle 2,2 s schlägt eine Meteoritenfaust beim nächsten Gegner ein; Schuppen: −15 % erlittener Schaden |
+| Ultimativ | **Karminsturm**: zündet alle Blutmale gleichzeitig + Riesennova | **Aderlass**: 20 % Leben opfern → 6 s +60 % Schaden, 3× Lebensraub, doppelte Wische | **Mitternacht**: 4 s unverwundbare Schattengestalt, schneidet bei Berührung | **Harmonie**: verbraucht alle Perlen; Druckwelle + Heilung, ab 3 Perlen Schatten-Klone, bei 5 **Vollkommene Harmonie** (Zeitlupe + alle Fähigkeiten sofort bereit) | **Drachengestalt**: 7 s als Drache, +40 % Schaden, halber erlittener Schaden, speit Feuer |
+| Stärken | Horden, zäh, Kettenreaktionen | Einzelschaden, heilt sich | schnellster Held, kurzes Ausweichen | alle drei Schulen, höchstes Kombo-Potenzial | rohe Kraft, zäh, Drachengestalt |
+| Schwächen | langsam, kurze Reichweite | wenig Leben, keine Regeneration | zerbrechlich, schwach im Stillstand | langsamer Start, muss stillstehen; Blut/Schatten nur 85 % | lange Abklingzeit, kein Lebensraub von Haus aus |
 
 
 ### Story-Modus „Das Vampirsystem“ (Finn Müller)
@@ -124,7 +124,8 @@ Die Kapitel sind am vollständig gelesenen Roman geprüft (Kapitelnotizen in
 
 **Freischaltung** (alles durch Spielen, keine Käufe):
 Vorian von Anfang an · Liora: Stufe 12 in einem Lauf (oder 400 Seelen) ·
-Nyx: 6 Minuten überleben (oder 700 Seelen) · Shen: Vaelgor besiegen (oder 1500 Seelen).
+Nyx: 6 Minuten überleben (oder 700 Seelen) · Shen: Vaelgor besiegen (oder 1500 Seelen) ·
+Sen Draco: im Story-Modus Kapitel 13 schaffen (oder 2500 Seelen).
 Für die Probeversion ist der **Testmodus „alle Helden frei“** eingeschaltet
 (Einstellungen → ausschalten, um das Freispielen zu erleben).
 
@@ -232,7 +233,8 @@ mit jeder Qi-Perle, beim Wurzelstand erscheint eine Lotusblüte.
 |---|---|
 | `src/00-core.js` | Mathe, Speicherstand, Audio, Eingabe/Joystick, Canvas |
 | `src/01-artkit.js` | Mal-Werkzeuge: Formen, Kontur, Randlicht, Lichter, Rauschen |
-| `src/02-heroes.js` | die vier Helden (Skelett + Malerei) |
+| `src/02-heroes.js` | die vier Grund-Helden (Skelett + Malerei) |
+| `src/19-draco.js` | Sen Draco: Held mit Drachengestalt |
 | `src/03-enemies-art.js` | Gegner, Hauptmann, Boss |
 | `src/04-world-art.js` | Welten (Friedhof + 7 Kapitel): Boden, Requisiten, Nebel, Licht |
 | `src/05-data.js` | Helden, Karten, Fusionen, Reaktionen, Gegner, Wellen, Altar |

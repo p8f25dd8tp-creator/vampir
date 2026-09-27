@@ -56,7 +56,7 @@ function icon(id) {
     dodge_blink() { D.blitzschritt(); },
     dodge_slide() { glow('#4ff0cc', 26); g.strokeStyle = '#9affe6'; g.lineWidth = 4; for (let i = 0; i < 3; i++) { g.beginPath(); g.moveTo(-34, -12 + i * 12); g.lineTo(14, -12 + i * 12); g.stroke(); } g.drawImage(ASPR.palm, 0, -24, 50, 40); }
   };
-  (D[id] || D.grabesmacht)();
+  (D[id] || (typeof ICON_EXTRA !== 'undefined' && ICON_EXTRA[id] ? () => ICON_EXTRA[id](g, glow) : null) || D.grabesmacht)();
   g.setTransform(1, 0, 0, 1, 0, 0);
   g.strokeStyle = rgba(col, 0.8); g.lineWidth = 3; g.strokeRect(1.5, 1.5, S - 3, S - 3);
   return (_icons[id] = c.toDataURL());

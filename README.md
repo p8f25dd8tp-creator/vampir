@@ -1,4 +1,4 @@
-> **Neu:** [**Nachtfall**](nachtfall/) — ein Dark-Fantasy-Survivors-Spiel mit vier Helden (Blut · Schatten · Qi). Details in [`nachtfall/README.md`](nachtfall/README.md).
+> **Neu:** [**Nachtfall**](nachtfall/) — ein Dark-Fantasy-Survivors-Spiel mit fünf Helden (Blut · Schatten · Qi). Details in [`nachtfall/README.md`](nachtfall/README.md).
 
 # 🩸 Blutmond — Vampir Tower Defense
 

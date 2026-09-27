@@ -15,7 +15,7 @@ UI.showTitle = function () {
     <div class="logo"><h1>NACHTFALL</h1><div class="sub"><b>BLUT</b> · <i>SCHATTEN</i> · <u>QI</u></div></div>
     <div class="menu">
       <button class="btn primary sysbtn" data-act="story"><span class="syst">[ SYSTEM ]</span><br>Das Vampirsystem<br><small>Story · Finn Müller · ${FINN_TIERS[F.tier].name}</small></button>
-      <button class="btn" data-act="play">Nachtfall · Arcade<br><small>4 Helden · Seelen: ${SAVE.souls}</small></button>
+      <button class="btn" data-act="play">Nachtfall · Arcade<br><small>${HERO_ORDER.length} Helden · Seelen: ${SAVE.souls}</small></button>
       <div class="row" style="gap:10px"><button class="btn small" style="flex:1" data-act="gear">Ausrüstung · ${S.crystals} ◆</button><button class="btn small" style="flex:1" data-act="altar">Altar (Arcade)</button></div>
       <div class="row" style="gap:10px"><button class="btn small ghost" style="flex:1" data-act="codex">Chronik</button><button class="btn small ghost" style="flex:1" data-act="settings">Einstellungen</button></div>
       <div class="foot">Offline spielbar · keine Käufe · Version 0.3<br>„Das Vampirsystem“ ist eine private Fan-Umsetzung.</div>
