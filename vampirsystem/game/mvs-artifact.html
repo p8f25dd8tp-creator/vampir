@@ -3718,7 +3718,7 @@ Object.assign(MISSIONS, {
       { narr: 'Zwischen den Ruinen bewegt sich etwas: eine Bestie, groß wie ein Hund, mit Rattenschnauze und langen Krallen. Quinn erledigt sie knapp – und die Handschuhe tragen die ersten Kratzer.' },
       { bg: 'system' },
       { sys: { head: 'NEUE FÄHIGKEIT', lines: ['Blood Spray', 'Ein Fächer aus Blut, wie eine Schrotflinte. Kostet 5 HP.'], kv: [['Hinweis', 'Rattaclaw-Blut ist giftig']] } },
-      { call: () => learn('bloodspray') },
+      { call: () => { learn('bloodspray'); SAVE.quinn.bank = Math.max(SAVE.quinn.bank, 60); writeSave(); } },
       { bg: 'rotplanet' },
       { narr: 'Der Kampflärm lockt das Rudel an. Zehn Rattaclaws jagen Quinn in ein halb eingestürztes Haus. Oben auf der Treppe ist der einzige Ort, an dem sie nur von vorn kommen können.' }
     ],
@@ -3726,7 +3726,7 @@ Object.assign(MISSIONS, {
       arena: { art: 'ruine', w: 340, h: 600, night: true, blocks: [{ x: 0, y: 206, w: 132, h: 26, invisible: true }, { x: 208, y: 206, w: 132, h: 26, invisible: true }] },
       playerAt: [170, 150], inspect: true, noFoeBar: true,
       foes: ratPack(10, [[60, 470], [280, 480], [170, 560], [100, 360], [250, 350]], 0.6, 1.8),
-      onTick: (G) => { wakeTick(G, 3); const n = G.ents.filter((e) => e.team === 1 && e.state !== 'down').length; G.hint = { text: G.t < 5 ? 'Halte die Treppe. <b>BLOOD SPRAY</b> trifft mehrere' : `Rattaclaws: ${n}` }; }
+      onTick: (G) => { wakeTick(G, 2); const n = G.ents.filter((e) => e.team === 1 && e.state !== 'down').length; G.hint = { text: G.t < 5 ? 'Halte die Treppe. <b>BLOOD SPRAY</b> trifft mehrere' : `Rattaclaws: ${n}` }; }
     },
     won: [
       { bg: 'system' },
