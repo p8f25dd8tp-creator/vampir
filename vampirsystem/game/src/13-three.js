@@ -102,7 +102,7 @@ function r3Build() {
   const T = THREE;
   R3.slams = []; R3.poiMeshes = null; R3.rigs.clear(); R3.fx.clear(); R3.tele.clear(); R3.proj.clear(); R3.ghosts.length = 0; R3.impacts.length = 0;
   const scene = new T.Scene();
-  R3.motes = null; R3.fade = []; R3.occ = []; R3.vrCubes = null; R3.e6Flick = R3.e6Spark = R3.e6Beacon = null;
+  R3.motes = null; R3.fade = []; R3.occ = []; R3.vrCubes = null; R3.e6Flick = R3.e6Spark = R3.e6Beacon = R3.e7 = R3.e7Water = null;
   ARENA3D[G.arena.art](G.arena, scene);
   const mkPts = (n, add, size) => {
     const geo = new T.BufferGeometry(); geo.setAttribute('position', new T.BufferAttribute(new Float32Array(n * 3), 3)); geo.setAttribute('color', new T.BufferAttribute(new Float32Array(n * 3), 3));
