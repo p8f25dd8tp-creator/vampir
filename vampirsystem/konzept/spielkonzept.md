@@ -826,5 +826,5 @@ geprüft.
    (siehe Abschnitt 14).
 2. **Namen:** englische Originalnamen. Ray heißt im neuen Spiel **Ray** (in Nachtfall bleibt er
    Sen Draco).
-3. **Ansicht:** keine Seitenansicht. Offen ist noch, ob es die schräge Ansicht von oben wird oder
-   eine Kamera hinter der Figur.
+3. **Ansicht:** schräg von oben (3/4-Ansicht) in 2D, wie Nachtfall. Keine Seitenansicht, keine
+   3D-Kamera hinter der Figur.
