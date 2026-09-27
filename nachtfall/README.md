@@ -105,7 +105,7 @@ sind dauerhaft und kommen dort, wo sie im Roman auftauchen — beim ersten Sieg 
 | 9 Der König mit Bedingungen | 946–1408 | 46–54 | Laxmus | Vampirkönig + 2. Qi-Stufe |
 | 10 Graham | 1409–1572 | 55–57 | Graham | Himmlischer Vampirlord (Kap. 1565) |
 | 11 Die Rückkehr einer Legende | 1573–1985 | 58–66 | Emma Wagner (Dhampir-Königin) | Gottbezwinger (Kap. 1688) |
-| 12 Die vergessene Legende | 1986–2107 | 67–70 | Jim Eno | Minny wird Begleiterin |
+| 12 Die vergessene Legende | 1986–2107 | 67–70 | Jim Eno (Zwischengegner: Sen Draco) | Minny wird Begleiterin |
 | 13 Gottbezwinger | 2108–2305 | 71–72 | Sen Draco (Mensch, ab halber Kraft Drache) | God-Slayer-Rüstung & Asura-Handschuhe |
 | 14 Dämonenkönige | 2306–2470 | 73–76 | Kronker | Dämonenform |
 | 15 Der letzte Vampir | 2471–2545 | 77–80 | Immortui | Der letzte Vampir (Kap. 2537) + Epilog |
@@ -141,6 +141,7 @@ Im Kapitelmenü wählst du bis zu zwei Begleiter (ab Kapitel 6 drei). Sie folgen
 | Leo | blinder Qi-Meister · Qi-Welle mit Rückstoß | Kapitel 2 |
 | Emma Wagner | Rang A · Eisschwert, verlangsamt Gegner | Kapitel 3 |
 | Fex Sanguini | Vampir · springende Blutfäden | Kapitel 4 |
+| Sen Draco | Stimme aus der Steintafel · Meteoritenfaust (nur Kapitel 10–11, danach Gegner) | Kapitel 9 |
 | Minny Talen | Finns Tochter · Lichtsäulen aus Himmelsenergie | Kapitel 12 |
 
 Sobald Finn die Schatten hat (Kapitel 2), wird sein Ausweichen zum **Schattenschritt**.

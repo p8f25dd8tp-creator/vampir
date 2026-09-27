@@ -198,6 +198,7 @@ Object.assign(ENEMY_ART, {
   dalkiW: dalkiArt({ spikes: 4, cols: DCOL.wolf, fur: true }, 84, '#ffb02a'),
   bat_aas: palArt('bat', [[EPAL.bat, { fur: '#2a2420', furL: '#5a4a40', wing: '#3a302a', wingL: '#6a5a4a', eye: '#ff6a2a' }]], '#ff8a5a'),
   // Kapitel 4: Vampir-Siedlung (Heldenfiguren umgefaerbt)
+  sendraco_h: heroArt('vorian', [[HERO_PAL.vorian, { skin: '#d8c0b0', skinD: '#8a6a58', armor: '#14100c', armorL: '#4a3a24', armorD: '#060402', red: '#8a5a10', redL: '#ffc040', redD: '#3a2204', hair: '#8a1a14', eye: '#ffc040', rim: '#ffb02a' }]], { glow: 0.8 }, '#ffb02a', 124),
   v_wache: heroArt('nyx', [[HERO_PAL.nyx, { cloak: '#2a1418', cloakL: '#5a2a32', cloakD: '#100608', scarf: '#6a0a18', scarfL: '#ff3a4e', eye: '#ff3a4e', rim: '#ff3a4e' }]], { flow: 0.2 }, '#ff3a4e', 110),
   v_ritter: heroArt('vorian', [[HERO_PAL.vorian, { armor: '#2a2a32', armorL: '#5a5a66', red: '#6a0a1a', redL: '#c0183a', hair: '#1a1418' }]], { glow: 0.4 }, '#ff3a4e', 120),
   v_magier: heroArt('liora', [[HERO_PAL.liora, { coat: '#3a0a2a', coatL: '#7a1a5a', coatD: '#1a0410', hair: '#e8e0e8', hairL: '#ffffff' }]], { rage: 0.5 }, '#ff5ab0', 110),

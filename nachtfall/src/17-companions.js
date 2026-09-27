@@ -49,7 +49,13 @@ COMPANIONS.minny = {
   hero: 'liora', pal: [[HERO_PAL.liora, { skin: '#8a5a40', coat: '#1a1420', coatL: '#4a3a5a', coatD: '#08060c', hair: '#1a100c', hairL: '#4a3024', eye: '#f4f0ff', rim: '#f4f0ff' }]],
   look: {}, speed: 185, range: 200, cd: 1.5
 };
-const COMP_ORDER = ['peter', 'lena', 'fabian', 'leo', 'emma', 'fex', 'minny'];
+COMPANIONS.sendraco = {
+  name: 'Sen Draco', role: 'Stimme aus der Steintafel · Drachenmensch', unlock: 9, until: 11, col: '#ffb02a',
+  desc: 'Ein uraltes Wesen, das in der Steintafel in Finns System lebt: laut, spöttisch und ein Mensch, der zum Drachen werden kann. Er leiht Finn seine Kraft; seine Meteoritenfaust zerschmettert ganze Gruppen.',
+  hero: 'vorian', pal: [[HERO_PAL.vorian, { skin: '#d8c0b0', skinD: '#8a6a58', armor: '#14100c', armorL: '#4a3a24', armorD: '#060402', red: '#8a5a10', redL: '#ffc040', redD: '#3a2204', hair: '#8a1a14', eye: '#ffc040', rim: '#ffb02a' }]],
+  look: { glow: 0.8 }, speed: 175, range: 150, cd: 2.2
+};
+const COMP_ORDER = ['peter', 'lena', 'fabian', 'leo', 'emma', 'fex', 'sendraco', 'minny'];
 function partyMax() { return typeof finnSkills === 'function' && finnSkills().has('fraktion') ? 3 : 2; }
 function companionOpen(id) { const S = storySave(); return SAVE.settings.testUnlock || !!S.cleared[COMPANIONS[id].unlock]; }
 // Figuren, die in spaeteren Kapiteln nicht mehr an Finns Seite stehen (Leo stirbt, Emma wird zur Gegnerin)
@@ -136,6 +142,19 @@ function compAttack(c, tgt, pw) {
       forEnemiesInRadius(c.x + Math.cos(a) * 26, c.y + Math.sin(a) * 18, 44, (en) => dealDamage(en, 11 * pw, 'none', 'fabian', { kb: 70, kx: Math.cos(a), ky: Math.sin(a), norm: true, noMark: true }));
       burstSparks(c.x + Math.cos(a) * 26, c.y - 12 + Math.sin(a) * 18, 3, '#ffd27a'); sfx('whip', 0, 0.06);
     });
+  } else if (id === 'sendraco') { // Meteoritenfaust: Drachenenergie schlaegt von oben ein
+    const tx = tgt.x, ty = tgt.y, r = 92;
+    addEffect({ x: tx, y: ty, dur: 0.28, layer: 2, draw(g, e, k) {
+      const yy = ty - 220 * (1 - k);
+      g.save(); g.globalCompositeOperation = 'lighter'; g.globalAlpha = 0.9;
+      g.drawImage(glowSprite('#ffb02a'), tx - 30, yy - 30, 60, 60);
+      g.strokeStyle = 'rgba(255,200,90,0.6)'; g.lineWidth = 6; g.beginPath(); g.moveTo(tx, yy - 50); g.lineTo(tx, yy); g.stroke();
+      g.restore();
+    } });
+    GAME.later(0.28, () => {
+      forEnemiesInRadius(tx, ty, r, (en) => dealDamage(en, 48 * pw, 'none', 'sendraco', { kb: 260, kx: en.x - tx, ky: en.y - ty, norm: true, noMark: true }));
+      fxRing(tx, ty, 10, r, 0.35, '#ffb02a', 7); fxRing(tx, ty, 6, r * 0.6, 0.3, '#fff0c0', 3); burstSparks(tx, ty - 10, 8, '#ffc040'); sfx('stomp', 0, 0.25); shake(2);
+    });
   } else if (id === 'minny') { // Lichtsaeule aus Himmelsenergie
     const tx = tgt.x, ty = tgt.y, r = 64;
     sfx('palm', 0, 0.12);
@@ -179,4 +198,4 @@ function drawCompanion(g, c, time) {
   g.lineWidth = 3; g.strokeStyle = 'rgba(0,0,0,0.8)'; g.strokeText(nm, c.x, c.y + 14);
   g.fillStyle = D.col; g.fillText(nm, c.x, c.y + 14);
 }
-Object.assign(SRC_NAMES, { fabian: 'Fabian Schneider', peter: 'Peter Kraus', lena: 'Lena Grimm', leo: 'Leo', fex: 'Fex Sanguini', emma: 'Emma Wagner', minny: 'Minny Talen' });
+Object.assign(SRC_NAMES, { fabian: 'Fabian Schneider', peter: 'Peter Kraus', lena: 'Lena Grimm', leo: 'Leo', fex: 'Fex Sanguini', emma: 'Emma Wagner', minny: 'Minny Talen', sendraco: 'Sen Draco' });

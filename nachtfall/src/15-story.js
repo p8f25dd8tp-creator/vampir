@@ -233,12 +233,12 @@ const CHAPTERS = [
       { type: 'survive', n: 480, text: 'Überlebe 8 Minuten', reward: { crystals: 60, bonus: 'heal' } },
       { type: 'mini', text: 'Töte die Dämonenbestie', reward: { crystals: 80, bonus: 'level' } }
     ],
-    reward: { king: true, skills: ['qi2'], text: 'Vampirkönig (Kap. 1371) · zweite Qi-Stufe von Chris' }
+    reward: { king: true, skills: ['qi2'], text: 'Vampirkönig (Kap. 1371) · zweite Qi-Stufe von Chris · Sen Draco erwacht in der Steintafel' }
   },
   {
     n: 10, id: 'graham', title: 'Graham', src: 'Kapitel 1409–1572', missions: [55, 57], place: 'Grahams Front', theme: 'roterhimmel', tier: 4,
     intro: [
-      'Vampire und Menschen kämpfen offen zusammen. Finn infiltriert Mutterschiffe, Emma geht ins Exil.',
+      'Vampire und Menschen kämpfen offen zusammen. Finn infiltriert Mutterschiffe, Emma geht ins Exil. Aus der Steintafel in seinem System spricht nun Sen Draco zu ihm — ein uraltes Wesen, das sich über ihn lustig macht und ihm doch seine Kraft leiht.',
       'An der entscheidenden Front stellt sich Finn dem Anführer der Dalki — mit einer Belastung, die sein eigenes Überleben gefährdet.'
     ],
     diff: { hp: 2.25, count: 1.15, dmg: 1.6 },
@@ -287,7 +287,7 @@ const CHAPTERS = [
     n: 12, id: 'vergessen', title: 'Die vergessene Legende', src: 'Kapitel 1986–2107', missions: [67, 70], place: 'Vampirsiedlung und der Dschungel des Daisy-Planeten', theme: 'bestienplanet', tier: 6,
     intro: [
       'Das Portal ist geschlossen, doch der Preis ist hoch: Kaum jemand erinnert sich noch an Finn — nur Minny. Unerkannt dient er als einfacher Wachmann der neunten Familie, trainiert Ronkin und wird Vater: Galen kommt zur Welt.',
-      'Auf dem Daisy-Planeten brechen Dämonen-Bestien aus dem Dschungel. Und Jim Eno ist zurück — gestärkt durch fremdes Blut, das ihn unheimlich mächtig macht.'
+      'Auf dem Daisy-Planeten brechen Dämonen-Bestien aus dem Dschungel. Sen Draco hat Finns System verlassen und trägt einen eigenen Drachenkörper — jetzt stellt er sich gegen ihn. Und Jim Eno ist zurück, gestärkt durch fremdes Blut.'
     ],
     diff: { hp: 2.75, count: 1.16, dmg: 1.7 },
     roles: {
@@ -296,14 +296,14 @@ const CHAPTERS = [
       knight: defEnemy('c12_wache', 'knight', 'v_ritter', 'Söldner der dritten Familie', { armor: 5 }),
       witch: defEnemy('c12_xblut', 'witch', 'v_magier', 'Vampir mit X-Blut', { shot: 'blood', flier: false }),
       brute: defEnemy('c12_horde', 'brute', 'q_koenig', 'Dämonen-Bestie', { splits: 0, hp: 220 }),
-      captain: defEnemy('c12_nest', 'captain', 'q_daemon', 'Hordenmutter mit Nestkristall', { scale: 1.4, hp: 5600 }),
+      captain: defEnemy('c12_draco', 'captain', 'sendraco_h', 'Sen Draco', { scale: 1.35, hp: 6400 }),
       boss: defBoss('c12_boss', 'jim', 'Jim Eno', 38000, { bellShot: 'blood' })
     },
     texts: { swarm: 'Aasflieger über dem leuchtenden Dschungel!', ring: 'Drei Hordenwellen zugleich!', boss: 'Jim Eno spürt deine Aura — und kommt selbst.' },
     quests: [
       { type: 'kill', role: 'ghoul', n: 400, text: 'Halte 400 Dschungelbestien auf', reward: { crystals: 100, bonus: 'level' } },
       { type: 'survive', n: 480, text: 'Beschütze die Schüler 8 Minuten', reward: { crystals: 90, bonus: 'heal' } },
-      { type: 'mini', text: 'Zerschlage die Hordenmutter', reward: { crystals: 110, bonus: 'level' } }
+      { type: 'mini', text: 'Überstehe den Kampf gegen Sen Draco', reward: { crystals: 110, bonus: 'level' } }
     ],
     reward: { text: 'Minny Talen kämpft ab jetzt an deiner Seite' }
   },

@@ -7116,6 +7116,7 @@ Object.assign(ENEMY_ART, {
   dalkiW: dalkiArt({ spikes: 4, cols: DCOL.wolf, fur: true }, 84, '#ffb02a'),
   bat_aas: palArt('bat', [[EPAL.bat, { fur: '#2a2420', furL: '#5a4a40', wing: '#3a302a', wingL: '#6a5a4a', eye: '#ff6a2a' }]], '#ff8a5a'),
   // Kapitel 4: Vampir-Siedlung (Heldenfiguren umgefaerbt)
+  sendraco_h: heroArt('vorian', [[HERO_PAL.vorian, { skin: '#d8c0b0', skinD: '#8a6a58', armor: '#14100c', armorL: '#4a3a24', armorD: '#060402', red: '#8a5a10', redL: '#ffc040', redD: '#3a2204', hair: '#8a1a14', eye: '#ffc040', rim: '#ffb02a' }]], { glow: 0.8 }, '#ffb02a', 124),
   v_wache: heroArt('nyx', [[HERO_PAL.nyx, { cloak: '#2a1418', cloakL: '#5a2a32', cloakD: '#100608', scarf: '#6a0a18', scarfL: '#ff3a4e', eye: '#ff3a4e', rim: '#ff3a4e' }]], { flow: 0.2 }, '#ff3a4e', 110),
   v_ritter: heroArt('vorian', [[HERO_PAL.vorian, { armor: '#2a2a32', armorL: '#5a5a66', red: '#6a0a1a', redL: '#c0183a', hair: '#1a1418' }]], { glow: 0.4 }, '#ff3a4e', 120),
   v_magier: heroArt('liora', [[HERO_PAL.liora, { coat: '#3a0a2a', coatL: '#7a1a5a', coatD: '#1a0410', hair: '#e8e0e8', hairL: '#ffffff' }]], { rage: 0.5 }, '#ff5ab0', 110),
@@ -7553,12 +7554,12 @@ const CHAPTERS = [
       { type: 'survive', n: 480, text: 'Überlebe 8 Minuten', reward: { crystals: 60, bonus: 'heal' } },
       { type: 'mini', text: 'Töte die Dämonenbestie', reward: { crystals: 80, bonus: 'level' } }
     ],
-    reward: { king: true, skills: ['qi2'], text: 'Vampirkönig (Kap. 1371) · zweite Qi-Stufe von Chris' }
+    reward: { king: true, skills: ['qi2'], text: 'Vampirkönig (Kap. 1371) · zweite Qi-Stufe von Chris · Sen Draco erwacht in der Steintafel' }
   },
   {
     n: 10, id: 'graham', title: 'Graham', src: 'Kapitel 1409–1572', missions: [55, 57], place: 'Grahams Front', theme: 'roterhimmel', tier: 4,
     intro: [
-      'Vampire und Menschen kämpfen offen zusammen. Finn infiltriert Mutterschiffe, Emma geht ins Exil.',
+      'Vampire und Menschen kämpfen offen zusammen. Finn infiltriert Mutterschiffe, Emma geht ins Exil. Aus der Steintafel in seinem System spricht nun Sen Draco zu ihm — ein uraltes Wesen, das sich über ihn lustig macht und ihm doch seine Kraft leiht.',
       'An der entscheidenden Front stellt sich Finn dem Anführer der Dalki — mit einer Belastung, die sein eigenes Überleben gefährdet.'
     ],
     diff: { hp: 2.25, count: 1.15, dmg: 1.6 },
@@ -7607,7 +7608,7 @@ const CHAPTERS = [
     n: 12, id: 'vergessen', title: 'Die vergessene Legende', src: 'Kapitel 1986–2107', missions: [67, 70], place: 'Vampirsiedlung und der Dschungel des Daisy-Planeten', theme: 'bestienplanet', tier: 6,
     intro: [
       'Das Portal ist geschlossen, doch der Preis ist hoch: Kaum jemand erinnert sich noch an Finn — nur Minny. Unerkannt dient er als einfacher Wachmann der neunten Familie, trainiert Ronkin und wird Vater: Galen kommt zur Welt.',
-      'Auf dem Daisy-Planeten brechen Dämonen-Bestien aus dem Dschungel. Und Jim Eno ist zurück — gestärkt durch fremdes Blut, das ihn unheimlich mächtig macht.'
+      'Auf dem Daisy-Planeten brechen Dämonen-Bestien aus dem Dschungel. Sen Draco hat Finns System verlassen und trägt einen eigenen Drachenkörper — jetzt stellt er sich gegen ihn. Und Jim Eno ist zurück, gestärkt durch fremdes Blut.'
     ],
     diff: { hp: 2.75, count: 1.16, dmg: 1.7 },
     roles: {
@@ -7616,14 +7617,14 @@ const CHAPTERS = [
       knight: defEnemy('c12_wache', 'knight', 'v_ritter', 'Söldner der dritten Familie', { armor: 5 }),
       witch: defEnemy('c12_xblut', 'witch', 'v_magier', 'Vampir mit X-Blut', { shot: 'blood', flier: false }),
       brute: defEnemy('c12_horde', 'brute', 'q_koenig', 'Dämonen-Bestie', { splits: 0, hp: 220 }),
-      captain: defEnemy('c12_nest', 'captain', 'q_daemon', 'Hordenmutter mit Nestkristall', { scale: 1.4, hp: 5600 }),
+      captain: defEnemy('c12_draco', 'captain', 'sendraco_h', 'Sen Draco', { scale: 1.35, hp: 6400 }),
       boss: defBoss('c12_boss', 'jim', 'Jim Eno', 38000, { bellShot: 'blood' })
     },
     texts: { swarm: 'Aasflieger über dem leuchtenden Dschungel!', ring: 'Drei Hordenwellen zugleich!', boss: 'Jim Eno spürt deine Aura — und kommt selbst.' },
     quests: [
       { type: 'kill', role: 'ghoul', n: 400, text: 'Halte 400 Dschungelbestien auf', reward: { crystals: 100, bonus: 'level' } },
       { type: 'survive', n: 480, text: 'Beschütze die Schüler 8 Minuten', reward: { crystals: 90, bonus: 'heal' } },
-      { type: 'mini', text: 'Zerschlage die Hordenmutter', reward: { crystals: 110, bonus: 'level' } }
+      { type: 'mini', text: 'Überstehe den Kampf gegen Sen Draco', reward: { crystals: 110, bonus: 'level' } }
     ],
     reward: { text: 'Minny Talen kämpft ab jetzt an deiner Seite' }
   },
@@ -8153,7 +8154,13 @@ COMPANIONS.minny = {
   hero: 'liora', pal: [[HERO_PAL.liora, { skin: '#8a5a40', coat: '#1a1420', coatL: '#4a3a5a', coatD: '#08060c', hair: '#1a100c', hairL: '#4a3024', eye: '#f4f0ff', rim: '#f4f0ff' }]],
   look: {}, speed: 185, range: 200, cd: 1.5
 };
-const COMP_ORDER = ['peter', 'lena', 'fabian', 'leo', 'emma', 'fex', 'minny'];
+COMPANIONS.sendraco = {
+  name: 'Sen Draco', role: 'Stimme aus der Steintafel · Drachenmensch', unlock: 9, until: 11, col: '#ffb02a',
+  desc: 'Ein uraltes Wesen, das in der Steintafel in Finns System lebt: laut, spöttisch und ein Mensch, der zum Drachen werden kann. Er leiht Finn seine Kraft; seine Meteoritenfaust zerschmettert ganze Gruppen.',
+  hero: 'vorian', pal: [[HERO_PAL.vorian, { skin: '#d8c0b0', skinD: '#8a6a58', armor: '#14100c', armorL: '#4a3a24', armorD: '#060402', red: '#8a5a10', redL: '#ffc040', redD: '#3a2204', hair: '#8a1a14', eye: '#ffc040', rim: '#ffb02a' }]],
+  look: { glow: 0.8 }, speed: 175, range: 150, cd: 2.2
+};
+const COMP_ORDER = ['peter', 'lena', 'fabian', 'leo', 'emma', 'fex', 'sendraco', 'minny'];
 function partyMax() { return typeof finnSkills === 'function' && finnSkills().has('fraktion') ? 3 : 2; }
 function companionOpen(id) { const S = storySave(); return SAVE.settings.testUnlock || !!S.cleared[COMPANIONS[id].unlock]; }
 // Figuren, die in spaeteren Kapiteln nicht mehr an Finns Seite stehen (Leo stirbt, Emma wird zur Gegnerin)
@@ -8240,6 +8247,19 @@ function compAttack(c, tgt, pw) {
       forEnemiesInRadius(c.x + Math.cos(a) * 26, c.y + Math.sin(a) * 18, 44, (en) => dealDamage(en, 11 * pw, 'none', 'fabian', { kb: 70, kx: Math.cos(a), ky: Math.sin(a), norm: true, noMark: true }));
       burstSparks(c.x + Math.cos(a) * 26, c.y - 12 + Math.sin(a) * 18, 3, '#ffd27a'); sfx('whip', 0, 0.06);
     });
+  } else if (id === 'sendraco') { // Meteoritenfaust: Drachenenergie schlaegt von oben ein
+    const tx = tgt.x, ty = tgt.y, r = 92;
+    addEffect({ x: tx, y: ty, dur: 0.28, layer: 2, draw(g, e, k) {
+      const yy = ty - 220 * (1 - k);
+      g.save(); g.globalCompositeOperation = 'lighter'; g.globalAlpha = 0.9;
+      g.drawImage(glowSprite('#ffb02a'), tx - 30, yy - 30, 60, 60);
+      g.strokeStyle = 'rgba(255,200,90,0.6)'; g.lineWidth = 6; g.beginPath(); g.moveTo(tx, yy - 50); g.lineTo(tx, yy); g.stroke();
+      g.restore();
+    } });
+    GAME.later(0.28, () => {
+      forEnemiesInRadius(tx, ty, r, (en) => dealDamage(en, 48 * pw, 'none', 'sendraco', { kb: 260, kx: en.x - tx, ky: en.y - ty, norm: true, noMark: true }));
+      fxRing(tx, ty, 10, r, 0.35, '#ffb02a', 7); fxRing(tx, ty, 6, r * 0.6, 0.3, '#fff0c0', 3); burstSparks(tx, ty - 10, 8, '#ffc040'); sfx('stomp', 0, 0.25); shake(2);
+    });
   } else if (id === 'minny') { // Lichtsaeule aus Himmelsenergie
     const tx = tgt.x, ty = tgt.y, r = 64;
     sfx('palm', 0, 0.12);
@@ -8283,7 +8303,7 @@ function drawCompanion(g, c, time) {
   g.lineWidth = 3; g.strokeStyle = 'rgba(0,0,0,0.8)'; g.strokeText(nm, c.x, c.y + 14);
   g.fillStyle = D.col; g.fillText(nm, c.x, c.y + 14);
 }
-Object.assign(SRC_NAMES, { fabian: 'Fabian Schneider', peter: 'Peter Kraus', lena: 'Lena Grimm', leo: 'Leo', fex: 'Fex Sanguini', emma: 'Emma Wagner', minny: 'Minny Talen' });
+Object.assign(SRC_NAMES, { fabian: 'Fabian Schneider', peter: 'Peter Kraus', lena: 'Lena Grimm', leo: 'Leo', fex: 'Fex Sanguini', emma: 'Emma Wagner', minny: 'Minny Talen', sendraco: 'Sen Draco' });
 
 /* ---- src/18-bible.js ---- */
 'use strict';
