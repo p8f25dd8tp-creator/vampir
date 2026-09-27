@@ -576,7 +576,7 @@ Object.assign(MISSIONS, {
     fight: {
       arena: { art: 'kantine', w: 380, h: 680, blocks: [{ x: 18, y: 180, w: 70, h: 26 }, { x: 292, y: 180, w: 70, h: 26 }, { x: 18, y: 500, w: 70, h: 26 }, { x: 292, y: 500, w: 70, h: 26 }] },
       playerAt: [190, 480], party: ['raten', 'quinn'],
-      foes: [{ id: 'mono', name: 'Mono · Voraussicht', hp: 60, poise: 5, at: [190, 280], ai: AI_MONO_BOSS, expRate: 1.2, expKill: 40, info: { name: 'Mono', race: 'Mensch', ability: 'Voraussicht (zwei Sekunden)', blood: 'A-' } }],
+      foes: [{ id: 'mono', name: 'Mono · Voraussicht', hp: 90, poise: 5, at: [190, 280], ai: AI_MONO_BOSS, expRate: 1.2, expKill: 40, info: { name: 'Mono', race: 'Mensch', ability: 'Voraussicht (zwei Sekunden)', blood: 'A-' } }],
       npcs: [{ id: 'erin', at: [60, 600], watch: 'foe' }, { id: 'layla', at: [320, 600], watch: 'foe' }, { id: 's2', at: [340, 150], watch: 'foe' }, { id: 's4', at: [30, 150], watch: 'foe' }],
       inspect: true, noDeath: true,
       onTick: (G, dt) => {

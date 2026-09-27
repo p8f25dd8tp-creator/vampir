@@ -134,7 +134,7 @@ canvas#game { position: absolute; inset: 0; display: block; touch-action: none; 
 .hud .party .pm i { position: absolute; left: 0; bottom: 0; height: 4px; background: var(--c); }
 .hud .party .pm.on { background: rgba(40,60,100,.85); box-shadow: 0 0 12px var(--c); }
 .hud .party .pm.dead { opacity: .35; }
-.hud .bank { position: absolute; left: calc(12px + var(--safe-l)); top: calc(120px + var(--safe-t)); display: flex; align-items: center; gap: 6px; font-family: 'Cinzel', serif; font-size: 10px; color: #ffb0b8; text-shadow: 0 1px 2px #000; }
+.hud .bank { position: absolute; left: calc(12px + var(--safe-l)); bottom: calc(168px + var(--safe-b)); display: flex; align-items: center; gap: 6px; font-family: 'Cinzel', serif; font-size: 10px; color: #ffb0b8; text-shadow: 0 1px 2px #000; }
 .hud .bank i { display: block; width: 70px; height: 6px; background: rgba(0,0,0,.6); border: 1px solid rgba(255,90,110,.5); border-radius: 3px; overflow: hidden; }
 .hud .bank i b { display: block; height: 100%; background: linear-gradient(90deg, #8a0a1e, #ff4a5a); }
 .hud .bank small { font-size: 10px; }

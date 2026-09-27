@@ -173,7 +173,7 @@ function startAttack(p, step, charged, special) {
 function releaseCharge(p) {
   const power = p.stateT;
   setState(p, 'idle');
-  if (power >= 0.45) { startAttack(p, 0, true); p.anim.cast = 1; }
+  if (power >= 0.3) { startAttack(p, 0, true); p.anim.cast = 1; }
   else startAttack(p, 0);
 }
 function tired(p) { floatText(p.x, p.y - 70, 'Keine Ausdauer', '#ffd04a'); p.stamDelay = 0.8; }
@@ -224,7 +224,7 @@ function updateFighter(p, dt, mx, my) {
     tvx = mx * spd * 0.3; tvy = my * spd * 0.3;
     p.anim.cast = 0.4 + Math.min(0.6, p.stateT);
     p.stamDelay = 0.3;
-    if (p.stateT > 0.45 && !p.chargeReady) { p.chargeReady = true; sfx('card'); burst(p.x + p.face * 10, p.y - 36, 6, '#ffd070'); }
+    if (p.stateT > 0.3 && !p.chargeReady) { p.chargeReady = true; sfx('card'); burst(p.x + p.face * 10, p.y - 36, 6, '#ffd070'); }
   } else if (p.state === 'dodge') {
     const k = p.stateT / 0.3;
     p.ghostT = (p.ghostT || 0) - dt;

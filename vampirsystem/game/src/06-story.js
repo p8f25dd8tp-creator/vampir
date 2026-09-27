@@ -125,7 +125,7 @@ function renderSceneBg(t) {
 /* ------------------------------------------------------------ Kampf-HUD */
 function buildHud(opt) {
   UI.root.innerHTML = `<div class="hud">
-    <div class="me"><div class="nm">QUINN TALEN<small id="lvl">Stufe ${SAVE.quinn.level}</small></div>
+    <div class="me"><div class="nm"><span id="pname">QUINN TALEN</span><small id="lvl">Stufe ${SAVE.quinn.level}</small></div>
       <div class="bar xp"><i id="xpb"></i></div>
       <div class="bar hp"><i id="hpb"></i></div><div class="hpnum" id="hpn"></div>
       <div class="bar st" id="stbw"><i id="stb"></i></div>
@@ -165,7 +165,7 @@ function updateHud() {
   if (!UI.hud || !G) return;
   const p = G.player, C = UI.cache;
   const hpK = p.char + p.hp + '/' + p.maxHp;
-  if (C.hp !== hpK) { C.hp = hpK; $('#hpb').style.width = (p.hp / p.maxHp * 100) + '%'; $('#hpn').textContent = `${CHARS[p.char] ? CHARS[p.char].name.toUpperCase() + ' · ' : ''}HP ${Math.ceil(p.hp)} / ${p.maxHp}`; }
+  if (C.hp !== hpK) { C.hp = hpK; $('#hpb').style.width = (p.hp / p.maxHp * 100) + '%'; $('#hpn').textContent = `HP ${Math.ceil(p.hp)} / ${p.maxHp}`; }
   const xk = SAVE.quinn.level + ':' + SAVE.quinn.exp + ':' + Math.round(G.expGain || 0);
   if (C.xp !== xk) { C.xp = xk; $('#lvl').textContent = 'Stufe ' + SAVE.quinn.level + (SAVE.quinn.points ? ' · +' + SAVE.quinn.points : ''); $('#xpb').style.width = Math.min(100, (SAVE.quinn.exp + (G.expGain || 0)) / expNeed(SAVE.quinn.level) * 100) + '%'; }
   const st = Math.round(p.stam);
@@ -177,7 +177,7 @@ function updateHud() {
   }
   const h = G.hint ? G.hint.text : '';
   if (C.hint !== h) { C.hint = h; $('#hint').innerHTML = h; }
-  const ch = p.state === 'charge' && p.stateT > 0.45;
+  const ch = p.state === 'charge' && p.stateT > 0.3;
   if (C.ch !== ch) { C.ch = ch; $('#bAtk').classList.toggle('charge', ch); }
   // Tag-Team-Knoepfe
   if (G.party && G.party.length > 1) {
@@ -192,7 +192,8 @@ function updateHud() {
   // Skills nur fuer Quinn
   const isQ = p.char === 'quinn';
   if (C.isQ !== isQ) { C.isQ = isQ; UI.hud.querySelectorAll('.pad .skill, .pad .insp').forEach((b) => { b.style.visibility = isQ ? '' : 'hidden'; }); }
-  const bk = SAVE.quinn.skills.includes('bloodbank') && !G.opt.hub ? SAVE.quinn.bank : -1;
+  const bk = SAVE.quinn.skills.includes('bloodbank') && !G.opt.hub && isQ ? SAVE.quinn.bank : -1;
+  if (C.pn !== p.char) { C.pn = p.char; $('#pname').textContent = p.char === 'quinn' ? 'QUINN TALEN' : CHARS[p.char].name.toUpperCase(); }
   if (C.bank !== bk) { C.bank = bk; $('#bank').innerHTML = bk >= 0 ? `<span>BLUTBANK</span><i><b style="width:${bk}%"></b></i><small>${bk} ml</small>` : ''; }
   const atkTxt = G.poi ? (G.poi.btn || 'LOS') : 'ANGRIFF';
   if (C.atk !== atkTxt) { C.atk = atkTxt; $('#bAtk').textContent = atkTxt; $('#bAtk').classList.toggle('act', !!G.poi); }

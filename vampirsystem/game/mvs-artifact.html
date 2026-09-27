@@ -127,6 +127,20 @@ canvas#game { position: absolute; inset: 0; display: block; touch-action: none; 
 .strow .plus { width: 40px; height: 40px; border-radius: 8px; border: 1.5px solid var(--sysline); background: #10284a; color: #fff; font-size: 22px; font-weight: 800; }
 .strow .plus:disabled { opacity: .3; }
 
+.pad .skill.s2 { right: 4px; bottom: 182px; border-color: rgba(150,210,255,.75); background: radial-gradient(circle at 40% 35%, rgba(60,120,200,.7), rgba(6,16,34,.85)); }
+.pad .skill.s3 { right: 80px; bottom: 180px; border-color: rgba(255,210,120,.75); background: radial-gradient(circle at 40% 35%, rgba(200,150,60,.7), rgba(34,22,6,.85)); }
+.pad { height: 260px; }
+.hud .party { position: absolute; left: calc(10px + var(--safe-l)); bottom: calc(18px + var(--safe-b)); display: flex; flex-direction: column; gap: 6px; pointer-events: none; z-index: 2; }
+.hud .party .pm { pointer-events: auto; width: 96px; height: 40px; border-radius: 10px; border: 1.5px solid var(--c); background: rgba(6,10,20,.75); color: #fff;
+  font-family: 'Cinzel', serif; font-size: 11px; font-weight: 800; letter-spacing: .06em; position: relative; overflow: hidden; text-align: left; padding: 4px 8px; }
+.hud .party .pm i { position: absolute; left: 0; bottom: 0; height: 4px; background: var(--c); }
+.hud .party .pm.on { background: rgba(40,60,100,.85); box-shadow: 0 0 12px var(--c); }
+.hud .party .pm.dead { opacity: .35; }
+.hud .bank { position: absolute; left: calc(12px + var(--safe-l)); bottom: calc(168px + var(--safe-b)); display: flex; align-items: center; gap: 6px; font-family: 'Cinzel', serif; font-size: 10px; color: #ffb0b8; text-shadow: 0 1px 2px #000; }
+.hud .bank i { display: block; width: 70px; height: 6px; background: rgba(0,0,0,.6); border: 1px solid rgba(255,90,110,.5); border-radius: 3px; overflow: hidden; }
+.hud .bank i b { display: block; height: 100%; background: linear-gradient(90deg, #8a0a1e, #ff4a5a); }
+.hud .bank small { font-size: 10px; }
+
 </style>
 
 <canvas id="game"></canvas>
@@ -184,7 +198,7 @@ function shade(h, f) {
 const SAVE_KEY = 'mvs.save.v1';
 const DEFAULT_SAVE = {
   progress: {},        // missionId -> { done, best }
-  quinn: { level: 1, exp: 0, points: 0, stats: { str: 10, agi: 10, sta: 10 }, skills: [], blood: {} },
+  quinn: { level: 1, exp: 0, points: 0, stats: { str: 10, agi: 10, sta: 10 }, skills: [], blood: {}, gear: {}, bank: 0, bloodFrom: {} },
   day: { n: 1, night: false, sun: 0, water: false },
   flags: {},
   credits: 10,
@@ -773,6 +787,24 @@ function drawPerson(g, P, L) {
       limb(g, A.ex, A.ey, A.hx, A.hy, 2.1, 1.8); paint(g, shade(L.top, dk - 0.05), 'rgba(0,0,0,0.6)', 0.6);
       g.beginPath(); g.arc(A.hx, A.hy, 1.9, 0, TAU); paint(g, shade(L.skin, dk), 'rgba(40,20,20,0.7)', 0.5);
     }
+    if (L.gauntlets && !claws) { // schwarze Handschuhe mit kleinen Hoernern
+      const a = Math.atan2(A.hy - A.ey, A.hx - A.ex);
+      g.beginPath(); g.arc(A.hx, A.hy, 2.5, 0, TAU); paint(g, '#141016', 'rgba(0,0,0,0.8)', 0.5);
+      g.fillStyle = '#d8d0c0'; g.beginPath(); g.moveTo(A.hx + Math.cos(a - 1.6) * 2, A.hy + Math.sin(a - 1.6) * 2); g.lineTo(A.hx + Math.cos(a - 2.2) * 5, A.hy + Math.sin(a - 2.2) * 5); g.lineTo(A.hx + Math.cos(a - 1.2) * 2.2, A.hy + Math.sin(a - 1.2) * 2.2); g.fill();
+    }
+    if (front && L.weapon === 'bow') {
+      g.save(); g.translate(A.hx, A.hy); g.rotate(P.cast > 0.1 ? P.aim : -0.3);
+      g.strokeStyle = '#5a3a2a'; g.lineWidth = 1.4; g.beginPath(); g.arc(-3, 0, 9, -1.2, 1.2); g.stroke();
+      g.strokeStyle = 'rgba(230,230,240,0.8)'; g.lineWidth = 0.5; g.beginPath(); g.moveTo(-3 + Math.cos(-1.2) * 9, Math.sin(-1.2) * 9); g.lineTo(-3 - P.cast * 4, 0); g.lineTo(-3 + Math.cos(1.2) * 9, Math.sin(1.2) * 9); g.stroke();
+      g.restore();
+    }
+    if (front && L.weapon === 'sword') {
+      const a = P.cast > 0.1 ? P.aim - 0.4 : -1.1;
+      g.save(); g.translate(A.hx, A.hy); g.rotate(a);
+      g.fillStyle = lg(g, 0, -1, 0, 1, [0, '#ffffff', 1, '#9ab8d8']); g.beginPath(); g.moveTo(2, -1); g.lineTo(22, -0.4); g.lineTo(24, 0.4); g.lineTo(2, 1); g.closePath(); g.fill();
+      g.fillStyle = '#2a3a5a'; g.fillRect(-3, -1.2, 5, 2.4); g.fillRect(1.5, -3, 1.2, 6);
+      g.restore();
+    }
     if (front && L.handGlow && P.cast > 0.05) glowDot(g, A.hx, A.hy, 5 + P.cast * 5, L.handGlow, 0.7 * P.cast);
   };
   leg(P.legB, -0.38); arm(P.armB, -0.38, false);
@@ -805,7 +837,8 @@ function drawPerson(g, P, L) {
   g.quadraticCurveTo(-3, 5, -4.4, 1.8); g.closePath();
   paint(g, lg(g, 2, -6, -3, 5, [0, shade(L.skin, 0.3), 0.6, L.skin, 1, L.skinD]), 'rgba(50,30,30,0.7)', 0.55);
   g.beginPath(); g.moveTo(-1.8, -1.4); g.lineTo(-4.2, -3.6); g.lineTo(-2.2, 1.2); g.closePath(); paint(g, L.skinD, 'rgba(50,30,30,0.6)', 0.4);
-  if (L.glow) eye(g, 2.6, -1.6, 1, L.eye);
+  if (L.blind) { g.strokeStyle = 'rgba(60,40,30,0.8)'; g.lineWidth = 0.6; g.beginPath(); g.moveTo(1.6, -1.6); g.lineTo(3.8, -1.4); g.stroke(); }
+  else if (L.glow) eye(g, 2.6, -1.6, 1, L.eye);
   else { g.fillStyle = '#fff'; g.beginPath(); g.ellipse(2.5, -1.6, 0.9, 0.7, 0, 0, TAU); g.fill(); g.fillStyle = L.eye; g.beginPath(); g.arc(2.8, -1.6, 0.5, 0, TAU); g.fill(); }
   g.strokeStyle = shade(L.hair, 0.1); g.lineWidth = 0.8; g.beginPath(); g.moveTo(1, -3); g.lineTo(4, L.angry ? -2 : -2.6); g.stroke();
   if (L.glasses) {
@@ -843,8 +876,8 @@ const LOOKS = {
   quinn: { outfit: 'hoodie', top: '#5c5e6c', topL: '#8a8c9a', topD: '#2c2e38', leg: '#34405a', legD: '#1a2030', shoe: '#e8e8ea', skin: '#e8c6ac', skinD: '#b08a74', hair: '#2a1c16', eye: '#6a4a2a', glasses: true, hairStyle: 'messy', rim: '#9ab0ff' },
   peter: { outfit: 'uniform', top: '#4a5a44', topL: '#76866e', topD: '#222a1e', leg: '#2e3628', legD: '#161a12', shoe: '#2a2420', skin: '#e8cdb0', skinD: '#a88a70', hair: '#8a6a3a', eye: '#4a6a3a', hairStyle: 'short', trim: '#b0a070', rim: '#9aff9a' },
   vorden: { outfit: 'uniform', top: '#2a3a5a', topL: '#4a5e8a', topD: '#10182a', leg: '#1e2638', legD: '#0c1018', shoe: '#1a1a20', skin: '#f0dccc', skinD: '#b09888', hair: '#e8cf7a', eye: '#4a7ac8', hairStyle: 'short', trim: '#e8cf7a', rim: '#ffd27a' },
-  layla: { outfit: 'uniform', top: '#3a2a5a', topL: '#5e4a8a', topD: '#180e2a', leg: '#221a30', legD: '#100c18', shoe: '#1a1620', skin: '#f0d8cc', skinD: '#b0968a', hair: '#2a1a2a', eye: '#6a4a8a', hairStyle: 'long', trim: '#c8a0ff', rim: '#c8a0ff' },
-  erin: { outfit: 'uniform', top: '#2a3a4a', topL: '#4a6278', topD: '#101a24', leg: '#1e2630', legD: '#0c1016', shoe: '#1a1a1e', skin: '#f4e4dc', skinD: '#b8a49c', hair: '#dce4f0', eye: '#6aa8d8', hairStyle: 'bun', trim: '#9ad8ff', rim: '#9ad8ff' },
+  layla: { weapon: 'bow', outfit: 'uniform', top: '#3a2a5a', topL: '#5e4a8a', topD: '#180e2a', leg: '#221a30', legD: '#100c18', shoe: '#1a1620', skin: '#f0d8cc', skinD: '#b0968a', hair: '#2a1a2a', eye: '#6a4a8a', hairStyle: 'long', trim: '#c8a0ff', rim: '#c8a0ff' },
+  erin: { weapon: 'sword', outfit: 'uniform', top: '#2a3a4a', topL: '#4a6278', topD: '#101a24', leg: '#1e2630', legD: '#0c1016', shoe: '#1a1a1e', skin: '#f4e4dc', skinD: '#b8a49c', hair: '#dce4f0', eye: '#6aa8d8', hairStyle: 'bun', trim: '#9ad8ff', rim: '#9ad8ff' },
   mono: { outfit: 'uniform', top: '#1a2440', topL: '#3a4a78', topD: '#080c18', leg: '#141a2a', legD: '#080a12', shoe: '#101014', skin: '#e8d0c0', skinD: '#a88878', hair: '#2a1e14', eye: '#6ab0ff', hairStyle: 'short', trim: '#6ab0ff', rim: '#6ab0ff' },
   zweit: { outfit: 'uniform', top: '#3a3040', topL: '#5e5068', topD: '#18121c', leg: '#201a24', legD: '#0e0a10', shoe: '#141014', skin: '#e0c4a8', skinD: '#a08468', hair: '#3a2a1e', eye: '#5a4a3a', hairStyle: 'spiky', trim: '#b0a070', rim: '#b0a0c0' },
   jane: { outfit: 'uniform', top: '#3a4a3a', topL: '#5e7260', topD: '#182018', leg: '#222a22', legD: '#0e120e', shoe: '#141410', skin: '#e8ccb4', skinD: '#a88c74', hair: '#5a3a24', eye: '#4a5a3a', hairStyle: 'bun', trim: '#e0c050', rim: '#e0c050' },
@@ -856,6 +889,12 @@ const LOOKS = {
   rylee: { outfit: 'uniform', top: '#4a3a2a', topL: '#76604a', topD: '#201810', leg: '#2a2218', legD: '#120e0a', shoe: '#1a1410', skin: '#e4c4a4', skinD: '#a48464', hair: '#5a3a1a', eye: '#6a5a3a', hairStyle: 'short', trim: '#b0a070', angry: true, rim: '#c0c8d0' },
   dan: { outfit: 'uniform', top: '#2a2a30', topL: '#4e4e58', topD: '#101014', leg: '#1e1e24', legD: '#0c0c10', shoe: '#101012', skin: '#c8a080', skinD: '#886040', hair: '#101010', eye: '#3a2a1a', hairStyle: 'short', trim: '#909098', angry: true, rim: '#d0a060' },
   hayley: { outfit: 'shirt', top: '#e8ecf0', topL: '#ffffff', topD: '#a8b0b8', leg: '#3a4a5a', legD: '#1a222a', shoe: '#e8e8ea', skin: '#f0d4c0', skinD: '#b09480', hair: '#c86a3a', eye: '#4a6a3a', hairStyle: 'bun', rim: '#9ad8ff' },
+  raten: { outfit: 'uniform', top: '#2a3a5a', topL: '#4a5e8a', topD: '#10182a', leg: '#1e2638', legD: '#0c1018', shoe: '#1a1a20', skin: '#f0dccc', skinD: '#b09888', hair: '#e8cf7a', eye: '#ff5a3a', glow: true, angry: true, hairStyle: 'spiky', trim: '#ff8a3a', rim: '#ff8a3a', handGlow: '#6ec8ff' },
+  fei: { outfit: 'uniform', top: '#4a2a3a', topL: '#76465e', topD: '#200e18', leg: '#241820', legD: '#100a0e', shoe: '#141014', skin: '#e8ccb8', skinD: '#a88c78', hair: '#1a1a1a', eye: '#5a3a3a', hairStyle: 'long', trim: '#b0a070', angry: true, rim: '#d0a0c0' },
+  loop: { outfit: 'uniform', top: '#3a3a2a', topL: '#62624a', topD: '#1a1a10', leg: '#20201a', legD: '#0e0e0a', shoe: '#141410', skin: '#d8b494', skinD: '#987454', hair: '#8a5a2a', eye: '#4a3a2a', hairStyle: 'messy', trim: '#b0a070', angry: true, rim: '#c0b080' },
+  brandon: { outfit: 'uniform', top: '#2a4a3a', topL: '#46765e', topD: '#10201a', leg: '#1a2a22', legD: '#0a120e', shoe: '#101410', skin: '#ecd0b8', skinD: '#ac9078', hair: '#c8a060', eye: '#3a5a4a', hairStyle: 'short', trim: '#b0a070', angry: true, rim: '#9ad0b0', weapon: 'sword' },
+  leo: { outfit: 'shirt', top: '#2a2420', topL: '#4a4038', topD: '#100c0a', leg: '#1a1612', legD: '#0a0806', shoe: '#1a1410', skin: '#d8b89a', skinD: '#987858', hair: '#d8b89a', eye: '#d8d8d8', hairStyle: 'short', rim: '#5ff0d0', weapon: 'sword', blind: true },
+  fay: { outfit: 'uniform', top: '#5a4a2a', topL: '#8a7648', topD: '#2a200e', leg: '#2a2418', legD: '#14100a', shoe: '#1a1410', skin: '#f0d8c8', skinD: '#b09888', hair: '#e8e0d0', eye: '#6a8aa8', hairStyle: 'bun', trim: '#e0c050', rim: '#e0c050', weapon: 'sword' },
   kyle: { outfit: 'uniform', top: '#6a2a1e', topL: '#9a4a36', topD: '#30100a', leg: '#2a1c18', legD: '#140c0a', shoe: '#1a1414', skin: '#e0b894', skinD: '#9a7458', hair: '#c8781e', eye: '#ffa030', hairStyle: 'spiky', trim: '#d0a060', angry: true, rim: '#ff9a3a' }
 };
 const HUMAN_BOX = 120;
@@ -974,6 +1013,38 @@ const COMBO = [
   { dmg: 2, win: 0.11, act: 0.08, rec: 0.32, reach: 36, arc: 1.1, kb: 190, cost: 14, lunge: 90, kick: true }
 ];
 const CHARGED = { dmg: 3, win: 0.05, act: 0.09, rec: 0.36, reach: 38, arc: 1.0, kb: 280, cost: 22, lunge: 140, poise: 3 };
+// Kampfsaetze der spielbaren Figuren (Tag-Team)
+const KITS = {
+  fist: { combo: COMBO, charged: CHARGED },
+  bow: { // Layla: Bestienbogen
+    combo: [{ dmg: 1.5, win: 0.14, act: 0.05, rec: 0.3, cost: 8, lunge: -30, proj: { sp: 430, max: 230, col: '#c8a0ff', kind: 'arrow' } }],
+    charged: { dmg: 3.5, win: 0.1, act: 0.05, rec: 0.42, cost: 20, lunge: -50, poise: 2, proj: { sp: 560, max: 320, col: '#f0e0ff', kind: 'arrow', pierce: true } }
+  },
+  sword: { // Erin: Schwert und Eis
+    combo: [
+      { dmg: 1.5, win: 0.08, act: 0.08, rec: 0.2, reach: 44, arc: 1.2, kb: 60, cost: 10, lunge: 50 },
+      { dmg: 1.5, win: 0.08, act: 0.08, rec: 0.22, reach: 44, arc: 1.2, kb: 70, cost: 10, lunge: 50 },
+      { dmg: 2.5, win: 0.12, act: 0.1, rec: 0.34, reach: 50, arc: 1.3, kb: 180, cost: 14, lunge: 90, kick: true }
+    ],
+    charged: { dmg: 3, win: 0.06, act: 0.1, rec: 0.4, reach: 64, arc: 1.6, kb: 120, cost: 22, lunge: 40, poise: 3, ice: true }
+  },
+  raten: { // Raten: schnelle Schlaege; aufgeladen Telekinese + Wasser zugleich
+    combo: [
+      { dmg: 1, win: 0.05, act: 0.06, rec: 0.12, reach: 30, arc: 1.0, kb: 40, cost: 7, lunge: 60 },
+      { dmg: 1, win: 0.05, act: 0.06, rec: 0.12, reach: 30, arc: 1.0, kb: 40, cost: 7, lunge: 60 },
+      { dmg: 1, win: 0.05, act: 0.06, rec: 0.12, reach: 30, arc: 1.0, kb: 40, cost: 7, lunge: 60 },
+      { dmg: 2, win: 0.09, act: 0.08, rec: 0.3, reach: 36, arc: 1.1, kb: 200, cost: 12, lunge: 90, kick: true }
+    ],
+    charged: { dmg: 4, win: 0.12, act: 0.06, rec: 0.45, cost: 26, lunge: 0, poise: 4, double: true, proj: { sp: 380, max: 180, col: '#6ec8ff', kind: 'water' } }
+  }
+};
+const CHARS = {
+  quinn: { name: 'Quinn', look: 'quinn', kit: 'fist' },
+  layla: { name: 'Layla', look: 'layla', kit: 'bow', hp: 12, str: 10, agi: 12, range: 150 },
+  erin: { name: 'Erin', look: 'erin', kit: 'sword', hp: 16, str: 12, agi: 12 },
+  raten: { name: 'Raten', look: 'raten', kit: 'raten', hp: 18, str: 12, agi: 13 }
+};
+const HAMMER = { dmg: 4, win: 0.14, act: 0.08, rec: 0.38, reach: 38, arc: 1.0, kb: 340, cost: 30, lunge: 60, poise: 4, kick: true, hammer: true };
 
 function newFight(opt) {
   G = {
@@ -981,11 +1052,17 @@ function newFight(opt) {
     arena: opt.arena, ents: [], tele: [], fx: [], texts: [], later: [],
     cam: { x: 0, y: 0 }, hint: null, proj: [], counterFlash: 0, opt, stats: { hits: 0, perfect: 0, taken: 0 }
   };
-  const p = mkEnt('quinn', LOOKS.quinn, opt.playerAt[0], opt.playerAt[1]);
-  p.team = 0; applyStats(p); p.hp = Math.max(1, p.maxHp - (SAVE.quinn.thirst || 0));
-  p.stam = p.maxStam; p.stamDelay = 0; p.counterT = 0; p.combo = 0; p.buffer = 0; p.holdT = 0; p.dodgeStart = -9;
-  G.player = p;
-  if (opt.mask) p.extra = { mask: true };
+  G.party = [];
+  (opt.party || ['quinn']).forEach((cid, i) => {
+    const C = CHARS[cid], e = mkEnt(cid, LOOKS[C.look], opt.playerAt[0] + (i ? (i % 2 ? -34 : 34) : 0), opt.playerAt[1] + (i ? 22 : 0));
+    e.team = 0; e.char = cid; e.kit = C.kit; e.range = C.range || 30;
+    if (cid === 'quinn') { applyStats(e); e.hp = Math.max(1, e.maxHp - (SAVE.quinn.thirst || 0)); if (opt.mask) e.extra = { mask: true }; if (SAVE.quinn.gear.hands) e.extra = Object.assign({}, e.extra, { gauntlets: true }); }
+    else { e.maxHp = e.hp = C.hp; e.str = C.str; e.agi = C.agi; e.maxStam = 100; }
+    e.stam = e.maxStam; e.stamDelay = 0; e.counterT = 0; e.combo = 0; e.buffer = 0; e.holdT = 0; e.dodgeStart = -9; e.aiCd = rand(0.3, 0.8);
+    G.party.push(e);
+  });
+  const p = G.party[opt.lead || 0];
+  G.player = p; G.swapCd = 0;
   for (const f of opt.foes) {
     const e = mkEnt(f.id, LOOKS[f.look || f.id], f.at[0], f.at[1]);
     Object.assign(e, { team: 1, name: f.name, maxHp: f.hp, hp: f.hp, ai: f.ai, poise: f.poise || 3, maxPoise: f.poise || 3, poiseT: 0, phase: 1, cd: f.cd || 0.8, info: f.info, draw: f.draw, fixed: f.fixed, r: f.r || 11, expRate: f.expRate || 0, expKill: f.expKill || 0 });
@@ -1018,7 +1095,8 @@ function updateFight(rdt) {
   if (G.arena.pois) updatePois();
   handleInput(dt);
   if (!G) return;
-  updatePlayer(dt);
+  for (const m of G.party) { if (m === G.player) { const [mx, my] = readMove(); updateFighter(m, dt, mx, my); } else updateAlly(m, dt); }
+  G.swapCd = Math.max(0, G.swapCd - dt);
   for (const e of G.ents) if (e.team === 1) updateFoe(e, dt);
   for (const e of G.ents) if (e.npc) updateNpc(e, dt);
   for (const e of G.ents) {
@@ -1059,12 +1137,15 @@ function handleInput(dt) {
     if (ev === 'atkDown') { p.holdT = 0; tryAttack(p); }
     else if (ev === 'inspect') doInspect(p);
     else if (ev === 'skill1') castBloodSwipe(p);
+    else if (ev === 'skill2') castFlashStep(p);
+    else if (ev === 'skill3') castHammer(p);
+    else if (ev.startsWith && ev.startsWith('swap')) swapTo(+ev.slice(4));
     else if (ev === 'atkUp') { if (p.state === 'charge') releaseCharge(p); p.holdT = -1; }
     else if (ev === 'dodge') tryDodge(p);
   }
   if (INPUT.atkHeld && p.holdT >= 0) p.holdT += dt;
   // lange gehalten und gerade frei -> aufladen
-  if (INPUT.atkHeld && p.holdT > 0.3 && (p.state === 'idle' || (p.state === 'attack' && p.stateT > p.atk.win + p.atk.act)) && p.stam >= CHARGED.cost * 0.5) setState(p, 'charge');
+  if (INPUT.atkHeld && p.holdT > 0.3 && (p.state === 'idle' || (p.state === 'attack' && p.stateT > p.atk.win + p.atk.act)) && p.stam >= KITS[p.kit].charged.cost * 0.5) setState(p, 'charge');
   if (!INPUT.atkHeld && p.state === 'charge') releaseCharge(p);
 }
 
@@ -1075,48 +1156,52 @@ function tryAttack(p) {
   if (p.state === 'charge') return;
   startAttack(p, 0);
 }
-function startAttack(p, step, charged) {
-  const A = charged ? CHARGED : COMBO[step];
+function startAttack(p, step, charged, special) {
+  const K = KITS[p.kit || 'fist'];
+  const A = special || (charged ? K.charged : K.combo[step]);
   if (p.stam < A.cost * 0.4) { tired(p); return; }
   spendStam(p, A.cost);
   p.atk = A; p.combo = step; p.hitDone = false; p.charged = !!charged;
   setState(p, 'attack');
   // Zielhilfe: zum naechsten Gegner in Reichweite drehen
-  const f = nearestFoe(p, 110);
+  const f = nearestFoe(p, A.proj ? 320 : 110);
   if (f) { p.aim = Math.atan2(f.y - p.y, f.x - p.x); p.face = Math.cos(p.aim) >= 0 ? 1 : -1; }
-  else { const [mx, my] = readMove(); p.aim = (mx || my) ? Math.atan2(my, mx) : (p.face > 0 ? 0 : Math.PI); if (mx) p.face = mx > 0 ? 1 : -1; }
+  else { const [mx, my] = p === G.player ? readMove() : [0, 0]; p.aim = (mx || my) ? Math.atan2(my, mx) : (p.face > 0 ? 0 : Math.PI); if (mx) p.face = mx > 0 ? 1 : -1; }
   sfx('whip', 0, 0.04);
 }
 function releaseCharge(p) {
   const power = p.stateT;
   setState(p, 'idle');
-  if (power >= 0.45) { startAttack(p, 0, true); p.anim.cast = 1; }
+  if (power >= 0.3) { startAttack(p, 0, true); p.anim.cast = 1; }
   else startAttack(p, 0);
 }
 function tired(p) { floatText(p.x, p.y - 70, 'Keine Ausdauer', '#ffd04a'); p.stamDelay = 0.8; }
-function tryDodge(p) {
+function tryDodge(p, dir) {
   if (p.state === 'down' || p.state === 'dodge') return;
   if (p.state === 'hurt' && p.stateT < 0.12) return;
-  if (p.stam < 18) { tired(p); return; }
+  if (p.stam < 18) { if (p === G.player) tired(p); return; }
   spendStam(p, 22, 0.5);
-  const [mx, my] = readMove();
+  const [mx, my] = dir || readMove();
   let a = (mx || my) ? Math.atan2(my, mx) : (p.face > 0 ? Math.PI : 0);
   p.dodgeA = a; p.dodgeStart = G.t; p.iframes = SAVE.settings.wideDodge ? 0.34 : 0.26;
   setState(p, 'dodge'); sfx('dodge'); dust(p.x, p.y, 5, 1);
   if (Math.cos(a) !== 0 && (mx || my)) p.face = Math.cos(a) > 0 ? 1 : -1;
 }
 
-function updatePlayer(dt) {
-  const p = G.player;
+function updateFighter(p, dt, mx, my) {
+  if (p.state === 'down') { p.vx *= Math.exp(-dt * 6); p.vy *= Math.exp(-dt * 6); return; }
   p.stateT += dt;
   p.counterT = Math.max(0, p.counterT - dt);
   p.buffer = Math.max(0, p.buffer - dt);
   p.stamDelay -= dt;
   if (p.stamDelay <= 0 && p.state !== 'charge') p.stam = Math.min(p.maxStam, p.stam + 42 * dt);
-  G.inSun = inSun(p);
-  const sunK = G.inSun ? 0.5 : 1;
+  if (p === G.player) G.inSun = inSun(p);
+  const sunK = sunFactor(p);
   const spd = 120 * Math.pow(p.agi * sunK / 10, 0.35);
-  const [mx, my] = readMove();
+  // Blutbank: heilt Quinn automatisch unter 5 HP (10 ml = 5 HP)
+  if (p.char === 'quinn' && SAVE.quinn.skills.includes('bloodbank') && p.hp < 5 && p.hp > 0 && SAVE.quinn.bank >= 10) {
+    SAVE.quinn.bank -= 10; p.hp = Math.min(p.maxHp, p.hp + 5); floatText(p.x, p.y - 80, '+5 Blutbank', '#ff8a9a'); sfx('heal'); burst(p.x, p.y - 30, 8, '#ff3a4e');
+  }
   let tvx = 0, tvy = 0;
   if (p.state === 'idle') {
     tvx = mx * spd; tvy = my * spd;
@@ -1131,14 +1216,14 @@ function updatePlayer(dt) {
     if (!p.hitDone && t >= A.win) { p.hitDone = true; playerHit(p, A); }
     if (t >= A.win + A.act + A.rec) {
       const next = p.combo + 1;
-      if (p.buffer > 0 && !p.charged && next < COMBO.length) { p.buffer = 0; startAttack(p, next); }
+      if (p.buffer > 0 && !p.charged && !A.hammer && next < KITS[p.kit].combo.length) { p.buffer = 0; startAttack(p, next); }
       else { setState(p, 'idle'); if (p.buffer > 0) { p.buffer = 0; startAttack(p, 0); } }
     }
   } else if (p.state === 'charge') {
     tvx = mx * spd * 0.3; tvy = my * spd * 0.3;
     p.anim.cast = 0.4 + Math.min(0.6, p.stateT);
     p.stamDelay = 0.3;
-    if (p.stateT > 0.45 && !p.chargeReady) { p.chargeReady = true; sfx('card'); burst(p.x + p.face * 10, p.y - 36, 6, '#ffd070'); }
+    if (p.stateT > 0.3 && !p.chargeReady) { p.chargeReady = true; sfx('card'); burst(p.x + p.face * 10, p.y - 36, 6, '#ffd070'); }
   } else if (p.state === 'dodge') {
     const k = p.stateT / 0.3;
     p.ghostT = (p.ghostT || 0) - dt;
@@ -1162,20 +1247,24 @@ function nearestFoe(p, maxD) {
 }
 function inArc(ex, ey, x, y, ang, half) { return Math.abs(angDiff(ang, Math.atan2(ey - y, ex - x))) <= half; }
 
+function sunFactor(p) { return p.char === 'quinn' && inSun(p) ? 0.5 : 1; }
 function playerHit(p, A) {
   let hitAny = false;
+  if (A.proj) { fireProj(p, A); return; }
   const heavy = A.kick || p.charged || p.counterT > 0;
   G.fx.push({ k: 'swoosh', x: p.x, y: p.y - 26, a: p.aim, r: A.reach + 4, arc: A.arc * 0.9, col: p.counterT > 0 ? '#ffd070' : heavy ? '#e8f4ff' : '#bfe0ff', w: heavy ? 7 : 4, life: 0.16, t: 0, dir: p.combo % 2 ? -1 : 1 });
   for (const e of G.ents) {
     if (e.team !== 1 || e.state === 'down' || e.state === 'transform') continue;
     const d = Math.hypot(e.x - p.x, e.y - p.y);
     if (d > A.reach + e.r || !inArc(e.x, e.y, p.x, p.y, p.aim, A.arc)) continue;
-    if (e.ai && e.ai.foresight && e.state !== 'stagger') { foresee(e, p); continue; }
-    let dmg = A.dmg * (p.str * (G.inSun ? 0.5 : 1) / 10);
+    if (e.ai && e.ai.foresight && e.state !== 'stagger' && !A.double) { foresee(e, p); continue; }
+    let dmg = A.dmg * (p.str * sunFactor(p) / 10);
     const counter = p.counterT > 0;
     if (counter) { dmg *= 2; p.counterT = 0; }
     hitAny = true;
     damageFoe(e, dmg, { kb: A.kb * (counter ? 1.6 : 1), ang: p.aim, poise: (A.poise || 1) + (counter ? 3 : 0), heavy: A.kick || p.charged || counter, counter });
+    if (A.ice) { e.slowT = 2.5; burst(e.x, e.y - 30, 8, '#bfe8ff'); floatText(e.x, e.y - 88, 'EIS', '#bfe8ff'); }
+    if (A.hammer) { setState(e, 'stagger'); G.shake = 10; dust(e.x, e.y, 10, 1.4); }
   }
   if (!hitAny) sfx('whip', 0, 0.05);
 }
@@ -1218,26 +1307,30 @@ function foeDown(e) {
   }
 }
 
-function damagePlayer(src, dmg, ang, kb) {
-  const p = G.player;
+function damagePlayer(src, dmg, ang, kb) { return damageAlly(G.player, src, dmg, ang, kb); }
+function damageAlly(p, src, dmg, ang, kb) {
   if (G.state !== 'play' || p.state === 'down') return false;
   if (p.iframes > 0) {
+    if (p !== G.player) return 'dodged';
     // perfektes Ausweichen: der Treffer kam kurz nach Beginn des Ausweichens
     const win = SAVE.settings.wideDodge ? 0.3 : 0.2;
     if (p.state === 'dodge' && G.t - p.dodgeStart <= win && !p.perfectUsed) perfectDodge(p, src);
     return 'dodged';
   }
+  if (p.char === 'quinn' && SAVE.quinn.gear.hands) dmg = Math.max(0.5, dmg * 0.8); // Verteidigung +2 der Handschuhe
   p.hp = Math.max(G.opt.noDeath ? 1 : 0, p.hp - dmg);
   G.stats.taken += dmg;
   p.iframes = 0.6; p.flash = 0.12; p.anim.hurt = 1;
   p.vx = Math.cos(ang) * kb; p.vy = Math.sin(ang) * kb * 0.7;
   setState(p, 'hurt');
-  G.hitstop = 0.06; G.shake = 7; sfx('hurt'); haptic(40);
-  floatText(p.x, p.y - 72, '-' + dmg, '#ff5a6a');
+  if (p === G.player) { G.hitstop = 0.06; G.shake = 7; sfx('hurt'); haptic(40); } else sfx('hit', 0, 0.05);
+  floatText(p.x, p.y - 72, '-' + (Number.isInteger(dmg) ? dmg : dmg.toFixed(1)), '#ff5a6a');
   burst(p.x, p.y - 30, 8, '#ff3a4e');
   if (p.hp <= 0) {
-    setState(p, 'down'); G.state = 'lost'; G.slowT = 1;
-    later(1.6, () => G.opt.onLose && G.opt.onLose(G));
+    setState(p, 'down');
+    const alive = G.party.filter((m) => m.state !== 'down');
+    if (!alive.length) { G.state = 'lost'; G.slowT = 1; later(1.6, () => G.opt.onLose && G.opt.onLose(G)); }
+    else if (p === G.player) later(0.5, () => { if (G && G.player === p) swapTo(G.party.indexOf(alive[0]), true); });
   }
   return true;
 }
@@ -1254,8 +1347,11 @@ function perfectDodge(p, src) {
 function updateFoe(e, dt) {
   e.stateT += dt;
   e.poiseT -= dt; if (e.poiseT <= 0) e.poise = e.maxPoise;
-  const p = G.player, AI = e.ai;
+  e.tgtT = (e.tgtT || 0) - dt;
+  if (!e.target || e.target.state === 'down' || e.tgtT <= 0) { e.target = pickTarget(e); e.tgtT = 1.2; }
+  const p = e.target || G.player, AI = e.ai;
   const dx = p.x - e.x, dy = p.y - e.y, d = Math.hypot(dx, dy) || 1;
+  if (e.slowT > 0) { e.slowT -= dt; dt *= 0.55; }
   let tvx = 0, tvy = 0;
   if (e.state === 'down') { e.vx *= Math.exp(-dt * 5); e.vy *= Math.exp(-dt * 5); e.anim.hurt = 1; return; }
   if (G.state !== 'play') { e.vx *= Math.exp(-dt * 8); e.vy *= Math.exp(-dt * 8); return; }
@@ -1285,20 +1381,19 @@ function updateFoe(e, dt) {
         e.hitDone = true;
         const L = A.len, ax = Math.cos(e.aim), ay = Math.sin(e.aim);
         const rx = p.x - e.x, ry = p.y - e.y, along = rx * ax + ry * ay, across = Math.abs(-rx * ay + ry * ax);
-        if (along > 0 && along < L && across < A.width / 2 + p.r) damagePlayer(e, A.dmg, e.aim, 140);
+        for (const m of G.party) { if (m.state === 'down') continue; const rx2 = m.x - e.x, ry2 = m.y - e.y, al = rx2 * ax + ry2 * ay, ac = Math.abs(-rx2 * ay + ry2 * ax); if (al > 0 && al < L && ac < A.width / 2 + m.r) damageAlly(m, e, A.dmg, e.aim, 140); }
         G.fx.push({ k: 'beam', x: e.x, y: e.y - 24, a: e.aim, len: L, w: A.width, col: A.col || '#ff6a4a', life: 0.2, t: 0 });
         sfx('enemyShot', 0, 0.02);
       }
       if (e.stateT >= A.act) setState(e, 'recover');
     } else if (A.type === 'lunge') {
       tvx = Math.cos(e.aim) * A.speed; tvy = Math.sin(e.aim) * A.speed;
-      if (!e.hitDone && Math.hypot(p.x - e.x, p.y - e.y) < e.r + p.r + 10) { e.hitDone = true; damagePlayer(e, A.dmg, e.aim, 220); }
+      if (!e.hitDone) for (const m of G.party) if (m.state !== 'down' && Math.hypot(m.x - e.x, m.y - e.y) < e.r + m.r + 10) { e.hitDone = true; damageAlly(m, e, A.dmg, e.aim, 220); break; }
       if (e.stateT >= A.act) { setState(e, 'recover'); }
     } else {
       if (!e.hitDone) {
         e.hitDone = true;
-        const pd = Math.hypot(p.x - e.x, p.y - e.y);
-        if (pd <= A.reach + p.r && inArc(p.x, p.y, e.x, e.y, e.aim, A.arc)) damagePlayer(e, A.dmg, e.aim, 180);
+        for (const m of G.party) if (m.state !== 'down' && Math.hypot(m.x - e.x, m.y - e.y) <= A.reach + m.r && inArc(m.x, m.y, e.x, e.y, e.aim, A.arc)) damageAlly(m, e, A.dmg, e.aim, 180);
         slash(e.x, e.y - 30, e.aim, A.reach, A.arc, A.col || '#ffb040');
         sfx('whip', 0, 0.02);
       }
@@ -1322,8 +1417,14 @@ function updateFoe(e, dt) {
   const k = e.state === 'active' && e.atk && e.atk.type === 'lunge' ? 40 : 10;
   e.vx = lerp(e.vx, tvx, 1 - Math.exp(-dt * k)); e.vy = lerp(e.vy, tvy, 1 - Math.exp(-dt * k));
 }
+function pickTarget(e) {
+  let best = null, bd = 1e12;
+  for (const m of G.party || []) { if (m.state === 'down') continue; const d = dist2(m.x, m.y, e.x, e.y) * (m === G.player ? 0.6 : 1); if (d < bd) { bd = d; best = m; } }
+  return best;
+}
 function startFoeAttack(e, A) {
-  e.atk = A; e.aim = Math.atan2(G.player.y - e.y, G.player.x - e.x);
+  const t = e.target || G.player;
+  e.atk = A; e.aim = Math.atan2(t.y - e.y, t.x - e.x);
   setState(e, 'wind');
   e.tele = addTele(e, A);
   if (A.shout) floatText(e.x, e.y - 80, A.shout, '#ffb040');
@@ -1419,7 +1520,7 @@ function updatePois() {
 /* ------------------------------------------------------------ Blood Swipe (ab Halbling)
    Roman: keine Abklingzeit, kostet 1 HP pro Einsatz, Reichweite etwa 5 Meter. */
 function castBloodSwipe(p) {
-  if (!SAVE.quinn.skills.includes('bloodswipe') || p.state === 'down' || p.state === 'hurt') return;
+  if (p.char !== 'quinn' || !SAVE.quinn.skills.includes('bloodswipe') || p.state === 'down' || p.state === 'hurt') return;
   if ((p.swipeCd || 0) > 0) return;
   if (p.hp <= 1) { floatText(p.x, p.y - 72, 'Zu wenig HP', '#ff8a8a'); return; }
   p.hp -= 1; p.swipeCd = 0.35; G.stats.swipes = (G.stats.swipes || 0) + 1;
@@ -1427,7 +1528,7 @@ function castBloodSwipe(p) {
   const [mx, my] = readMove();
   const a = f ? Math.atan2(f.y - p.y, f.x - p.x) : (mx || my) ? Math.atan2(my, mx) : (p.face > 0 ? 0 : Math.PI);
   p.face = Math.cos(a) >= 0 ? 1 : -1; p.anim.cast = 1; p.anim.aim = p.face > 0 ? a : Math.PI - a;
-  G.proj.push({ x: p.x + Math.cos(a) * 12, y: p.y + Math.sin(a) * 12, a, sp: 300, dist: 0, max: 70, dmg: 2 * (p.str * (G.inSun ? 0.5 : 1) / 10), hit: new Set() });
+  G.proj.push({ x: p.x + Math.cos(a) * 12, y: p.y + Math.sin(a) * 12, a, sp: 300, dist: 0, max: 70, dmg: 2 * (SAVE.quinn.gear.hands ? 1.05 : 1) * (p.str * sunFactor(p) / 10), hit: new Set(), col: '#ff3a4e', kind: 'blood' });
   floatText(p.x, p.y - 72, '-1 HP', '#ff5a6a');
   sfx('whip', 0, 0.03); sfx('splat', 0, 0.05);
 }
@@ -1437,12 +1538,86 @@ function updateProj(dt) {
   for (let i = G.proj.length - 1; i >= 0; i--) {
     const P = G.proj[i];
     const step = P.sp * dt; P.x += Math.cos(P.a) * step; P.y += Math.sin(P.a) * step; P.dist += step;
+    let gone = false;
     for (const e of G.ents) {
       if (e.team !== 1 || e.state === 'down' || P.hit.has(e.id)) continue;
-      if (Math.hypot(e.x - P.x, e.y - P.y) < e.r + 12) { P.hit.add(e.id); damageFoe(e, P.dmg, { kb: 90, ang: P.a, poise: 1, heavy: false }); }
+      if (Math.hypot(e.x - P.x, e.y - P.y) < e.r + 12) {
+        P.hit.add(e.id);
+        if (e.ai && e.ai.foresight && !P.double && e.state !== 'stagger') { foresee(e, P); continue; }
+        damageFoe(e, P.dmg, { kb: P.kb || 90, ang: P.a, poise: P.poise || 1, heavy: !!P.heavy });
+        if (!P.pierce && P.kind === 'arrow') { gone = true; break; }
+      }
     }
-    if (P.dist >= P.max) { G.proj.splice(i, 1); burst(P.x, P.y - 20, 4, '#ff3a4e'); }
+    if (gone || P.dist >= P.max) { G.proj.splice(i, 1); burst(P.x, P.y - 20, 4, P.col || '#ff3a4e'); }
   }
+}
+
+/* ------------------------------------------------------------ Geschosse der Figuren */
+function fireProj(p, A) {
+  const P = A.proj;
+  G.proj.push({ x: p.x + Math.cos(p.aim) * 12, y: p.y + Math.sin(p.aim) * 12, a: p.aim, sp: P.sp, dist: 0, max: P.max, dmg: A.dmg * (p.str * sunFactor(p) / 10), hit: new Set(), col: P.col, kind: P.kind, pierce: P.pierce, double: A.double, poise: A.poise || 1, heavy: !!A.double || !!A.poise, kb: A.double ? 200 : 90 });
+  sfx(P.kind === 'water' ? 'splat' : 'whip', 0, 0.03);
+  if (A.double) { // Telekinese + Wasser gleichzeitig: ein zweiter Stoss von der Seite
+    const f = nearestFoe(p, 220);
+    if (f) later(0.12, () => { if (f.state !== 'down') { damageFoe(f, A.dmg * 0.5 * (p.str / 10), { kb: 160, ang: p.aim + 1.2, poise: 2, heavy: true }); burst(f.x, f.y - 30, 10, '#c8a0ff'); floatText(f.x, f.y - 92, 'DOPPELT', '#c8a0ff'); } });
+  }
+}
+
+/* ------------------------------------------------------------ Tag-Team */
+function swapTo(i, forced) {
+  const m = G.party[i];
+  if (!m || m === G.player || m.state === 'down' || (!forced && G.swapCd > 0)) return;
+  const old = G.player;
+  if (old.state === 'charge') setState(old, 'idle');
+  G.player = m; G.swapCd = 0.6; INPUT.atkHeld = false;
+  burst(m.x, m.y - 30, 10, LOOKS[m.char].rim || '#8ad8ff'); sfx('dodge');
+  floatText(m.x, m.y - 86, CHARS[m.char].name, LOOKS[m.char].rim || '#fff');
+  if (UI.cache) UI.cache.party = null;
+}
+function updateAlly(e, dt) {
+  if (e.state === 'down') { updateFighter(e, dt, 0, 0); return; }
+  e.aiCd -= dt;
+  const f = nearestFoe(e, 600);
+  let mx = 0, my = 0;
+  if (f) {
+    const dx = f.x - e.x, dy = f.y - e.y, d = Math.hypot(dx, dy) || 1;
+    // angekuendigten Angriffen ausweichen
+    if (f.state === 'wind' && f.target === e && f.stateT > f.atk.wind - 0.16 && !e.aiDodged) { e.aiDodged = true; if (Math.random() < 0.65) tryDodge(e, [-dy / d, dx / d]); }
+    if (f.state !== 'wind') e.aiDodged = false;
+    const want = e.range;
+    if (d > want + 8) { mx = dx / d; my = dy / d; } else if (d < want * 0.6 && want > 60) { mx = -dx / d; my = -dy / d; }
+    else if (e.aiCd <= 0 && e.state === 'idle' && e.stam > 25) { e.aiCd = rand(0.5, 1.1); startAttack(e, e.aiStep = ((e.aiStep || 0) + 1) % KITS[e.kit].combo.length); }
+  } else {
+    const p = G.player, dx = p.x - e.x, dy = p.y - e.y, d = Math.hypot(dx, dy);
+    if (d > 60) { mx = dx / d * 0.8; my = dy / d * 0.8; }
+  }
+  updateFighter(e, dt, mx * 0.85, my * 0.85);
+  if (Math.abs(mx) > 0.1 && e.state === 'idle') e.face = mx > 0 ? 1 : -1;
+}
+
+/* ------------------------------------------------------------ Flash Step, Hammer Strike (Kap. 39–40) */
+function castFlashStep(p) {
+  const Q = SAVE.quinn;
+  if (p.char !== 'quinn' || !Q.skills.includes('flashstep') || p.state === 'down') return;
+  if (Q.stats.agi < 15) { floatText(p.x, p.y - 80, 'Braucht Agilität 15', '#ffd04a'); return; }
+  if (p.stam < 35) { tired(p); return; }
+  spendStam(p, 35, 0.6);
+  const [mx, my] = readMove();
+  const a = (mx || my) ? Math.atan2(my, mx) : (p.face > 0 ? 0 : Math.PI);
+  for (let k = 0; k < 5; k++) G.fx.push({ k: 'spark', x: p.x + Math.cos(a) * k * 12, y: p.y - 30 + Math.sin(a) * k * 12, vx: 0, vy: 0, life: 0.25, t: 0, col: '#bfe0ff', size: 5 });
+  p.x += Math.cos(a) * 62; p.y += Math.sin(a) * 62; collideArena(p);
+  p.iframes = Math.max(p.iframes, 0.2); setState(p, 'idle');
+  if (Math.cos(a)) p.face = Math.cos(a) > 0 ? 1 : -1;
+  sfx('shadowstep'); dust(p.x, p.y, 6, 1);
+}
+function castHammer(p) {
+  const Q = SAVE.quinn;
+  if (p.char !== 'quinn' || !Q.skills.includes('hammer') || p.state === 'down') return;
+  if (Q.stats.str < 15) { floatText(p.x, p.y - 80, 'Braucht Stärke 15', '#ffd04a'); return; }
+  if ((p.hammerCd || 0) > G.t) return;
+  if (p.stam < 30) { tired(p); return; }
+  p.hammerCd = G.t + 3;
+  startAttack(p, 0, false, HAMMER);
 }
 
 /* ---- src/05-render.js ---- */
@@ -1620,13 +1795,30 @@ function renderFight() {
     const sway = Math.sin(G.t * 1.2 + x) * 1.5;
     for (const [dx, dy, r, c] of [[0, -40, 22, '#2e5a28'], [-12, -32, 15, '#3a6a30'], [12, -34, 16, '#3a6a30'], [4, -46, 13, '#4a7a3a']]) { g.fillStyle = A.night ? shade(c, -0.55) : c; g.beginPath(); g.arc(x + dx + sway, y + dy, r, 0, TAU); g.fill(); }
   }
-  // Blood Swipe
+  // Geschosse: Blood Swipe, Pfeile, Wasser
   for (const P of G.proj || []) {
     g.save(); g.translate(P.x, P.y - 22); g.rotate(P.a);
-    g.fillStyle = '#6a0010'; g.beginPath(); g.arc(-6, 0, 14, -1.2, 1.2); g.arc(-12, 0, 11, 1.1, -1.1, true); g.closePath(); g.fill();
-    g.globalCompositeOperation = 'lighter'; g.fillStyle = 'rgba(255,40,70,0.85)'; g.beginPath(); g.arc(-6, 0, 13, -1.1, 1.1); g.arc(-11, 0, 11, 1.0, -1.0, true); g.closePath(); g.fill();
-    g.drawImage(glowSprite('#ff2a40'), -20, -18, 36, 36);
+    if (P.kind === 'arrow') {
+      g.strokeStyle = '#e8e0d0'; g.lineWidth = 1.6; g.beginPath(); g.moveTo(-14, 0); g.lineTo(6, 0); g.stroke();
+      g.fillStyle = P.col; g.beginPath(); g.moveTo(6, -2.6); g.lineTo(12, 0); g.lineTo(6, 2.6); g.fill();
+      g.globalCompositeOperation = 'lighter'; g.globalAlpha = 0.6; g.drawImage(glowSprite(P.col), -16, -8, 26, 16);
+    } else if (P.kind === 'water') {
+      g.globalCompositeOperation = 'lighter';
+      for (let k = 0; k < 4; k++) g.drawImage(glowSprite('#6ec8ff'), -8 - k * 7, -8 + Math.sin(G.t * 20 + k) * 3, 18, 16);
+      g.fillStyle = 'rgba(200,240,255,0.9)'; g.beginPath(); g.ellipse(0, 0, 8, 5, 0, 0, TAU); g.fill();
+    } else {
+      g.fillStyle = '#6a0010'; g.beginPath(); g.arc(-6, 0, 14, -1.2, 1.2); g.arc(-12, 0, 11, 1.1, -1.1, true); g.closePath(); g.fill();
+      g.globalCompositeOperation = 'lighter'; g.fillStyle = 'rgba(255,40,70,0.85)'; g.beginPath(); g.arc(-6, 0, 13, -1.1, 1.1); g.arc(-11, 0, 11, 1.0, -1.0, true); g.closePath(); g.fill();
+      g.drawImage(glowSprite('#ff2a40'), -20, -18, 36, 36);
+    }
     g.restore();
+  }
+  // Tag-Team: Markierung ueber der gesteuerten Figur, Leisten ueber den anderen
+  if (G.party && G.party.length > 1) for (const m of G.party) {
+    if (m.state === 'down') continue;
+    const col = LOOKS[m.char].rim || '#fff';
+    if (m === G.player) { g.fillStyle = col; g.beginPath(); g.moveTo(m.x - 5, m.y - 84); g.lineTo(m.x + 5, m.y - 84); g.lineTo(m.x, m.y - 78); g.fill(); }
+    else { g.fillStyle = 'rgba(0,0,0,0.6)'; g.fillRect(m.x - 14, m.y - 80, 28, 4); g.fillStyle = col; g.fillRect(m.x - 14, m.y - 80, 28 * m.hp / m.maxHp, 4); }
   }
   // Haertung (Rylee): graue Platte auf der gehaerteten Seite
   for (const e of G.ents) if (e.ai && e.ai.harden && e.state !== 'down') {
@@ -1859,7 +2051,7 @@ function renderSceneBg(t) {
 /* ------------------------------------------------------------ Kampf-HUD */
 function buildHud(opt) {
   UI.root.innerHTML = `<div class="hud">
-    <div class="me"><div class="nm">QUINN TALEN<small id="lvl">Stufe ${SAVE.quinn.level}</small></div>
+    <div class="me"><div class="nm"><span id="pname">QUINN TALEN</span><small id="lvl">Stufe ${SAVE.quinn.level}</small></div>
       <div class="bar xp"><i id="xpb"></i></div>
       <div class="bar hp"><i id="hpb"></i></div><div class="hpnum" id="hpn"></div>
       <div class="bar st" id="stbw"><i id="stb"></i></div>
@@ -1869,10 +2061,14 @@ function buildHud(opt) {
     <button class="pause" id="pauseBtn">❚❚</button>
     ${opt.hub ? '<button class="pause statusbtn" id="statusBtn">☰</button>' : ''}
     <div class="hint" id="hint"></div>
+    <div class="party" id="party"></div>
+    <div class="bank" id="bank"></div>
     <div class="stickzone" id="sz"><div class="stick" style="display:none"><i></i></div></div>
     <div class="pad">
       <button class="insp ${opt.inspect || SAVE.quinn.skills.includes('inspect') ? '' : 'off'}" id="bInsp">INSPECT</button>
       ${SAVE.quinn.skills.includes('bloodswipe') && !opt.hub ? '<button class="skill" id="bSkill">BLOOD<br>SWIPE<small>1 HP</small></button>' : ''}
+      ${SAVE.quinn.skills.includes('flashstep') && !opt.hub ? '<button class="skill s2" id="bSkill2">FLASH<br>STEP</button>' : ''}
+      ${SAVE.quinn.skills.includes('hammer') && !opt.hub ? '<button class="skill s3" id="bSkill3">HAMMER<br>STRIKE</button>' : ''}
       <button class="dodge" id="bDodge">AUS-<br>WEICHEN</button>
       <button class="atk" id="bAtk">ANGRIFF</button>
     </div>
@@ -1885,6 +2081,8 @@ function buildHud(opt) {
   bindButton($('#bDodge'), () => pushInput('dodge'));
   bindButton($('#bInsp'), () => pushInput('inspect'));
   if ($('#bSkill')) bindButton($('#bSkill'), () => pushInput('skill1'));
+  if ($('#bSkill2')) bindButton($('#bSkill2'), () => pushInput('skill2'));
+  if ($('#bSkill3')) bindButton($('#bSkill3'), () => pushInput('skill3'));
   $('#pauseBtn').addEventListener('pointerup', () => showPause());
   if (opt.hub) $('#statusBtn').addEventListener('pointerup', () => { if (!G) return; G.paused = true; showStatus(() => { if (G) G.paused = false; }); });
   UI.cache = {};
@@ -1892,7 +2090,7 @@ function buildHud(opt) {
 function updateHud() {
   if (!UI.hud || !G) return;
   const p = G.player, C = UI.cache;
-  const hpK = p.hp + '/' + p.maxHp;
+  const hpK = p.char + p.hp + '/' + p.maxHp;
   if (C.hp !== hpK) { C.hp = hpK; $('#hpb').style.width = (p.hp / p.maxHp * 100) + '%'; $('#hpn').textContent = `HP ${Math.ceil(p.hp)} / ${p.maxHp}`; }
   const xk = SAVE.quinn.level + ':' + SAVE.quinn.exp + ':' + Math.round(G.expGain || 0);
   if (C.xp !== xk) { C.xp = xk; $('#lvl').textContent = 'Stufe ' + SAVE.quinn.level + (SAVE.quinn.points ? ' · +' + SAVE.quinn.points : ''); $('#xpb').style.width = Math.min(100, (SAVE.quinn.exp + (G.expGain || 0)) / expNeed(SAVE.quinn.level) * 100) + '%'; }
@@ -1905,8 +2103,24 @@ function updateHud() {
   }
   const h = G.hint ? G.hint.text : '';
   if (C.hint !== h) { C.hint = h; $('#hint').innerHTML = h; }
-  const ch = p.state === 'charge' && p.stateT > 0.45;
+  const ch = p.state === 'charge' && p.stateT > 0.3;
   if (C.ch !== ch) { C.ch = ch; $('#bAtk').classList.toggle('charge', ch); }
+  // Tag-Team-Knoepfe
+  if (G.party && G.party.length > 1) {
+    const pk = G.party.map((m) => m.char + (m === G.player ? '*' : '') + Math.ceil(m.hp) + m.state.slice(0, 1)).join('|');
+    if (C.party !== pk) {
+      C.party = pk;
+      const box = $('#party');
+      box.innerHTML = G.party.map((m, i) => `<button class="pm ${m === G.player ? 'on' : ''} ${m.state === 'down' ? 'dead' : ''}" data-i="${i}" style="--c:${LOOKS[m.char].rim}"><b>${CHARS[m.char].name}</b><i style="width:${Math.max(0, m.hp / m.maxHp * 100)}%"></i></button>`).join('');
+      box.querySelectorAll('.pm').forEach((b) => bindButton(b, () => pushInput('swap' + b.dataset.i)));
+    }
+  }
+  // Skills nur fuer Quinn
+  const isQ = p.char === 'quinn';
+  if (C.isQ !== isQ) { C.isQ = isQ; UI.hud.querySelectorAll('.pad .skill, .pad .insp').forEach((b) => { b.style.visibility = isQ ? '' : 'hidden'; }); }
+  const bk = SAVE.quinn.skills.includes('bloodbank') && !G.opt.hub && isQ ? SAVE.quinn.bank : -1;
+  if (C.pn !== p.char) { C.pn = p.char; $('#pname').textContent = p.char === 'quinn' ? 'QUINN TALEN' : CHARS[p.char].name.toUpperCase(); }
+  if (C.bank !== bk) { C.bank = bk; $('#bank').innerHTML = bk >= 0 ? `<span>BLUTBANK</span><i><b style="width:${bk}%"></b></i><small>${bk} ml</small>` : ''; }
   const atkTxt = G.poi ? (G.poi.btn || 'LOS') : 'ANGRIFF';
   if (C.atk !== atkTxt) { C.atk = atkTxt; $('#bAtk').textContent = atkTxt; $('#bAtk').classList.toggle('act', !!G.poi); }
   const sun = !!G.inSun;
@@ -2010,6 +2224,41 @@ const AI_RYLEE = {
     if (e.hardDir === undefined) e.hardDir = want;
     const turn = e.state === 'wind' || e.state === 'active' ? 1.2 : 2.2; // beim Angreifen dreht er langsamer
     e.hardDir += clamp(angDiff(e.hardDir, want), -turn * dt, turn * dt);
+  }
+};
+
+/* ------------------------------------------------------------ Etappe 4: Gegner */
+const THUG_ATK = { type: 'swipe', wind: 0.5, act: 0.1, rec: 0.55, reach: 40, arc: 0.9, dmg: 1, col: '#c8b8a0' };
+const AI_THUG = { params: () => ({ range: 40, speed: 85, cd: 1.3 }), choose: (e, d) => (d < 58 ? THUG_ATK : null) };
+// Brandon: Speer mit grosser Reichweite, Stoss nach vorn (Kap. 30)
+const BRANDON_ATK = {
+  thrust: { type: 'lunge', wind: 0.55, act: 0.18, rec: 0.6, speed: 280, dmg: 2, shout: '!' },
+  sweep: { type: 'swipe', wind: 0.5, act: 0.1, rec: 0.5, reach: 58, arc: 1.3, dmg: 1, col: '#9ad0b0' }
+};
+const AI_BRANDON = { params: () => ({ range: 55, speed: 90, cd: 0.9 }), choose: (e, d) => (d > 70 ? BRANDON_ATK.thrust : d < 72 ? BRANDON_ATK.sweep : null) };
+// Leo: unglaublich schnell, wird immer schneller; Inspect zeigt nichts (Kap. 32)
+const LEO_ATK = { type: 'swipe', wind: 0.42, act: 0.08, rec: 0.3, reach: 50, arc: 1.4, dmg: 1, col: '#5ff0d0' };
+const AI_LEO = {
+  params: () => ({ range: 46, speed: 120 + G.t * 2, cd: Math.max(0.35, 1.0 - G.t * 0.016) }),
+  choose: (e, d) => (d < 64 ? Object.assign({}, LEO_ATK, { wind: Math.max(0.28, 0.42 - G.t * 0.004), chain: G.t > 15 ? Object.assign({}, LEO_ATK, { wind: 0.25 }) : null }) : null)
+};
+// Zweitjaehrige in der Aula: Wasser, Erde, Schlaeger
+const WATER_ATK = { type: 'beam', wind: 0.7, act: 0.12, rec: 0.6, len: 200, width: 20, dmg: 1, col: '#6ec8ff' };
+const EARTH_ATK = { type: 'lunge', wind: 0.7, act: 0.26, rec: 0.8, speed: 260, dmg: 2, shout: '!' };
+const AI_WATER = { params: () => ({ range: 130, speed: 70, cd: 1.6 }), choose: (e, d) => (d < 210 ? WATER_ATK : null) };
+const AI_EARTH = { params: () => ({ range: 50, speed: 70, cd: 1.4 }), choose: (e, d) => (d > 80 ? EARTH_ATK : d < 60 ? THUG_ATK : null) };
+// Mono in der Aula: Voraussicht + Seelenwaffe (lebende Peitsche) ab halber Kraft (Kap. 45–46)
+const MONO_WHIP = { type: 'beam', wind: 0.6, act: 0.14, rec: 0.55, len: 170, width: 16, dmg: 2, col: '#6ab0ff' };
+const AI_MONO_BOSS = {
+  foresight: true,
+  params: (e) => ({ range: e.phase === 2 ? 110 : 60, speed: 95, cd: e.phase === 2 ? 1.0 : 1.3 }),
+  choose: (e, d) => (e.phase === 2 ? (d < 180 ? MONO_WHIP : null) : d < 55 ? MONO_ATK : null),
+  onHurt(e) {
+    if (e.phase === 1 && e.hp <= e.maxHp * 0.6) {
+      e.phase = 2; setState(e, 'transform'); G.tele = G.tele.filter((T) => T.owner !== e);
+      banner('SEELENWAFFE'); sfx('roar');
+      sysMsg({ head: 'SYSTEM', lines: ['Mono ruft seine Seelenwaffe: eine lebende Peitsche.', 'Voraussicht: Einzelne Angriffe sieht er kommen. Ratens Doppelangriff (ANGRIFF halten) nicht.'] }, 4200);
+    }
   }
 };
 
@@ -2282,11 +2531,9 @@ const MISSIONS = {
       { who: 'Layla', text: 'Ich weiß, was du bist. Und ich verrate dich nicht – aber du erklärst mir alles.' },
       { portrait: 'quinn' },
       { narr: 'Quinn behauptet, es sei ein seltenes Fähigkeitsbuch gewesen. Die beiden treffen eine Abmachung: Layla hält dicht, hilft ihm und gibt ihm ihr Blut, wenn er es braucht.' },
-      { bg: 'nacht', portrait: null },
-      { narr: 'Ende der dritten Etappe. Als Nächstes: Vordens Geheimnis und die Aula.' }
     ],
-    after: () => { const Q = SAVE.quinn; Q.thirst = 0; Q.stats.str += 1; Q.blood['A+'] = (Q.blood['A+'] || 0) + 1; SAVE.flags.biss = true; },
-    next: null
+    after: () => { const Q = SAVE.quinn; Q.thirst = 0; drinkBlood('layla', 'A+'); stepDone('biss'); },
+    next: 'akademie'
   }
 };
 MISSIONS.training = {
@@ -2301,7 +2548,244 @@ MISSIONS.training = {
   },
   next: 'akademie', repeat: true
 };
-const MISSION_ORDER = ['prolog', 'test', 'kyle', 'nacht', 'mono', 'rylee', 'dan', 'biss'];
+Object.assign(MISSIONS, {
+  /* Rylees Bande (Kap. 26): erstes Tag-Team */
+  bande: {
+    id: 'bande', title: 'Zu zweit', src: 'Kapitel 26', type: 'gefecht',
+    scene: [
+      { bg: 'nacht', portrait: 'layla' },
+      { narr: 'Layla hält sich an die Abmachung – und will mehr als nur zusehen. In dieser Nacht warten Rylee und zwei seiner Leute im Park.' },
+      { who: 'Layla', text: 'Ich decke dich mit dem Bogen. Du musst nur nah genug rankommen.' },
+      { bg: 'system', portrait: null },
+      { sys: { head: 'TAG-TEAM', lines: ['Unten links wechselst du zwischen Quinn und Layla.', 'Wen du nicht steuerst, kämpft selbstständig weiter.', 'Layla: ANGRIFF schießt Pfeile, halten = durchschlagender Schuss.'] } }
+    ],
+    fight: {
+      arena: { art: 'park', w: 420, h: 700, night: true, lamps: [[120, 260], [300, 260], [120, 460], [300, 460]], trees: [[40, 150], [390, 170], [30, 600], [400, 620]] },
+      playerAt: [210, 500], mask: true, party: ['quinn', 'layla'],
+      foes: [
+        { id: 'rylee', name: 'Rylee · Verhärtung', hp: 22, poise: 3, at: [210, 280], ai: AI_RYLEE, expRate: 1.5, expKill: 20, info: { name: 'Rylee', race: 'Mensch', ability: 'Verhärtung', blood: '0+' } },
+        { id: 'fei', look: 's3', name: 'Helfer', hp: 12, at: [130, 310], ai: AI_THUG, expRate: 1, expKill: 10, info: { name: 'Helfer', race: 'Mensch', ability: 'Stufe 2', blood: 'A-' } },
+        { id: 'loop', look: 's1', name: 'Helfer', hp: 12, at: [290, 310], ai: AI_THUG, expRate: 1, expKill: 10, info: { name: 'Helfer', race: 'Mensch', ability: 'Stufe 2', blood: 'B+' } }
+      ],
+      inspect: true
+    },
+    won: [
+      { bg: 'nacht', portrait: 'layla' },
+      { narr: 'Ein Pfeil ins Knie, und Rylee geht zu Boden. Die beiden nehmen ihnen die erpressten Credits ab – und füllen heimlich etwas Blut in kleine Glasröhrchen.' },
+      { bg: 'system', portrait: null },
+      { sys: { head: 'BLUTGRUPPEN', lines: ['Das Blut verschiedener Menschen wirkt verschieden:', 'A → Stärke · B → Agilität · AB → Ausdauer · 0 → freier Wertepunkt', 'Jede Person bringt nur beim ersten Mal einen Wert.'] } },
+      { call: () => {
+        const g = [drinkBlood('bande1', 'A-'), drinkBlood('bande2', 'B+'), drinkBlood('rylee', '0+')].filter(Boolean);
+        MISSIONS.bande.won[5].sys.lines = g.length ? g : ['Nichts Neues.'];
+      } },
+      { sys: { head: 'BLUT GETRUNKEN', lines: [] } }
+    ],
+    reward: { exp: 30 },
+    after: () => { stepDone('bande'); SAVE.credits += 20; },
+    next: 'akademie'
+  },
+
+  /* Waffenklasse (Kap. 27–30) und Brandon */
+  waffen: {
+    id: 'waffen', title: 'Die Waffenklasse', src: 'Kapitel 27–29',
+    scene: [
+      { bg: 'kantine', portrait: 'leo' },
+      { narr: 'Jeder wählt eine Kampfklasse. Quinn nimmt die Waffenklasse – und zu seiner Überraschung auch Erin.' },
+      { narr: 'Die Waffenhalle ist zwanzig Meter hoch. Der Lehrer ist ein kahlköpfiger Mann mit einem Katana aus Bestienmaterial: Leo.' },
+      { who: 'Leo', text: 'Eine Waffe ist nur so gut wie der, der sie hält. Heute kämpft ihr ohne Fähigkeiten.' },
+      { bg: 'system', portrait: null },
+      { sys: { head: 'SYSTEM', lines: ['Inspect zeigt jetzt auch Waffenwerte und ob eine Waffe zu dir passt.', 'Waffen gibt es in acht Stufen, von Basic bis zu Dämonenwaffen.'] } },
+      { bg: 'kantine', portrait: 'brandon' },
+      { narr: 'Im Übungskampf bekommt Quinn Brandon als Gegner, Stufe 3, mit einem Speer. Brandon lacht über den Stufe-1er.' }
+    ],
+    next: 'brandon'
+  },
+  brandon: {
+    id: 'brandon', title: 'Brandon', src: 'Kapitel 30–31', type: 'duell',
+    scene: [{ bg: 'system' }, { sys: { head: 'DUELL', lines: ['Brandon, Stufe 3, Speer.', 'Große Reichweite – geh nah ran oder weiche dem Stoß seitlich aus.'] } }],
+    fight: {
+      arena: { art: 'halle', w: 340, h: 680 },
+      playerAt: [170, 460],
+      foes: [{ id: 'brandon', name: 'Brandon · Stufe 3 · Speer', hp: 28, poise: 4, at: [170, 290], ai: AI_BRANDON, expRate: 1.5, expKill: 25, info: { name: 'Brandon Richardson', race: 'Mensch', ability: 'Wind (Stufe 3)', blood: 'AB+' } }],
+      npcs: [{ id: 'leo', at: [60, 250], watch: 'player' }, { id: 'erin', at: [290, 260], watch: 'player' }, { id: 's2', at: [50, 520] }, { id: 's3', at: [295, 530] }],
+      inspect: true
+    },
+    won: [
+      { bg: 'kantine', portrait: 'brandon' },
+      { narr: 'Brandons Speer bricht. Die Halle ist still, dann gewinnt der Stufe-1er.' },
+      { bg: 'system', portrait: null },
+      { sys: { head: 'NEUE FÄHIGKEIT', lines: ['Blutbank (Stufe 1)', 'Speichert bis zu 100 ml Blut. Fällt Quinn unter 5 HP, heilt sie automatisch: 10 ml = 5 HP.', 'Getrunkenes Blut füllt sie auf.'] } },
+      { bg: 'kantine', portrait: 'leo' },
+      { narr: 'Leo hat den Kampf nicht gesehen – er ist blind. Aber er hat Quinns Aura gespürt. Sie erinnert ihn an etwas, das er aus dem Krieg kennt.' }
+    ],
+    reward: { exp: 20, skills: ['bloodbank'] },
+    after: () => { SAVE.quinn.bank = 60; stepDone('waffen'); },
+    next: 'akademie'
+  },
+  leo: {
+    id: 'leo', title: 'Der blinde Schwertkämpfer', src: 'Kapitel 32–33', type: 'duell',
+    scene: [
+      { bg: 'kantine', portrait: 'leo' },
+      { who: 'Leo', text: 'Ich will selbst sehen, was du bist. Auf deine Art.' },
+      { bg: 'system', portrait: null },
+      { sys: { head: 'QUEST', lines: ['Duell gegen Leo.', 'Inspect zeigt bei ihm – nichts.', 'Halte 40 Sekunden durch. Er wird immer schneller.'] } }
+    ],
+    fight: {
+      arena: { art: 'halle', w: 340, h: 680 },
+      playerAt: [170, 460],
+      foes: [{ id: 'leo', name: 'Leo · ???', hp: 999, poise: 99, at: [170, 290], ai: AI_LEO, expRate: 0.5, info: { name: '???', race: '???', ability: '???', blood: '???' } }],
+      inspect: true, noDeath: true, noFoeBar: true,
+      expBonus: (G) => Math.round(Math.min(40, (G.tut && G.tut.t) || 0) + G.stats.perfect * 6),
+      onTick: survivalTick(40)
+    },
+    won: [
+      { bg: 'kantine', portrait: 'leo' },
+      { narr: 'Nach vierzig Sekunden hebt Leo die Hand. Kein Sieger. Er lächelt zum ersten Mal.' },
+      { who: 'Leo', text: 'Nimm die hier. Bei mir liegen sie nur herum.' },
+      { bg: 'system', portrait: null },
+      { sys: { head: 'AUSRÜSTUNG', lines: ['Black Horned Gauntlets'], kv: [['Stärke', '+3'], ['Verteidigung', '+2'], ['Blood Swipe', '+5 %']] } },
+      { bg: 'zimmer', portrait: 'vorden' },
+      { narr: 'Am Abend sieht Vorden Quinns blutige Kleidung. Seine Augen verändern sich. Es klingt, als stritten in ihm mehrere Stimmen.' }
+    ],
+    reward: { exp: 30 },
+    after: () => { SAVE.quinn.gear.hands = 'gauntlets'; stepDone('leo'); },
+    next: 'akademie'
+  },
+
+  /* Fei und Loop auf dem Dach (Kap. 36–37) */
+  dach: {
+    id: 'dach', title: 'Auf dem Dach', src: 'Kapitel 33–37', type: 'gefecht',
+    scene: [
+      { bg: 'nacht', portrait: 'fei' },
+      { narr: 'Brandons Freunde Fei und Loop wollen Rache für die Blamage. Nachts locken sie Quinn aufs Dach des Wohnheims. Layla folgt ihm.' },
+      { bg: 'system', portrait: null },
+      { sys: { head: 'KAMPF', lines: ['Zwei Gegner. Wechsle zwischen Quinn und Layla.'] } }
+    ],
+    fight: {
+      arena: { art: 'halle', w: 340, h: 640, night: true },
+      playerAt: [170, 440], party: ['quinn', 'layla'],
+      foes: [
+        { id: 'fei', name: 'Fei', hp: 20, poise: 3, at: [120, 280], ai: AI_BRANDON, expRate: 1.2, expKill: 15, info: { name: 'Fei', race: 'Mensch', ability: 'Stufe 2', blood: 'B-' } },
+        { id: 'loop', name: 'Loop', hp: 20, poise: 3, at: [220, 270], ai: AI_THUG, expRate: 1.2, expKill: 15, info: { name: 'Loop', race: 'Mensch', ability: 'Stufe 2', blood: '0-' } }
+      ],
+      inspect: true
+    },
+    won: [
+      { bg: 'nacht', portrait: 'quinn' },
+      { narr: 'Quinn beißt Loop. Als er vom Dach springt, bremst Layla seinen Fall mit Telekinese.' },
+      { bg: 'system', portrait: null, call: () => { MISSIONS.dach.won[3].sys.lines = [drinkBlood('loop', '0-'), drinkBlood('fei', 'B-')].filter(Boolean).concat(['Die Blutbank ist aufgefüllt.']); } },
+      { sys: { head: 'BLUT GETRUNKEN', lines: [] } },
+      { bg: 'nacht', portrait: 'loop' },
+      { narr: 'Loop bettelt um Gnade – und erzählt, was an der Schule niemand weiß: Brandon ist tot.' }
+    ],
+    reward: { exp: 20 },
+    after: () => { stepDone('dach'); },
+    next: 'akademie'
+  },
+
+  /* System-Tutorial und Verhoer (Kap. 39–41) */
+  tutorial: {
+    id: 'tutorial', title: 'Nahkampf', src: 'Kapitel 39–41',
+    scene: [
+      { bg: 'system' },
+      { sys: { head: 'TUTORIAL', lines: ['Nahkampf (Stufe 1)', 'Ein Video spielt ab: Ein blonder Mann mit roten Augen führt zwei Techniken vor.'] } },
+      { sys: { head: 'NEUE FÄHIGKEITEN', lines: ['Flash Step – ein Sprung über bis zu 5 Meter. Braucht Agilität 15, kostet viel Ausdauer.', 'Hammer Strike – ein vernichtender Schlag, der den Gegner taumeln lässt. Braucht Stärke 15.'] } },
+      { bg: 'kantine', portrait: 'quinn' },
+      { narr: 'Am nächsten Tag holt das Militär Quinn zum Verhör. Eine Frau mit einer Wahrheits-Fähigkeit stellt Fragen, gegen die das System nichts tun kann. Quinn hat Brandon nicht getötet – und kommt frei.' }
+    ],
+    reward: { exp: 0, skills: ['flashstep', 'hammer'] },
+    after: () => { stepDone('tutorial'); },
+    next: 'akademie'
+  },
+
+  /* Die Aula (Kap. 41–47) */
+  aula: {
+    id: 'aula', title: 'Die Aula', src: 'Kapitel 41–45', type: 'gefecht',
+    scene: [
+      { bg: 'kantine', portrait: 'mono' },
+      { narr: 'Die Zweitjährigen treiben hundert Erstjährige in die Aula. Auf der Bühne hängt Vorden gefesselt vor einer Platte.' },
+      { who: 'Mono', text: 'Das hier ist eine Lektion. Für alle, die glauben, ihre Stufe bedeute nichts.' },
+      { portrait: 'erin' },
+      { narr: 'Als die Zweitjährigen die Neuen zwingen, auf Vorden zu werfen, reicht es Quinn. Erin und Layla stellen sich an seine Seite.' },
+      { bg: 'system', portrait: null },
+      { sys: { head: 'KAMPF', lines: ['Zweitjährige mit Wasser und Erde.', 'Tag-Team: Quinn, Erin (Schwert, halten = Eis) und Layla (Bogen).'] } }
+    ],
+    fight: {
+      arena: { art: 'kantine', w: 380, h: 680, blocks: [{ x: 18, y: 180, w: 70, h: 26 }, { x: 292, y: 180, w: 70, h: 26 }, { x: 18, y: 500, w: 70, h: 26 }, { x: 292, y: 500, w: 70, h: 26 }] },
+      playerAt: [190, 520], party: ['quinn', 'erin', 'layla'],
+      foes: [
+        { id: 'z1', look: 'zweit', name: 'Zweitjähriger · Wasser', hp: 16, at: [120, 250], ai: AI_WATER, expRate: 1, expKill: 12, info: { name: 'Zweitjähriger', race: 'Mensch', ability: 'Wasser', blood: 'B-' } },
+        { id: 'z2', look: 'zweit', name: 'Zweitjähriger · Erde (Stufe 4)', hp: 22, at: [260, 240], ai: AI_EARTH, expRate: 1, expKill: 15, info: { name: 'Zweitjähriger', race: 'Mensch', ability: 'Erde (Stufe 4)', blood: 'AB-' } },
+        { id: 'z3', look: 's3', name: 'Zweitjähriger', hp: 14, at: [190, 300], ai: AI_THUG, expRate: 1, expKill: 10, info: { name: 'Zweitjähriger', race: 'Mensch', ability: 'Stufe 3', blood: 'A+' } },
+        { id: 'z4', look: 's1', name: 'Zweitjähriger', hp: 14, at: [90, 330], ai: AI_THUG, expRate: 1, expKill: 10, info: { name: 'Zweitjähriger', race: 'Mensch', ability: 'Stufe 3', blood: '0+' } }
+      ],
+      npcs: [{ id: 'vorden', at: [190, 120], pose: 'cower' }, { id: 'mono', at: [300, 130], watch: 'player' }, { id: 'peter', at: [40, 610], pose: 'cower' }, { id: 's2', at: [340, 620], watch: 'foe' }, { id: 's4', at: [30, 420], watch: 'foe' }],
+      inspect: true
+    },
+    won: [
+      { bg: 'kantine', portrait: 'vorden' },
+      { narr: 'Die Zweitjährigen liegen am Boden. Da verändert sich Vorden auf der Bühne. Er lässt sich von Layla berühren, kopiert ihre Telekinese und reißt sich los.' },
+      { portrait: 'raten' },
+      { who: 'Raten', text: 'Vorden ist gerade nicht da. Ich bin Raten. Und Mono gehört mir.' },
+      { bg: 'system', portrait: null },
+      { sys: { head: 'NEUE FIGUR', lines: ['Raten', 'Schnelle Schlagfolgen. ANGRIFF halten: Telekinese und Wasser gleichzeitig – ein Doppelangriff, den selbst Voraussicht nicht ausweichen kann.'] } }
+    ],
+    reward: { exp: 30 },
+    next: 'aula2'
+  },
+  aula2: {
+    id: 'aula2', title: 'Raten gegen Mono', src: 'Kapitel 45–47', type: 'boss',
+    fight: {
+      arena: { art: 'kantine', w: 380, h: 680, blocks: [{ x: 18, y: 180, w: 70, h: 26 }, { x: 292, y: 180, w: 70, h: 26 }, { x: 18, y: 500, w: 70, h: 26 }, { x: 292, y: 500, w: 70, h: 26 }] },
+      playerAt: [190, 480], party: ['raten', 'quinn'],
+      foes: [{ id: 'mono', name: 'Mono · Voraussicht', hp: 90, poise: 5, at: [190, 280], ai: AI_MONO_BOSS, expRate: 1.2, expKill: 40, info: { name: 'Mono', race: 'Mensch', ability: 'Voraussicht (zwei Sekunden)', blood: 'A-' } }],
+      npcs: [{ id: 'erin', at: [60, 600], watch: 'foe' }, { id: 'layla', at: [320, 600], watch: 'foe' }, { id: 's2', at: [340, 150], watch: 'foe' }, { id: 's4', at: [30, 150], watch: 'foe' }],
+      inspect: true, noDeath: true,
+      onTick: (G, dt) => {
+        const T = G.tut || (G.tut = { t: 0 }); T.t += dt;
+        if (T.t < 6) G.hint = { text: 'Einzelne Schläge sieht Mono kommen.<br><b>ANGRIFF halten</b>: Ratens Doppelangriff' };
+        else if (!T.h2) { T.h2 = true; G.hint = null; }
+        if (G.state === 'play' && (G.foe.hp <= G.foe.maxHp * 0.3 || T.t > 60)) { G.state = 'won'; G.tele.length = 0; banner('FAY'); later(1.0, () => G.opt.onWin(G)); }
+      }
+    },
+    won: [
+      { bg: 'kantine', portrait: 'fay' },
+      { narr: 'Ein Windstoß, ein Aufblitzen – und Mono liegt am Boden. Sergeant Fay ist so schnell, dass niemand ihre Bewegung gesehen hat. Peter hat sie geholt.' },
+      { portrait: 'hayley' },
+      { narr: 'Hayley versorgt die Verletzten. Dass Quinns Wunden schon fast verheilt sind, erklärt er mit einem Freund, der heilen kann.' },
+      { portrait: 'del' },
+      { narr: 'Die Führung der Akademie berät. Echte Strafen gibt es keine – aber in der nächsten Woche beginnen die ersten Portalmissionen.' },
+      { bg: 'nacht', portrait: null },
+      { narr: 'Ende der vierten Etappe. Als Nächstes: Earl, Peters Geheimnis und die Portale.' }
+    ],
+    reward: { exp: 40 },
+    after: () => { stepDone('aula'); },
+    next: null
+  }
+});
+const MISSION_ORDER = ['prolog', 'test', 'kyle', 'nacht', 'mono', 'rylee', 'dan', 'biss', 'bande', 'waffen', 'brandon', 'leo', 'dach', 'tutorial', 'aula', 'aula2'];
+
+/* ------------------------------------------------------------ Etappe 4 im Hof: Story-Schritte */
+const STORY4 = [
+  { id: 'bande', need: 'biss', night: true, label: 'Park (mit Layla)', x: 220, y: 680, goal: 'Nachts mit Layla und Maske in den Park', mission: 'bande' },
+  { id: 'waffen', need: 'bande', newDay: true, label: 'Waffenklasse', x: 335, y: 420, goal: 'Geh zur Waffenklasse (Trainingshalle)', mission: 'waffen' },
+  { id: 'leo', need: 'waffen', newDay: true, label: 'Duell mit Leo', x: 335, y: 420, goal: 'Leo erwartet dich in der Trainingshalle', mission: 'leo' },
+  { id: 'dach', need: 'leo', night: true, label: 'Dach des Wohnheims', x: 110, y: 150, goal: 'Nachts aufs Dach des Wohnheims', mission: 'dach' },
+  { id: 'tutorial', need: 'dach', newDay: true, label: 'Zimmer 23 · System', x: 110, y: 150, goal: 'Ruh dich im Zimmer 23 aus', mission: 'tutorial' },
+  { id: 'aula', need: 'tutorial', label: 'Aula', x: 105, y: 420, goal: 'Unruhe in der Aula – geh hin', mission: 'aula' }
+];
+function stepDone(id) { SAVE.flags[id] = true; SAVE.flags[id + 'Day'] = SAVE.day.n; writeSave(); }
+// aktueller Schritt und was davor noetig ist ('sleep' | 'wait' | 'go')
+function story4State() {
+  const F = SAVE.flags, D = SAVE.day;
+  if (!F.biss) return null;
+  const st = STORY4.find((x) => !F[x.id]);
+  if (!st) return null;
+  if (st.newDay && D.n <= (F[st.need + 'Day'] || 0)) return { st, need: 'sleep' };
+  if (st.night && !D.night) return { st, need: 'wait' };
+  if (!st.night && D.night) return { st, need: 'sleep' };
+  return { st, need: 'go' };
+}
 
 /* ------------------------------------------------------------ Ablauf-Hilfen */
 function testTick(G, dt) {
@@ -2361,6 +2845,12 @@ function hubSetup() {
   pois.push({ x: 110, y: 150, label: 'Zimmer 23 · Bis zur Nacht warten', col: '#9ab0ff', hidden: () => night || !(F.mask && !F.rylee), action: () => leaveHub(() => { D.night = true; writeSave(); startMission('akademie'); }) });
   // Park (Nacht, mit Maske)
   pois.push({ x: 220, y: 680, label: 'Park', col: '#c8a0ff', hidden: () => !(night && F.mask && !F.rylee), action: go('rylee') });
+  // Etappe 4: Story-Schritte
+  const S4 = story4State();
+  if (S4 && S4.need === 'go') pois.push({ x: S4.st.x, y: S4.st.y, label: S4.st.label, col: '#ff9ab0', action: go(S4.st.mission) });
+  if (S4 && S4.need === 'wait') pois.push({ x: 110, y: 150, label: 'Zimmer 23 · Bis zur Nacht warten', col: '#9ab0ff', action: () => leaveHub(() => { D.night = true; writeSave(); startMission('akademie'); }) });
+  // Laylas Blut: einmal am Tag die Blutbank auffuellen (Abmachung, Kap. 23)
+  pois.push({ x: 330, y: 150, label: 'Layla (Blut)', col: '#ff6a7a', hidden: () => night || !F.biss || !SAVE.quinn.skills.includes('bloodbank') || D.layla, action: () => { D.layla = true; SAVE.quinn.bank = Math.min(100, SAVE.quinn.bank + 40); writeSave(); sfx('heal'); sysMsg({ head: 'BLUTBANK', lines: ['Layla gibt dir etwas Blut.'], kv: [['Blutbank', SAVE.quinn.bank + ' / 100 ml']] }); } });
   // Wasserspender (Tagesquest)
   pois.push({ x: 175, y: 440, label: 'Wasser trinken', col: '#6ec8ff', hidden: () => night || D.water, action: () => { D.water = true; writeSave(); sfx('heal'); sysMsg({ head: 'TAGESQUEST ERFÜLLT', lines: ['2 Liter Wasser getrunken.'], kv: [['EP', '+5']] }); addExp(5); } });
   // Trainingshalle tagsueber: freies Training fuer EP
@@ -2389,7 +2879,10 @@ function canSleep() {
   if (D.n === 1) return F.book && F.room;
   if (D.n === 2) return F.kyle && F.nacht;
   if (D.n === 3) return F.rylee;
-  return false;
+  const S4 = story4State();
+  if (S4) return S4.need === 'sleep';
+  if (F.dan && !F.biss) return false;
+  return D.n >= 4;
 }
 function hubGoal() {
   const D = SAVE.day, F = SAVE.flags;
@@ -2404,6 +2897,8 @@ function hubGoal() {
   if (D.n === 3) return 'Geh schlafen (Zimmer 23)';
   if (!F.dan) return 'Geh in die Kantine';
   if (!F.biss) return 'Geh in die Bibliothek – der Hunger ist unerträglich';
+  const S4 = story4State();
+  if (S4) return S4.need === 'sleep' ? 'Geh schlafen (Zimmer 23)' : S4.need === 'wait' ? 'Warte im Zimmer 23 auf die Nacht' : S4.st.goal;
   return '';
 }
 function hubTick(G, dt) {
@@ -2514,7 +3009,8 @@ function addExp(n) {
 function quinnStats() {
   const S = SAVE.quinn.stats;
   const race = SAVE.quinn.race === 'Halbling' ? 5 : 0;
-  return { maxHp: 10 + race + (S.sta - 10), maxStam: 100 + (S.sta - 10) * 4, str: S.str, agi: S.agi };
+  const gear = SAVE.quinn.gear.hands === 'gauntlets' ? 3 : 0; // Black Horned Gauntlets: Staerke +3
+  return { maxHp: 10 + race + (S.sta - 10), maxStam: 100 + (S.sta - 10) * 4, str: S.str + gear, agi: S.agi };
 }
 const STAT_INFO = {
   str: { name: 'Stärke', desc: 'mehr Schaden pro Schlag' },
@@ -2535,9 +3031,26 @@ function statusHtml() {
     <div class="line" style="margin-top:4px;font-size:15px">Credits: <b>${SAVE.credits}</b>${Q.thirst ? ` · <span style="color:#ff8a8a">Blutdurst: −${Q.thirst} HP</span>` : ''}</div>
     <div class="line" style="margin-top:6px">Freie Wertepunkte: <b style="color:#ffe6a0">${Q.points}</b></div>
     ${rows}
+    ${Q.skills.includes('bloodbank') ? `<div class="line" style="font-size:15px">Blutbank: <b style="color:#ff8a9a">${Q.bank} / 100 ml</b></div>` : ''}
+    ${Q.gear.hands ? '<div class="line" style="font-size:15px">Ausrüstung: Black Horned Gauntlets (Stärke +3, Verteidigung +2)</div>' : ''}
     <div class="line" style="margin-top:8px;font-size:15px;color:#9ab">Fähigkeiten: ${Q.skills.length ? Q.skills.map((s) => SKILL_NAMES[s] || s).join(', ') : '—'}</div></div>`;
 }
-const SKILL_NAMES = { inspect: 'Inspect', bloodswipe: 'Blood Swipe' };
+const SKILL_NAMES = { inspect: 'Inspect', bloodswipe: 'Blood Swipe', bloodbank: 'Blutbank', flashstep: 'Flash Step', hammer: 'Hammer Strike' };
+// Blut trinken: jede Person gibt nur beim ersten Mal einen Wert (Roman: A Staerke, B Agilitaet, AB Ausdauer, 0 freier Punkt)
+function drinkBlood(person, type) {
+  const Q = SAVE.quinn;
+  if (Q.bloodFrom[person]) return null;
+  Q.bloodFrom[person] = type; Q.blood[type] = (Q.blood[type] || 0) + 1;
+  const base = type.replace(/[+-]/, '');
+  let gain;
+  if (base === 'A') { Q.stats.str++; gain = 'Stärke +1'; }
+  else if (base === 'B') { Q.stats.agi++; gain = 'Agilität +1'; }
+  else if (base === 'AB') { Q.stats.sta++; gain = 'Ausdauer +1'; }
+  else { Q.points++; gain = '1 freier Wertepunkt'; }
+  if (Q.skills.includes('bloodbank')) Q.bank = Math.min(100, Q.bank + 30);
+  writeSave();
+  return gain;
+}
 function showStatus(back) {
   const el = document.createElement('div');
   el.className = 'screen dim'; el.style.pointerEvents = 'auto'; el.style.zIndex = 20;
@@ -2593,7 +3106,7 @@ function showTitle() {
     <button class="btn" id="tNew">${started ? 'Von vorn beginnen' : 'Spiel starten'}</button>
     ${started ? '<button class="btn" id="tCont">Fortsetzen</button>' : ''}
     <button class="btn ghost" id="tSet">Einstellungen</button>
-    <div class="foot">Private Fan-Umsetzung von „My Vampire System“.<br>Frühe Testversion · Etappe 3</div>`, '');
+    <div class="foot">Private Fan-Umsetzung von „My Vampire System“.<br>Frühe Testversion · Etappe 4</div>`, '');
   el.querySelector('#tNew').onclick = () => { AudioSys.init(); if (started) resetSave(); startMission('prolog'); };
   if (started) el.querySelector('#tCont').onclick = () => { AudioSys.init(); startMission(nextMission()); };
   el.querySelector('#tSet').onclick = showSettings;
@@ -2601,7 +3114,7 @@ function showTitle() {
 function nextMission() {
   if (!SAVE.progress.prolog) return 'prolog';
   if (!SAVE.progress.test) return 'test';
-  return SAVE.flags.biss ? 'ende' : 'akademie';
+  return SAVE.flags.aula ? 'ende' : 'akademie';
 }
 function showSettings() {
   const S = SAVE.settings;
@@ -2684,13 +3197,16 @@ function showEnd() {
   G = null; SCENE_BG.cur = 'nacht';
   const Q = SAVE.quinn;
   const el = uiShow(`${sysBox({ head: 'STATUS', kv: [['Name', 'Quinn Talen'], ['Rasse', Q.race || 'Mensch'], ['Stufe', Q.level], ['EP', Q.exp + ' / ' + expNeed(Q.level)], ['Fähigkeiten', Q.skills.map((k) => SKILL_NAMES[k] || k).join(', ') || '—']], quests: ['Hauptquest: Erreiche Stufe 10'] })}
-    <div class="subtitle">Etappe 3 geschafft · Fortsetzung folgt</div>
+    <div class="subtitle">Etappe 4 geschafft · Fortsetzung folgt</div>
     <div class="subtitle" style="font-size:13px">Kämpfe wiederholen (für EP):</div>
-    <button class="btn" id="eK">Kyle</button><button class="btn" id="eM">Mono</button><button class="btn" id="eR">Rylee im Park</button><button class="btn" id="eT">Training</button>
+    <button class="btn" id="eK">Kyle</button><button class="btn" id="eM">Mono</button><button class="btn" id="eR">Rylee im Park</button><button class="btn" id="eB">Brandon</button><button class="btn" id="eA">Aula</button><button class="btn" id="eA2">Raten gegen Mono</button><button class="btn" id="eT">Training</button>
     <button class="btn ghost" id="eStat">Status${SAVE.quinn.points ? ' · +' + SAVE.quinn.points : ''}</button><button class="btn ghost" id="eMenu">Hauptmenü</button>`, 'dim');
   el.querySelector('#eK').onclick = () => startMission('kyle', true, true);
   el.querySelector('#eM').onclick = () => startMission('mono', true, true);
   el.querySelector('#eR').onclick = () => startMission('rylee', true, true);
+  el.querySelector('#eB').onclick = () => startMission('brandon', true, true);
+  el.querySelector('#eA').onclick = () => startMission('aula', true, true);
+  el.querySelector('#eA2').onclick = () => startMission('aula2', true, true);
   el.querySelector('#eT').onclick = () => startMission('training', true, true);
   el.querySelector('#eStat').onclick = () => showStatus(showEnd);
   el.querySelector('#eMenu').onclick = showTitle;
