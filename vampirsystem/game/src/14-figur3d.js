@@ -144,14 +144,15 @@ function buildHuman(L0, extra) {
     addP(S, sh, taper(0.06, 0.052, 0.27), top, 0, -0.02, 0);
     const el = grp(sh, 0, -0.29, 0);
     addP(S, el, fgeo('elbow', () => new T.SphereGeometry(0.052, 10, 8)), top, 0, 0, 0);
-    if (L.claws) { addP(S, el, taper(0.07, 0.06, 0.24), '#d8862a', 0, 0, 0); for (let k = 0; k < 3; k++) addP(S, el, fgeo('stripe', () => new T.TorusGeometry(0.066, 0.008, 4, 14)), '#2a1406', 0, -0.06 - k * 0.06, 0, Math.PI / 2); }
+    if (L.claws && L.clawCol) { addP(S, el, taper(0.05, 0.043, 0.23), top, 0, 0, 0); addP(S, el, taper(0.052, 0.046, 0.08), skin, 0, -0.16, 0); }
+    else if (L.claws) { addP(S, el, taper(0.07, 0.06, 0.24), '#d8862a', 0, 0, 0); for (let k = 0; k < 3; k++) addP(S, el, fgeo('stripe', () => new T.TorusGeometry(0.066, 0.008, 4, 14)), '#2a1406', 0, -0.06 - k * 0.06, 0, Math.PI / 2); }
     else { addP(S, el, taper(0.05, 0.043, 0.23), top, 0, 0, 0); addP(S, el, fgeo('cuff', () => new T.CylinderGeometry(0.047, 0.047, 0.03, 12)), topD, 0, -0.215, 0); }
     const hand = grp(el, 0, -0.29, 0);
     const hc = L.gauntlets ? '#16121a' : skin;
     addP(S, hand, fgeo('palm', () => new T.SphereGeometry(0.052, 10, 8)), hc, 0, 0, 0.005, 0, 0, 0, 0.85, 1.05, 0.72);
     addP(S, hand, fgeo('thumb', () => new T.CapsuleGeometry(0.016, 0.03, 3, 6)), hc, s * -0.03, 0.005, 0.03, 0.5, 0, s * 0.4);
     if (L.gauntlets) for (const k of [-1, 1]) addP(S, hand, fgeo('horn', () => new T.ConeGeometry(0.012, 0.06, 5)), '#d8d0c0', k * 0.02, 0.03, -0.03, -0.6, 0, 0);
-    if (L.claws) for (let k = -1; k <= 1; k++) addP(S, hand, fgeo('claw', () => new T.ConeGeometry(0.012, 0.13, 5)), '#f6efe0', k * 0.026, -0.08, 0.02, Math.PI + 0.25, 0, 0);
+    if (L.claws) for (let k = -1; k <= 1; k++) addP(S, hand, fgeo('claw', () => new T.ConeGeometry(0.012, 0.13, 5)), L.clawCol || '#f6efe0', k * 0.026, -0.08, 0.02, Math.PI + 0.25, 0, 0);
     arms.push({ sh, el, hand });
   }
   // Waffen

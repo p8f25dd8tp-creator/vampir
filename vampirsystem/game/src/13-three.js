@@ -102,7 +102,7 @@ function r3Build() {
   const T = THREE;
   R3.slams = []; R3.poiMeshes = null; R3.rigs.clear(); R3.fx.clear(); R3.tele.clear(); R3.proj.clear(); R3.ghosts.length = 0; R3.impacts.length = 0;
   const scene = new T.Scene();
-  R3.motes = null; R3.fade = []; R3.occ = []; R3.vrCubes = null;
+  R3.motes = null; R3.fade = []; R3.occ = []; R3.vrCubes = null; R3.e6Flick = R3.e6Spark = R3.e6Beacon = null;
   ARENA3D[G.arena.art](G.arena, scene);
   const mkPts = (n, add, size) => {
     const geo = new T.BufferGeometry(); geo.setAttribute('position', new T.BufferAttribute(new Float32Array(n * 3), 3)); geo.setAttribute('color', new T.BufferAttribute(new Float32Array(n * 3), 3));
@@ -256,7 +256,7 @@ function r3Occlusion(rdt) {
 // Objekte und Bestien mit eigener 3D-Fassung (OBJ3D in den Orts-Dateien)
 function r3Obj(e) {
   let R = R3.rigs.get(e.id);
-  if (!R) { R = OBJ3D[e.draw](e); R.obj = true; R.flashK = 0; R3.rigs.set(e.id, R); R3.scene.add(R.root); R.root.traverse((o) => { if (o.isMesh && o.material && o.material.isMeshToonMaterial) { o.material = o.material.clone(); (R.mats || (R.mats = [])).push(o.material); } }); }
+  if (!R) { R = OBJ3D[e.draw](e); R.obj = true; R.flashK = 0; R3.rigs.set(e.id, R); R3.scene.add(R.root); R.root.traverse((o) => { if (o.isMesh && o.material && o.material.isMeshToonMaterial) { if (!o.material.userData.own) o.material = o.material.clone(); if (!(R.mats || (R.mats = [])).includes(o.material)) R.mats.push(o.material); } }); }
   R.root.position.set(e.x * S3, 0, e.y * S3);
   if (e.flash > R.flashK + 0.02) r3Impact(e);
   R.flashK = e.flash;
