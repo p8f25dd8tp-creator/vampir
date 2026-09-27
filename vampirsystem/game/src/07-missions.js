@@ -74,7 +74,7 @@ const BRANDON_ATK = {
   sweep: { type: 'swipe', wind: 0.5, act: 0.1, rec: 0.5, reach: 58, arc: 1.3, dmg: 1, col: '#9ad0b0' }
 };
 const AI_BRANDON = { params: () => ({ range: 55, speed: 90, cd: 0.9 }), choose: (e, d) => (d > 70 ? BRANDON_ATK.thrust : d < 72 ? BRANDON_ATK.sweep : null) };
-// Leo: unglaublich schnell, wird immer schneller; Inspect zeigt nichts (Kap. 32)
+// Leo: unglaublich schnell, wird immer schneller; Analyse zeigt nichts (Kap. 32)
 const LEO_ATK = { type: 'swipe', wind: 0.42, act: 0.08, rec: 0.3, reach: 50, arc: 1.4, dmg: 1, col: '#5ff0d0' };
 const AI_LEO = {
   params: () => ({ range: 46, speed: 120 + G.t * 2, cd: Math.max(0.35, 1.0 - G.t * 0.016) }),
@@ -192,7 +192,7 @@ const MISSIONS = {
       { who: 'Peter', text: 'Danke … Bisher hat sich noch nie jemand für mich eingesetzt.' },
       { bg: 'system', portrait: null },
       { sys: { head: 'QUEST ERFÜLLT', lines: ['Erster Kampf gewonnen.'], kv: [['EP', '+50']] } },
-      { sys: { head: 'NEUE FÄHIGKEIT', lines: ['Inspect (Stufe 1)', 'Zeigt Name, Rasse, Fähigkeitstyp, HP und Blutgruppe eines Ziels. Knopf INSPECT.'] } },
+      { sys: { head: 'NEUE FÄHIGKEIT', lines: ['Analyse (Stufe 1)', 'Zeigt Name, Rasse, Fähigkeitstyp, HP und Blutgruppe eines Ziels. Knopf ANALYSE.'] } },
       { sys: { head: 'OPTIONALE QUEST', lines: ['Trinke das Blut deines Gegners.'], kv: [['Belohnung', '1 Wertepunkt']] } },
       { bg: 'kantine', portrait: 'quinn' },
       { narr: 'Quinn lehnt ab – und kann trotzdem den Blick nicht vom Blut auf dem Boden lösen.' }
@@ -240,7 +240,7 @@ const MISSIONS = {
       { portrait: 'mono' },
       { who: 'Mono', text: 'Hier gibt es Regeln, die nirgends stehen. Wer sie nicht kennt, lernt sie auf die harte Tour.' },
       { bg: 'system', portrait: null },
-      { sys: { head: 'KAMPF', lines: ['Mono, Stufe 6.', 'Versuche, ihn zu treffen. Probier auch INSPECT.'] } }
+      { sys: { head: 'KAMPF', lines: ['Mono, Stufe 6.', 'Versuche, ihn zu treffen. Probier auch ANALYSE.'] } }
     ],
     fight: {
       arena: { art: 'hof', w: 440, h: 700, sun: [{ x: 0, y: 0, w: 440, h: 700 }], paths: [{ x: 192, y: 0, w: 56, h: 700 }] },
@@ -307,7 +307,7 @@ const MISSIONS = {
       { narr: 'Rylee bleibt am Boden liegen. Quinn spürt, wie etwas in ihm zerreißt und neu zusammenwächst.' },
       { bg: 'system', portrait: null },
       { sys: { head: 'EVOLUTION', lines: ['Rasse: Mensch → Halbling'], kv: [['HP', '+5']] } },
-      { sys: { head: 'NEUE FÄHIGKEIT', lines: ['Blood Swipe (Stufe 1)', 'Ein Hieb aus Blut, etwa 5 Meter weit. Keine Abklingzeit – kostet 1 HP pro Einsatz.'] } },
+      { sys: { head: 'NEUE FÄHIGKEIT', lines: ['Blutschnitt (Stufe 1)', 'Ein Hieb aus Blut, etwa 5 Meter weit. Keine Abklingzeit – kostet 1 HP pro Einsatz.'] } },
       { sys: { head: 'WARNUNG', lines: ['Blutdurst: Ohne Menschenblut verliert Quinn mit der Zeit HP.'] } },
       { bg: 'nacht', portrait: 'quinn' },
       { who: 'Quinn', text: 'Blut? Bin ich etwa … ein Vampir?' },
@@ -327,7 +327,7 @@ const MISSIONS = {
       { bg: 'kantine', portrait: 'rylee' },
       { who: 'Rylee', text: 'Du warst das im Park, oder? Das zahl ich dir heim.' },
       { bg: 'system', portrait: null },
-      { sys: { head: 'KAMPF', lines: ['Nur 5 HP. Blood Swipe kostet Leben – überleg dir jeden Einsatz.'] } }
+      { sys: { head: 'KAMPF', lines: ['Nur 5 HP. Blutschnitt kostet Leben – überleg dir jeden Einsatz.'] } }
     ],
     fight: {
       arena: { art: 'kantine', w: 340, h: 600, blocks: [{ x: 18, y: 150, w: 70, h: 26 }, { x: 252, y: 150, w: 70, h: 26 }, { x: 18, y: 440, w: 70, h: 26 }, { x: 252, y: 440, w: 70, h: 26 }] },
@@ -432,7 +432,7 @@ Object.assign(MISSIONS, {
       { narr: 'Die Waffenhalle ist zwanzig Meter hoch. Der Lehrer ist ein kahlköpfiger Mann mit einem Katana aus Bestienmaterial: Leo.' },
       { who: 'Leo', text: 'Eine Waffe ist nur so gut wie der, der sie hält. Heute kämpft ihr ohne Fähigkeiten.' },
       { bg: 'system', portrait: null },
-      { sys: { head: 'SYSTEM', lines: ['Inspect zeigt jetzt auch Waffenwerte und ob eine Waffe zu dir passt.', 'Waffen gibt es in acht Stufen, von Basic bis zu Dämonenwaffen.'] } },
+      { sys: { head: 'SYSTEM', lines: ['Analyse zeigt jetzt auch Waffenwerte und ob eine Waffe zu dir passt.', 'Waffen gibt es in acht Stufen, von Basic bis zu Dämonenwaffen.'] } },
       { bg: 'kantine', portrait: 'brandon' },
       { narr: 'Im Übungskampf bekommt Quinn Brandon als Gegner, Stufe 3, mit einem Speer. Brandon lacht über den Stufe-1er.' }
     ],
@@ -466,7 +466,7 @@ Object.assign(MISSIONS, {
       { bg: 'kantine', portrait: 'leo' },
       { who: 'Leo', text: 'Ich will selbst sehen, was du bist. Auf deine Art.' },
       { bg: 'system', portrait: null },
-      { sys: { head: 'QUEST', lines: ['Duell gegen Leo.', 'Inspect zeigt bei ihm – nichts.', 'Halte 40 Sekunden durch. Er wird immer schneller.'] } }
+      { sys: { head: 'QUEST', lines: ['Duell gegen Leo.', 'Analyse zeigt bei ihm – nichts.', 'Halte 40 Sekunden durch. Er wird immer schneller.'] } }
     ],
     fight: {
       arena: { art: 'halle', w: 340, h: 680 },
@@ -481,7 +481,7 @@ Object.assign(MISSIONS, {
       { narr: 'Nach vierzig Sekunden hebt Leo die Hand. Kein Sieger. Er lächelt zum ersten Mal.' },
       { who: 'Leo', text: 'Nimm die hier. Bei mir liegen sie nur herum.' },
       { bg: 'system', portrait: null },
-      { sys: { head: 'AUSRÜSTUNG', lines: ['Black Horned Gauntlets'], kv: [['Stärke', '+3'], ['Verteidigung', '+2'], ['Blood Swipe', '+5 %']] } },
+      { sys: { head: 'AUSRÜSTUNG', lines: ['Schwarzhorn-Handschuhe'], kv: [['Stärke', '+3'], ['Verteidigung', '+2'], ['Blutschnitt', '+5 %']] } },
       { bg: 'zimmer', portrait: 'vorden' },
       { narr: 'Am Abend sieht Vorden Quinns blutige Kleidung. Seine Augen verändern sich. Es klingt, als stritten in ihm mehrere Stimmen.' }
     ],
@@ -527,7 +527,7 @@ Object.assign(MISSIONS, {
     scene: [
       { bg: 'system' },
       { sys: { head: 'TUTORIAL', lines: ['Nahkampf (Stufe 1)', 'Ein Video spielt ab: Ein blonder Mann mit roten Augen führt zwei Techniken vor.'] } },
-      { sys: { head: 'NEUE FÄHIGKEITEN', lines: ['Flash Step – ein Sprung über bis zu 5 Meter. Braucht Agilität 15, kostet viel Ausdauer.', 'Hammer Strike – ein vernichtender Schlag, der den Gegner taumeln lässt. Braucht Stärke 15.'] } },
+      { sys: { head: 'NEUE FÄHIGKEITEN', lines: ['Blitzschritt – ein Sprung über bis zu 5 Meter. Braucht Agilität 15, kostet viel Ausdauer.', 'Hammerschlag – ein vernichtender Schlag, der den Gegner taumeln lässt. Braucht Stärke 15.'] } },
       { bg: 'kantine', portrait: 'quinn' },
       { narr: 'Am nächsten Tag holt das Militär Quinn zum Verhör. Eine Frau mit einer Wahrheits-Fähigkeit stellt Fragen, gegen die das System nichts tun kann. Quinn hat Brandon nicht getötet – und kommt frei.' }
     ],
@@ -652,7 +652,7 @@ function monoTick(G, dt) {
   const T = G.tut || (G.tut = { t: 0 });
   T.t += dt;
   const ev = G.stats.evaded || 0;
-  G.hint = { text: ev < 2 ? 'Greif Mono an' : T.inspected ? '' : 'Tippe <b>INSPECT</b>' };
+  G.hint = { text: ev < 2 ? 'Greif Mono an' : T.inspected ? '' : 'Tippe <b>ANALYSE</b>' };
   if ((ev >= 6 && T.inspected) || T.t > 32) { if (G.state === 'play') { G.state = 'won'; G.tele.length = 0; later(0.8, () => G.opt.onWin(G)); } }
 }
 

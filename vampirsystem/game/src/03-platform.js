@@ -2,8 +2,8 @@
 /* ==========================================================================
    PLATTFORM — Canvas, Ansicht und Handy-Steuerung
    Links: dynamischer Stick (Daumen setzt irgendwo auf).
-   Rechts: Angriff (tippen = Combo, halten = aufgeladener Schlag), Ausweichen, Inspect.
-   Tastatur zum Testen: WASD/Pfeile, J = Angriff, K/Leertaste = Ausweichen, I = Inspect.
+   Rechts: Angriff (tippen = Combo, halten = aufgeladener Schlag), Ausweichen, Analyse.
+   Tastatur zum Testen: WASD/Pfeile, J = Angriff, K/Leertaste = Ausweichen, I = Analyse.
    ========================================================================== */
 
 const cv = document.getElementById('game');

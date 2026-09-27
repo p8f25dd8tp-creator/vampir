@@ -2,7 +2,7 @@
 /* ==========================================================================
    ETAPPE 5 — Power Fighter (VR-Raum der Akademie) und Kapitel 49–64
    Roman: leere Arena, Duelle, Lebensbalken ohne echten Schaden, frei gestaltbares
-   Aussehen, Quinns Name „Blood Evolver“. Im Spiel kostet Blood Swipe keine HP,
+   Aussehen, Quinns Name „Blood Evolver“. Im Spiel kostet Blutschnitt keine HP,
    die Blutbank wirkt nicht, ein Sieg gibt 25 EP. Eigene Gestaltung aller Figuren.
    ========================================================================== */
 
@@ -38,13 +38,13 @@ const WIND_ATK = {
   stab: { type: 'swipe', wind: 0.36, act: 0.08, rec: 0.35, reach: 38, arc: 0.8, dmg: 1, col: '#8ad8b0', chain: { type: 'swipe', wind: 0.22, act: 0.08, rec: 0.45, reach: 38, arc: 0.8, dmg: 1, col: '#8ad8b0' } },
   gust: { type: 'beam', wind: 0.55, act: 0.12, rec: 0.5, len: 220, width: 26, dmg: 1, col: '#bff0d8' }
 };
-// Windklinge: schnelle Dolche, Windstoss auf Distanz; der Bestien-Umhang blockt Blood Swipe (Kap. 54)
+// Windklinge: schnelle Dolche, Windstoss auf Distanz; der Bestien-Umhang blockt Blutschnitt (Kap. 54)
 const AI_WIND = { cloak: true, params: () => ({ range: 42, speed: 120, cd: 0.8 }), choose: (e, d) => (d > 90 ? WIND_ATK.gust : d < 56 ? WIND_ATK.stab : null) };
 const NATE_ATK = {
   punch: { type: 'swipe', wind: 0.5, act: 0.1, rec: 0.5, reach: 42, arc: 1.0, dmg: 2, col: '#c8d8f0' },
   charge: { type: 'lunge', wind: 0.7, act: 0.26, rec: 0.8, speed: 300, dmg: 2, shout: '!' }
 };
-// Hardsteely (Nate): ganzer Koerper aus Metall; nur Hammer Strike und Konter gehen durch (Kap. 55–56)
+// Hardsteely (Nate): ganzer Koerper aus Metall; nur Hammerschlag und Konter gehen durch (Kap. 55–56)
 const AI_NATE = { steel: true, params: () => ({ range: 42, speed: 85, cd: 1.0 }), choose: (e, d) => (d > 100 ? NATE_ATK.charge : d < 60 ? NATE_ATK.punch : null) };
 
 /* ------------------------------------------------------------ Rangliste */
@@ -53,8 +53,8 @@ const VR_LIST = [
   { id: 'vr2', look: 's2', name: 'Lanzenfuchs', hp: 18, ai: AI_BRANDON, blurb: 'Hält dich mit der Lanze auf Abstand.' },
   { id: 'vr3', look: 's3', name: 'Felsbrecher · Erde', hp: 22, ai: AI_EARTH, blurb: 'Stürmt nach vorn, wenn du zu weit weg bist.' },
   { id: 'vr4', look: 's4', name: 'Nasse Katze · Wasser', hp: 20, ai: AI_WATER, blurb: 'Schießt Wasserstrahlen aus der Ferne.' },
-  { id: 'windklinge', look: 'windklinge', name: 'Windklinge · Bestien-Umhang', hp: 24, ai: AI_WIND, blurb: 'Schnelle Dolche. Der Umhang schluckt Blood Swipe.' },
-  { id: 'hardsteely', look: 'nate', name: 'Hardsteely · Metall', hp: 26, ai: AI_NATE, blurb: 'Ganz aus Metall. Nur Hammer Strike und Konter gehen durch.' },
+  { id: 'windklinge', look: 'windklinge', name: 'Windklinge · Bestien-Umhang', hp: 24, ai: AI_WIND, blurb: 'Schnelle Dolche. Der Umhang schluckt Blutschnitt.' },
+  { id: 'hardsteely', look: 'nate', name: 'Hardsteely · Metall', hp: 26, ai: AI_NATE, blurb: 'Ganz aus Metall. Nur Hammerschlag und Konter gehen durch.' },
   { id: 'vr7', look: 'zweit', name: 'Doppelklinge', hp: 32, ai: AI_LEO, blurb: 'Wird mit jeder Sekunde schneller.' },
   { id: 'vr8', look: 'rylee', name: 'Eisenhaut', hp: 34, ai: AI_RYLEE, blurb: 'Verhärtet immer nur eine Seite.' },
   { id: 'vr9', look: 'mono', name: 'Champion der Woche', hp: 44, ai: AI_MONO_BOSS, blurb: 'Sieht deine Schläge kommen.' }
@@ -76,7 +76,7 @@ function showVrMenu(back) {
     const open = i <= V.rank, beaten = i < V.rank;
     return `<button class="vrrow ${open ? '' : 'locked'}" data-i="${i}" ${open ? '' : 'disabled'}><b>${i + 1}. ${open ? o.name : '???'}</b><small>${open ? o.blurb : 'Besiege zuerst Platz ' + i}</small><span>${beaten ? '✔' : open ? '+25 EP' : '🔒'}</span></button>`;
   }).join('');
-  el.innerHTML = `${sysBox({ head: 'POWER FIGHTER', lines: ['Spieler: Blood Evolver', `Credits: ${SAVE.credits} · ein Kampf kostet ${VR_COST} Credits`, 'Kein echter Schaden. Blood Swipe kostet hier keine HP, die Blutbank wirkt nicht.'], kv: [['Siege', V.wins], ['Rang', V.rank + 1 + ' / ' + VR_LIST.length]] })}
+  el.innerHTML = `${sysBox({ head: 'POWER FIGHTER', lines: ['Spieler: Blood Evolver', `Credits: ${SAVE.credits} · ein Kampf kostet ${VR_COST} Credits`, 'Kein echter Schaden. Blutschnitt kostet hier keine HP, die Blutbank wirkt nicht.'], kv: [['Siege', V.wins], ['Rang', V.rank + 1 + ' / ' + VR_LIST.length]] })}
     <div class="vrlist">${rows}</div><button class="btn ghost" id="vrBack">Zurück</button>`;
   el.querySelectorAll('.vrrow').forEach((b) => b.addEventListener('click', () => {
     if (SAVE.credits < VR_COST) { b.querySelector('small').textContent = 'Zu wenig Credits – jeder Tag bringt 10.'; return; }
@@ -100,7 +100,7 @@ Object.assign(MISSIONS, {
       { who: 'Vorden', text: 'Mein Name dort ist VBCopy. Komm mit, ich zahl die erste Stunde.' },
       { narr: 'Im VR-Raum darf man sein Aussehen frei wählen. Quinn wird zu einem Bauern mit roten Stachelhaaren und nennt sich Blood Evolver.' },
       { bg: 'system', portrait: null },
-      { sys: { head: 'SYSTEM', lines: ['Das System funktioniert auch hier.', 'Blood Swipe kostet im Spiel keine HP. Die Blutbank wirkt nicht.', 'Ein Sieg bringt 25 EP.'] } }
+      { sys: { head: 'SYSTEM', lines: ['Das System funktioniert auch hier.', 'Blutschnitt kostet im Spiel keine HP. Die Blutbank wirkt nicht.', 'Ein Sieg bringt 25 EP.'] } }
     ],
     fight: vrFight(VR_LIST[0]),
     won: [
@@ -114,7 +114,7 @@ Object.assign(MISSIONS, {
     id: 'windklinge', title: 'Die Windklinge', src: 'Kapitel 54', type: 'duell',
     scene: [
       { bg: 'system' },
-      { sys: { head: 'SCHNELLSPIEL', lines: ['Ein Gegner mit Winddolchen und einem Umhang aus Bestienmaterial.', 'Der Umhang schluckt Blood Swipe. Komm nah ran – Flash Step hilft.'] } }
+      { sys: { head: 'SCHNELLSPIEL', lines: ['Ein Gegner mit Winddolchen und einem Umhang aus Bestienmaterial.', 'Der Umhang schluckt Blutschnitt. Komm nah ran – Blitzschritt hilft.'] } }
     ],
     fight: vrFight(VR_LIST[4]),
     won: [
@@ -132,12 +132,12 @@ Object.assign(MISSIONS, {
     id: 'nate', title: 'Hardsteely', src: 'Kapitel 55–56', type: 'duell',
     scene: [
       { bg: 'system' },
-      { sys: { head: 'DUELL', lines: ['Hardsteely macht sich komplett zu Metall.', 'Normale Treffer richten kaum etwas an. Hammer Strike trifft nach innen – und Konter nach perfektem Ausweichen gehen durch.'] } }
+      { sys: { head: 'DUELL', lines: ['Hardsteely macht sich komplett zu Metall.', 'Normale Treffer richten kaum etwas an. Hammerschlag trifft nach innen – und Konter nach perfektem Ausweichen gehen durch.'] } }
     ],
     fight: vrFight(VR_LIST[5]),
     won: [
       { bg: 'kantine', portrait: 'nate' },
-      { narr: 'Nate lacht, obwohl er verloren hat. Hammer Strike ist ein Schlag, der nach innen wirkt – genau das, was gegen Verhärtung hilft.' },
+      { narr: 'Nate lacht, obwohl er verloren hat. Hammerschlag ist ein Schlag, der nach innen wirkt – genau das, was gegen Verhärtung hilft.' },
       { who: 'Nate', text: 'Nächstes Mal krieg ich dich. Ab jetzt sind wir Rivalen.' }
     ],
     reward: { exp: 30 },
@@ -151,7 +151,7 @@ Object.assign(MISSIONS, {
       { narr: 'Layla hilft Quinn herauszufinden, was ihm in der Sonne hilft. Ein UV-Schirm schützt vollständig, ist aber unpraktisch. Sonnencreme nützt nichts. Erst dicke schwarze Kleidung wirkt.' },
       { who: 'Layla', text: 'Und Knoblauch? Ein Kreuz? Silber?' },
       { portrait: 'quinn' },
-      { narr: 'Nichts davon macht ihm etwas aus – Inspect bestätigt es. Süßes schmeckt ihm fad, Fleisch gut, Blut wie Karamell. Und die Frage bleibt: Altert er überhaupt noch?' },
+      { narr: 'Nichts davon macht ihm etwas aus – Analyse bestätigt es. Süßes schmeckt ihm fad, Fleisch gut, Blut wie Karamell. Und die Frage bleibt: Altert er überhaupt noch?' },
       { bg: 'system', portrait: null },
       { sys: { head: 'IDEE', lines: ['Sams Umhang ist aus Bestienmaterial.', 'Ein Anzug aus so einem Material könnte gegen die Sonne helfen.'] } }
     ],
@@ -162,7 +162,7 @@ Object.assign(MISSIONS, {
     id: 'portalteam', title: 'Die Portale', src: 'Kapitel 59–61',
     scene: [
       { bg: 'kantine', portrait: 'del' },
-      { narr: 'Del erklärt die Portale, die aus Dalki-Technik gebaut wurden. Grüne sind erforscht und haben Shelter, orange nur teilweise, rote gar nicht.' },
+      { narr: 'Del erklärt die Portale, die aus Dalki-Technik gebaut wurden. Grüne sind erforscht und haben Schutzstationen, orange nur teilweise, rote gar nicht.' },
       { narr: 'Für die ersten Portalmissionen bilden sich Fünferteams: Quinn, Layla, Vorden, Peter – und Erin will unbedingt dazu.' },
       { portrait: 'erin' },
       { who: 'Erin', text: 'Peter hat keine richtige Fähigkeit. Er bremst uns.' },

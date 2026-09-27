@@ -172,7 +172,7 @@ function renderFight() {
     const sway = Math.sin(G.t * 1.2 + x) * 1.5;
     for (const [dx, dy, r, c] of [[0, -40, 22, '#2e5a28'], [-12, -32, 15, '#3a6a30'], [12, -34, 16, '#3a6a30'], [4, -46, 13, '#4a7a3a']]) { g.fillStyle = A.night ? shade(c, -0.55) : c; g.beginPath(); g.arc(x + dx + sway, y + dy, r, 0, TAU); g.fill(); }
   }
-  // Geschosse: Blood Swipe, Pfeile, Wasser
+  // Geschosse: Blutschnitt, Pfeile, Wasser
   for (const P of G.proj || []) {
     g.save(); g.translate(P.x, P.y - 22); g.rotate(P.a);
     if (P.kind === 'arrow') {

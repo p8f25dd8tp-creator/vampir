@@ -188,8 +188,8 @@ Object.assign(MISSIONS, {
       { bg: 'system', portrait: null },
       { sys: { head: 'WARNUNG', lines: ['Starke Sonne: Werte stark gesenkt.'] } },
       { bg: 'wueste', portrait: 'quinnvamp' },
-      { narr: 'Im Shelter gibt es eine Travellerhalle mit Schmiede, Ködern und einem Questbrett. Quinn erinnert sich an Sams Umhang – das Material stammt von einem geflügelten Wüstenwesen auf genau diesem Planeten.' },
-      { narr: 'Ein Ladenbesitzer bedient lieber Militäranwärter als Stufe-1er. Quinn liest sein verschlossenes Bestiarium einfach per Inspect.' },
+      { narr: 'In der Schutzstation gibt es eine Reisendenhalle mit Schmiede, Ködern und einem Questbrett. Quinn erinnert sich an Sams Umhang – das Material stammt von einem geflügelten Wüstenwesen auf genau diesem Planeten.' },
+      { narr: 'Ein Ladenbesitzer bedient lieber Militäranwärter als Stufe-1er. Quinn liest sein verschlossenes Bestiarium einfach per Analyse.' },
       { bg: 'system', portrait: null },
       { sys: { head: 'BESTIARIUM', kv: [['Zahnwurm', 'Basis · an der Oase'], ['Flügelechse', 'Basis · Flügel hart, Bauch weich'], ['Brennschlange', 'Mittelstufe']] } },
       { sys: { head: 'KI', lines: ['Wer von dir „geblutet“ wurde, gehört zur Familie.', 'Die Kills deiner Familie bringen auch dir EP.'] } }
@@ -231,7 +231,7 @@ Object.assign(MISSIONS, {
       { portrait: 'logan' },
       { narr: 'Unterwegs überholt sie Logan auf einem selbstgebauten Laufstuhl mit Hundebeinen.' },
       { bg: 'system', portrait: null },
-      { sys: { head: 'TAKTIK', lines: ['Die Echsen panzern sich vorn mit den Flügeln.', 'Greif von der Seite an – oder brich die Deckung mit Hammer Strike. Erins Eis bremst sie.'] } }
+      { sys: { head: 'TAKTIK', lines: ['Die Echsen panzern sich vorn mit den Flügeln.', 'Greif von der Seite an – oder brich die Deckung mit Hammerschlag. Erins Eis bremst sie.'] } }
     ],
     fight: {
       arena: sunArena({ seed: 72, blocks: [{ x: 60, y: 250, w: 60, h: 30, invisible: true }, { x: 270, y: 360, w: 60, h: 30, invisible: true }] }), playerAt: [190, 520], party: ['quinn', 'erin', 'layla'], inspect: true, noFoeBar: true,
@@ -344,7 +344,7 @@ Object.assign(MISSIONS, {
       { portrait: 'dalki' },
       { narr: 'Der Dalki hat nur einen Stachel – und ist trotzdem stärker als alles, was Quinn je gesehen hat.' },
       { bg: 'system', portrait: null },
-      { sys: { head: 'TAKTIK', lines: ['Blutskills prallen an seiner Haut ab.', 'Greif von innen an: Hammer Strike, Konter, Schatten.', 'Jede Wunde macht ihn schneller.'] } }
+      { sys: { head: 'TAKTIK', lines: ['Blutskills prallen an seiner Haut ab.', 'Greif von innen an: Hammerschlag, Konter, Schatten.', 'Jede Wunde macht ihn schneller.'] } }
     ],
     fight: {
       arena: sunArena({ seed: 75, brunnen: [300, 120] }), playerAt: [190, 480], inspect: true,
@@ -361,7 +361,7 @@ Object.assign(MISSIONS, {
           banner('NACHT');
         }
         if (d.hp <= d.maxHp * 0.3 && G.state === 'play') { G.state = 'won'; G.tele.length = 0; banner('PETER!'); later(1.4, () => G.opt.onWin(G)); }
-        G.hint = G.t < 6 ? { text: 'Blutskills prallen ab · <b>HAMMER</b> und Konter' } : null;
+        G.hint = G.t < 6 ? { text: 'Blutskills prallen ab · <b>HAMMERSCHLAG</b> und Konter' } : null;
       }
     },
     won: [
@@ -372,7 +372,7 @@ Object.assign(MISSIONS, {
       { portrait: 'quinnvamp' },
       { narr: 'Quinns erster Gedanke gilt dem vergossenen Blut. Dann erst kommt das Entsetzen. Er feuert Blutspray um Blutspray, bis der Dalki grün blutet.' },
       { bg: 'system', portrait: null },
-      { sys: { head: 'SYSTEM', lines: ['Blood Spray erreicht Stufe 2.'] } }
+      { sys: { head: 'SYSTEM', lines: ['Blutspray erreicht Stufe 2.'] } }
     ],
     reward: { exp: 150 },
     after: () => { stepDone('dalki'); },

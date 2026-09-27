@@ -1,7 +1,7 @@
 'use strict';
 /* ==========================================================================
    ETAPPE 6 — Das rote Portal (Kapitel 65–110)
-   Peters Stoß, der dunkle Planet, Rattaclaws, Scordana, der Bloodsucker,
+   Peters Stoß, der dunkle Planet, Rattenkrallen, Scordana, der Blutsauger,
    die Evolution zum Vampir, Schatten und MC, Rückkehr zur Akademie.
    Alle Texte eigene Zusammenfassungen, alle Figuren eigene Gestaltung.
    ========================================================================== */
@@ -12,7 +12,7 @@ Object.assign(LOOKS, {
   ian: { outfit: 'shirt', top: '#4a4a36', topL: '#72725a', topD: '#20200e', leg: '#34302a', legD: '#18160e', shoe: '#2a2018', skin: '#d8b494', skinD: '#987454', hair: '#3a2a1e', eye: '#6a6a5a', hairStyle: 'short', rim: '#c8d0dc' },
   // „Der Kleine“: Vordens dritte Persoenlichkeit
   kleiner: Object.assign({}, LOOKS.vorden, { eye: '#8ac8ff', rim: '#bfe0ff', angry: false }),
-  // der wahnsinnige Bloodsucker: Glatze, Klauen, schwarze Augen
+  // der wahnsinnige Blutsauger: Glatze, Klauen, schwarze Augen
   bloodsucker: { outfit: 'uniform', top: '#3a3e48', topL: '#5a5e6a', topD: '#16181e', leg: '#262a34', legD: '#101218', shoe: '#e8e8ea', skin: '#d8d4cc', skinD: '#8a8480', hair: '#d8d4cc', eye: '#000000', hairStyle: 'bald', claws: 1, clawCol: '#c8c4bc', angry: true, trim: '#707480', rim: '#ff3a4e' },
   erdnutzer: { outfit: 'uniform', top: '#5a4a2a', topL: '#8a7648', topD: '#2a200e', leg: '#3a3020', legD: '#1a140a', shoe: '#2a2014', skin: '#e0c0a0', skinD: '#a08060', hair: '#4a3a24', eye: '#c8a060', hairStyle: 'short', trim: '#c8a070', angry: true, rim: '#c8a070' },
   schlaeger: Object.assign({}, LOOKS.s3, { angry: true })
@@ -217,7 +217,7 @@ const RAT_ATK = {
   bite: { type: 'swipe', wind: 0.5, act: 0.08, rec: 0.45, reach: 34, arc: 0.9, dmg: 1, col: '#d0b0a0' },
   pounce: { type: 'lunge', wind: 0.55, act: 0.22, rec: 0.6, speed: 300, dmg: 1, shout: '!' }
 };
-// Rattaclaw (Basic-Bestie, Kap. 66): rudelweise, springt an; wartet im Dunkeln, bis sie Witterung aufnimmt
+// Rattenkralle (Basic-Bestie, Kap. 66): rudelweise, springt an; wartet im Dunkeln, bis sie Witterung aufnimmt
 const ratAsleep = (e) => e.wakeT === undefined || G.t < e.wakeT;
 const AI_RAT = {
   pack: true,
@@ -251,7 +251,7 @@ const BS_ATK = {
   leap: { type: 'lunge', wind: 0.5, act: 0.24, rec: 0.55, speed: 360, dmg: 2, shout: '!' },
   back: { type: 'beam', wind: 0.55, act: 0.12, rec: 0.5, len: 220, width: 14, dmg: 2, col: '#c8d8f0', shout: 'Spieße!' }
 };
-// der Bloodsucker (Kap. 80–81): schnell, regeneriert, wirft die Metallspiesse zurueck
+// der Blutsauger (Kap. 80–81): schnell, regeneriert, wirft die Metallspiesse zurueck
 const AI_BLOODSUCKER = {
   params: () => ({ range: 36, speed: 140, cd: 0.95 }),
   choose: (e, d) => (d > 110 && G.t - (e.backT || 0) > 5 ? ((e.backT = G.t), BS_ATK.back) : d > 80 ? BS_ATK.leap : d < 56 ? BS_ATK.claw : null),
@@ -268,7 +268,7 @@ const ERDE_ATK = {
   ram: { type: 'lunge', wind: 0.7, act: 0.26, rec: 0.8, speed: 260, dmg: 2, shout: '!' },
   hit: { type: 'swipe', wind: 0.5, act: 0.1, rec: 0.5, reach: 42, arc: 1.0, dmg: 2, col: '#c8a070' }
 };
-// Stufe-4-Erdnutzer in Bestienruestung (Kap. 106–107): Steinwand vorn; nur Hammer Strike bricht sie
+// Stufe-4-Erdnutzer in Bestienruestung (Kap. 106–107): Steinwand vorn; nur Hammerschlag bricht sie
 const AI_ERDE = {
   harden: true,
   params: () => ({ range: 70, speed: 70, cd: 1.2 }),
@@ -277,7 +277,7 @@ const AI_ERDE = {
 };
 
 /* ------------------------------------------------------------ neue Faehigkeiten */
-// Blood Spray (Kap. 66): Faecher aus Blut wie eine Schrotflinte, kostet 5 HP
+// Blutspray (Kap. 66): Faecher aus Blut wie eine Schrotflinte, kostet 5 HP
 function sprayFan(p, n, spread, dmg) {
   const f = nearestFoe(p, 200), [mx, my] = readMove();
   const a = f ? Math.atan2(f.y - p.y, f.x - p.x) : (mx || my) ? Math.atan2(my, mx) : (p.face > 0 ? 0 : Math.PI);
@@ -297,13 +297,13 @@ function castBloodSpray(p) {
   p.sprayCd = G.t + 0.9; G.stats.swipes = (G.stats.swipes || 0) + 1;
   sprayFan(p, 5, 1.0, 1.6);
 }
-// Hammer Spray (Kap. 104): Hammer Strike plus Blutfaecher; frisst Ausdauer und etwas Blut
+// Hammerspray (Kap. 104): Hammerschlag plus Blutfaecher; frisst Ausdauer und etwas Blut
 function hammerSpray(p) {
   if (p.stam < 12 || (!G.opt.vr && p.hp <= 3)) return;
   spendStam(p, 12, 0.4);
   if (!G.opt.vr) p.hp -= 2;
   sprayFan(p, 3, 0.6, 1.4);
-  floatText(p.x, p.y - 86, 'HAMMER SPRAY', '#ff8a9a');
+  floatText(p.x, p.y - 86, 'HAMMERSPRAY', '#ff8a9a');
 }
 // Schattenkontrolle (Kap. 89–93): der Schatten packt die Beine des naechsten Gegners
 function castShadow(p) {
@@ -323,8 +323,8 @@ function learn(...ids) { const Q = SAVE.quinn; for (const s of ids) if (!Q.skill
 
 /* ------------------------------------------------------------ Kampf-Hilfen */
 function ratPack(n, spots, t0, dt) {
-  return Array.from({ length: n }, (_, i) => ({ id: 'rat' + i, draw: 'rattaclaw', name: 'Rattaclaw', hp: 3, poise: 2, r: 13, at: spots[i % spots.length].map((v, j) => v + (j ? (i >> 2) * 12 : 0)), ai: AI_RAT, expRate: 1, expKill: 14,
-    info: { name: 'Rattaclaw', race: 'Bestie · Basic-Stufe', ability: 'Rudeljäger, scharfe Krallen', blood: 'giftig – nicht trinkbar' } }));
+  return Array.from({ length: n }, (_, i) => ({ id: 'rat' + i, draw: 'rattaclaw', name: 'Rattenkralle', hp: 3, poise: 2, r: 13, at: spots[i % spots.length].map((v, j) => v + (j ? (i >> 2) * 12 : 0)), ai: AI_RAT, expRate: 1, expKill: 14,
+    info: { name: 'Rattenkralle', race: 'Bestie · Basic-Stufe', ability: 'Rudeljäger, scharfe Krallen', blood: 'giftig – nicht trinkbar' } }));
 }
 function wakeTick(G, maxAwake) { // Rudel: hoechstens maxAwake greifen gleichzeitig an, die naechste folgt mit kurzem Abstand
   const rats = G.ents.filter((e) => e.team === 1 && e.ai && e.ai.pack);
@@ -363,20 +363,20 @@ Object.assign(MISSIONS, {
       { bg: 'rotplanet', portrait: null },
       { narr: 'Zwischen den Ruinen bewegt sich etwas: eine Bestie, groß wie ein Hund, mit Rattenschnauze und langen Krallen. Quinn erledigt sie knapp – und die Handschuhe tragen die ersten Kratzer.' },
       { bg: 'system' },
-      { sys: { head: 'NEUE FÄHIGKEIT', lines: ['Blood Spray', 'Ein Fächer aus Blut, wie eine Schrotflinte. Kostet 5 HP.'], kv: [['Hinweis', 'Rattaclaw-Blut ist giftig']] } },
+      { sys: { head: 'NEUE FÄHIGKEIT', lines: ['Blutspray', 'Ein Fächer aus Blut, wie eine Schrotflinte. Kostet 5 HP.'], kv: [['Hinweis', 'Rattenkralle-Blut ist giftig']] } },
       { call: () => { learn('bloodspray'); SAVE.quinn.bank = Math.max(SAVE.quinn.bank, 60); writeSave(); } },
       { bg: 'rotplanet' },
-      { narr: 'Der Kampflärm lockt das Rudel an. Zehn Rattaclaws jagen Quinn in ein halb eingestürztes Haus. Oben auf der Treppe ist der einzige Ort, an dem sie nur von vorn kommen können.' }
+      { narr: 'Der Kampflärm lockt das Rudel an. Zehn Rattenkrallen jagen Quinn in ein halb eingestürztes Haus. Oben auf der Treppe ist der einzige Ort, an dem sie nur von vorn kommen können.' }
     ],
     fight: {
       arena: { art: 'ruine', w: 340, h: 600, night: true, blocks: [{ x: 0, y: 206, w: 132, h: 26, invisible: true }, { x: 208, y: 206, w: 132, h: 26, invisible: true }] },
       playerAt: [170, 150], inspect: true, noFoeBar: true,
       foes: ratPack(10, [[60, 470], [280, 480], [170, 560], [100, 360], [250, 350]], 0.6, 1.8),
-      onTick: (G) => { wakeTick(G, 2); const n = G.ents.filter((e) => e.team === 1 && e.state !== 'down').length; G.hint = { text: G.t < 5 ? 'Halte die Treppe. <b>BLOOD SPRAY</b> trifft mehrere' : `Rattaclaws: ${n}` }; }
+      onTick: (G) => { wakeTick(G, 2); const n = G.ents.filter((e) => e.team === 1 && e.state !== 'down').length; G.hint = { text: G.t < 5 ? 'Halte die Treppe. <b>BLUTSPRAY</b> trifft mehrere' : `Rattenkrallen: ${n}` }; }
     },
     won: [
       { bg: 'system' },
-      { sys: { head: 'SYSTEM', lines: ['Alle zehn Rattaclaws besiegt.', 'Blood Swipe erreicht Stufe 2.', 'Inventar freigeschaltet: 10 Basis-Kristalle (je etwa 10 Credits wert).'] } },
+      { sys: { head: 'SYSTEM', lines: ['Alle zehn Rattenkrallen besiegt.', 'Blutschnitt erreicht Stufe 2.', 'Inventar freigeschaltet: 10 Basis-Kristalle (je etwa 10 Credits wert).'] } },
       { bg: 'rotplanet' },
       { narr: 'Vom Dach aus sieht Quinn ein Lagerhaus des Militärs – mit dem Wappen seiner Akademie.' }
     ],
@@ -392,7 +392,7 @@ Object.assign(MISSIONS, {
       { portrait: 'kleiner' },
       { narr: 'Neben Raten lebt dort noch jemand: „der Kleine“, eine dritte, ängstliche Persönlichkeit. Seine früheren Freunde sind alle gestorben.' },
       { portrait: 'ian' },
-      { narr: 'Vorden trifft Ian, einen Traveller, der hier festsitzt. Auf dem Planeten dauert eine Nacht ein halbes Jahr – und die Nacht hat gerade erst begonnen.' },
+      { narr: 'Vorden trifft Ian, einen Reisenden, der hier festsitzt. Auf dem Planeten dauert eine Nacht ein halbes Jahr – und die Nacht hat gerade erst begonnen.' },
       { portrait: 'raten' },
       { who: 'Raten', text: 'Der hat einen seltenen Kristall dabei. Lass ihn uns einfach nehmen.' },
       { portrait: 'vorden' },
@@ -400,7 +400,7 @@ Object.assign(MISSIONS, {
       { bg: 'rotplanet', portrait: 'quinn' },
       { narr: 'Quinn kriecht ins Militärlager. Fast alles ist zerstört – bis auf einen gesicherten Container mit Zahlenschloss.' },
       { bg: 'system', portrait: null },
-      { sys: { head: 'INSPECT · STUFE 2', lines: ['Berührung verrät mehr.', 'Der Code des Containers wird sichtbar.'] } },
+      { sys: { head: 'ANALYSE · STUFE 2', lines: ['Berührung verrät mehr.', 'Der Code des Containers wird sichtbar.'] } },
       { bg: 'rotplanet', portrait: 'quinn' },
       { narr: 'Der Container ist voller Fähigkeits- und Skillbücher. Lernen kann Quinn sie nicht – aber das System verwandelt sie in Erfahrung.' }
     ],
@@ -421,8 +421,8 @@ Object.assign(MISSIONS, {
       { bg: 'rotplanet', portrait: 'quinn' },
       { narr: 'Der Blutdurst meldet sich. In der Blutbank sind nur noch wenige Reserven. Im Hangar nebenan hat eine größere Bestie ein Nest gebaut.' },
       { bg: 'system', portrait: null },
-      { sys: { head: 'INSPECT', kv: [['Name', 'Scordana'], ['Stufe', 'Mittelstufe'], ['Körper', 'Skorpion-Unterleib, vier Scheren'], ['Nest', 'drei Eier']] } },
-      { sys: { head: 'TAKTIK', lines: ['Der Panzer vorn blockt Schläge und Blood Swipe.', 'Der Oberkörper ist weich: Flash Step hinter sie, dann Hammer Strike.', 'Hammer Strike bringt sie auch von vorn ins Taumeln.', 'Achtung vor dem Stachel!'] } }
+      { sys: { head: 'ANALYSE', kv: [['Name', 'Scordana'], ['Stufe', 'Mittelstufe'], ['Körper', 'Skorpion-Unterleib, vier Scheren'], ['Nest', 'drei Eier']] } },
+      { sys: { head: 'TAKTIK', lines: ['Der Panzer vorn blockt Schläge und Blutschnitt.', 'Der Oberkörper ist weich: Blitzschritt hinter sie, dann Hammerschlag.', 'Hammerschlag bringt sie auch von vorn ins Taumeln.', 'Achtung vor dem Stachel!'] } }
     ],
     fight: {
       arena: { art: 'hangar', w: 360, h: 560, night: true, blocks: [{ x: 30, y: 250, w: 50, h: 40, invisible: true }, { x: 280, y: 330, w: 50, h: 40, invisible: true }] },
@@ -433,14 +433,14 @@ Object.assign(MISSIONS, {
         { id: 'ei2', draw: 'ei', name: 'Ei', hp: 3, poise: 99, r: 9, fixed: true, at: [292, 100], ai: AI_EGG, expKill: 15, info: { name: 'Scordana-Ei', race: 'Bestie', ability: '—', blood: '—' } },
         { id: 'ei3', draw: 'ei', name: 'Ei', hp: 3, poise: 99, r: 9, fixed: true, at: [314, 86], ai: AI_EGG, expKill: 15, info: { name: 'Scordana-Ei', race: 'Bestie', ability: '—', blood: '—' } }
       ],
-      onTick: (G) => { const s = G.foe; G.hint = s.state === 'down' ? { text: 'Die Eier (oben rechts)' } : G.t < 6 ? { text: 'Von hinten angreifen · <b>FLASH STEP</b> + <b>HAMMER</b>' } : null; }
+      onTick: (G) => { const s = G.foe; G.hint = s.state === 'down' ? { text: 'Die Eier (oben rechts)' } : G.t < 6 ? { text: 'Von hinten angreifen · <b>BLITZSCHRITT</b> + <b>HAMMERSCHLAG</b>' } : null; }
     },
     won: [
       { bg: 'rotplanet', portrait: 'quinn' },
       { narr: 'Scordana bricht zusammen. Quinn zertritt die Eier – auch sie zählen als Kills.' },
-      { narr: 'Dann knackt es an seinen Händen: Die Black Horned Gauntlets sind zerbrochen.' },
+      { narr: 'Dann knackt es an seinen Händen: Die Schwarzhorn-Handschuhe sind zerbrochen.' },
       { bg: 'system', portrait: null },
-      { sys: { head: 'SYSTEM', lines: ['Ausrüstung zerstört: Black Horned Gauntlets.', 'Ein Stufenaufstieg heilt nicht.', 'Blutdurst: −1 HP pro Stunde.'] } }
+      { sys: { head: 'SYSTEM', lines: ['Ausrüstung zerstört: Schwarzhorn-Handschuhe.', 'Ein Stufenaufstieg heilt nicht.', 'Blutdurst: −1 HP pro Stunde.'] } }
     ],
     reward: { exp: 60 },
     after: () => { stepDone('scordana'); SAVE.quinn.gear.hands = null; },
@@ -451,7 +451,7 @@ Object.assign(MISSIONS, {
     scene: [
       { bg: 'rotplanet', portrait: 'quinn' },
       { narr: 'Quinn schleicht durch die Ruinenstadt. In einer unzerstörbaren Kuppel stehen ausgeschlachtete Mechs – vielleicht ist dort das Portal.' },
-      { narr: 'Mit einem geworfenen Stück Metall lenkt er ein Rudel ab, Inspect knackt den Türcode. Doch vor der Tür warten noch mehr Rattaclaws – und er ist am Ende seiner Kräfte.' },
+      { narr: 'Mit einem geworfenen Stück Metall lenkt er ein Rudel ab, Analyse knackt den Türcode. Doch vor der Tür warten noch mehr Rattenkrallen – und er ist am Ende seiner Kräfte.' },
       { call: () => { SAVE.quinn.bank = 0; writeSave(); } },
       { bg: 'system', portrait: null },
       { sys: { head: 'ZUSTAND', lines: ['Blutbank leer.', 'Der Hunger frisst die letzten HP.'] } }
@@ -474,14 +474,14 @@ Object.assign(MISSIONS, {
     next: 'bloodsucker'
   },
   bloodsucker: {
-    id: 'bloodsucker', title: 'Der Bloodsucker', src: 'Kapitel 78–81', type: 'boss',
+    id: 'bloodsucker', title: 'Der Blutsauger', src: 'Kapitel 78–81', type: 'boss',
     scene: [
       { bg: 'rotplanet', portrait: 'ian' },
       { narr: 'Einäugige Schneckenbestien greifen das Bibliotheksversteck an. Ian zeigt seine Fähigkeit: Er zieht Metall an und stößt es ab – erst ein Schild aus Metallkugeln, dann eine Explosion nach außen.' },
       { portrait: 'vorden' },
-      { narr: 'Später finden Vorden und Ian tote Rattaclaws vor dem Dom. Gemeinsam biegen sie die Tür auf. Drinnen sind alle Lichter zerstört.' },
+      { narr: 'Später finden Vorden und Ian tote Rattenkrallen vor dem Dom. Gemeinsam biegen sie die Tür auf. Drinnen sind alle Lichter zerstört.' },
       { bg: 'system', portrait: null },
-      { sys: { head: '???', kv: [['Rasse', '(Wahnsinniger) Bloodsucker'], ['Werte', 'verdoppelt'], ['HP', 'halbiert'], ['Verstand', 'keiner']] } },
+      { sys: { head: '???', kv: [['Rasse', '(Wahnsinniger) Blutsauger'], ['Werte', 'verdoppelt'], ['HP', 'halbiert'], ['Verstand', 'keiner']] } },
       { bg: 'nacht', portrait: 'bloodsucker' },
       { narr: 'Ein Wesen ohne Haare, mit Klauen und schwarzen Augen stürmt schreiend aus der Dunkelheit. Ian ist sofort gelähmt.' },
       { portrait: 'kleiner' },
@@ -491,7 +491,7 @@ Object.assign(MISSIONS, {
       arena: { art: 'dom', w: 360, h: 560, night: true, blocks: [{ x: 40, y: 150, w: 56, h: 36, invisible: true }, { x: 264, y: 400, w: 56, h: 36, invisible: true }] },
       playerAt: [180, 420], party: ['kleiner'], inspect: false,
       npcs: [{ id: 'ian', at: [110, 470], pose: 'cower', watch: 'foe' }],
-      foes: [{ id: 'bloodsucker', name: 'Bloodsucker', hp: 36, poise: 5, at: [180, 200], ai: AI_BLOODSUCKER, expRate: 0, info: { name: '???', race: 'Bloodsucker', ability: 'Regeneration', blood: '—' } }],
+      foes: [{ id: 'bloodsucker', name: 'Blutsauger', hp: 36, poise: 5, at: [180, 200], ai: AI_BLOODSUCKER, expRate: 0, info: { name: '???', race: 'Blutsauger', ability: 'Regeneration', blood: '—' } }],
       expBonus: () => 20,
       onTick: (G) => {
         const b = G.foe;
@@ -501,7 +501,7 @@ Object.assign(MISSIONS, {
     },
     won: [
       { bg: 'nacht', portrait: 'kleiner' },
-      { narr: 'Der Kleine erkennt die Uniform. Das ist Quinn. Er weint – und stellt sich zwischen den Bloodsucker und Ian, um den tödlichen Schlag zu verhindern.' },
+      { narr: 'Der Kleine erkennt die Uniform. Das ist Quinn. Er weint – und stellt sich zwischen den Blutsauger und Ian, um den tödlichen Schlag zu verhindern.' },
       { portrait: 'bloodsucker' },
       { narr: 'Doch das Wesen ist schneller. Es verletzt Ian schwer und schleift ihn in die Dunkelheit.' }
     ],
@@ -525,12 +525,12 @@ Object.assign(MISSIONS, {
       { narr: 'Am Ende der Spur: Quinn, mit roten Augen. Er verletzt Vorden an der Brust und fleht um Blut. Vorden verriegelt die Tür von außen.' },
       { bg: 'system', portrait: null },
       { narr: 'Fünfzehn Minuten Schmerz.' },
-      { sys: { head: 'EVOLUTION', lines: ['Rasse: Vampir'], kv: [['Stärke / Agilität / Ausdauer', 'mindestens 15'], ['HP', 'stark erhöht'], ['Neu', 'Charme, Blutfamilien-Bonus'], ['Skills', 'Blutritual (0/2), Daze']] } },
+      { sys: { head: 'EVOLUTION', lines: ['Rasse: Vampir'], kv: [['Stärke / Agilität / Ausdauer', 'mindestens 15'], ['HP', 'stark erhöht'], ['Neu', 'Charme, Blutfamilien-Bonus'], ['Skills', 'Blutritual (0/2), Betäubung']] } },
       { sys: { head: 'SYSTEM · STUFE 2', lines: ['Eine Aufzeichnung mit der Stimme des blonden Mannes meldet sich. Eine KI hilft ab jetzt.', 'Andere Vampire leben versteckt unter den Menschen.', 'Werde stärker. Bau dir eine eigene Streitmacht.'] } },
       { call: () => { const Q = SAVE.quinn; Q.race = 'Vampir'; for (const k of ['str', 'agi', 'sta']) Q.stats[k] = Math.max(15, Q.stats[k]); learn('daze'); } },
       { bg: 'rotplanet', portrait: 'quinnvamp' },
       { narr: 'Durch die Tür erzählt Quinn Vorden fast alles. Vorden hat keine Angst – nur eine Sorge: Regierung, Militär und Familien würden Quinn benutzen wollen, wenn sie davon wüssten.' },
-      { narr: 'Und das Schattenbuch? Inspect verrät: Nur wer Vampirblut in sich trägt, kann es lernen.' }
+      { narr: 'Und das Schattenbuch? Analyse verrät: Nur wer Vampirblut in sich trägt, kann es lernen.' }
     ],
     after: () => { stepDone('evolution'); },
     next: 'schatten'
@@ -609,7 +609,7 @@ Object.assign(MISSIONS, {
       { narr: 'Der Kiefer des Schülers ist gebrochen. Peter will sich bedanken – doch Quinn macht klar, dass er es nicht für ihn getan hat.' },
       { narr: 'Ein paar Mädchen tuscheln über den „Neuen“. Quinn ist größer und blasser geworden.' },
       { bg: 'nacht', portrait: null },
-      { narr: 'Währenddessen in Dreamland, einer ummauerten Elitestadt: Jack Truedream erfährt von Ians Tod. Die Bissmale kennt er – von einem anderen toten Traveller, vor Jahren.' }
+      { narr: 'Währenddessen in Dreamland, einer ummauerten Elitestadt: Jack Truedream erfährt von Ians Tod. Die Bissmale kennt er – von einem anderen toten Reisenden, vor Jahren.' }
     ],
     after: () => { stepDone('kiefer'); },
     next: 'akademie'
@@ -623,21 +623,21 @@ Object.assign(MISSIONS, {
       { bg: 'system', portrait: null },
       { sys: { head: 'SHOP', lines: ['Kristalle verkauft: 13.630 Credits.', 'Jeder Gegenstand kann nur einmal gekauft werden.'] } },
       { sys: { head: 'GEKAUFT', lines: ['Schwarzhorn-Wolfsstiefel'], kv: [['Agilität', '+4'], ['Verteidigung', '+2']] } },
-      { sys: { head: 'GEFERTIGT', lines: ['Best-Standard-Handschuhe'], kv: [['Stärke', '+6'], ['Verteidigung', '+4'], ['Blutskills', '+5 %']] } },
+      { sys: { head: 'GEFERTIGT', lines: ['Beste Standard-Handschuhe'], kv: [['Stärke', '+6'], ['Verteidigung', '+4'], ['Blutskills', '+5 %']] } },
       { sys: { head: 'NEU', lines: ['Schattenausrüstung: Ausrüstung aus dem Dimensionslager sofort anlegen.'] } }
     ],
     after: () => { stepDone('systemshop'); SAVE.quinn.gear.hands = 'standard'; SAVE.quinn.gear.feet = 'wolf'; writeSave(); },
     next: 'akademie'
   },
   hammerspray: {
-    id: 'hammerspray', title: 'Hammer Spray', src: 'Kapitel 104',
+    id: 'hammerspray', title: 'Hammerspray', src: 'Kapitel 104',
     scene: [
       { bg: 'zimmer', portrait: 'peter' },
       { narr: 'Peter sitzt verprügelt vor der Tür. Vorden forscht nach, wer die Schuld für den Portal-Stoß übernommen hat – dahinter steckt wohl mindestens ein Sergeant.' },
       { portrait: 'vorden' },
       { narr: 'Quinn drängt ihn, sich mit Layla zu versöhnen. Vor ihr bringt Vorden kaum einen Satz heraus.' },
       { bg: 'system', portrait: null },
-      { sys: { head: 'TUTORIAL · KOMBINATION', lines: ['Hammer Spray', 'Hammer Strike plus ein Blutfächer.', 'Frisst Ausdauer und etwas Blut.'] } },
+      { sys: { head: 'TUTORIAL · KOMBINATION', lines: ['Hammerspray', 'Hammerschlag plus ein Blutfächer.', 'Frisst Ausdauer und etwas Blut.'] } },
       { call: () => learn('hammerspray') }
     ],
     after: () => { stepDone('hammerspray'); },
@@ -652,12 +652,12 @@ Object.assign(MISSIONS, {
       { bg: 'kantine', portrait: 'nate' },
       { narr: 'Zuschauer strömen herbei, Nate staunt. Der Gegner: ein Stufe-4-Erdnutzer in voller Bestienausrüstung.' },
       { bg: 'system', portrait: null },
-      { sys: { head: 'TAKTIK', lines: ['Vorn hält eine Steinwand alles ab.', 'Hammer Strike (mit Hammer Spray) bricht sie.'] } }
+      { sys: { head: 'TAKTIK', lines: ['Vorn hält eine Steinwand alles ab.', 'Hammerschlag (mit Hammerspray) bricht sie.'] } }
     ],
     fight: vrFight({ id: 'erde', look: 'erdnutzer', name: 'Erdnutzer · Stufe 4', hp: 40, poise: 5, ai: AI_ERDE, blurb: 'Steinwand vorn, Erdspeer auf Distanz.' }),
     won: [
       { bg: 'kantine', portrait: 'nate' },
-      { narr: 'Ein Blood Hammer sprengt die letzte Steinwand. Danach kann Quinn kaum noch stehen. Nate zittert vor Begeisterung.' }
+      { narr: 'Ein Bluthammer sprengt die letzte Steinwand. Danach kann Quinn kaum noch stehen. Nate zittert vor Begeisterung.' }
     ],
     reward: { exp: 40 },
     after: () => { stepDone('vrerde'); },

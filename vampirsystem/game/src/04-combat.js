@@ -275,7 +275,7 @@ function playerHit(p, A) {
 }
 
 function damageFoe(e, dmg, o) {
-  // Metall-Verhaertung (Hardsteely): nur Hammer Strike (innerer Schlag) und Konter wirken voll
+  // Metall-Verhaertung (Hardsteely): nur Hammerschlag (innerer Schlag) und Konter wirken voll
   if (e.ai && e.ai.steel && !o.hammer && !o.counter) { dmg *= 0.25; if (Math.random() < 0.5) floatText(e.x, e.y - 90, 'METALL', '#c8d0dc'); sfx('chain', 0, 0.05); }
   if (e.ai && e.ai.harden && e.state !== 'stagger') {
     const from = Math.atan2(-Math.sin(o.ang), -Math.cos(o.ang)); // Richtung, aus der der Treffer kommt
@@ -492,17 +492,17 @@ function updateFx(dt) {
   for (let i = G.texts.length - 1; i >= 0; i--) { const T = G.texts[i]; T.t += dt; T.y -= 34 * dt; if (T.t >= T.life) G.texts.splice(i, 1); }
 }
 
-/* ------------------------------------------------------------ Sonne, Inspect, Voraussicht, Hub */
+/* ------------------------------------------------------------ Sonne, Analyse, Voraussicht, Hub */
 function inRects(e, list) { for (const r of list || []) if (e.x > r.x && e.x < r.x + r.w && e.y > r.y && e.y < r.y + r.h) return true; return false; }
 function inSun(e) { return !inRects(e, G.arena.shade) && inRects(e, G.arena.sun); }
 function doInspect(p) {
   if (!SAVE.quinn.skills.includes('inspect')) return;
   const f = nearestFoe(p, 260) || G.ents.find((e) => e.npc && e.npc.info && dist2(e.x, e.y, p.x, p.y) < 260 * 260);
-  if (!f) { sysMsg({ head: 'INSPECT', lines: ['Kein Ziel in der Nähe.'] }, 1600); return; }
+  if (!f) { sysMsg({ head: 'ANALYSE', lines: ['Kein Ziel in der Nähe.'] }, 1600); return; }
   sfx('card');
-  if (G.inSun) { sysMsg({ head: 'INSPECT', lines: ['Im direkten Sonnenlicht nicht lesbar.'] }, 2400); if (G.opt.onInspect) G.opt.onInspect(G, f, false); return; }
+  if (G.inSun) { sysMsg({ head: 'ANALYSE', lines: ['Im direkten Sonnenlicht nicht lesbar.'] }, 2400); if (G.opt.onInspect) G.opt.onInspect(G, f, false); return; }
   const I = f.info || (f.npc && f.npc.info) || {};
-  sysMsg({ head: 'INSPECT', kv: [['Name', I.name || f.name || '?'], ['Rasse', I.race || 'Mensch'], ['Fähigkeit', I.ability || '?'], ['HP', f.team === 1 ? Math.ceil(f.hp) + ' / ' + f.maxHp : '—'], ['Blutgruppe', I.blood || '?']] }, 3400);
+  sysMsg({ head: 'ANALYSE', kv: [['Name', I.name || f.name || '?'], ['Rasse', I.race || 'Mensch'], ['Fähigkeit', I.ability || '?'], ['HP', f.team === 1 ? Math.ceil(f.hp) + ' / ' + f.maxHp : '—'], ['Blutgruppe', I.blood || '?']] }, 3400);
   if (G.opt.onInspect) G.opt.onInspect(G, f, true);
 }
 function foresee(e, p) {
@@ -525,7 +525,7 @@ function updatePois() {
   G.poi = best;
 }
 
-/* ------------------------------------------------------------ Blood Swipe (ab Halbling)
+/* ------------------------------------------------------------ Blutschnitt (ab Halbling)
    Roman: keine Abklingzeit, kostet 1 HP pro Einsatz, Reichweite etwa 5 Meter. */
 function castBloodSwipe(p) {
   if (p.char !== 'quinn' || !SAVE.quinn.skills.includes('bloodswipe') || p.state === 'down' || p.state === 'hurt') return;
@@ -606,7 +606,7 @@ function updateAlly(e, dt) {
   if (Math.abs(mx) > 0.1 && e.state === 'idle') e.face = mx > 0 ? 1 : -1;
 }
 
-/* ------------------------------------------------------------ Flash Step, Hammer Strike (Kap. 39–40) */
+/* ------------------------------------------------------------ Blitzschritt, Hammerschlag (Kap. 39–40) */
 function castFlashStep(p) {
   const Q = SAVE.quinn;
   if (p.char !== 'quinn' || !Q.skills.includes('flashstep') || p.state === 'down') return;
