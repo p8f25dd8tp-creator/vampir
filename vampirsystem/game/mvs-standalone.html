@@ -3617,7 +3617,7 @@ const AI_SCORDANA = {
 };
 const AI_EGG = { params: () => ({ range: 9999, speed: 0, cd: 9 }), choose: () => null };
 const BS_ATK = {
-  claw: { type: 'swipe', wind: 0.38, act: 0.08, rec: 0.3, reach: 40, arc: 1.1, dmg: 2, col: '#ff4a5a', chain: { type: 'swipe', wind: 0.24, act: 0.08, rec: 0.5, reach: 40, arc: 1.1, dmg: 2, col: '#ff4a5a' } },
+  claw: { type: 'swipe', wind: 0.38, act: 0.08, rec: 0.3, reach: 40, arc: 1.1, dmg: 1.5, col: '#ff4a5a', chain: { type: 'swipe', wind: 0.24, act: 0.08, rec: 0.5, reach: 40, arc: 1.1, dmg: 1.5, col: '#ff4a5a' } },
   leap: { type: 'lunge', wind: 0.5, act: 0.24, rec: 0.55, speed: 360, dmg: 2, shout: '!' },
   back: { type: 'beam', wind: 0.55, act: 0.12, rec: 0.5, len: 220, width: 14, dmg: 2, col: '#c8d8f0', shout: 'Spieße!' }
 };
@@ -3863,8 +3863,8 @@ Object.assign(MISSIONS, {
       expBonus: () => 20,
       onTick: (G) => {
         const b = G.foe;
-        G.hint = G.t < 5 ? { text: 'Du spielst den Kleinen · <b>ANGRIFF</b> wirft Metallspieße' } : b.hp < b.maxHp * 0.6 ? { text: 'Etwas an der Uniform kommt dir bekannt vor …' } : null;
-        if (b.hp <= b.maxHp * 0.35 && G.state === 'play') { G.state = 'won'; G.tele.length = 0; b.vx = 0; b.vy = 0; banner('ER HÄLT INNE'); later(1.4, () => G.opt.onWin(G)); }
+        G.hint = G.t < 5 ? { text: 'Du spielst den Kleinen · <b>ANGRIFF</b> wirft Metallspieße' } : b.hp < b.maxHp * 0.75 ? { text: 'Etwas an der Uniform kommt dir bekannt vor …' } : null;
+        if (b.hp <= b.maxHp * 0.5 && G.state === 'play') { G.state = 'won'; G.tele.length = 0; b.vx = 0; b.vy = 0; banner('ER HÄLT INNE'); later(1.4, () => G.opt.onWin(G)); }
       }
     },
     won: [
