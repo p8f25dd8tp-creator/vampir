@@ -153,3 +153,16 @@ canvas#game { position: absolute; inset: 0; display: block; touch-action: none; 
 .pad .skill.s5 small { color: #d8c0ff; }
 .bar.mc { height: 5px; margin-top: 3px; }
 .bar.mc i { background: linear-gradient(90deg, #4a1a8a, #c8a0ff); }
+/* 3D-Modus: Kampf-Oberflaeche im Stil moderner Action-Spiele */
+.hud.h3d .pad button { background: radial-gradient(circle at 50% 40%, rgba(40,48,70,.72), rgba(6,8,16,.82)); border: 1.5px solid rgba(220,235,255,.55); box-shadow: 0 0 12px rgba(0,0,0,.6), inset 0 0 10px rgba(120,170,255,.18); text-shadow: 0 1px 3px #000; }
+.hud.h3d .pad button::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; pointer-events: none;
+  background: conic-gradient(rgba(0,0,0,.62) calc(var(--cd, 0) * 360deg), transparent 0); -webkit-mask: radial-gradient(circle, #000 64%, transparent 65%); mask: radial-gradient(circle, #000 64%, transparent 65%); }
+.hud.h3d .pad .atk { border: 2px solid rgba(255,255,255,.8); background: radial-gradient(circle at 50% 38%, rgba(70,110,190,.75), rgba(8,14,34,.85)); font-size: 15px; letter-spacing: .06em; }
+.hud.h3d .pad .skill { border-color: rgba(255,110,130,.8); }
+.hud.h3d .pad .skill.s2 { border-color: rgba(140,200,255,.85); }
+.hud.h3d .pad .skill.s3 { border-color: rgba(255,210,120,.85); }
+.hud.h3d .pad .dodge { border-color: rgba(160,255,220,.7); }
+.hud.h3d .me { background: linear-gradient(90deg, rgba(4,6,14,.65), rgba(4,6,14,0)); padding: 6px 10px 8px; border-radius: 6px; }
+.hud.h3d .bar.hp i { background: linear-gradient(90deg, #d8102a, #ff6070); box-shadow: 0 0 8px rgba(255,60,80,.7); }
+.hud.h3d .foe .bar i { background: linear-gradient(90deg, #ff3a4e, #ff9a5a); box-shadow: 0 0 8px rgba(255,80,60,.7); }
+.hud.h3d .hint { top: calc(250px + var(--safe-t, 0px)); bottom: auto; font-size: 15px; }

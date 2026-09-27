@@ -15,11 +15,13 @@ function showTitle() {
     <div style="height:18px"></div>
     <button class="btn" id="tNew">${started ? 'Von vorn beginnen' : 'Spiel starten'}</button>
     ${started ? '<button class="btn" id="tCont">Fortsetzen</button>' : ''}
+    <button class="btn" id="t3d" style="border-color:#ff5a6a">3D-Kampftest (neu)</button>
     <button class="btn ghost" id="tSet">Einstellungen</button>
     <div class="foot">Private Fan-Umsetzung von „My Vampire System“.<br>Frühe Testversion · Etappe 7</div>`, '');
   el.querySelector('#tNew').onclick = () => { AudioSys.init(); if (started) resetSave(); startMission('prolog'); };
   if (started) el.querySelector('#tCont').onclick = () => { AudioSys.init(); startMission(nextMission()); };
   el.querySelector('#tSet').onclick = showSettings;
+  el.querySelector('#t3d').onclick = () => { AudioSys.init(); startTest3d(); };
 }
 function nextMission() {
   if (!SAVE.progress.prolog) return 'prolog';
@@ -87,7 +89,7 @@ function finishMission(M, won, G0) {
   if (first && M.after) M.after();
   writeSave();
   G = null;
-  const after = () => (REPLAY ? showEnd() : M.next ? startMission(M.next) : showEnd(M));
+  const after = () => (M.id === 'test3d' ? showTitle() : REPLAY ? showEnd() : M.next ? startMission(M.next) : showEnd(M));
   const story = () => (M.won && (first || !M.repeat) && !REPLAY ? runScene(M.won, after) : after());
   if (rep) showReport(rep, story); else story();
 }
@@ -109,6 +111,7 @@ function showLost(M, G0) {
   el.querySelector('#lRe').onclick = () => startMission(M.id, true);
   if (SAVE.quinn.points) el.querySelector('#lStat').onclick = () => showStatus();
   el.querySelector('#lMenu').onclick = showTitle;
+  if (M.id === 'test3d') el.querySelector('#lRe').onclick = () => startMission('test3d', true, true);
 }
 function showEnd() {
   G = null; SCENE_BG.cur = 'nacht';

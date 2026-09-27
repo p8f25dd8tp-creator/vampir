@@ -203,3 +203,6 @@ const AudioSys = (() => {
 const sfx = (n, a, g) => AudioSys.play(n, a, g);
 function haptic(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) { /* iOS kann das nicht */ } }
 
+
+// Faehigkeit vorhanden? Im 3D-Kampftest gelten eigene Faehigkeiten, der Spielstand bleibt unberuehrt.
+function hasSkill(id) { return typeof G !== 'undefined' && G && G.opt && G.opt.skills ? G.opt.skills.includes(id) : SAVE.quinn.skills.includes(id); }

@@ -131,7 +131,7 @@ function buildHud(opt) {
       <div class="bar xp"><i id="xpb"></i></div>
       <div class="bar hp"><i id="hpb"></i></div><div class="hpnum" id="hpn"></div>
       <div class="bar st" id="stbw"><i id="stb"></i></div>
-      ${SAVE.quinn.skills.includes('schatten') && !opt.hub ? '<div class="bar mc" id="mcw"><i id="mcb"></i></div>' : ''}
+      ${hasSkill('schatten') && !opt.hub ? '<div class="bar mc" id="mcw"><i id="mcb"></i></div>' : ''}
       <div class="goal" id="goal"></div></div>
     <div class="sunchip" id="sun">☀ SONNE · WERTE HALBIERT</div>
     <div class="foe" id="foe" style="display:none"><div class="nm" id="foen"></div><div class="bar"><i id="foeb"></i></div></div>
@@ -142,12 +142,12 @@ function buildHud(opt) {
     <div class="bank" id="bank"></div>
     <div class="stickzone" id="sz"><div class="stick" style="display:none"><i></i></div></div>
     <div class="pad">
-      <button class="insp ${opt.inspect || SAVE.quinn.skills.includes('inspect') ? '' : 'off'}" id="bInsp">ANALYSE</button>
-      ${SAVE.quinn.skills.includes('bloodswipe') && !opt.hub ? '<button class="skill" id="bSkill">BLUT-<br>SCHNITT<small>1 HP</small></button>' : ''}
-      ${SAVE.quinn.skills.includes('flashstep') && !opt.hub ? '<button class="skill s2" id="bSkill2">BLITZ-<br>SCHRITT</button>' : ''}
-      ${SAVE.quinn.skills.includes('hammer') && !opt.hub ? '<button class="skill s3" id="bSkill3">HAMMER-<br>SCHLAG</button>' : ''}
-      ${SAVE.quinn.skills.includes('bloodspray') && !opt.hub ? '<button class="skill s4" id="bSkill4">BLUT-<br>SPRAY<small>5 HP</small></button>' : ''}
-      ${SAVE.quinn.skills.includes('schatten') && !opt.hub ? '<button class="skill s5" id="bSkill5">SCHAT-<br>TEN<small>25 MC</small></button>' : ''}
+      <button class="insp ${opt.inspect || hasSkill('inspect') ? '' : 'off'}" id="bInsp">ANALYSE</button>
+      ${hasSkill('bloodswipe') && !opt.hub ? '<button class="skill" id="bSkill">BLUT-<br>SCHNITT<small>1 HP</small></button>' : ''}
+      ${hasSkill('flashstep') && !opt.hub ? '<button class="skill s2" id="bSkill2">BLITZ-<br>SCHRITT</button>' : ''}
+      ${hasSkill('hammer') && !opt.hub ? '<button class="skill s3" id="bSkill3">HAMMER-<br>SCHLAG</button>' : ''}
+      ${hasSkill('bloodspray') && !opt.hub ? '<button class="skill s4" id="bSkill4">BLUT-<br>SPRAY<small>5 HP</small></button>' : ''}
+      ${hasSkill('schatten') && !opt.hub ? '<button class="skill s5" id="bSkill5">SCHAT-<br>TEN<small>25 MC</small></button>' : ''}
       <button class="dodge" id="bDodge">AUS-<br>WEICHEN</button>
       <button class="atk" id="bAtk">ANGRIFF</button>
     </div>
@@ -201,7 +201,7 @@ function updateHud() {
   // Skills nur fuer Quinn
   const isQ = p.char === 'quinn';
   if (C.isQ !== isQ) { C.isQ = isQ; UI.hud.querySelectorAll('.pad .skill, .pad .insp').forEach((b) => { b.style.visibility = isQ ? '' : 'hidden'; }); }
-  const bk = SAVE.quinn.skills.includes('bloodbank') && !G.opt.hub && isQ ? SAVE.quinn.bank : -1;
+  const bk = hasSkill('bloodbank') && !G.opt.hub && isQ ? SAVE.quinn.bank : -1;
   if (C.pn !== p.char) { C.pn = p.char; $('#pname').textContent = p.char === 'quinn' ? (G.opt.vr ? 'BLOOD EVOLVER' : 'QUINN TALEN') : CHARS[p.char].name.toUpperCase(); }
   if (C.bank !== bk) { C.bank = bk; $('#bank').innerHTML = bk >= 0 ? `<span>BLUTBANK</span><i><b style="width:${bk}%"></b></i><small>${bk} ml</small>` : ''; }
   const atkTxt = G.poi ? (G.poi.btn || 'LOS') : 'ANGRIFF';

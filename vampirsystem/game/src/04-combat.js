@@ -57,7 +57,7 @@ function newFight(opt) {
   (opt.party || ['quinn']).forEach((cid, i) => {
     const C = CHARS[cid], e = mkEnt(cid, LOOKS[C.look], opt.playerAt[0] + (i ? (i % 2 ? -34 : 34) : 0), opt.playerAt[1] + (i ? 22 : 0));
     e.team = 0; e.char = cid; e.kit = C.kit; e.range = C.range || 30;
-    if (cid === 'quinn') { applyStats(e); if (opt.vr) e.look = LOOKS.bloodevolver; else if (SAVE.quinn.race === 'Vampir' && LOOKS.quinnvamp) e.look = LOOKS.quinnvamp; if (SAVE.quinn.skills.includes('schatten')) { e.maxMc = 100; e.mc = 100; } e.hp = Math.max(1, e.maxHp - (SAVE.quinn.thirst || 0)); if (opt.mask) e.extra = { mask: true }; if (SAVE.quinn.gear.hands) e.extra = Object.assign({}, e.extra, { gauntlets: true }); }
+    if (cid === 'quinn') { applyStats(e); if (opt.vr) e.look = LOOKS.bloodevolver; else if (SAVE.quinn.race === 'Vampir' && LOOKS.quinnvamp) e.look = LOOKS.quinnvamp; if (hasSkill('schatten')) { e.maxMc = 100; e.mc = 100; } e.hp = Math.max(1, e.maxHp - (SAVE.quinn.thirst || 0)); if (opt.mask) e.extra = { mask: true }; if (SAVE.quinn.gear.hands) e.extra = Object.assign({}, e.extra, { gauntlets: true }); }
     else { e.maxHp = e.hp = C.hp; e.str = C.str; e.agi = C.agi; e.maxStam = 100; }
     e.stam = e.maxStam; e.stamDelay = 0; e.counterT = 0; e.combo = 0; e.buffer = 0; e.holdT = 0; e.dodgeStart = -9; e.aiCd = rand(0.3, 0.8);
     G.party.push(e);
@@ -203,7 +203,7 @@ function updateFighter(p, dt, mx, my) {
   const sunK = sunFactor(p);
   const spd = 120 * Math.pow(p.agi * sunK / 10, 0.35);
   // Blutbank: heilt Quinn automatisch unter 5 HP (10 ml = 5 HP)
-  if (p.char === 'quinn' && !G.opt.vr && SAVE.quinn.skills.includes('bloodbank') && p.hp < 5 && p.hp > 0 && SAVE.quinn.bank >= 10) {
+  if (p.char === 'quinn' && !G.opt.vr && hasSkill('bloodbank') && p.hp < 5 && p.hp > 0 && SAVE.quinn.bank >= 10) {
     SAVE.quinn.bank -= 10; p.hp = Math.min(p.maxHp, p.hp + 5); floatText(p.x, p.y - 80, '+5 Blutbank', '#ff8a9a'); sfx('heal'); burst(p.x, p.y - 30, 8, '#ff3a4e');
   }
   let tvx = 0, tvy = 0;
@@ -270,7 +270,7 @@ function playerHit(p, A) {
     if (A.ice) { e.slowT = 2.5; burst(e.x, e.y - 30, 8, '#bfe8ff'); floatText(e.x, e.y - 88, 'EIS', '#bfe8ff'); }
     if (A.hammer) { setState(e, 'stagger'); G.shake = 10; dust(e.x, e.y, 10, 1.4); }
   }
-  if (A.hammer && hitAny && SAVE.quinn.skills.includes('hammerspray') && p.char === 'quinn') hammerSpray(p);
+  if (A.hammer && hitAny && hasSkill('hammerspray') && p.char === 'quinn') hammerSpray(p);
   if (!hitAny) sfx('whip', 0, 0.05);
 }
 
@@ -496,7 +496,7 @@ function updateFx(dt) {
 function inRects(e, list) { for (const r of list || []) if (e.x > r.x && e.x < r.x + r.w && e.y > r.y && e.y < r.y + r.h) return true; return false; }
 function inSun(e) { return !inRects(e, G.arena.shade) && inRects(e, G.arena.sun); }
 function doInspect(p) {
-  if (!SAVE.quinn.skills.includes('inspect')) return;
+  if (!hasSkill('inspect')) return;
   const f = nearestFoe(p, 260) || G.ents.find((e) => e.npc && e.npc.info && dist2(e.x, e.y, p.x, p.y) < 260 * 260);
   if (!f) { sysMsg({ head: 'ANALYSE', lines: ['Kein Ziel in der Nähe.'] }, 1600); return; }
   sfx('card');
@@ -528,7 +528,7 @@ function updatePois() {
 /* ------------------------------------------------------------ Blutschnitt (ab Halbling)
    Roman: keine Abklingzeit, kostet 1 HP pro Einsatz, Reichweite etwa 5 Meter. */
 function castBloodSwipe(p) {
-  if (p.char !== 'quinn' || !SAVE.quinn.skills.includes('bloodswipe') || p.state === 'down' || p.state === 'hurt') return;
+  if (p.char !== 'quinn' || !hasSkill('bloodswipe') || p.state === 'down' || p.state === 'hurt') return;
   if ((p.swipeCd || 0) > 0) return;
   if (p.hp <= 1) { floatText(p.x, p.y - 72, 'Zu wenig HP', '#ff8a8a'); return; }
   if (!G.opt.vr) p.hp -= 1; p.swipeCd = 0.35; G.stats.swipes = (G.stats.swipes || 0) + 1;
@@ -609,8 +609,8 @@ function updateAlly(e, dt) {
 /* ------------------------------------------------------------ Blitzschritt, Hammerschlag (Kap. 39–40) */
 function castFlashStep(p) {
   const Q = SAVE.quinn;
-  if (p.char !== 'quinn' || !Q.skills.includes('flashstep') || p.state === 'down') return;
-  if (Q.stats.agi < 15) { floatText(p.x, p.y - 80, 'Braucht Agilität 15', '#ffd04a'); return; }
+  if (p.char !== 'quinn' || !hasSkill('flashstep') || p.state === 'down') return;
+  if (Q.stats.agi < 15 && !G.opt.test) { floatText(p.x, p.y - 80, 'Braucht Agilität 15', '#ffd04a'); return; }
   if (p.stam < 35) { tired(p); return; }
   spendStam(p, 35, 0.6);
   const [mx, my] = readMove();
@@ -623,8 +623,8 @@ function castFlashStep(p) {
 }
 function castHammer(p) {
   const Q = SAVE.quinn;
-  if (p.char !== 'quinn' || !Q.skills.includes('hammer') || p.state === 'down') return;
-  if (Q.stats.str < 15) { floatText(p.x, p.y - 80, 'Braucht Stärke 15', '#ffd04a'); return; }
+  if (p.char !== 'quinn' || !hasSkill('hammer') || p.state === 'down') return;
+  if (Q.stats.str < 15 && !G.opt.test) { floatText(p.x, p.y - 80, 'Braucht Stärke 15', '#ffd04a'); return; }
   if ((p.hammerCd || 0) > G.t) return;
   if (p.stam < 30) { tired(p); return; }
   p.hammerCd = G.t + 2.5;

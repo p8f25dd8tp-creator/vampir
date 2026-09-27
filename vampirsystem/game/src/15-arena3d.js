@@ -26,16 +26,16 @@ function box3(scene, w, h, d, col, x, y, z, o) {
 
 ARENA3D.kantine = function (A, scene) {
   const T = THREE, W = A.w * S3, H = A.h * S3;
-  const floor = new T.Mesh(new T.PlaneGeometry(W + 8, H + 8), new T.MeshLambertMaterial({ map: floorTex('#aeb3bd', '#959aa6', 11, [(W + 8) / 3.2, (H + 8) / 3.2]) }));
+  const floor = new T.Mesh(new T.PlaneGeometry(W + 8, H + 8), new T.MeshStandardMaterial({ map: floorTex('#8a8f9c', '#6e7380', 11, [(W + 8) / 3.2, (H + 8) / 3.2]), roughness: 0.6, metalness: 0.0 }));
   floor.rotation.x = -Math.PI / 2; floor.position.set(W / 2, 0, H / 2); floor.receiveShadow = true; scene.add(floor);
   // Rueckwand, Sockel, Fensterfront
   box3(scene, W + 8, 3.6, 0.35, '#48506a', W / 2, 1.8, -0.2, { noOutline: true });
   box3(scene, W + 8, 0.45, 0.4, '#262c3a', W / 2, 0.22, -0.02, { noOutline: true });
   for (let x = 1.1; x < W - 0.5; x += 2.2) {
-    const win = new T.Mesh(new T.PlaneGeometry(1.5, 1.5), new T.MeshBasicMaterial({ color: new T.Color('#e4f2ff') })); win.position.set(x, 2.0, -0.01); scene.add(win);
+    const win = new T.Mesh(new T.PlaneGeometry(1.5, 1.5), new T.MeshBasicMaterial({ color: new T.Color('#ffb070') })); win.position.set(x, 2.0, -0.01); scene.add(win);
     box3(scene, 0.07, 1.5, 0.06, '#262c3a', x, 2.0, 0.0, { noOutline: true, noCast: true }); box3(scene, 1.5, 0.07, 0.06, '#262c3a', x, 2.0, 0.0, { noOutline: true, noCast: true });
     box3(scene, 1.7, 0.1, 0.18, '#3a4258', x, 1.2, 0.05, { noOutline: true });
-    const shaft = new T.Mesh(new T.PlaneGeometry(1.5, 6), new T.MeshBasicMaterial({ color: new T.Color('#fff2d4'), transparent: true, opacity: 0.07, blending: T.AdditiveBlending, depthWrite: false, side: T.DoubleSide }));
+    const shaft = new T.Mesh(new T.PlaneGeometry(1.5, 6), new T.MeshBasicMaterial({ color: new T.Color('#ff9a50'), transparent: true, opacity: 0.035, blending: T.AdditiveBlending, depthWrite: false, side: T.DoubleSide }));
     shaft.position.set(x + 0.3, 1.2, 2.6); shaft.rotation.x = -1.02; scene.add(shaft);
   }
   // Essensausgabe an der Rueckwand
@@ -67,14 +67,20 @@ ARENA3D.kantine = function (A, scene) {
       const cup = new T.Mesh(fgeo('cup', () => new T.CylinderGeometry(0.035, 0.03, 0.1, 10)), toonMat('#e8ecf0')); cup.position.set(tx - 0.1, 0.87, z + 0.06); cup.castShadow = true; scene.add(cup);
     }
   }
-  // Licht: helles Tageslicht von den Fenstern, weiche Aufhellung
-  scene.background = new T.Color('#1c2130');
-  scene.fog = new T.Fog('#1c2130', 16, 36);
-  scene.add(new T.HemisphereLight('#e2ecff', '#6a5a50', 1.15));
-  const sun = new T.DirectionalLight('#ffeed6', 2.4); sun.position.set(W / 2 - 2, 12, -3); sun.target.position.set(W / 2, 0, H / 2);
+  // Licht: Abendstimmung – warmes Abendrot durch die Fenster, kuehle Deckenlampen, dunkle Ecken
+  scene.background = new T.Color('#0c0e16');
+  scene.fog = new T.Fog('#0c0e16', 12, 30);
+  scene.add(new T.HemisphereLight('#6a78a8', '#2a2026', 0.75));
+  const sun = new T.DirectionalLight('#ff9a58', 2.6); sun.position.set(W / 2 - 3, 7, -5); sun.target.position.set(W / 2, 0, H / 2);
   sun.castShadow = true; sun.shadow.mapSize.set(1024, 1024); const sc = sun.shadow.camera; sc.left = -W; sc.right = W; sc.top = H * 0.8; sc.bottom = -H * 0.8; sc.near = 1; sc.far = 40; sun.shadow.bias = -0.0015; sun.shadow.normalBias = 0.03;
   scene.add(sun, sun.target);
-  const fill = new T.DirectionalLight('#a8b8ff', 0.5); fill.position.set(W / 2 + 4, 6, H + 6); scene.add(fill);
+  const fill = new T.DirectionalLight('#5a78ff', 0.8); fill.position.set(W / 2 + 5, 6, H + 6); scene.add(fill);
+  // Deckenlampen: Lichtkegel und helle Flecken am Boden (ohne teure Schatten)
+  for (const [lx, lz] of [[W / 2, H * 0.32], [W / 2, H * 0.62], [W / 2, H * 0.9]]) {
+    const pl = new T.PointLight('#bcd4ff', 7, 7, 1.6); pl.position.set(lx, 3.0, lz); scene.add(pl);
+    const spot = new T.Mesh(new T.CircleGeometry(1.4, 24), new T.MeshBasicMaterial({ map: R3.glowTex, color: '#6a88c8', transparent: true, opacity: 0.35, blending: T.AdditiveBlending, depthWrite: false }));
+    spot.rotation.x = -Math.PI / 2; spot.position.set(lx, 0.02, lz); scene.add(spot);
+  }
   // Staub im Licht
   const n = 160, pos = new Float32Array(n * 3), r2 = mulberry(8);
   for (let i = 0; i < n; i++) { pos[i * 3] = r2() * W; pos[i * 3 + 1] = 0.2 + r2() * 2.8; pos[i * 3 + 2] = r2() * H * 0.7; }

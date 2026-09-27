@@ -103,8 +103,9 @@ function buildHuman(L0, extra) {
   const faceMat = rimToon({ map: faceTexture(L) }, L.rim);
   const mats = [mat, faceMat];
   const S = PartSet();
-  const root = new T.Group(), body = grp(root), hips = grp(body, 0, 0.93, 0);
-  const torso = grp(hips), chest = grp(torso, 0, 0.42, 0), neck = grp(chest, 0, 0.06, 0), head = grp(neck, 0, 0.2, 0), hairPivot = grp(head);
+  const root = new T.Group(), body = grp(root), hips = grp(body, 0, 1.0, 0);
+  const torso = grp(hips), chest = grp(torso, 0, 0.42, 0), neck = grp(chest, 0, 0.06, 0), head = grp(neck, 0, 0.19, 0), hairPivot = grp(head);
+  head.scale.setScalar(0.9);
   const top = L.top, topD = L.topD, topL = L.topL || L.top, leg = L.leg, skin = L.skin;
   // Becken und Hose
   addP(S, hips, lathe('pelvis', [[0.02, -0.13], [0.12, -0.11], [0.145, -0.03], [0.135, 0.05], [0.02, 0.06]]), leg, 0, 0, 0, 0, 0, 0, 1, 1, 0.76);
@@ -160,11 +161,11 @@ function buildHuman(L0, extra) {
   const legs = [];
   for (const s of [-1, 1]) {
     const thigh = grp(hips, s * 0.085, -0.04, 0);
-    addP(S, thigh, taper(0.082, 0.066, 0.41), leg, 0, 0, 0);
-    const knee = grp(thigh, 0, -0.41, 0);
+    addP(S, thigh, taper(0.082, 0.064, 0.44), leg, 0, 0, 0);
+    const knee = grp(thigh, 0, -0.44, 0);
     addP(S, knee, fgeo('knee', () => new T.SphereGeometry(0.064, 10, 8)), leg, 0, 0, 0);
-    addP(S, knee, taper(0.062, 0.05, 0.4), leg, 0, 0, 0);
-    const foot = grp(knee, 0, -0.43, 0);
+    addP(S, knee, taper(0.06, 0.047, 0.43), leg, 0, 0, 0);
+    const foot = grp(knee, 0, -0.47, 0);
     addP(S, foot, fgeo('shoe', () => new T.SphereGeometry(0.07, 12, 8)), L.shoe, 0, 0.0, 0.05, 0, 0, 0, 0.82, 0.62, 1.5);
     addP(S, foot, fgeo('sole', () => new T.BoxGeometry(0.1, 0.02, 0.22)), shade(L.shoe, -0.5), 0, -0.035, 0.05);
     legs.push({ thigh, knee, foot });
@@ -187,7 +188,11 @@ function hairParts(S, pivot, L) {
   const bangs = hs === 'long' || hs === 'bun' ? [[-0.1, 0.25, 1], [-0.02, 0.05, 1.1], [0.07, -0.15, 1], [0.13, -0.35, 0.9]] : [[-0.11, 0.3, 0.9], [-0.04, 0.08, 1.05], [0.04, -0.1, 1], [0.11, -0.32, 0.9]];
   for (const [x, rz, s] of bangs) tuft(x, 0.09, 0.13, Math.PI - 0.45, rz, s);
   if (hs === 'spiky') for (let k = 0; k < 10; k++) { const a = k / 10 * TAU; addP(S, pivot, lock, col, Math.cos(a) * 0.1, 0.16, Math.sin(a) * 0.1 - 0.04, -0.35 - Math.sin(a) * 0.55, a, -Math.cos(a) * 0.75, 1.5, 1.4, 1.5); }
-  if (hs === 'messy') for (let k = 0; k < 9; k++) { const a = k / 9 * TAU; addP(S, pivot, lock, col, Math.cos(a) * 0.12, 0.12, Math.sin(a) * 0.12 - 0.05, -0.95 - Math.sin(a) * 0.55, a, -Math.cos(a) * 1.05, 1.05, 0.95, 1.05); }
+  if (hs === 'messy') { // fallende Straehnen: Seiten, Hinterkopf, Oberkopf nach hinten gekaemmt
+    for (const s of [-1, 1]) for (let k = 0; k < 3; k++) addP(S, pivot, lock, col, s * 0.155, 0.06 - k * 0.05, 0.07 - k * 0.07, Math.PI - 0.15, s * 0.3, s * (0.25 + k * 0.1), 1.0, 1.1, 1.0);
+    for (let k = 0; k < 7; k++) { const x = (k / 6 - 0.5) * 0.28; addP(S, pivot, lock, col, x, 0.02 - Math.abs(x) * 0.2, -0.16, Math.PI - 0.55, 0, -x * 1.5, 1.15, 1.25, 1.15); }
+    for (let k = 0; k < 6; k++) { const x = (k / 5 - 0.5) * 0.22; addP(S, pivot, lock, col, x, 0.17, 0.02 - k % 2 * 0.05, -1.25, 0, -x * 2.2, 1.1, 1.2, 1.1); }
+  }
   if (hs === 'short') for (let k = 0; k < 6; k++) { const a = Math.PI + k / 5 * Math.PI; addP(S, pivot, lock, col, Math.cos(a) * 0.13, 0.08, Math.sin(a) * 0.1 - 0.06, -1.3, a, -Math.cos(a) * 1.2, 0.8, 0.7, 0.8); }
   if (hs === 'long') { addP(S, pivot, fgeo('hback', () => new T.CylinderGeometry(0.17, 0.12, 0.5, 14, 1, true, Math.PI * 0.55, Math.PI * 0.9)), col, 0, -0.17, -0.02, 0.08); for (const s of [-1, 1]) addP(S, pivot, lock, col, s * 0.15, -0.08, 0.04, Math.PI, 0, s * -0.1, 1.2, 2.0, 1.2); }
   if (hs === 'bun') { addP(S, pivot, fgeo('hbun', () => new T.SphereGeometry(0.085, 12, 10)), col, 0, 0.13, -0.16); addP(S, pivot, lock, col, 0, -0.02, -0.16, 0.2, 0, 0, 1.3, 1.1, 1.3); }
@@ -280,7 +285,7 @@ function poseHuman(R, e, dt) {
   // anwenden, weich ueberblendet (Angriffe schneller, damit sie knackig bleiben)
   const fast = st === 'attack' || st === 'active' || st === 'dodge' || st === 'hurt';
   const k = 1 - Math.exp(-dt * (fast ? 40 : 18)), set = (o, prop, v) => { o[prop] = lerpA(o[prop], v, k); };
-  set(R.hips.position, 'y', 0.93 - crouch + bob - Math.abs(Math.cos(ph)) * 0.035 * run + Math.sin(t * 2.3) * 0.005);
+  set(R.hips.position, 'y', 1.0 - crouch + bob - Math.abs(Math.cos(ph)) * 0.035 * run + Math.sin(t * 2.3) * 0.005);
   set(R.torso.rotation, 'x', lean); set(R.torso.rotation, 'y', twist); set(R.torso.rotation, 'z', side);
   set(R.hips.rotation, 'y', -twist * 0.35);
   set(R.head.rotation, 'x', headX - lean * 0.45); set(R.head.rotation, 'y', -twist * 0.4);

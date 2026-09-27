@@ -290,7 +290,7 @@ function sprayFan(p, n, spread, dmg) {
   sfx('splat', 0, 0.03); sfx('whip', 0, 0.05);
 }
 function castBloodSpray(p) {
-  if (p.char !== 'quinn' || !SAVE.quinn.skills.includes('bloodspray') || p.state === 'down' || p.state === 'hurt') return;
+  if (p.char !== 'quinn' || !hasSkill('bloodspray') || p.state === 'down' || p.state === 'hurt') return;
   if ((p.sprayCd || 0) > G.t) return;
   if (!G.opt.vr && p.hp <= 5) { floatText(p.x, p.y - 72, 'Zu wenig HP', '#ff8a8a'); return; }
   if (!G.opt.vr) { p.hp -= 5; floatText(p.x, p.y - 72, '-5 HP', '#ff5a6a'); }
@@ -307,7 +307,7 @@ function hammerSpray(p) {
 }
 // Schattenkontrolle (Kap. 89–93): der Schatten packt die Beine des naechsten Gegners
 function castShadow(p) {
-  if (p.char !== 'quinn' || !SAVE.quinn.skills.includes('schatten') || p.state === 'down') return;
+  if (p.char !== 'quinn' || !hasSkill('schatten') || p.state === 'down') return;
   if (G.opt.vr) { floatText(p.x, p.y - 80, 'Im Spiel nicht verfügbar', '#c8a0ff'); return; }
   if (!p.maxMc || p.mc < 25) { floatText(p.x, p.y - 80, 'Zu wenig MC', '#c8a0ff'); return; }
   const f = nearestFoe(p, 180);
@@ -317,9 +317,9 @@ function castShadow(p) {
   for (let k = 0; k < 10; k++) G.fx.push({ k: 'spark', x: f.x + rand(-14, 14), y: f.y + rand(-6, 2), vx: 0, vy: 0, life: 0.4, t: 0, col: '#8a4aff', size: 5 });
   floatText(f.x, f.y - 80, 'SCHATTEN', '#c8a0ff'); sfx('shadowstep');
   // Schattensense (Kap. 133): der Schatten fuehrt einen Blutschnitt als Klinge – trifft einmal, mit eigener Kraft
-  if (SAVE.quinn.skills.includes('sense')) later(0.15, () => { if (G && f.state !== 'down') { slash(f.x, f.y - 30, Math.atan2(f.y - p.y, f.x - p.x), 40, 1.2, '#8a4aff'); damageFoe(f, 3 * (p.str / 10), { kb: 80, ang: Math.atan2(f.y - p.y, f.x - p.x), poise: 2, heavy: true }); } });
+  if (hasSkill('sense')) later(0.15, () => { if (G && f.state !== 'down') { slash(f.x, f.y - 30, Math.atan2(f.y - p.y, f.x - p.x), 40, 1.2, '#8a4aff'); damageFoe(f, 3 * (p.str / 10), { kb: 80, ang: Math.atan2(f.y - p.y, f.x - p.x), poise: 2, heavy: true }); } });
 }
-function learn(...ids) { const Q = SAVE.quinn; for (const s of ids) if (!Q.skills.includes(s)) Q.skills.push(s); writeSave(); }
+function learn(...ids) { const Q = SAVE.quinn; for (const s of ids) if (!hasSkill(s)) Q.skills.push(s); writeSave(); }
 
 /* ------------------------------------------------------------ Kampf-Hilfen */
 function ratPack(n, spots, t0, dt) {

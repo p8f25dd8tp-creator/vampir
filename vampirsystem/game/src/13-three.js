@@ -26,7 +26,7 @@ function r3Init() {
   r.shadowMap.enabled = true; r.shadowMap.type = T.PCFSoftShadowMap;
   r.outputColorSpace = T.SRGBColorSpace; r.toneMapping = T.ACESFilmicToneMapping; r.toneMappingExposure = 1.05;
   R3.r = r; R3.canvas = c;
-  R3.cam = new T.PerspectiveCamera(40, 1, 0.1, 120);
+  R3.cam = new T.PerspectiveCamera(58, 1, 0.1, 120);
   const g = new Uint8Array([60, 60, 60, 255, 140, 140, 140, 255, 215, 215, 215, 255, 255, 255, 255, 255]);
   R3.grad = new T.DataTexture(g, 4, 1, T.RGBAFormat); R3.grad.minFilter = R3.grad.magFilter = T.NearestFilter; R3.grad.needsUpdate = true;
   R3.outline = new T.ShaderMaterial({
@@ -62,7 +62,7 @@ function r3SetupPost() {
   const T = THREE, W = window.innerWidth, H = window.innerHeight;
   const comp = new P.EffectComposer(R3.r);
   R3.rpass = new P.RenderPass(new T.Scene(), R3.cam); comp.addPass(R3.rpass);
-  R3.bloom = new P.UnrealBloomPass(new T.Vector2(W / 2, H / 2), 0.45, 0.4, 0.9); comp.addPass(R3.bloom);
+  R3.bloom = new P.UnrealBloomPass(new T.Vector2(W / 2, H / 2), 0.45, 0.4, 0.93); comp.addPass(R3.bloom);
   GRADE_SHADER.uniforms.tint.value = new T.Color(1, 1, 1);
   R3.grade = new P.ShaderPass(GRADE_SHADER); comp.addPass(R3.grade);
   comp.addPass(new P.OutputPass());
@@ -166,6 +166,7 @@ function render3d(rdt) {
   const p = G.player;
   R3.playerLight.position.set(p.x * S3, 2.2, p.y * S3); R3.playerLight.intensity = G.arena.night ? 6 : 0;
   r3Camera(rdt);
+  r3Hud();
   // Farbstimmung: Zeitlupe kuehl, Konter golden
   if (R3.grade) {
     const slow = clamp((1 - G.scale) / 0.7, 0, 1), gold = Math.min(1, (G.counterFlash || 0) * 2);
@@ -176,19 +177,28 @@ function render3d(rdt) {
   if (R3.comp) R3.comp.render(); else R3.r.render(scene, R3.cam);
   renderOverlay3d();
 }
-// Kamera: schraeg von oben, folgt mit Vorausschau; zoomt bei schweren Treffern und Kontern heran
+// Kamera: flach hinter der Figur (Third Person), Zielerfassung zwischen Spieler und Ziel,
+// zoomt bei schweren Treffern und Kontern heran
+function r3Target() {
+  const p = G.player; let best = null, bd = 320 * 320;
+  for (const e of G.ents) if (e.team === 1 && e.state !== 'down' && !e.draw) { const d = dist2(e.x, e.y, p.x, p.y) * (e === R3.lock ? 0.6 : 1); if (d < bd) { bd = d; best = e; } }
+  R3.lock = best; return best;
+}
 function r3Camera(rdt) {
-  const cam = R3.cam, asp = cam.aspect, vf = cam.fov * Math.PI / 180, p = G.player;
-  const base = clamp((window.R3DIST || 4.8) / (2 * Math.tan(vf / 2) * asp), 6, 14);
+  const cam = R3.cam, p = G.player, tgt = r3Target();
+  const asp = cam.aspect, vf = cam.fov * Math.PI / 180;
+  const base = clamp((window.R3DIST || 4.3) / (2 * Math.tan(vf / 2) * asp), 5.2, 9.5);
   const punch = (G.punch || 0) * (SAVE.settings.shake || 0), counter = Math.min(1, (G.counterFlash || 0) * 2), slow = clamp((1 - G.scale) / 0.7, 0, 1);
-  const want = { d: base * (1 - punch * 0.1 - counter * 0.12 - slow * 0.08), pitch: 0.88 - counter * 0.1 - slow * 0.06, x: G.cam.x + Math.cos(p.aim || 0) * 8 * (p.state === 'attack' ? 1 : 0), y: G.cam.y };
+  let fx = p.x, fy = p.y;
+  if (tgt) { fx = lerpA(p.x, tgt.x, 0.3); fy = lerpA(p.y, tgt.y, 0.3); }
+  const want = { d: base * (1 - punch * 0.12 - counter * 0.15 - slow * 0.1), pitch: (window.R3PITCH || 0.56) - counter * 0.08 - slow * 0.05, x: fx, y: fy };
   const C = R3.camS || (R3.camS = Object.assign({}, want));
-  const k = 1 - Math.exp(-rdt * 7), kz = 1 - Math.exp(-rdt * (punch > 0.3 || counter > 0 ? 18 : 5));
+  const k = 1 - Math.exp(-rdt * 6), kz = 1 - Math.exp(-rdt * (punch > 0.3 || counter > 0 ? 16 : 4));
   C.d = lerpA(C.d, want.d, kz); C.pitch = lerpA(C.pitch, want.pitch, kz); C.x = lerpA(C.x, want.x, k); C.y = lerpA(C.y, want.y, k);
-  const tx = C.x * S3, tz = C.y * S3 + 0.6;
-  const sh = G.shake * (SAVE.settings.shake || 1) * 0.012;
-  cam.position.set(tx + rand(-sh, sh), Math.sin(C.pitch) * C.d + rand(-sh, sh), tz + Math.cos(C.pitch) * C.d);
-  cam.lookAt(tx, 0.75, tz);
+  const tx = C.x * S3, tz = C.y * S3;
+  const sh = G.shake * (SAVE.settings.shake || 1) * 0.01;
+  cam.position.set(tx + rand(-sh, sh), 0.9 + Math.sin(C.pitch) * C.d + rand(-sh, sh), tz + Math.cos(C.pitch) * C.d);
+  cam.lookAt(tx, 1.05, tz - 0.4);
   if (window.R3CAM) window.R3CAM(cam);
 }
 
@@ -199,7 +209,9 @@ function r3Impact(e) {
   const gl = glowSprite3(heavy ? '#ffd070' : '#bfe0ff', 0.6, 0.9); gl.position.copy(s.position); R3.scene.add(gl);
   const ring = new THREE.Mesh(fgeo('iring', () => new THREE.RingGeometry(0.34, 0.44, 32)), new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
   ring.rotation.x = -Math.PI / 2; ring.position.set(e.x * S3, 0.04, e.y * S3); R3.scene.add(ring);
-  R3.impacts.push({ s, gl, ring, t: 0, big: heavy ? 1.6 : 1 });
+  const streaks = [];
+  for (let i = 0; i < (heavy ? 2 : 1); i++) { const st = glowSprite3(heavy ? '#ffe0a0' : '#9ad8ff', 1, 1); st.position.copy(s.position); st.material.rotation = rand(-0.6, 0.6) + (i ? Math.PI / 2 : 0); R3.scene.add(st); streaks.push(st); }
+  R3.impacts.push({ s, gl, ring, streaks, t: 0, big: heavy ? 1.6 : 1 });
   if (heavy && e.team === 1) { R3.lines = 0.22; R3.linesAt = [e.x, e.y]; }
 }
 function r3Impacts(dt) {
@@ -208,7 +220,8 @@ function r3Impacts(dt) {
     I.s.scale.setScalar((0.3 + easeSnap(Math.min(1, k * 2)) * 1.1) * I.big); I.s.material.opacity = Math.max(0, 1 - k * 1.2);
     I.gl.scale.setScalar((0.6 + k * 1.4) * I.big); I.gl.material.opacity = Math.max(0, 0.9 * (1 - k));
     I.ring.scale.setScalar((0.5 + k * 2.4) * I.big); I.ring.material.opacity = Math.max(0, 0.8 * (1 - k));
-    if (k >= 1) { for (const o of [I.s, I.gl, I.ring]) { o.removeFromParent(); o.material.dispose(); } R3.impacts.splice(i, 1); }
+    for (const st of I.streaks) { st.scale.set((1.2 + k * 2.2) * I.big, 0.05 * (1 - k), 1); st.material.opacity = 1 - k; }
+    if (k >= 1) { for (const o of [I.s, I.gl, I.ring, ...I.streaks]) { o.removeFromParent(); o.material.dispose(); } R3.impacts.splice(i, 1); }
   }
 }
 function r3Ghost(R, col) {
@@ -256,7 +269,7 @@ const TRAIL_SHADER = {
     void main(){ float u = vUv.x; if (u > head) discard;
       float tail = smoothstep(head - 0.75, head, u); float edge = pow(sin(vUv.y * 3.14159), 0.8);
       float core = smoothstep(head - 0.12, head, u) * smoothstep(0.35, 1.0, vUv.y);
-      vec3 c = mix(col, vec3(1.0), core * 0.85); gl_FragColor = vec4(c * (tail * edge) * fade * 0.95, 1.0); }`
+      vec3 c = mix(col, vec3(1.0), core * 0.85); gl_FragColor = vec4(c * (tail * edge) * fade * 1.7, 1.0); }`
 };
 function trailGeo(r0, r1, arc, n) {
   const pos = [], uv = [], idx = [];
@@ -294,8 +307,9 @@ function r3Fx(dt) {
           holder.position.set(f.x * S3, 1.0, (f.y + 24) * S3); holder.rotation.y = -f.a; mesh.scale.set(f.len * S3, 1, f.w * S3);
         } else {
           const R = Math.max(0.35, f.r * S3) * (f.k === 'swoosh' ? 1.15 : 1);
-          m = new T.ShaderMaterial({ uniforms: { col: { value: new T.Color(f.col || '#bfe0ff') }, head: { value: 0 }, fade: { value: 1 } }, vertexShader: TRAIL_SHADER.vertexShader, fragmentShader: TRAIL_SHADER.fragmentShader, transparent: true, blending: T.AdditiveBlending, depthWrite: false, side: T.DoubleSide });
-          mesh = new T.Mesh(trailGeo(R * 0.72, R * 1.05, f.arc * 1.1, 28), m);
+          const neon = f.k === 'swoosh' ? ({ '#ffd070': '#ffb030', '#e8f4ff': '#7ad0ff', '#bfe0ff': '#3a9cff' }[f.col] || f.col) : (f.col || '#ff6a3a');
+          m = new T.ShaderMaterial({ uniforms: { col: { value: new T.Color(neon) }, head: { value: 0 }, fade: { value: 1 } }, vertexShader: TRAIL_SHADER.vertexShader, fragmentShader: TRAIL_SHADER.fragmentShader, transparent: true, blending: T.AdditiveBlending, depthWrite: false, side: T.DoubleSide });
+          mesh = new T.Mesh(trailGeo(R * 0.8, R * 1.06, f.arc * 1.15, 32), m);
           if ((f.dir || 1) < 0) mesh.scale.z = -1;
           holder.position.set(f.x * S3, f.k === 'swoosh' ? 1.0 : 0.95, (f.y + (f.k === 'swoosh' ? 26 : 30)) * S3); holder.rotation.y = -f.a;
           mesh.rotation.x = f.k === 'swoosh' ? (f.w > 5 ? 0.35 : -0.25) : 0.15; // leicht schraeg, wie ein echter Schwung
@@ -350,6 +364,27 @@ function renderOverlay3d() {
     for (let i = 0; i < 46; i++) { const a = (i / 46) * TAU + (hash2(i, Math.floor(G.t * 20), 5) % 100) / 400, w = 0.004 + (hash2(i, 3, 9) % 100) / 12000, r0 = R0 * (0.9 + (hash2(i, 7, Math.floor(G.t * 20)) % 100) / 250); g.beginPath(); g.moveTo(cx + Math.cos(a - w) * r0, cy + Math.sin(a - w) * r0); g.lineTo(cx + Math.cos(a) * R1, cy + Math.sin(a) * R1); g.lineTo(cx + Math.cos(a + w) * r0, cy + Math.sin(a + w) * r0); g.fill(); }
     g.restore();
   }
+  // Zielerfassung: rotes Kreuz am anvisierten Gegner
+  const L = R3.lock;
+  if (L && G.state === 'play') {
+    const [sx, sy] = r3Screen(L.x, L.y, 1.15), r = 26 * d, a = G.t * 1.5;
+    g.save(); g.globalCompositeOperation = 'lighter'; g.strokeStyle = 'rgba(255,60,70,0.85)'; g.lineWidth = 2 * d;
+    g.beginPath(); g.arc(sx, sy, r, a, a + 1.2); g.stroke(); g.beginPath(); g.arc(sx, sy, r, a + Math.PI, a + Math.PI + 1.2); g.stroke();
+    g.globalAlpha = 0.5; g.lineWidth = 1.2 * d; g.beginPath(); g.moveTo(sx - r * 3.2, sy); g.lineTo(sx - r * 1.3, sy); g.moveTo(sx + r * 1.3, sy); g.lineTo(sx + r * 3.2, sy); g.moveTo(sx, sy - r * 2.6); g.lineTo(sx, sy - r * 1.3); g.moveTo(sx, sy + r * 1.3); g.lineTo(sx, sy + r * 2.6); g.stroke();
+    g.fillStyle = '#ff3a4e'; g.globalAlpha = 0.9; g.beginPath(); g.arc(sx, sy, 2.5 * d, 0, TAU); g.fill();
+    g.restore();
+  }
+  // Combo-Zaehler links (roter Pinselstrich)
+  const C = R3.combo;
+  if (C && C.n >= 2) {
+    const x = 16 * d, y = H * 0.42, s = 1 + C.pop * 0.35, al = Math.min(1, C.t * 2);
+    g.save(); g.globalAlpha = al; g.translate(x, y); g.transform(1, 0, -0.2, 1, 0, 0);
+    const bw = 150 * d; const gr = g.createLinearGradient(0, 0, bw, 0); gr.addColorStop(0, 'rgba(200,10,30,0.85)'); gr.addColorStop(1, 'rgba(200,10,30,0)');
+    g.fillStyle = gr; g.fillRect(0, -26 * d, bw, 34 * d);
+    g.textAlign = 'left'; g.font = `italic 900 ${34 * d * s}px Cinzel, serif`; g.lineWidth = 4 * d; g.strokeStyle = 'rgba(0,0,0,0.7)'; g.strokeText(C.n, 8 * d, 0); g.fillStyle = '#ffffff'; g.fillText(C.n, 8 * d, 0);
+    const w = g.measureText(C.n).width; g.font = `italic 800 ${15 * d}px Cinzel, serif`; g.strokeText('HITS', 14 * d + w, 0); g.fillStyle = '#ffd0d4'; g.fillText('HITS', 14 * d + w, 0);
+    g.restore();
+  }
   g.textAlign = 'center';
   for (const T of G.texts) {
     const k = T.t / T.life; if (T._y0 === undefined) T._y0 = T.y + 72;
@@ -371,4 +406,16 @@ function renderOverlay3d() {
   if (p && p.hp / p.maxHp < 0.35 && p.state !== 'down') { const a = 0.25 + Math.sin(G.t * 6) * 0.08; g.fillStyle = rg(g, W / 2, H / 2, Math.min(W, H) * 0.35, Math.max(W, H) * 0.8, [0, 'rgba(120,0,20,0)', 1, `rgba(140,0,20,${a})`]); g.fillRect(0, 0, W, H); }
   g.globalAlpha = 1;
 }
-function hide3d() { if (R3.canvas) R3.canvas.style.display = 'none'; }
+function hide3d() { if (R3.canvas) R3.canvas.style.display = 'none'; if (UI.hud) UI.hud.classList.remove('h3d'); }
+// Kampf-Oberflaeche im 3D-Modus: dunkle Glas-Knoepfe mit Abklingring, Combo-Zaehler
+function r3Hud() {
+  if (!UI.hud) return;
+  if (!UI.hud.classList.contains('h3d')) UI.hud.classList.add('h3d');
+  const p = G.player, cd = (id, v) => { const b = document.getElementById(id); if (b) b.style.setProperty('--cd', clamp(v, 0, 1).toFixed(3)); };
+  cd('bSkill', (p.swipeCd || 0) / 0.35); cd('bSkill3', ((p.hammerCd || 0) - G.t) / 2.5); cd('bSkill4', ((p.sprayCd || 0) - G.t) / 0.9);
+  cd('bSkill5', p.maxMc ? 1 - Math.min(1, p.mc / 25) : 0); cd('bSkill2', p.stam < 35 ? 1 - p.stam / 35 : 0); cd('bDodge', p.stam < 18 ? 1 - p.stam / 18 : 0);
+  // Combo: Treffer in Folge, verfaellt nach 2 s
+  const C = R3.combo || (R3.combo = { hits: 0, n: 0, t: 0, pop: 0 });
+  if (G.stats.hits > C.hits) { C.n += G.stats.hits - C.hits; C.t = 2; C.pop = 1; }
+  C.hits = G.stats.hits; C.t -= 1 / 60; C.pop = Math.max(0, C.pop - 0.08); if (C.t <= 0) C.n = 0;
+}
