@@ -54,7 +54,7 @@ const VR_LIST = [
   { id: 'vr3', look: 's3', name: 'Felsbrecher · Erde', hp: 22, ai: AI_EARTH, blurb: 'Stürmt nach vorn, wenn du zu weit weg bist.' },
   { id: 'vr4', look: 's4', name: 'Nasse Katze · Wasser', hp: 20, ai: AI_WATER, blurb: 'Schießt Wasserstrahlen aus der Ferne.' },
   { id: 'windklinge', look: 'windklinge', name: 'Windklinge · Bestien-Umhang', hp: 24, ai: AI_WIND, blurb: 'Schnelle Dolche. Der Umhang schluckt Blood Swipe.' },
-  { id: 'hardsteely', look: 'nate', name: 'Hardsteely · Metall', hp: 30, ai: AI_NATE, blurb: 'Ganz aus Metall. Nur Hammer Strike und Konter gehen durch.' },
+  { id: 'hardsteely', look: 'nate', name: 'Hardsteely · Metall', hp: 26, ai: AI_NATE, blurb: 'Ganz aus Metall. Nur Hammer Strike und Konter gehen durch.' },
   { id: 'vr7', look: 'zweit', name: 'Doppelklinge', hp: 32, ai: AI_LEO, blurb: 'Wird mit jeder Sekunde schneller.' },
   { id: 'vr8', look: 'rylee', name: 'Eisenhaut', hp: 34, ai: AI_RYLEE, blurb: 'Verhärtet immer nur eine Seite.' },
   { id: 'vr9', look: 'mono', name: 'Champion der Woche', hp: 44, ai: AI_MONO_BOSS, blurb: 'Sieht deine Schläge kommen.' }

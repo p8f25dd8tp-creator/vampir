@@ -272,7 +272,7 @@ function playerHit(p, A) {
 
 function damageFoe(e, dmg, o) {
   // Metall-Verhaertung (Hardsteely): nur Hammer Strike (innerer Schlag) und Konter wirken voll
-  if (e.ai && e.ai.steel && !o.hammer && !o.counter) { dmg *= 0.15; if (Math.random() < 0.5) floatText(e.x, e.y - 90, 'METALL', '#c8d0dc'); sfx('chain', 0, 0.05); }
+  if (e.ai && e.ai.steel && !o.hammer && !o.counter) { dmg *= 0.25; if (Math.random() < 0.5) floatText(e.x, e.y - 90, 'METALL', '#c8d0dc'); sfx('chain', 0, 0.05); }
   if (e.ai && e.ai.harden && e.state !== 'stagger') {
     const from = Math.atan2(-Math.sin(o.ang), -Math.cos(o.ang)); // Richtung, aus der der Treffer kommt
     if (Math.abs(angDiff(e.hardDir || 0, from)) < 1.05) {
@@ -620,6 +620,6 @@ function castHammer(p) {
   if (Q.stats.str < 15) { floatText(p.x, p.y - 80, 'Braucht Stärke 15', '#ffd04a'); return; }
   if ((p.hammerCd || 0) > G.t) return;
   if (p.stam < 30) { tired(p); return; }
-  p.hammerCd = G.t + 3;
+  p.hammerCd = G.t + 2.5;
   startAttack(p, 0, false, HAMMER);
 }
