@@ -160,6 +160,7 @@ function render3d(rdt) {
     if (e.state === 'attack' && e.atk && e.atk.hammer) { if (!R.slam && e.stateT >= e.atk.win) { R.slam = true; r3Slam(e); } } else R.slam = false;
     R.flashK = e.flash;
     poseHuman(R, e, rdt);
+    if (typeof r3Harden === 'function') r3Harden(e, R);
     const f = Math.min(1, e.flash * 9);
     for (const m of R.mats) m.emissive.setRGB(f, f * 0.95, f * 0.9);
     const sq = 1 + f * 0.1; R.body.scale.set(sq, 1 / sq, sq);

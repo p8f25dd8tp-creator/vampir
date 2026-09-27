@@ -39,6 +39,8 @@ const slowIn = (k) => k * k * k;
 const P_NEUTRAL = pose();
 const P_GUARD = pose({ y: -0.05, twist: -0.22, hipYaw: 0.15, headY: 0.18, sh: [[-0.55, 0.32], [-0.85, 0.28]], el: [-2.05, -1.9], th: [[-0.28, 0.06], [0.18, 0.06]], kn: [0.42, 0.26] });
 const P_LOOSE = pose({ y: -0.03, sh: [[-0.35, 0.3], [-0.45, 0.3]], el: [-1.5, -1.4], th: [[-0.15, 0.06], [0.1, 0.06]], kn: [0.25, 0.2] });
+// Mono: laessig, Haende halb in den Taschen, Kinn oben
+const P_COOL = pose({ headX: -0.12, headY: -0.15, sh: [[0.12, 0.06], [0.12, 0.06]], el: [-0.55, -0.55], th: [[-0.05, 0.05], [0.08, 0.05]], kn: [0.12, 0.1] });
 const P_PROWL = pose({ y: -0.2, lean: 0.5, headX: -0.4, sh: [[-1.05, 0.5], [-1.0, 0.5]], el: [-0.55, -0.6], th: [[-0.45, 0.18], [0.35, 0.18]], kn: [1.0, 0.75] });
 
 /* ------------------------------------------------------------ Bewegungen (Zeitleisten) */
@@ -98,6 +100,7 @@ function timeline(e) {
 function stanceOf(e) {
   if (e.npc || (G.opt && G.opt.hub)) return P_NEUTRAL;
   if (e.kind === 'kyle' && e.phase === 2) return P_PROWL;
+  if (e.kind === 'mono') return P_COOL;
   if (e.team === 0 && (e.kit === 'fist' || e.kit === 'raten' || e.kit === 'sil' || e.kit === 'feuer')) return P_GUARD;
   return e.team === 1 ? P_LOOSE : P_GUARD;
 }
@@ -143,6 +146,10 @@ function poseHuman(R, e, dt) {
   else if ((st === 'wind' || st === 'active' || st === 'recover') && e.atk) P = keysAt(timeline(e), clip(foeMove(e), G0, R.alt));
   else if (st === 'charge') { const k = snap(Math.min(1, sT / 0.3)); P = mixPose(G0, with_(G0, { y: -0.2, twist: -0.8, lean: 0.2, sh: [[0.6, 0.35], [-1.0, 0.3]], el: [-2.2, -1.6], kn: [0.8, 0.6] }), k); P.twist += Math.sin(t * 50) * 0.02 * k; }
   else if (st === 'dodge') P = dodgePose(R, e, G0, sT);
+  else if (st === 'evade') { // Voraussicht: muehelos zur Seite gleiten
+    const k = Math.sin(Math.min(1, sT / 0.25) * Math.PI), face = Math.atan2(Math.cos(R.yaw), Math.sin(R.yaw)), side = angDiff(face, Math.atan2(e.vy, e.vx)) > 0 ? 1 : -1;
+    P = with_(G0, { air: 0.12 * k, roll: -0.35 * k * side, lean: -0.1 * k, headY: 0.2 * side * k, th: [[-0.3 * k, 0.3 * k], [0.2 * k, 0.3 * k]], kn: [0.5 * k, 0.3 * k] });
+  }
   else if (st === 'stagger') { const k = Math.sin(t * 9); P = with_(G0, { lean: -0.35, headX: -0.4, roll: k * 0.18, y: -0.1, sh: [[0.4, 0.7], [0.3, 0.8]], el: [-0.5, -0.4], th: [[-0.4 * k, 0.2], [0.4 * k, 0.2]], kn: [0.5, 0.5] }); }
   else if (st === 'transform') P = with_(G0, { y: -0.2, lean: 0.5, headX: 0.35, sh: [[0.25 + Math.sin(t * 34) * 0.12, 0.8], [0.25 - Math.sin(t * 34) * 0.12, 0.8]], el: [-1.8, -1.8], kn: [0.8, 0.8] });
   else if (st === 'hurt') P = with_(G0, { lean: -0.45, headX: -0.4, sh: [[0.35, 0.6], [0.3, 0.6]], el: [-0.6, -0.6] });

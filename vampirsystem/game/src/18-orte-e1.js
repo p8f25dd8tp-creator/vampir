@@ -120,9 +120,11 @@ ARENA3D.hof = function (A, scene) {
   for (const b of A.buildings || []) building3d(scene, b, night);
   // ueberdachter Hauptweg (wirft den Schatten, in dem Quinn sicher ist)
   const px = 220 * S3, z0 = 130 * S3, z1 = H;
+  if (!A.noRoof) {
   const roof = new T.Mesh(new T.BoxGeometry(56 * S3 + 0.4, 0.1, z1 - z0), toonMat(night ? '#3a3a44' : '#8a3a3a', { transparent: true })); roof.position.set(px, 2.8, (z0 + z1) / 2); roof.castShadow = true; scene.add(roof);
   R3.fade.push({ mat: roof.material, x0: px - 1.2, x1: px + 1.2, z0: z0 - 1, z1: z1 + 2 });
   for (let z = z0 + 1; z < z1; z += 3) for (const s of [-1, 1]) part(fgeo('pillar', () => new T.CylinderGeometry(0.06, 0.06, 2.8, 6)), toonMat('#2a2a30'), scene, px + s * (28 * S3 + 0.15), 1.4, z);
+  }
   for (const [x, y] of A.trees || []) tree3d(scene, x * S3, y * S3, 1.1, night);
   for (const [x, y] of A.benches || []) bench3d(scene, x * S3, y * S3, 0);
   // Mauer am Rand
