@@ -643,7 +643,7 @@ const ETAPPE_OF = {};
  ['vrintro', 'windklinge', 'nate', 'sonne', 'portalteam', 'logan', 'earl', 'vrfree'],
  ['portalsturz', 'rattaclaw', 'lagerhaus', 'scordana', 'dom', 'bloodsucker', 'evolution', 'schatten', 'rettung', 'kiefer', 'systemshop', 'hammerspray', 'vrerde', 'logan2'],
  ['caladi', 'zahnwurm', 'echsen', 'berg', 'schattenleere', 'absturz', 'dalki', 'ghul']].forEach((l, i) => l.forEach((id) => { ETAPPE_OF[id] = i + 1; }));
-const FOE_DMG = { 1: 1.0, 2: 1.15, 3: 1.45, 4: 1.75, 5: 1.8, 6: 1.9, 7: 1.9 };
+const FOE_DMG = { 1: 1.0, 2: 1.15, 3: 1.45, 4: 1.65, 5: 1.6, 6: 1.8, 7: 1.9 };
 function foeDmgScale() {
   if (G.opt.test) return 1;
   const et = (typeof MISSION !== 'undefined' && MISSION && ETAPPE_OF[MISSION.id]) || 1;
