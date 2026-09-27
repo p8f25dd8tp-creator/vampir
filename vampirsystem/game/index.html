@@ -31,8 +31,20 @@
 <script src="src/11-portal.js?v=1"></script>
 <script src="src/12-caladi.js?v=1"></script>
 <script src="src/13-three.js?v=1"></script>
+<script src="src/14-figur3d.js?v=1"></script>
+<script src="src/15-arena3d.js?v=1"></script>
 <script src="src/08-main.js?v=1"></script>
 <!--/SCRIPTS-->
-<script type="module">import * as T3 from './vendor/three.module.min.js'; window.THREE = T3;</script>
+<script type="importmap">{"imports":{"three":"./vendor/three.module.min.js","three/addons/":"./vendor/addons/"}}</script>
+<script type="module">
+import * as T3 from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+window.THREE_PP = { EffectComposer, RenderPass, ShaderPass, UnrealBloomPass, OutputPass };
+window.THREE = T3;
+</script>
 </body>
 </html>
