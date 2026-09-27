@@ -59,14 +59,15 @@ canvas#game { position: absolute; inset: 0; display: block; touch-action: none; 
 .hud { position: absolute; inset: 0; pointer-events: none; }
 .hud .me { position: absolute; left: calc(12px + var(--safe-l)); top: calc(10px + var(--safe-t)); width: min(46vw, 210px); }
 .hud .nm { font-family: 'Cinzel', serif; font-weight: 800; font-size: 13px; letter-spacing: .1em; text-shadow: 0 1px 3px #000; }
-.hud .nm small { color: var(--dim); font-weight: 600; margin-left: 6px; }
+.hud .nm { white-space: nowrap; }
+.hud .nm small { color: var(--dim); font-weight: 600; margin-left: 6px; font-size: 11px; }
 .bar { height: 9px; background: rgba(0,0,0,.6); border: 1px solid rgba(255,255,255,.18); border-radius: 5px; overflow: hidden; margin-top: 4px; }
 .bar i { display: block; height: 100%; width: 100%; transition: width .12s; }
 .bar.hp i { background: linear-gradient(90deg, #a0102a, #ff4a5a); }
 .bar.st i { background: linear-gradient(90deg, #2a8a5a, #7affb0); }
 .bar.st.low i { background: linear-gradient(90deg, #6a5a1a, #ffd04a); }
 .hud .hpnum { font-size: 13px; color: #ffd0d6; font-variant-numeric: tabular-nums; margin-top: 2px; text-shadow: 0 1px 2px #000; }
-.hud .foe { position: absolute; left: 50%; transform: translateX(-50%); top: calc(86px + var(--safe-t)); width: min(70vw, 320px); text-align: center; }
+.hud .foe { position: absolute; left: 50%; transform: translateX(-50%); top: calc(100px + var(--safe-t)); width: min(70vw, 320px); text-align: center; }
 .hud .foe .bar { height: 7px; }
 .hud .foe .bar i { background: linear-gradient(90deg, #d8781e, #ffc04a); }
 .hud .pause { position: absolute; right: calc(12px + var(--safe-r)); top: calc(10px + var(--safe-t)); width: 44px; height: 44px; border-radius: 10px;

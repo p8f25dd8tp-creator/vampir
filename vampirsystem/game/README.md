@@ -23,7 +23,7 @@ Wer im letzten Moment ausweicht (die rote Bodenfläche ist gerade voll), löst e
 **perfektes Ausweichen** aus: kurze Zeitlupe und ein Konterfenster mit doppeltem Schaden.
 Angriffe und Ausweichen kosten **Ausdauer**.
 
-## Stand: Etappe 2
+## Stand: Etappe 3
 
 * Prolog „Das schwarze Buch“ (Kap. 1–3): das System erwacht, Statusfenster, Tagesquests, Sonne.
 * Der Fähigkeitstest (Kap. 4–7): Vordens Handschlag, die Testgruppe, Messung in der Sonne mit
@@ -35,6 +35,12 @@ Angriffe und Ausweichen kosten **Ausdauer**.
 * „Training bei Nacht“ (Kap. 12): Ausweichtest gegen ein Trainingsgerät, Layla schaut zu.
 * „Ungeschriebene Regeln“ (Kap. 13–14): Mono weicht jedem Angriff aus; Inspect ist in der
   Sonne nicht lesbar.
+* **Etappe 3 (Kap. 15–23):** Credits (10 pro Tag), Vorden steckt Quinn Credits zu, die
+  schwarze Maske aus dem Laden, nachts im Park **Rylee** (Verhärtung immer nur an einer Stelle –
+  graue Platte; die Seite wechseln und dort treffen, wo er weich ist). Danach **Evolution zum
+  Halbling** (+5 HP) und **Blood Swipe** (Knopf, kostet 1 HP, keine Abklingzeit), Blutdurst
+  (weniger HP bis zum ersten Blut), Dan greift ein, der Biss in der Bibliothek (Blutgruppe A+,
+  +1 Stärke) und die Abmachung mit Layla.
 * INSPECT-Knopf: zeigt Name, Rasse, Fähigkeit, HP und Blutgruppe des nächsten Ziels.
 
 ## EP und Stufen (frei, nicht an die Story gebunden)
