@@ -51,7 +51,7 @@ Beispiele aus dem Roman, die zeigen, wie diese Kämpfe funktionieren:
 - **Rylee (17):** Er kann immer nur eine Körperstelle verhärten. Quinn gewinnt mit einer Finte.
 - **Mono (14, 45–46):** Er sieht zwei Sekunden in die Zukunft und weicht deshalb allem aus.
 - **Ronkin (2016):** Quinn kämpft auf exakt demselben Kraftniveau und gewinnt nur durch Technik.
-- **Sen Draco / Ray (2286–2291):** Ein Faustduell, in dem jeder Treffer beide stärker macht.
+- **Ray (2286–2291):** Ein Faustduell, in dem jeder Treffer beide stärker macht.
 
 ### 1.2 Das System im Roman ist bereits ein Spiel
 
@@ -179,7 +179,7 @@ davon leben, dass jemand schneller ist, ausweicht, sich teleportiert oder täusc
 - Monos Voraussicht wird zu „+Ausweichchance“.
 - Die Finte gegen Rylee lässt sich nicht spielen.
 - Ausweichen wird zur Würfelchance.
-- Das Faustduell mit Sen Draco, in dem jeder Treffer beide steigert, wäre nur ein Balken.
+- Das Faustduell mit Ray, in dem jeder Treffer beide steigert, wäre nur ein Balken.
 
 **Quinn** wäre ein Schadensträger mit vielen Knöpfen. Der Unterschied zwischen dem frühen und dem
 späten Quinn läge nur in den Zahlen.
@@ -240,7 +240,7 @@ oder Kämpfe kleiner Gruppen.
 **Das passt gut:**
 - Mono, Rylee, Kyle, die Prüfungen und Turniere.
 - Die God-Slayer-Prüfkämpfe, der Penswi-Turm (2197) und der Grand Meet Up (2446).
-- Quinn gegen Erin und Quinn gegen Sen Draco.
+- Quinn gegen Erin und Quinn gegen Ray.
 
 **Das passt schlecht:**
 - Erkundung, Portalplaneten, Horden und Kriege.
@@ -483,7 +483,7 @@ ergibt sich aus den Skills, die tatsächlich zusammen vorkommen.
 - **Ronkin (2016):** Das Training „gleiche Kraft, nur Technik“ ist ein Duell mit gesperrten
   Werten, bei dem nur Timing und Konter zählen.
 - **Erin (1937–1978):** Ihre gelbe Dhampir-Energie schwächt Vampire in markierten Zonen.
-- **Sen Draco / Ray (2286–2291):**
+- **Ray (2286–2291):**
   - Das Faustduell mit **Asura's Rage** macht jeden Treffer am selben Gegner stärker. Nach 10
     Sekunden ohne Treffer setzt es sich zurück.
   - Er wird auch besser, also gewinnt man durch Tempo und den Blutschatten.
@@ -656,8 +656,14 @@ Eigenschaften und Verbesserungsstufen.
 
 ### 14. Team-System
 
-- **Bis zu 3 Figuren pro Mission.** Die Geschichte legt fest, wer dabei ist. In freien Missionen
-  und im Endgame darf man wählen.
+- **Bis zu 3 Figuren pro Mission.** Die Geschichte legt fest, wer dabei ist, mit ein paar
+  Wahlmöglichkeiten (entschieden):
+  - Waren im Roman mehr Figuren in der Szene als Plätze frei sind, wählst du aus genau diesen
+    Figuren aus. Beispiel: In der Aula sind Raten, Erin und Layla dabei, du nimmst zwei davon mit.
+  - Bei Aufgaben, die im Roman aufgeteilt werden, entscheidest du, welchen Teil du spielst. Der
+    Rest läuft wie im Roman. Beispiel: Beim Befreiungskommando kämpfen mehrere Gruppen an
+    verschiedenen Orten.
+  - Frei wählbar sind Teams nur in Nebenmissionen, in Logans Simulationskammer und im Endgame.
 - **Wechselangriff:** Die Figur, die hereinkommt, führt einen eigenen Einstiegsangriff aus.
 - **Kanon-Synergien:** Quinn und Layla haben eine Blutbank-Verbindung, die Quinn-Arthur-Schatten
   ergänzen sich, und Fex und Peter haben eine Hunger-Verbindung. Sie werden nur verwendet, wo der
@@ -814,12 +820,11 @@ geprüft.
 
 ---
 
-## Offene Fragen an dich
+## Entscheidungen
 
-1. **Tag-Team:** Ist dir die Regel „Die Geschichte bestimmt, wer dabei ist“ recht, oder willst du
-   in Storymissionen freie Wahl?
-2. **Sen Draco:** In Nachtfall heißt Ray jetzt Sen Draco. Im neuen Spiel mit englischen
-   Originalnamen heißt er **Ray**, es sei denn, du willst Sen Draco behalten.
-3. **Ansicht:** 3/4 von oben, wie Nachtfall, habe ich wegen der Wiederverwendung und der
-   Schlachten gewählt. Eine Seitenansicht würde Duelle hübscher machen, Schlachten aber
-   schlechter und doppelt so teuer. Einverstanden?
+1. **Tag-Team:** Die Geschichte bestimmt, wer dabei ist, mit ein paar Wahlmöglichkeiten
+   (siehe Abschnitt 14).
+2. **Namen:** englische Originalnamen. Ray heißt im neuen Spiel **Ray** (in Nachtfall bleibt er
+   Sen Draco).
+3. **Ansicht:** keine Seitenansicht. Offen ist noch, ob es die schräge Ansicht von oben wird oder
+   eine Kamera hinter der Figur.
