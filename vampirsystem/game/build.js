@@ -22,3 +22,10 @@ const out = html
   .replace(/<!--SCRIPTS-->[\s\S]*<!--\/SCRIPTS-->/, () => '<script>\n' + js + '\n</script>');
 fs.writeFileSync(path.join(root, 'mvs-standalone.html'), out);
 console.log('mvs-standalone.html —', (out.length / 1024).toFixed(0), 'KB');
+
+// Fassung als Artifact-Seite (ohne eigenes html/head/body; der Rahmen wird beim Veroeffentlichen ergaenzt)
+const body = html.match(/<body>([\s\S]*)<\/body>/)[1]
+  .replace(/<!--SCRIPTS-->[\s\S]*<!--\/SCRIPTS-->/, () => '<script>\n' + js + '\n</script>');
+const art = '<title>My Vampire System</title>\n<style>\n' + css + '\n</style>\n' + body;
+fs.writeFileSync(path.join(root, 'mvs-artifact.html'), art);
+console.log('mvs-artifact.html —', (art.length / 1024).toFixed(0), 'KB');
