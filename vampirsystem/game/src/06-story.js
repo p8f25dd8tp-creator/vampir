@@ -193,7 +193,7 @@ function updateHud() {
   const isQ = p.char === 'quinn';
   if (C.isQ !== isQ) { C.isQ = isQ; UI.hud.querySelectorAll('.pad .skill, .pad .insp').forEach((b) => { b.style.visibility = isQ ? '' : 'hidden'; }); }
   const bk = SAVE.quinn.skills.includes('bloodbank') && !G.opt.hub && isQ ? SAVE.quinn.bank : -1;
-  if (C.pn !== p.char) { C.pn = p.char; $('#pname').textContent = p.char === 'quinn' ? 'QUINN TALEN' : CHARS[p.char].name.toUpperCase(); }
+  if (C.pn !== p.char) { C.pn = p.char; $('#pname').textContent = p.char === 'quinn' ? (G.opt.vr ? 'BLOOD EVOLVER' : 'QUINN TALEN') : CHARS[p.char].name.toUpperCase(); }
   if (C.bank !== bk) { C.bank = bk; $('#bank').innerHTML = bk >= 0 ? `<span>BLUTBANK</span><i><b style="width:${bk}%"></b></i><small>${bk} ml</small>` : ''; }
   const atkTxt = G.poi ? (G.poi.btn || 'LOS') : 'ANGRIFF';
   if (C.atk !== atkTxt) { C.atk = atkTxt; $('#bAtk').textContent = atkTxt; $('#bAtk').classList.toggle('act', !!G.poi); }
