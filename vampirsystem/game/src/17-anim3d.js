@@ -86,7 +86,8 @@ const MOVES = {
     [0.44, with_(G0, { twist: 0.6, lean: 0.35, fwd: 0.12, sh: [[-1.45, 0.0], [-0.3, 0.5]], el: [-0.05, -0.8] }), snap], [1, G0]]
 };
 const CLIP_CACHE = new Map();
-function clip(name, G0, alt) { const k = name + (alt ? '1' : '0') + (G0 === P_GUARD ? 'g' : G0 === P_PROWL ? 'p' : 'l'); if (!CLIP_CACHE.has(k)) CLIP_CACHE.set(k, MOVES[name](G0, alt)); return CLIP_CACHE.get(k); }
+let _cid = 0;
+function clip(name, G0, alt) { const k = name + (alt ? '1' : '0') + (G0._cid || (G0._cid = ++_cid)); if (!CLIP_CACHE.has(k)) CLIP_CACHE.set(k, MOVES[name](G0, alt)); return CLIP_CACHE.get(k); }
 // Zeitleiste aus dem Zustand: Ausholen 0–0.3, Kontakt 0.3–0.5, Erholen 0.5–1
 function timeline(e) {
   const K = e.atk, s = e.stateT || 0;

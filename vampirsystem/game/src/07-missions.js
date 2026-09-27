@@ -500,7 +500,7 @@ Object.assign(MISSIONS, {
       { sys: { head: 'KAMPF', lines: ['Zwei Gegner. Wechsle zwischen Quinn und Layla.'] } }
     ],
     fight: {
-      arena: { art: 'halle', w: 340, h: 640, night: true },
+      arena: { art: 'dach', w: 340, h: 640, night: true },
       playerAt: [170, 440], party: ['quinn', 'layla'],
       foes: [
         { id: 'fei', name: 'Fei', hp: 20, poise: 3, at: [120, 280], ai: AI_BRANDON, expRate: 1.2, expKill: 15, info: { name: 'Fei', race: 'Mensch', ability: 'Stufe 2', blood: 'B-' } },

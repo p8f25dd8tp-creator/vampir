@@ -129,7 +129,8 @@ function render3d(rdt) {
     let R = R3.rigs.get(e.id);
     if (!R || R.look !== e.look || R.extra !== e.extra) {
       if (R) R.root.removeFromParent();
-      R = buildHuman(e.look, e.extra); R.look = e.look; R.extra = e.extra; R.yaw = e.face > 0 ? Math.PI / 2 : -Math.PI / 2;
+      const wp = typeof weaponFor === 'function' ? weaponFor(e) : null;
+      R = buildHuman(e.look, wp ? Object.assign({}, e.extra, { weapon: wp }) : e.extra); R.look = e.look; R.extra = e.extra; R.yaw = e.face > 0 ? Math.PI / 2 : -Math.PI / 2;
       if (e.npc) R.root.traverse((o) => { o.castShadow = false; });
       const blob = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.9), new THREE.MeshBasicMaterial({ map: R3.blobTex, transparent: true, depthWrite: false }));
       blob.rotation.x = -Math.PI / 2; blob.position.y = 0.012; R.root.add(blob); R.blob = blob;
@@ -161,6 +162,7 @@ function render3d(rdt) {
     R.flashK = e.flash;
     poseHuman(R, e, rdt);
     if (typeof r3Harden === 'function') r3Harden(e, R);
+    if (typeof r3Extras === 'function') r3Extras(e, R, rdt);
     const f = Math.min(1, e.flash * 9);
     for (const m of R.mats) m.emissive.setRGB(f, f * 0.95, f * 0.9);
     const sq = 1 + f * 0.1; R.body.scale.set(sq, 1 / sq, sq);
