@@ -3585,13 +3585,13 @@ Object.assign(OBJ_ART, {
 
 /* ------------------------------------------------------------ Gegner-KI */
 const RAT_ATK = {
-  bite: { type: 'swipe', wind: 0.42, act: 0.08, rec: 0.45, reach: 34, arc: 0.9, dmg: 1, col: '#d0b0a0' },
+  bite: { type: 'swipe', wind: 0.5, act: 0.08, rec: 0.45, reach: 34, arc: 0.9, dmg: 1, col: '#d0b0a0' },
   pounce: { type: 'lunge', wind: 0.55, act: 0.22, rec: 0.6, speed: 300, dmg: 1, shout: '!' }
 };
 // Rattaclaw (Basic-Bestie, Kap. 66): rudelweise, springt an; wartet im Dunkeln, bis sie Witterung aufnimmt
 const ratAsleep = (e) => e.wakeT === undefined || G.t < e.wakeT;
 const AI_RAT = {
-  params: (e) => (ratAsleep(e) ? { range: 9999, speed: 0, cd: 1 } : { range: 32, speed: 125, cd: 1.0 }),
+  params: (e) => (ratAsleep(e) ? { range: 9999, speed: 0, cd: 1 } : { range: 32, speed: 115, cd: 1.5 }),
   choose: (e, d) => (ratAsleep(e) ? null : d > 70 && d < 150 && Math.random() < 0.5 ? RAT_ATK.pounce : d < 50 ? RAT_ATK.bite : null),
   onTick: (e) => { if (!e.awake && !ratAsleep(e)) { e.awake = true; floatText(e.x, e.y - 40, 'KRIII', '#ff8a7a'); } },
   onHurt: (e) => { e.wakeT = 0; }
