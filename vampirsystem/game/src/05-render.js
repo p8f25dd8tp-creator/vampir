@@ -179,6 +179,10 @@ function renderFight() {
       g.strokeStyle = '#e8e0d0'; g.lineWidth = 1.6; g.beginPath(); g.moveTo(-14, 0); g.lineTo(6, 0); g.stroke();
       g.fillStyle = P.col; g.beginPath(); g.moveTo(6, -2.6); g.lineTo(12, 0); g.lineTo(6, 2.6); g.fill();
       g.globalCompositeOperation = 'lighter'; g.globalAlpha = 0.6; g.drawImage(glowSprite(P.col), -16, -8, 26, 16);
+    } else if (P.kind === 'fire') {
+      g.globalCompositeOperation = 'lighter';
+      for (let k = 0; k < 4; k++) g.drawImage(glowSprite(k % 2 ? '#ffb040' : '#ff5a2a'), -10 - k * 7, -9 + Math.sin(G.t * 24 + k) * 3, 20, 18);
+      g.fillStyle = 'rgba(255,240,200,0.9)'; g.beginPath(); g.arc(0, 0, 4, 0, TAU); g.fill();
     } else if (P.kind === 'spike') {
       g.fillStyle = lg(g, -12, 0, 8, 0, [0, '#5a6272', 1, '#e8eef8']); g.beginPath(); g.moveTo(-12, -1.4); g.lineTo(6, -1.4); g.lineTo(12, 0); g.lineTo(6, 1.4); g.lineTo(-12, 1.4); g.closePath(); g.fill();
       g.globalCompositeOperation = 'lighter'; g.globalAlpha = 0.4; g.drawImage(glowSprite('#c8d8f0'), -14, -7, 24, 14);
@@ -241,6 +245,9 @@ function renderFight() {
     const p0 = G.player;
     g.fillStyle = rg(g, p0.x, p0.y - 30, 40, 260, [0, 'rgba(8,10,30,0.15)', 1, 'rgba(4,6,20,0.72)']);
     g.fillRect(G.cam.x - VIEW.w, G.cam.y - VIEW.h, VIEW.w * 2, VIEW.h * 2);
+  }
+  if (A.leere) { // Schattenleere: lila Daemmerlicht
+    g.fillStyle = 'rgba(50,10,80,0.32)'; g.fillRect(G.cam.x - VIEW.w, G.cam.y - VIEW.h, VIEW.w * 2, VIEW.h * 2);
   }
   for (const [x, y] of A.lamps || []) {
     g.save(); g.globalCompositeOperation = 'lighter'; g.globalAlpha = 0.55; g.drawImage(glowSprite('#ffd890'), x - 70, y - 50, 140, 100); g.restore();

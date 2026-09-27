@@ -220,6 +220,7 @@ const RAT_ATK = {
 // Rattaclaw (Basic-Bestie, Kap. 66): rudelweise, springt an; wartet im Dunkeln, bis sie Witterung aufnimmt
 const ratAsleep = (e) => e.wakeT === undefined || G.t < e.wakeT;
 const AI_RAT = {
+  pack: true,
   params: (e) => (ratAsleep(e) ? { range: 9999, speed: 0, cd: 1 } : { range: 32, speed: 115, cd: 1.5 }),
   choose: (e, d) => (ratAsleep(e) ? null : d > 70 && d < 150 && Math.random() < 0.5 ? RAT_ATK.pounce : d < 50 ? RAT_ATK.bite : null),
   onTick: (e) => { if (!e.awake && !ratAsleep(e)) { e.awake = true; floatText(e.x, e.y - 40, 'KRIII', '#ff8a7a'); } },
@@ -315,6 +316,8 @@ function castShadow(p) {
   G.stats.shadow = (G.stats.shadow || 0) + 1;
   for (let k = 0; k < 10; k++) G.fx.push({ k: 'spark', x: f.x + rand(-14, 14), y: f.y + rand(-6, 2), vx: 0, vy: 0, life: 0.4, t: 0, col: '#8a4aff', size: 5 });
   floatText(f.x, f.y - 80, 'SCHATTEN', '#c8a0ff'); sfx('shadowstep');
+  // Schattensense (Kap. 133): der Schatten fuehrt einen Blutschnitt als Klinge – trifft einmal, mit eigener Kraft
+  if (SAVE.quinn.skills.includes('sense')) later(0.15, () => { if (G && f.state !== 'down') { slash(f.x, f.y - 30, Math.atan2(f.y - p.y, f.x - p.x), 40, 1.2, '#8a4aff'); damageFoe(f, 3 * (p.str / 10), { kb: 80, ang: Math.atan2(f.y - p.y, f.x - p.x), poise: 2, heavy: true }); } });
 }
 function learn(...ids) { const Q = SAVE.quinn; for (const s of ids) if (!Q.skills.includes(s)) Q.skills.push(s); writeSave(); }
 
@@ -324,7 +327,7 @@ function ratPack(n, spots, t0, dt) {
     info: { name: 'Rattaclaw', race: 'Bestie · Basic-Stufe', ability: 'Rudeljäger, scharfe Krallen', blood: 'giftig – nicht trinkbar' } }));
 }
 function wakeTick(G, maxAwake) { // Rudel: hoechstens maxAwake greifen gleichzeitig an, die naechste folgt mit kurzem Abstand
-  const rats = G.ents.filter((e) => e.team === 1 && e.ai === AI_RAT);
+  const rats = G.ents.filter((e) => e.team === 1 && e.ai && e.ai.pack);
   const busy = rats.filter((e) => e.state !== 'down' && !ratAsleep(e)).length;
   const next = rats.find((e) => e.state !== 'down' && e.wakeT === undefined);
   if (next && busy < maxAwake && G.t - (G.lastWake || -9) > 1.2) { next.wakeT = G.t; G.lastWake = G.t; }
@@ -673,12 +676,10 @@ Object.assign(MISSIONS, {
       { bg: 'system', portrait: null },
       { sys: { head: 'UHR', lines: ['Dreimal tippen: Anzeige wechselt zwischen Stufe 1 und Stufe 6.'] } },
       { sys: { head: 'EINE WOCHE SPÄTER', lines: ['Schattenkontrolle und Schattenausrüstung: Lv. 2', 'Gekauft: Schattenleere (eine Stunde Schattenzone, 50 MC).'], quests: ['Vorerst tabu: Schattenfresser'] } },
-      { call: () => learn('leere') },
-      { bg: 'nacht' },
-      { narr: 'Ende der sechsten Etappe. Als Nächstes: die Reise nach Caladi.' }
+      { call: () => learn('leere') }
     ],
     after: () => { stepDone('logan2'); },
-    next: null
+    next: 'caladi'
   }
 });
 MISSION_ORDER.push('portalsturz', 'rattaclaw', 'lagerhaus', 'scordana', 'dom', 'bloodsucker', 'evolution', 'schatten', 'rettung', 'kiefer', 'systemshop', 'hammerspray', 'vrerde', 'logan2');

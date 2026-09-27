@@ -12,7 +12,7 @@ function gainExp(n) {
   n = Math.max(0, Math.round(n));
   Q.exp += n;
   let ups = 0;
-  while (Q.exp >= expNeed(Q.level)) { Q.exp -= expNeed(Q.level); Q.level++; Q.points++; ups++; }
+  while (Q.exp >= expNeed(Q.level)) { Q.exp -= expNeed(Q.level); Q.level++; Q.points += Q.race === 'Vampir' ? 2 : 1; ups++; } // als Vampir 2 Punkte pro Stufe (Kap. 114)
   writeSave();
   return ups;
 }
@@ -55,7 +55,7 @@ function statusHtml() {
     ${Q.skills.includes('schatten') ? '<div class="line" style="font-size:15px">MC: <b style="color:#c8a0ff">100 / 100</b> · Schatten Stufe 6</div>' : ''}
     <div class="line" style="margin-top:8px;font-size:15px;color:#9ab">Fähigkeiten: ${Q.skills.length ? Q.skills.map((s) => SKILL_NAMES[s] || s).join(', ') : '—'}</div></div>`;
 }
-const SKILL_NAMES = { inspect: 'Inspect', bloodswipe: 'Blood Swipe', bloodbank: 'Blutbank', flashstep: 'Flash Step', hammer: 'Hammer Strike', bloodspray: 'Blood Spray', daze: 'Daze', schatten: 'Schattenkontrolle', lager: 'Dimensionslager', mantel: 'Schattenmantel', hammerspray: 'Hammer Spray', leere: 'Schattenleere' };
+const SKILL_NAMES = { inspect: 'Inspect', bloodswipe: 'Blood Swipe', bloodbank: 'Blutbank', flashstep: 'Flash Step', hammer: 'Hammer Strike', bloodspray: 'Blood Spray', daze: 'Daze', schatten: 'Schattenkontrolle', lager: 'Dimensionslager', mantel: 'Schattenmantel', hammerspray: 'Hammer Spray', leere: 'Schattenleere', beeinflussung: 'Beeinflussung', sense: 'Schattensense', ritual: 'Blutritual (1/2)' };
 // Blut trinken: jede Person gibt nur beim ersten Mal einen Wert (Roman: A Staerke, B Agilitaet, AB Ausdauer, 0 freier Punkt)
 function drinkBlood(person, type) {
   const Q = SAVE.quinn;

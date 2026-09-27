@@ -145,6 +145,11 @@ function drawPerson(g, P, L) {
     }
     if (front && L.handGlow && P.cast > 0.05) glowDot(g, A.hx, A.hy, 5 + P.cast * 5, L.handGlow, 0.7 * P.cast);
   };
+  if (L.tail) { // Schwanz (Dalki)
+    g.strokeStyle = shade(L.tail, -0.2); g.lineWidth = 3.2; g.lineCap = 'round';
+    g.beginPath(); g.moveTo(P.hipX - 2, P.hipY - 2); g.quadraticCurveTo(P.hipX - 14, P.hipY + 4 + Math.sin(t * 3) * 2, P.hipX - 22, P.hipY + 10 + Math.sin(t * 2.2) * 3); g.stroke();
+    g.strokeStyle = L.tail; g.lineWidth = 1.6; g.stroke();
+  }
   leg(P.legB, -0.38); arm(P.armB, -0.38, false);
   // --- Rumpf
   g.save(); g.translate(P.hipX, P.hipY); g.rotate(P.lean);
@@ -200,6 +205,10 @@ function drawPerson(g, P, L) {
   else { g.moveTo(-5, 0); g.quadraticCurveTo(-6.5, -5, -3.5, -7.6); g.lineTo(-2, -9); g.lineTo(-0.5, -7.8); g.lineTo(1.5, -9.2); g.lineTo(2.6, -7.6); g.quadraticCurveTo(5.4, -7.2, 4.8, -4); g.quadraticCurveTo(3, -5.6, 0.5, -5.2); g.quadraticCurveTo(-1.5, -4, -2.5, -1); }
   g.closePath();
   paint(g, lg(g, 0, -9, 0, 0, [0, shade(L.hair, 0.25), 1, L.hair]), 'rgba(0,0,0,0.5)', 0.5);
+  for (let k = 0; k < (L.spikes || 0); k++) { // Stacheln am Hinterkopf (Dalki)
+    g.beginPath(); g.moveTo(-3.5 - k * 1.5, -6 + k * 2); g.lineTo(-9 - k * 1.5, -11 + k * 3); g.lineTo(-2 - k * 1.5, -4 + k * 2); g.closePath();
+    paint(g, L.spikeCol || '#e8e0c8', 'rgba(0,0,0,0.6)', 0.5);
+  }
   g.restore();
   if (L.outfit === 'hoodie') { // Kapuze im Nacken
     g.save(); g.translate(P.neckX, P.neckY); g.rotate(P.lean);

@@ -198,7 +198,7 @@ function updateFighter(p, dt, mx, my) {
   p.buffer = Math.max(0, p.buffer - dt);
   p.stamDelay -= dt;
   if (p.stamDelay <= 0 && p.state !== 'charge') p.stam = Math.min(p.maxStam, p.stam + 42 * dt);
-  if (p.maxMc) p.mc = Math.min(p.maxMc, p.mc + 2.5 * dt); // MC (Schatten) laedt im Spiel schneller als im Roman
+  if (p.maxMc && !G.opt.leere) p.mc = Math.min(p.maxMc, p.mc + 2.5 * dt); // in der Schattenleere laedt MC nicht // MC (Schatten) laedt im Spiel schneller als im Roman
   if (p === G.player) G.inSun = inSun(p);
   const sunK = sunFactor(p);
   const spd = 120 * Math.pow(p.agi * sunK / 10, 0.35);
@@ -553,7 +553,9 @@ function updateProj(dt) {
         P.hit.add(e.id);
         if (e.ai && e.ai.foresight && !P.double && e.state !== 'stagger') { foresee(e, P); continue; }
         if (e.ai && e.ai.cloak && P.kind === 'blood') { floatText(e.x, e.y - 86, 'UMHANG', '#d0c0a0'); burst(e.x, e.y - 30, 6, '#d0c0a0'); gone = true; break; }
-        damageFoe(e, P.dmg, { kb: P.kb || 90, ang: P.a, poise: P.poise || 1, heavy: !!P.heavy });
+        let pd = P.dmg;
+        if (e.ai && e.ai.skin && P.kind === 'blood') { pd *= 0.25; floatText(e.x, e.y - 94, 'PRALLT AB', '#9ad870'); } // Dalki-Haut
+        damageFoe(e, pd, { kb: P.kb || 90, ang: P.a, poise: P.poise || 1, heavy: !!P.heavy });
         if (!P.pierce && (P.kind === 'arrow' || P.kind === 'spike')) { gone = true; break; }
       }
     }
