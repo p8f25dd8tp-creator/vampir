@@ -25,7 +25,8 @@ function addExp(n) {
 function quinnStats() {
   const S = SAVE.quinn.stats;
   const race = SAVE.quinn.race === 'Halbling' ? 5 : 0;
-  return { maxHp: 10 + race + (S.sta - 10), maxStam: 100 + (S.sta - 10) * 4, str: S.str, agi: S.agi };
+  const gear = SAVE.quinn.gear.hands === 'gauntlets' ? 3 : 0; // Black Horned Gauntlets: Staerke +3
+  return { maxHp: 10 + race + (S.sta - 10), maxStam: 100 + (S.sta - 10) * 4, str: S.str + gear, agi: S.agi };
 }
 const STAT_INFO = {
   str: { name: 'Stärke', desc: 'mehr Schaden pro Schlag' },
@@ -46,9 +47,26 @@ function statusHtml() {
     <div class="line" style="margin-top:4px;font-size:15px">Credits: <b>${SAVE.credits}</b>${Q.thirst ? ` · <span style="color:#ff8a8a">Blutdurst: −${Q.thirst} HP</span>` : ''}</div>
     <div class="line" style="margin-top:6px">Freie Wertepunkte: <b style="color:#ffe6a0">${Q.points}</b></div>
     ${rows}
+    ${Q.skills.includes('bloodbank') ? `<div class="line" style="font-size:15px">Blutbank: <b style="color:#ff8a9a">${Q.bank} / 100 ml</b></div>` : ''}
+    ${Q.gear.hands ? '<div class="line" style="font-size:15px">Ausrüstung: Black Horned Gauntlets (Stärke +3, Verteidigung +2)</div>' : ''}
     <div class="line" style="margin-top:8px;font-size:15px;color:#9ab">Fähigkeiten: ${Q.skills.length ? Q.skills.map((s) => SKILL_NAMES[s] || s).join(', ') : '—'}</div></div>`;
 }
-const SKILL_NAMES = { inspect: 'Inspect', bloodswipe: 'Blood Swipe' };
+const SKILL_NAMES = { inspect: 'Inspect', bloodswipe: 'Blood Swipe', bloodbank: 'Blutbank', flashstep: 'Flash Step', hammer: 'Hammer Strike' };
+// Blut trinken: jede Person gibt nur beim ersten Mal einen Wert (Roman: A Staerke, B Agilitaet, AB Ausdauer, 0 freier Punkt)
+function drinkBlood(person, type) {
+  const Q = SAVE.quinn;
+  if (Q.bloodFrom[person]) return null;
+  Q.bloodFrom[person] = type; Q.blood[type] = (Q.blood[type] || 0) + 1;
+  const base = type.replace(/[+-]/, '');
+  let gain;
+  if (base === 'A') { Q.stats.str++; gain = 'Stärke +1'; }
+  else if (base === 'B') { Q.stats.agi++; gain = 'Agilität +1'; }
+  else if (base === 'AB') { Q.stats.sta++; gain = 'Ausdauer +1'; }
+  else { Q.points++; gain = '1 freier Wertepunkt'; }
+  if (Q.skills.includes('bloodbank')) Q.bank = Math.min(100, Q.bank + 30);
+  writeSave();
+  return gain;
+}
 function showStatus(back) {
   const el = document.createElement('div');
   el.className = 'screen dim'; el.style.pointerEvents = 'auto'; el.style.zIndex = 20;

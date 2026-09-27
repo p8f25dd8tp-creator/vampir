@@ -65,6 +65,41 @@ const AI_RYLEE = {
   }
 };
 
+/* ------------------------------------------------------------ Etappe 4: Gegner */
+const THUG_ATK = { type: 'swipe', wind: 0.5, act: 0.1, rec: 0.55, reach: 40, arc: 0.9, dmg: 1, col: '#c8b8a0' };
+const AI_THUG = { params: () => ({ range: 40, speed: 85, cd: 1.3 }), choose: (e, d) => (d < 58 ? THUG_ATK : null) };
+// Brandon: Speer mit grosser Reichweite, Stoss nach vorn (Kap. 30)
+const BRANDON_ATK = {
+  thrust: { type: 'lunge', wind: 0.55, act: 0.18, rec: 0.6, speed: 280, dmg: 2, shout: '!' },
+  sweep: { type: 'swipe', wind: 0.5, act: 0.1, rec: 0.5, reach: 58, arc: 1.3, dmg: 1, col: '#9ad0b0' }
+};
+const AI_BRANDON = { params: () => ({ range: 55, speed: 90, cd: 0.9 }), choose: (e, d) => (d > 70 ? BRANDON_ATK.thrust : d < 72 ? BRANDON_ATK.sweep : null) };
+// Leo: unglaublich schnell, wird immer schneller; Inspect zeigt nichts (Kap. 32)
+const LEO_ATK = { type: 'swipe', wind: 0.42, act: 0.08, rec: 0.3, reach: 50, arc: 1.4, dmg: 1, col: '#5ff0d0' };
+const AI_LEO = {
+  params: () => ({ range: 46, speed: 120 + G.t * 2, cd: Math.max(0.35, 1.0 - G.t * 0.016) }),
+  choose: (e, d) => (d < 64 ? Object.assign({}, LEO_ATK, { wind: Math.max(0.28, 0.42 - G.t * 0.004), chain: G.t > 15 ? Object.assign({}, LEO_ATK, { wind: 0.25 }) : null }) : null)
+};
+// Zweitjaehrige in der Aula: Wasser, Erde, Schlaeger
+const WATER_ATK = { type: 'beam', wind: 0.7, act: 0.12, rec: 0.6, len: 200, width: 20, dmg: 1, col: '#6ec8ff' };
+const EARTH_ATK = { type: 'lunge', wind: 0.7, act: 0.26, rec: 0.8, speed: 260, dmg: 2, shout: '!' };
+const AI_WATER = { params: () => ({ range: 130, speed: 70, cd: 1.6 }), choose: (e, d) => (d < 210 ? WATER_ATK : null) };
+const AI_EARTH = { params: () => ({ range: 50, speed: 70, cd: 1.4 }), choose: (e, d) => (d > 80 ? EARTH_ATK : d < 60 ? THUG_ATK : null) };
+// Mono in der Aula: Voraussicht + Seelenwaffe (lebende Peitsche) ab halber Kraft (Kap. 45–46)
+const MONO_WHIP = { type: 'beam', wind: 0.6, act: 0.14, rec: 0.55, len: 170, width: 16, dmg: 2, col: '#6ab0ff' };
+const AI_MONO_BOSS = {
+  foresight: true,
+  params: (e) => ({ range: e.phase === 2 ? 110 : 60, speed: 95, cd: e.phase === 2 ? 1.0 : 1.3 }),
+  choose: (e, d) => (e.phase === 2 ? (d < 180 ? MONO_WHIP : null) : d < 55 ? MONO_ATK : null),
+  onHurt(e) {
+    if (e.phase === 1 && e.hp <= e.maxHp * 0.6) {
+      e.phase = 2; setState(e, 'transform'); G.tele = G.tele.filter((T) => T.owner !== e);
+      banner('SEELENWAFFE'); sfx('roar');
+      sysMsg({ head: 'SYSTEM', lines: ['Mono ruft seine Seelenwaffe: eine lebende Peitsche.', 'Voraussicht: Einzelne Angriffe sieht er kommen. Ratens Doppelangriff (ANGRIFF halten) nicht.'] }, 4200);
+    }
+  }
+};
+
 /* ------------------------------------------------------------ Missionen */
 const MISSIONS = {
   prolog: {
@@ -334,11 +369,9 @@ const MISSIONS = {
       { who: 'Layla', text: 'Ich weiß, was du bist. Und ich verrate dich nicht – aber du erklärst mir alles.' },
       { portrait: 'quinn' },
       { narr: 'Quinn behauptet, es sei ein seltenes Fähigkeitsbuch gewesen. Die beiden treffen eine Abmachung: Layla hält dicht, hilft ihm und gibt ihm ihr Blut, wenn er es braucht.' },
-      { bg: 'nacht', portrait: null },
-      { narr: 'Ende der dritten Etappe. Als Nächstes: Vordens Geheimnis und die Aula.' }
     ],
-    after: () => { const Q = SAVE.quinn; Q.thirst = 0; Q.stats.str += 1; Q.blood['A+'] = (Q.blood['A+'] || 0) + 1; SAVE.flags.biss = true; },
-    next: null
+    after: () => { const Q = SAVE.quinn; Q.thirst = 0; drinkBlood('layla', 'A+'); stepDone('biss'); },
+    next: 'akademie'
   }
 };
 MISSIONS.training = {
@@ -353,7 +386,244 @@ MISSIONS.training = {
   },
   next: 'akademie', repeat: true
 };
-const MISSION_ORDER = ['prolog', 'test', 'kyle', 'nacht', 'mono', 'rylee', 'dan', 'biss'];
+Object.assign(MISSIONS, {
+  /* Rylees Bande (Kap. 26): erstes Tag-Team */
+  bande: {
+    id: 'bande', title: 'Zu zweit', src: 'Kapitel 26', type: 'gefecht',
+    scene: [
+      { bg: 'nacht', portrait: 'layla' },
+      { narr: 'Layla hält sich an die Abmachung – und will mehr als nur zusehen. In dieser Nacht warten Rylee und zwei seiner Leute im Park.' },
+      { who: 'Layla', text: 'Ich decke dich mit dem Bogen. Du musst nur nah genug rankommen.' },
+      { bg: 'system', portrait: null },
+      { sys: { head: 'TAG-TEAM', lines: ['Unten links wechselst du zwischen Quinn und Layla.', 'Wen du nicht steuerst, kämpft selbstständig weiter.', 'Layla: ANGRIFF schießt Pfeile, halten = durchschlagender Schuss.'] } }
+    ],
+    fight: {
+      arena: { art: 'park', w: 420, h: 700, night: true, lamps: [[120, 260], [300, 260], [120, 460], [300, 460]], trees: [[40, 150], [390, 170], [30, 600], [400, 620]] },
+      playerAt: [210, 500], mask: true, party: ['quinn', 'layla'],
+      foes: [
+        { id: 'rylee', name: 'Rylee · Verhärtung', hp: 22, poise: 3, at: [210, 280], ai: AI_RYLEE, expRate: 1.5, expKill: 20, info: { name: 'Rylee', race: 'Mensch', ability: 'Verhärtung', blood: '0+' } },
+        { id: 'fei', look: 's3', name: 'Helfer', hp: 12, at: [130, 310], ai: AI_THUG, expRate: 1, expKill: 10, info: { name: 'Helfer', race: 'Mensch', ability: 'Stufe 2', blood: 'A-' } },
+        { id: 'loop', look: 's1', name: 'Helfer', hp: 12, at: [290, 310], ai: AI_THUG, expRate: 1, expKill: 10, info: { name: 'Helfer', race: 'Mensch', ability: 'Stufe 2', blood: 'B+' } }
+      ],
+      inspect: true
+    },
+    won: [
+      { bg: 'nacht', portrait: 'layla' },
+      { narr: 'Ein Pfeil ins Knie, und Rylee geht zu Boden. Die beiden nehmen ihnen die erpressten Credits ab – und füllen heimlich etwas Blut in kleine Glasröhrchen.' },
+      { bg: 'system', portrait: null },
+      { sys: { head: 'BLUTGRUPPEN', lines: ['Das Blut verschiedener Menschen wirkt verschieden:', 'A → Stärke · B → Agilität · AB → Ausdauer · 0 → freier Wertepunkt', 'Jede Person bringt nur beim ersten Mal einen Wert.'] } },
+      { call: () => {
+        const g = [drinkBlood('bande1', 'A-'), drinkBlood('bande2', 'B+'), drinkBlood('rylee', '0+')].filter(Boolean);
+        MISSIONS.bande.won[5].sys.lines = g.length ? g : ['Nichts Neues.'];
+      } },
+      { sys: { head: 'BLUT GETRUNKEN', lines: [] } }
+    ],
+    reward: { exp: 30 },
+    after: () => { stepDone('bande'); SAVE.credits += 20; },
+    next: 'akademie'
+  },
+
+  /* Waffenklasse (Kap. 27–30) und Brandon */
+  waffen: {
+    id: 'waffen', title: 'Die Waffenklasse', src: 'Kapitel 27–29',
+    scene: [
+      { bg: 'kantine', portrait: 'leo' },
+      { narr: 'Jeder wählt eine Kampfklasse. Quinn nimmt die Waffenklasse – und zu seiner Überraschung auch Erin.' },
+      { narr: 'Die Waffenhalle ist zwanzig Meter hoch. Der Lehrer ist ein kahlköpfiger Mann mit einem Katana aus Bestienmaterial: Leo.' },
+      { who: 'Leo', text: 'Eine Waffe ist nur so gut wie der, der sie hält. Heute kämpft ihr ohne Fähigkeiten.' },
+      { bg: 'system', portrait: null },
+      { sys: { head: 'SYSTEM', lines: ['Inspect zeigt jetzt auch Waffenwerte und ob eine Waffe zu dir passt.', 'Waffen gibt es in acht Stufen, von Basic bis zu Dämonenwaffen.'] } },
+      { bg: 'kantine', portrait: 'brandon' },
+      { narr: 'Im Übungskampf bekommt Quinn Brandon als Gegner, Stufe 3, mit einem Speer. Brandon lacht über den Stufe-1er.' }
+    ],
+    next: 'brandon'
+  },
+  brandon: {
+    id: 'brandon', title: 'Brandon', src: 'Kapitel 30–31', type: 'duell',
+    scene: [{ bg: 'system' }, { sys: { head: 'DUELL', lines: ['Brandon, Stufe 3, Speer.', 'Große Reichweite – geh nah ran oder weiche dem Stoß seitlich aus.'] } }],
+    fight: {
+      arena: { art: 'halle', w: 340, h: 680 },
+      playerAt: [170, 460],
+      foes: [{ id: 'brandon', name: 'Brandon · Stufe 3 · Speer', hp: 28, poise: 4, at: [170, 290], ai: AI_BRANDON, expRate: 1.5, expKill: 25, info: { name: 'Brandon Richardson', race: 'Mensch', ability: 'Wind (Stufe 3)', blood: 'AB+' } }],
+      npcs: [{ id: 'leo', at: [60, 250], watch: 'player' }, { id: 'erin', at: [290, 260], watch: 'player' }, { id: 's2', at: [50, 520] }, { id: 's3', at: [295, 530] }],
+      inspect: true
+    },
+    won: [
+      { bg: 'kantine', portrait: 'brandon' },
+      { narr: 'Brandons Speer bricht. Die Halle ist still, dann gewinnt der Stufe-1er.' },
+      { bg: 'system', portrait: null },
+      { sys: { head: 'NEUE FÄHIGKEIT', lines: ['Blutbank (Stufe 1)', 'Speichert bis zu 100 ml Blut. Fällt Quinn unter 5 HP, heilt sie automatisch: 10 ml = 5 HP.', 'Getrunkenes Blut füllt sie auf.'] } },
+      { bg: 'kantine', portrait: 'leo' },
+      { narr: 'Leo hat den Kampf nicht gesehen – er ist blind. Aber er hat Quinns Aura gespürt. Sie erinnert ihn an etwas, das er aus dem Krieg kennt.' }
+    ],
+    reward: { exp: 20, skills: ['bloodbank'] },
+    after: () => { SAVE.quinn.bank = 60; stepDone('waffen'); },
+    next: 'akademie'
+  },
+  leo: {
+    id: 'leo', title: 'Der blinde Schwertkämpfer', src: 'Kapitel 32–33', type: 'duell',
+    scene: [
+      { bg: 'kantine', portrait: 'leo' },
+      { who: 'Leo', text: 'Ich will selbst sehen, was du bist. Auf deine Art.' },
+      { bg: 'system', portrait: null },
+      { sys: { head: 'QUEST', lines: ['Duell gegen Leo.', 'Inspect zeigt bei ihm – nichts.', 'Halte 40 Sekunden durch. Er wird immer schneller.'] } }
+    ],
+    fight: {
+      arena: { art: 'halle', w: 340, h: 680 },
+      playerAt: [170, 460],
+      foes: [{ id: 'leo', name: 'Leo · ???', hp: 999, poise: 99, at: [170, 290], ai: AI_LEO, expRate: 0.5, info: { name: '???', race: '???', ability: '???', blood: '???' } }],
+      inspect: true, noDeath: true, noFoeBar: true,
+      expBonus: (G) => Math.round(Math.min(40, (G.tut && G.tut.t) || 0) + G.stats.perfect * 6),
+      onTick: survivalTick(40)
+    },
+    won: [
+      { bg: 'kantine', portrait: 'leo' },
+      { narr: 'Nach vierzig Sekunden hebt Leo die Hand. Kein Sieger. Er lächelt zum ersten Mal.' },
+      { who: 'Leo', text: 'Nimm die hier. Bei mir liegen sie nur herum.' },
+      { bg: 'system', portrait: null },
+      { sys: { head: 'AUSRÜSTUNG', lines: ['Black Horned Gauntlets'], kv: [['Stärke', '+3'], ['Verteidigung', '+2'], ['Blood Swipe', '+5 %']] } },
+      { bg: 'zimmer', portrait: 'vorden' },
+      { narr: 'Am Abend sieht Vorden Quinns blutige Kleidung. Seine Augen verändern sich. Es klingt, als stritten in ihm mehrere Stimmen.' }
+    ],
+    reward: { exp: 30 },
+    after: () => { SAVE.quinn.gear.hands = 'gauntlets'; stepDone('leo'); },
+    next: 'akademie'
+  },
+
+  /* Fei und Loop auf dem Dach (Kap. 36–37) */
+  dach: {
+    id: 'dach', title: 'Auf dem Dach', src: 'Kapitel 33–37', type: 'gefecht',
+    scene: [
+      { bg: 'nacht', portrait: 'fei' },
+      { narr: 'Brandons Freunde Fei und Loop wollen Rache für die Blamage. Nachts locken sie Quinn aufs Dach des Wohnheims. Layla folgt ihm.' },
+      { bg: 'system', portrait: null },
+      { sys: { head: 'KAMPF', lines: ['Zwei Gegner. Wechsle zwischen Quinn und Layla.'] } }
+    ],
+    fight: {
+      arena: { art: 'halle', w: 340, h: 640, night: true },
+      playerAt: [170, 440], party: ['quinn', 'layla'],
+      foes: [
+        { id: 'fei', name: 'Fei', hp: 20, poise: 3, at: [120, 280], ai: AI_BRANDON, expRate: 1.2, expKill: 15, info: { name: 'Fei', race: 'Mensch', ability: 'Stufe 2', blood: 'B-' } },
+        { id: 'loop', name: 'Loop', hp: 20, poise: 3, at: [220, 270], ai: AI_THUG, expRate: 1.2, expKill: 15, info: { name: 'Loop', race: 'Mensch', ability: 'Stufe 2', blood: '0-' } }
+      ],
+      inspect: true
+    },
+    won: [
+      { bg: 'nacht', portrait: 'quinn' },
+      { narr: 'Quinn beißt Loop. Als er vom Dach springt, bremst Layla seinen Fall mit Telekinese.' },
+      { bg: 'system', portrait: null, call: () => { MISSIONS.dach.won[3].sys.lines = [drinkBlood('loop', '0-'), drinkBlood('fei', 'B-')].filter(Boolean).concat(['Die Blutbank ist aufgefüllt.']); } },
+      { sys: { head: 'BLUT GETRUNKEN', lines: [] } },
+      { bg: 'nacht', portrait: 'loop' },
+      { narr: 'Loop bettelt um Gnade – und erzählt, was an der Schule niemand weiß: Brandon ist tot.' }
+    ],
+    reward: { exp: 20 },
+    after: () => { stepDone('dach'); },
+    next: 'akademie'
+  },
+
+  /* System-Tutorial und Verhoer (Kap. 39–41) */
+  tutorial: {
+    id: 'tutorial', title: 'Nahkampf', src: 'Kapitel 39–41',
+    scene: [
+      { bg: 'system' },
+      { sys: { head: 'TUTORIAL', lines: ['Nahkampf (Stufe 1)', 'Ein Video spielt ab: Ein blonder Mann mit roten Augen führt zwei Techniken vor.'] } },
+      { sys: { head: 'NEUE FÄHIGKEITEN', lines: ['Flash Step – ein Sprung über bis zu 5 Meter. Braucht Agilität 15, kostet viel Ausdauer.', 'Hammer Strike – ein vernichtender Schlag, der den Gegner taumeln lässt. Braucht Stärke 15.'] } },
+      { bg: 'kantine', portrait: 'quinn' },
+      { narr: 'Am nächsten Tag holt das Militär Quinn zum Verhör. Eine Frau mit einer Wahrheits-Fähigkeit stellt Fragen, gegen die das System nichts tun kann. Quinn hat Brandon nicht getötet – und kommt frei.' }
+    ],
+    reward: { exp: 0, skills: ['flashstep', 'hammer'] },
+    after: () => { stepDone('tutorial'); },
+    next: 'akademie'
+  },
+
+  /* Die Aula (Kap. 41–47) */
+  aula: {
+    id: 'aula', title: 'Die Aula', src: 'Kapitel 41–45', type: 'gefecht',
+    scene: [
+      { bg: 'kantine', portrait: 'mono' },
+      { narr: 'Die Zweitjährigen treiben hundert Erstjährige in die Aula. Auf der Bühne hängt Vorden gefesselt vor einer Platte.' },
+      { who: 'Mono', text: 'Das hier ist eine Lektion. Für alle, die glauben, ihre Stufe bedeute nichts.' },
+      { portrait: 'erin' },
+      { narr: 'Als die Zweitjährigen die Neuen zwingen, auf Vorden zu werfen, reicht es Quinn. Erin und Layla stellen sich an seine Seite.' },
+      { bg: 'system', portrait: null },
+      { sys: { head: 'KAMPF', lines: ['Zweitjährige mit Wasser und Erde.', 'Tag-Team: Quinn, Erin (Schwert, halten = Eis) und Layla (Bogen).'] } }
+    ],
+    fight: {
+      arena: { art: 'kantine', w: 380, h: 680, blocks: [{ x: 18, y: 180, w: 70, h: 26 }, { x: 292, y: 180, w: 70, h: 26 }, { x: 18, y: 500, w: 70, h: 26 }, { x: 292, y: 500, w: 70, h: 26 }] },
+      playerAt: [190, 520], party: ['quinn', 'erin', 'layla'],
+      foes: [
+        { id: 'z1', look: 'zweit', name: 'Zweitjähriger · Wasser', hp: 16, at: [120, 250], ai: AI_WATER, expRate: 1, expKill: 12, info: { name: 'Zweitjähriger', race: 'Mensch', ability: 'Wasser', blood: 'B-' } },
+        { id: 'z2', look: 'zweit', name: 'Zweitjähriger · Erde (Stufe 4)', hp: 22, at: [260, 240], ai: AI_EARTH, expRate: 1, expKill: 15, info: { name: 'Zweitjähriger', race: 'Mensch', ability: 'Erde (Stufe 4)', blood: 'AB-' } },
+        { id: 'z3', look: 's3', name: 'Zweitjähriger', hp: 14, at: [190, 300], ai: AI_THUG, expRate: 1, expKill: 10, info: { name: 'Zweitjähriger', race: 'Mensch', ability: 'Stufe 3', blood: 'A+' } },
+        { id: 'z4', look: 's1', name: 'Zweitjähriger', hp: 14, at: [90, 330], ai: AI_THUG, expRate: 1, expKill: 10, info: { name: 'Zweitjähriger', race: 'Mensch', ability: 'Stufe 3', blood: '0+' } }
+      ],
+      npcs: [{ id: 'vorden', at: [190, 120], pose: 'cower' }, { id: 'mono', at: [300, 130], watch: 'player' }, { id: 'peter', at: [40, 610], pose: 'cower' }, { id: 's2', at: [340, 620], watch: 'foe' }, { id: 's4', at: [30, 420], watch: 'foe' }],
+      inspect: true
+    },
+    won: [
+      { bg: 'kantine', portrait: 'vorden' },
+      { narr: 'Die Zweitjährigen liegen am Boden. Da verändert sich Vorden auf der Bühne. Er lässt sich von Layla berühren, kopiert ihre Telekinese und reißt sich los.' },
+      { portrait: 'raten' },
+      { who: 'Raten', text: 'Vorden ist gerade nicht da. Ich bin Raten. Und Mono gehört mir.' },
+      { bg: 'system', portrait: null },
+      { sys: { head: 'NEUE FIGUR', lines: ['Raten', 'Schnelle Schlagfolgen. ANGRIFF halten: Telekinese und Wasser gleichzeitig – ein Doppelangriff, den selbst Voraussicht nicht ausweichen kann.'] } }
+    ],
+    reward: { exp: 30 },
+    next: 'aula2'
+  },
+  aula2: {
+    id: 'aula2', title: 'Raten gegen Mono', src: 'Kapitel 45–47', type: 'boss',
+    fight: {
+      arena: { art: 'kantine', w: 380, h: 680, blocks: [{ x: 18, y: 180, w: 70, h: 26 }, { x: 292, y: 180, w: 70, h: 26 }, { x: 18, y: 500, w: 70, h: 26 }, { x: 292, y: 500, w: 70, h: 26 }] },
+      playerAt: [190, 480], party: ['raten', 'quinn'],
+      foes: [{ id: 'mono', name: 'Mono · Voraussicht', hp: 60, poise: 5, at: [190, 280], ai: AI_MONO_BOSS, expRate: 1.2, expKill: 40, info: { name: 'Mono', race: 'Mensch', ability: 'Voraussicht (zwei Sekunden)', blood: 'A-' } }],
+      npcs: [{ id: 'erin', at: [60, 600], watch: 'foe' }, { id: 'layla', at: [320, 600], watch: 'foe' }, { id: 's2', at: [340, 150], watch: 'foe' }, { id: 's4', at: [30, 150], watch: 'foe' }],
+      inspect: true, noDeath: true,
+      onTick: (G, dt) => {
+        const T = G.tut || (G.tut = { t: 0 }); T.t += dt;
+        if (T.t < 6) G.hint = { text: 'Einzelne Schläge sieht Mono kommen.<br><b>ANGRIFF halten</b>: Ratens Doppelangriff' };
+        else if (!T.h2) { T.h2 = true; G.hint = null; }
+        if (G.state === 'play' && (G.foe.hp <= G.foe.maxHp * 0.3 || T.t > 60)) { G.state = 'won'; G.tele.length = 0; banner('FAY'); later(1.0, () => G.opt.onWin(G)); }
+      }
+    },
+    won: [
+      { bg: 'kantine', portrait: 'fay' },
+      { narr: 'Ein Windstoß, ein Aufblitzen – und Mono liegt am Boden. Sergeant Fay ist so schnell, dass niemand ihre Bewegung gesehen hat. Peter hat sie geholt.' },
+      { portrait: 'hayley' },
+      { narr: 'Hayley versorgt die Verletzten. Dass Quinns Wunden schon fast verheilt sind, erklärt er mit einem Freund, der heilen kann.' },
+      { portrait: 'del' },
+      { narr: 'Die Führung der Akademie berät. Echte Strafen gibt es keine – aber in der nächsten Woche beginnen die ersten Portalmissionen.' },
+      { bg: 'nacht', portrait: null },
+      { narr: 'Ende der vierten Etappe. Als Nächstes: Earl, Peters Geheimnis und die Portale.' }
+    ],
+    reward: { exp: 40 },
+    after: () => { stepDone('aula'); },
+    next: null
+  }
+});
+const MISSION_ORDER = ['prolog', 'test', 'kyle', 'nacht', 'mono', 'rylee', 'dan', 'biss', 'bande', 'waffen', 'brandon', 'leo', 'dach', 'tutorial', 'aula', 'aula2'];
+
+/* ------------------------------------------------------------ Etappe 4 im Hof: Story-Schritte */
+const STORY4 = [
+  { id: 'bande', need: 'biss', night: true, label: 'Park (mit Layla)', x: 220, y: 680, goal: 'Nachts mit Layla und Maske in den Park', mission: 'bande' },
+  { id: 'waffen', need: 'bande', newDay: true, label: 'Waffenklasse', x: 335, y: 420, goal: 'Geh zur Waffenklasse (Trainingshalle)', mission: 'waffen' },
+  { id: 'leo', need: 'waffen', newDay: true, label: 'Duell mit Leo', x: 335, y: 420, goal: 'Leo erwartet dich in der Trainingshalle', mission: 'leo' },
+  { id: 'dach', need: 'leo', night: true, label: 'Dach des Wohnheims', x: 110, y: 150, goal: 'Nachts aufs Dach des Wohnheims', mission: 'dach' },
+  { id: 'tutorial', need: 'dach', newDay: true, label: 'Zimmer 23 · System', x: 110, y: 150, goal: 'Ruh dich im Zimmer 23 aus', mission: 'tutorial' },
+  { id: 'aula', need: 'tutorial', label: 'Aula', x: 105, y: 420, goal: 'Unruhe in der Aula – geh hin', mission: 'aula' }
+];
+function stepDone(id) { SAVE.flags[id] = true; SAVE.flags[id + 'Day'] = SAVE.day.n; writeSave(); }
+// aktueller Schritt und was davor noetig ist ('sleep' | 'wait' | 'go')
+function story4State() {
+  const F = SAVE.flags, D = SAVE.day;
+  if (!F.biss) return null;
+  const st = STORY4.find((x) => !F[x.id]);
+  if (!st) return null;
+  if (st.newDay && D.n <= (F[st.need + 'Day'] || 0)) return { st, need: 'sleep' };
+  if (st.night && !D.night) return { st, need: 'wait' };
+  if (!st.night && D.night) return { st, need: 'sleep' };
+  return { st, need: 'go' };
+}
 
 /* ------------------------------------------------------------ Ablauf-Hilfen */
 function testTick(G, dt) {
@@ -413,6 +683,12 @@ function hubSetup() {
   pois.push({ x: 110, y: 150, label: 'Zimmer 23 · Bis zur Nacht warten', col: '#9ab0ff', hidden: () => night || !(F.mask && !F.rylee), action: () => leaveHub(() => { D.night = true; writeSave(); startMission('akademie'); }) });
   // Park (Nacht, mit Maske)
   pois.push({ x: 220, y: 680, label: 'Park', col: '#c8a0ff', hidden: () => !(night && F.mask && !F.rylee), action: go('rylee') });
+  // Etappe 4: Story-Schritte
+  const S4 = story4State();
+  if (S4 && S4.need === 'go') pois.push({ x: S4.st.x, y: S4.st.y, label: S4.st.label, col: '#ff9ab0', action: go(S4.st.mission) });
+  if (S4 && S4.need === 'wait') pois.push({ x: 110, y: 150, label: 'Zimmer 23 · Bis zur Nacht warten', col: '#9ab0ff', action: () => leaveHub(() => { D.night = true; writeSave(); startMission('akademie'); }) });
+  // Laylas Blut: einmal am Tag die Blutbank auffuellen (Abmachung, Kap. 23)
+  pois.push({ x: 330, y: 150, label: 'Layla (Blut)', col: '#ff6a7a', hidden: () => night || !F.biss || !SAVE.quinn.skills.includes('bloodbank') || D.layla, action: () => { D.layla = true; SAVE.quinn.bank = Math.min(100, SAVE.quinn.bank + 40); writeSave(); sfx('heal'); sysMsg({ head: 'BLUTBANK', lines: ['Layla gibt dir etwas Blut.'], kv: [['Blutbank', SAVE.quinn.bank + ' / 100 ml']] }); } });
   // Wasserspender (Tagesquest)
   pois.push({ x: 175, y: 440, label: 'Wasser trinken', col: '#6ec8ff', hidden: () => night || D.water, action: () => { D.water = true; writeSave(); sfx('heal'); sysMsg({ head: 'TAGESQUEST ERFÜLLT', lines: ['2 Liter Wasser getrunken.'], kv: [['EP', '+5']] }); addExp(5); } });
   // Trainingshalle tagsueber: freies Training fuer EP
@@ -441,7 +717,10 @@ function canSleep() {
   if (D.n === 1) return F.book && F.room;
   if (D.n === 2) return F.kyle && F.nacht;
   if (D.n === 3) return F.rylee;
-  return false;
+  const S4 = story4State();
+  if (S4) return S4.need === 'sleep';
+  if (F.dan && !F.biss) return false;
+  return D.n >= 4;
 }
 function hubGoal() {
   const D = SAVE.day, F = SAVE.flags;
@@ -456,6 +735,8 @@ function hubGoal() {
   if (D.n === 3) return 'Geh schlafen (Zimmer 23)';
   if (!F.dan) return 'Geh in die Kantine';
   if (!F.biss) return 'Geh in die Bibliothek – der Hunger ist unerträglich';
+  const S4 = story4State();
+  if (S4) return S4.need === 'sleep' ? 'Geh schlafen (Zimmer 23)' : S4.need === 'wait' ? 'Warte im Zimmer 23 auf die Nacht' : S4.st.goal;
   return '';
 }
 function hubTick(G, dt) {

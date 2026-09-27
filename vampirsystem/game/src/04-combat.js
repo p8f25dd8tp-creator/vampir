@@ -14,6 +14,38 @@ const COMBO = [
   { dmg: 2, win: 0.11, act: 0.08, rec: 0.32, reach: 36, arc: 1.1, kb: 190, cost: 14, lunge: 90, kick: true }
 ];
 const CHARGED = { dmg: 3, win: 0.05, act: 0.09, rec: 0.36, reach: 38, arc: 1.0, kb: 280, cost: 22, lunge: 140, poise: 3 };
+// Kampfsaetze der spielbaren Figuren (Tag-Team)
+const KITS = {
+  fist: { combo: COMBO, charged: CHARGED },
+  bow: { // Layla: Bestienbogen
+    combo: [{ dmg: 1.5, win: 0.14, act: 0.05, rec: 0.3, cost: 8, lunge: -30, proj: { sp: 430, max: 230, col: '#c8a0ff', kind: 'arrow' } }],
+    charged: { dmg: 3.5, win: 0.1, act: 0.05, rec: 0.42, cost: 20, lunge: -50, poise: 2, proj: { sp: 560, max: 320, col: '#f0e0ff', kind: 'arrow', pierce: true } }
+  },
+  sword: { // Erin: Schwert und Eis
+    combo: [
+      { dmg: 1.5, win: 0.08, act: 0.08, rec: 0.2, reach: 44, arc: 1.2, kb: 60, cost: 10, lunge: 50 },
+      { dmg: 1.5, win: 0.08, act: 0.08, rec: 0.22, reach: 44, arc: 1.2, kb: 70, cost: 10, lunge: 50 },
+      { dmg: 2.5, win: 0.12, act: 0.1, rec: 0.34, reach: 50, arc: 1.3, kb: 180, cost: 14, lunge: 90, kick: true }
+    ],
+    charged: { dmg: 3, win: 0.06, act: 0.1, rec: 0.4, reach: 64, arc: 1.6, kb: 120, cost: 22, lunge: 40, poise: 3, ice: true }
+  },
+  raten: { // Raten: schnelle Schlaege; aufgeladen Telekinese + Wasser zugleich
+    combo: [
+      { dmg: 1, win: 0.05, act: 0.06, rec: 0.12, reach: 30, arc: 1.0, kb: 40, cost: 7, lunge: 60 },
+      { dmg: 1, win: 0.05, act: 0.06, rec: 0.12, reach: 30, arc: 1.0, kb: 40, cost: 7, lunge: 60 },
+      { dmg: 1, win: 0.05, act: 0.06, rec: 0.12, reach: 30, arc: 1.0, kb: 40, cost: 7, lunge: 60 },
+      { dmg: 2, win: 0.09, act: 0.08, rec: 0.3, reach: 36, arc: 1.1, kb: 200, cost: 12, lunge: 90, kick: true }
+    ],
+    charged: { dmg: 4, win: 0.12, act: 0.06, rec: 0.45, cost: 26, lunge: 0, poise: 4, double: true, proj: { sp: 380, max: 180, col: '#6ec8ff', kind: 'water' } }
+  }
+};
+const CHARS = {
+  quinn: { name: 'Quinn', look: 'quinn', kit: 'fist' },
+  layla: { name: 'Layla', look: 'layla', kit: 'bow', hp: 12, str: 10, agi: 12, range: 150 },
+  erin: { name: 'Erin', look: 'erin', kit: 'sword', hp: 16, str: 12, agi: 12 },
+  raten: { name: 'Raten', look: 'raten', kit: 'raten', hp: 18, str: 12, agi: 13 }
+};
+const HAMMER = { dmg: 4, win: 0.14, act: 0.08, rec: 0.38, reach: 38, arc: 1.0, kb: 340, cost: 30, lunge: 60, poise: 4, kick: true, hammer: true };
 
 function newFight(opt) {
   G = {
@@ -21,11 +53,17 @@ function newFight(opt) {
     arena: opt.arena, ents: [], tele: [], fx: [], texts: [], later: [],
     cam: { x: 0, y: 0 }, hint: null, proj: [], counterFlash: 0, opt, stats: { hits: 0, perfect: 0, taken: 0 }
   };
-  const p = mkEnt('quinn', LOOKS.quinn, opt.playerAt[0], opt.playerAt[1]);
-  p.team = 0; applyStats(p); p.hp = Math.max(1, p.maxHp - (SAVE.quinn.thirst || 0));
-  p.stam = p.maxStam; p.stamDelay = 0; p.counterT = 0; p.combo = 0; p.buffer = 0; p.holdT = 0; p.dodgeStart = -9;
-  G.player = p;
-  if (opt.mask) p.extra = { mask: true };
+  G.party = [];
+  (opt.party || ['quinn']).forEach((cid, i) => {
+    const C = CHARS[cid], e = mkEnt(cid, LOOKS[C.look], opt.playerAt[0] + (i ? (i % 2 ? -34 : 34) : 0), opt.playerAt[1] + (i ? 22 : 0));
+    e.team = 0; e.char = cid; e.kit = C.kit; e.range = C.range || 30;
+    if (cid === 'quinn') { applyStats(e); e.hp = Math.max(1, e.maxHp - (SAVE.quinn.thirst || 0)); if (opt.mask) e.extra = { mask: true }; if (SAVE.quinn.gear.hands) e.extra = Object.assign({}, e.extra, { gauntlets: true }); }
+    else { e.maxHp = e.hp = C.hp; e.str = C.str; e.agi = C.agi; e.maxStam = 100; }
+    e.stam = e.maxStam; e.stamDelay = 0; e.counterT = 0; e.combo = 0; e.buffer = 0; e.holdT = 0; e.dodgeStart = -9; e.aiCd = rand(0.3, 0.8);
+    G.party.push(e);
+  });
+  const p = G.party[opt.lead || 0];
+  G.player = p; G.swapCd = 0;
   for (const f of opt.foes) {
     const e = mkEnt(f.id, LOOKS[f.look || f.id], f.at[0], f.at[1]);
     Object.assign(e, { team: 1, name: f.name, maxHp: f.hp, hp: f.hp, ai: f.ai, poise: f.poise || 3, maxPoise: f.poise || 3, poiseT: 0, phase: 1, cd: f.cd || 0.8, info: f.info, draw: f.draw, fixed: f.fixed, r: f.r || 11, expRate: f.expRate || 0, expKill: f.expKill || 0 });
@@ -58,7 +96,8 @@ function updateFight(rdt) {
   if (G.arena.pois) updatePois();
   handleInput(dt);
   if (!G) return;
-  updatePlayer(dt);
+  for (const m of G.party) { if (m === G.player) { const [mx, my] = readMove(); updateFighter(m, dt, mx, my); } else updateAlly(m, dt); }
+  G.swapCd = Math.max(0, G.swapCd - dt);
   for (const e of G.ents) if (e.team === 1) updateFoe(e, dt);
   for (const e of G.ents) if (e.npc) updateNpc(e, dt);
   for (const e of G.ents) {
@@ -99,12 +138,15 @@ function handleInput(dt) {
     if (ev === 'atkDown') { p.holdT = 0; tryAttack(p); }
     else if (ev === 'inspect') doInspect(p);
     else if (ev === 'skill1') castBloodSwipe(p);
+    else if (ev === 'skill2') castFlashStep(p);
+    else if (ev === 'skill3') castHammer(p);
+    else if (ev.startsWith && ev.startsWith('swap')) swapTo(+ev.slice(4));
     else if (ev === 'atkUp') { if (p.state === 'charge') releaseCharge(p); p.holdT = -1; }
     else if (ev === 'dodge') tryDodge(p);
   }
   if (INPUT.atkHeld && p.holdT >= 0) p.holdT += dt;
   // lange gehalten und gerade frei -> aufladen
-  if (INPUT.atkHeld && p.holdT > 0.3 && (p.state === 'idle' || (p.state === 'attack' && p.stateT > p.atk.win + p.atk.act)) && p.stam >= CHARGED.cost * 0.5) setState(p, 'charge');
+  if (INPUT.atkHeld && p.holdT > 0.3 && (p.state === 'idle' || (p.state === 'attack' && p.stateT > p.atk.win + p.atk.act)) && p.stam >= KITS[p.kit].charged.cost * 0.5) setState(p, 'charge');
   if (!INPUT.atkHeld && p.state === 'charge') releaseCharge(p);
 }
 
@@ -115,16 +157,17 @@ function tryAttack(p) {
   if (p.state === 'charge') return;
   startAttack(p, 0);
 }
-function startAttack(p, step, charged) {
-  const A = charged ? CHARGED : COMBO[step];
+function startAttack(p, step, charged, special) {
+  const K = KITS[p.kit || 'fist'];
+  const A = special || (charged ? K.charged : K.combo[step]);
   if (p.stam < A.cost * 0.4) { tired(p); return; }
   spendStam(p, A.cost);
   p.atk = A; p.combo = step; p.hitDone = false; p.charged = !!charged;
   setState(p, 'attack');
   // Zielhilfe: zum naechsten Gegner in Reichweite drehen
-  const f = nearestFoe(p, 110);
+  const f = nearestFoe(p, A.proj ? 320 : 110);
   if (f) { p.aim = Math.atan2(f.y - p.y, f.x - p.x); p.face = Math.cos(p.aim) >= 0 ? 1 : -1; }
-  else { const [mx, my] = readMove(); p.aim = (mx || my) ? Math.atan2(my, mx) : (p.face > 0 ? 0 : Math.PI); if (mx) p.face = mx > 0 ? 1 : -1; }
+  else { const [mx, my] = p === G.player ? readMove() : [0, 0]; p.aim = (mx || my) ? Math.atan2(my, mx) : (p.face > 0 ? 0 : Math.PI); if (mx) p.face = mx > 0 ? 1 : -1; }
   sfx('whip', 0, 0.04);
 }
 function releaseCharge(p) {
@@ -134,29 +177,32 @@ function releaseCharge(p) {
   else startAttack(p, 0);
 }
 function tired(p) { floatText(p.x, p.y - 70, 'Keine Ausdauer', '#ffd04a'); p.stamDelay = 0.8; }
-function tryDodge(p) {
+function tryDodge(p, dir) {
   if (p.state === 'down' || p.state === 'dodge') return;
   if (p.state === 'hurt' && p.stateT < 0.12) return;
-  if (p.stam < 18) { tired(p); return; }
+  if (p.stam < 18) { if (p === G.player) tired(p); return; }
   spendStam(p, 22, 0.5);
-  const [mx, my] = readMove();
+  const [mx, my] = dir || readMove();
   let a = (mx || my) ? Math.atan2(my, mx) : (p.face > 0 ? Math.PI : 0);
   p.dodgeA = a; p.dodgeStart = G.t; p.iframes = SAVE.settings.wideDodge ? 0.34 : 0.26;
   setState(p, 'dodge'); sfx('dodge'); dust(p.x, p.y, 5, 1);
   if (Math.cos(a) !== 0 && (mx || my)) p.face = Math.cos(a) > 0 ? 1 : -1;
 }
 
-function updatePlayer(dt) {
-  const p = G.player;
+function updateFighter(p, dt, mx, my) {
+  if (p.state === 'down') { p.vx *= Math.exp(-dt * 6); p.vy *= Math.exp(-dt * 6); return; }
   p.stateT += dt;
   p.counterT = Math.max(0, p.counterT - dt);
   p.buffer = Math.max(0, p.buffer - dt);
   p.stamDelay -= dt;
   if (p.stamDelay <= 0 && p.state !== 'charge') p.stam = Math.min(p.maxStam, p.stam + 42 * dt);
-  G.inSun = inSun(p);
-  const sunK = G.inSun ? 0.5 : 1;
+  if (p === G.player) G.inSun = inSun(p);
+  const sunK = sunFactor(p);
   const spd = 120 * Math.pow(p.agi * sunK / 10, 0.35);
-  const [mx, my] = readMove();
+  // Blutbank: heilt Quinn automatisch unter 5 HP (10 ml = 5 HP)
+  if (p.char === 'quinn' && SAVE.quinn.skills.includes('bloodbank') && p.hp < 5 && p.hp > 0 && SAVE.quinn.bank >= 10) {
+    SAVE.quinn.bank -= 10; p.hp = Math.min(p.maxHp, p.hp + 5); floatText(p.x, p.y - 80, '+5 Blutbank', '#ff8a9a'); sfx('heal'); burst(p.x, p.y - 30, 8, '#ff3a4e');
+  }
   let tvx = 0, tvy = 0;
   if (p.state === 'idle') {
     tvx = mx * spd; tvy = my * spd;
@@ -171,7 +217,7 @@ function updatePlayer(dt) {
     if (!p.hitDone && t >= A.win) { p.hitDone = true; playerHit(p, A); }
     if (t >= A.win + A.act + A.rec) {
       const next = p.combo + 1;
-      if (p.buffer > 0 && !p.charged && next < COMBO.length) { p.buffer = 0; startAttack(p, next); }
+      if (p.buffer > 0 && !p.charged && !A.hammer && next < KITS[p.kit].combo.length) { p.buffer = 0; startAttack(p, next); }
       else { setState(p, 'idle'); if (p.buffer > 0) { p.buffer = 0; startAttack(p, 0); } }
     }
   } else if (p.state === 'charge') {
@@ -202,20 +248,24 @@ function nearestFoe(p, maxD) {
 }
 function inArc(ex, ey, x, y, ang, half) { return Math.abs(angDiff(ang, Math.atan2(ey - y, ex - x))) <= half; }
 
+function sunFactor(p) { return p.char === 'quinn' && inSun(p) ? 0.5 : 1; }
 function playerHit(p, A) {
   let hitAny = false;
+  if (A.proj) { fireProj(p, A); return; }
   const heavy = A.kick || p.charged || p.counterT > 0;
   G.fx.push({ k: 'swoosh', x: p.x, y: p.y - 26, a: p.aim, r: A.reach + 4, arc: A.arc * 0.9, col: p.counterT > 0 ? '#ffd070' : heavy ? '#e8f4ff' : '#bfe0ff', w: heavy ? 7 : 4, life: 0.16, t: 0, dir: p.combo % 2 ? -1 : 1 });
   for (const e of G.ents) {
     if (e.team !== 1 || e.state === 'down' || e.state === 'transform') continue;
     const d = Math.hypot(e.x - p.x, e.y - p.y);
     if (d > A.reach + e.r || !inArc(e.x, e.y, p.x, p.y, p.aim, A.arc)) continue;
-    if (e.ai && e.ai.foresight && e.state !== 'stagger') { foresee(e, p); continue; }
-    let dmg = A.dmg * (p.str * (G.inSun ? 0.5 : 1) / 10);
+    if (e.ai && e.ai.foresight && e.state !== 'stagger' && !A.double) { foresee(e, p); continue; }
+    let dmg = A.dmg * (p.str * sunFactor(p) / 10);
     const counter = p.counterT > 0;
     if (counter) { dmg *= 2; p.counterT = 0; }
     hitAny = true;
     damageFoe(e, dmg, { kb: A.kb * (counter ? 1.6 : 1), ang: p.aim, poise: (A.poise || 1) + (counter ? 3 : 0), heavy: A.kick || p.charged || counter, counter });
+    if (A.ice) { e.slowT = 2.5; burst(e.x, e.y - 30, 8, '#bfe8ff'); floatText(e.x, e.y - 88, 'EIS', '#bfe8ff'); }
+    if (A.hammer) { setState(e, 'stagger'); G.shake = 10; dust(e.x, e.y, 10, 1.4); }
   }
   if (!hitAny) sfx('whip', 0, 0.05);
 }
@@ -258,26 +308,30 @@ function foeDown(e) {
   }
 }
 
-function damagePlayer(src, dmg, ang, kb) {
-  const p = G.player;
+function damagePlayer(src, dmg, ang, kb) { return damageAlly(G.player, src, dmg, ang, kb); }
+function damageAlly(p, src, dmg, ang, kb) {
   if (G.state !== 'play' || p.state === 'down') return false;
   if (p.iframes > 0) {
+    if (p !== G.player) return 'dodged';
     // perfektes Ausweichen: der Treffer kam kurz nach Beginn des Ausweichens
     const win = SAVE.settings.wideDodge ? 0.3 : 0.2;
     if (p.state === 'dodge' && G.t - p.dodgeStart <= win && !p.perfectUsed) perfectDodge(p, src);
     return 'dodged';
   }
+  if (p.char === 'quinn' && SAVE.quinn.gear.hands) dmg = Math.max(0.5, dmg * 0.8); // Verteidigung +2 der Handschuhe
   p.hp = Math.max(G.opt.noDeath ? 1 : 0, p.hp - dmg);
   G.stats.taken += dmg;
   p.iframes = 0.6; p.flash = 0.12; p.anim.hurt = 1;
   p.vx = Math.cos(ang) * kb; p.vy = Math.sin(ang) * kb * 0.7;
   setState(p, 'hurt');
-  G.hitstop = 0.06; G.shake = 7; sfx('hurt'); haptic(40);
-  floatText(p.x, p.y - 72, '-' + dmg, '#ff5a6a');
+  if (p === G.player) { G.hitstop = 0.06; G.shake = 7; sfx('hurt'); haptic(40); } else sfx('hit', 0, 0.05);
+  floatText(p.x, p.y - 72, '-' + (Number.isInteger(dmg) ? dmg : dmg.toFixed(1)), '#ff5a6a');
   burst(p.x, p.y - 30, 8, '#ff3a4e');
   if (p.hp <= 0) {
-    setState(p, 'down'); G.state = 'lost'; G.slowT = 1;
-    later(1.6, () => G.opt.onLose && G.opt.onLose(G));
+    setState(p, 'down');
+    const alive = G.party.filter((m) => m.state !== 'down');
+    if (!alive.length) { G.state = 'lost'; G.slowT = 1; later(1.6, () => G.opt.onLose && G.opt.onLose(G)); }
+    else if (p === G.player) later(0.5, () => { if (G && G.player === p) swapTo(G.party.indexOf(alive[0]), true); });
   }
   return true;
 }
@@ -294,8 +348,11 @@ function perfectDodge(p, src) {
 function updateFoe(e, dt) {
   e.stateT += dt;
   e.poiseT -= dt; if (e.poiseT <= 0) e.poise = e.maxPoise;
-  const p = G.player, AI = e.ai;
+  e.tgtT = (e.tgtT || 0) - dt;
+  if (!e.target || e.target.state === 'down' || e.tgtT <= 0) { e.target = pickTarget(e); e.tgtT = 1.2; }
+  const p = e.target || G.player, AI = e.ai;
   const dx = p.x - e.x, dy = p.y - e.y, d = Math.hypot(dx, dy) || 1;
+  if (e.slowT > 0) { e.slowT -= dt; dt *= 0.55; }
   let tvx = 0, tvy = 0;
   if (e.state === 'down') { e.vx *= Math.exp(-dt * 5); e.vy *= Math.exp(-dt * 5); e.anim.hurt = 1; return; }
   if (G.state !== 'play') { e.vx *= Math.exp(-dt * 8); e.vy *= Math.exp(-dt * 8); return; }
@@ -325,20 +382,19 @@ function updateFoe(e, dt) {
         e.hitDone = true;
         const L = A.len, ax = Math.cos(e.aim), ay = Math.sin(e.aim);
         const rx = p.x - e.x, ry = p.y - e.y, along = rx * ax + ry * ay, across = Math.abs(-rx * ay + ry * ax);
-        if (along > 0 && along < L && across < A.width / 2 + p.r) damagePlayer(e, A.dmg, e.aim, 140);
+        for (const m of G.party) { if (m.state === 'down') continue; const rx2 = m.x - e.x, ry2 = m.y - e.y, al = rx2 * ax + ry2 * ay, ac = Math.abs(-rx2 * ay + ry2 * ax); if (al > 0 && al < L && ac < A.width / 2 + m.r) damageAlly(m, e, A.dmg, e.aim, 140); }
         G.fx.push({ k: 'beam', x: e.x, y: e.y - 24, a: e.aim, len: L, w: A.width, col: A.col || '#ff6a4a', life: 0.2, t: 0 });
         sfx('enemyShot', 0, 0.02);
       }
       if (e.stateT >= A.act) setState(e, 'recover');
     } else if (A.type === 'lunge') {
       tvx = Math.cos(e.aim) * A.speed; tvy = Math.sin(e.aim) * A.speed;
-      if (!e.hitDone && Math.hypot(p.x - e.x, p.y - e.y) < e.r + p.r + 10) { e.hitDone = true; damagePlayer(e, A.dmg, e.aim, 220); }
+      if (!e.hitDone) for (const m of G.party) if (m.state !== 'down' && Math.hypot(m.x - e.x, m.y - e.y) < e.r + m.r + 10) { e.hitDone = true; damageAlly(m, e, A.dmg, e.aim, 220); break; }
       if (e.stateT >= A.act) { setState(e, 'recover'); }
     } else {
       if (!e.hitDone) {
         e.hitDone = true;
-        const pd = Math.hypot(p.x - e.x, p.y - e.y);
-        if (pd <= A.reach + p.r && inArc(p.x, p.y, e.x, e.y, e.aim, A.arc)) damagePlayer(e, A.dmg, e.aim, 180);
+        for (const m of G.party) if (m.state !== 'down' && Math.hypot(m.x - e.x, m.y - e.y) <= A.reach + m.r && inArc(m.x, m.y, e.x, e.y, e.aim, A.arc)) damageAlly(m, e, A.dmg, e.aim, 180);
         slash(e.x, e.y - 30, e.aim, A.reach, A.arc, A.col || '#ffb040');
         sfx('whip', 0, 0.02);
       }
@@ -362,8 +418,14 @@ function updateFoe(e, dt) {
   const k = e.state === 'active' && e.atk && e.atk.type === 'lunge' ? 40 : 10;
   e.vx = lerp(e.vx, tvx, 1 - Math.exp(-dt * k)); e.vy = lerp(e.vy, tvy, 1 - Math.exp(-dt * k));
 }
+function pickTarget(e) {
+  let best = null, bd = 1e12;
+  for (const m of G.party || []) { if (m.state === 'down') continue; const d = dist2(m.x, m.y, e.x, e.y) * (m === G.player ? 0.6 : 1); if (d < bd) { bd = d; best = m; } }
+  return best;
+}
 function startFoeAttack(e, A) {
-  e.atk = A; e.aim = Math.atan2(G.player.y - e.y, G.player.x - e.x);
+  const t = e.target || G.player;
+  e.atk = A; e.aim = Math.atan2(t.y - e.y, t.x - e.x);
   setState(e, 'wind');
   e.tele = addTele(e, A);
   if (A.shout) floatText(e.x, e.y - 80, A.shout, '#ffb040');
@@ -459,7 +521,7 @@ function updatePois() {
 /* ------------------------------------------------------------ Blood Swipe (ab Halbling)
    Roman: keine Abklingzeit, kostet 1 HP pro Einsatz, Reichweite etwa 5 Meter. */
 function castBloodSwipe(p) {
-  if (!SAVE.quinn.skills.includes('bloodswipe') || p.state === 'down' || p.state === 'hurt') return;
+  if (p.char !== 'quinn' || !SAVE.quinn.skills.includes('bloodswipe') || p.state === 'down' || p.state === 'hurt') return;
   if ((p.swipeCd || 0) > 0) return;
   if (p.hp <= 1) { floatText(p.x, p.y - 72, 'Zu wenig HP', '#ff8a8a'); return; }
   p.hp -= 1; p.swipeCd = 0.35; G.stats.swipes = (G.stats.swipes || 0) + 1;
@@ -467,7 +529,7 @@ function castBloodSwipe(p) {
   const [mx, my] = readMove();
   const a = f ? Math.atan2(f.y - p.y, f.x - p.x) : (mx || my) ? Math.atan2(my, mx) : (p.face > 0 ? 0 : Math.PI);
   p.face = Math.cos(a) >= 0 ? 1 : -1; p.anim.cast = 1; p.anim.aim = p.face > 0 ? a : Math.PI - a;
-  G.proj.push({ x: p.x + Math.cos(a) * 12, y: p.y + Math.sin(a) * 12, a, sp: 300, dist: 0, max: 70, dmg: 2 * (p.str * (G.inSun ? 0.5 : 1) / 10), hit: new Set() });
+  G.proj.push({ x: p.x + Math.cos(a) * 12, y: p.y + Math.sin(a) * 12, a, sp: 300, dist: 0, max: 70, dmg: 2 * (SAVE.quinn.gear.hands ? 1.05 : 1) * (p.str * sunFactor(p) / 10), hit: new Set(), col: '#ff3a4e', kind: 'blood' });
   floatText(p.x, p.y - 72, '-1 HP', '#ff5a6a');
   sfx('whip', 0, 0.03); sfx('splat', 0, 0.05);
 }
@@ -477,10 +539,84 @@ function updateProj(dt) {
   for (let i = G.proj.length - 1; i >= 0; i--) {
     const P = G.proj[i];
     const step = P.sp * dt; P.x += Math.cos(P.a) * step; P.y += Math.sin(P.a) * step; P.dist += step;
+    let gone = false;
     for (const e of G.ents) {
       if (e.team !== 1 || e.state === 'down' || P.hit.has(e.id)) continue;
-      if (Math.hypot(e.x - P.x, e.y - P.y) < e.r + 12) { P.hit.add(e.id); damageFoe(e, P.dmg, { kb: 90, ang: P.a, poise: 1, heavy: false }); }
+      if (Math.hypot(e.x - P.x, e.y - P.y) < e.r + 12) {
+        P.hit.add(e.id);
+        if (e.ai && e.ai.foresight && !P.double && e.state !== 'stagger') { foresee(e, P); continue; }
+        damageFoe(e, P.dmg, { kb: P.kb || 90, ang: P.a, poise: P.poise || 1, heavy: !!P.heavy });
+        if (!P.pierce && P.kind === 'arrow') { gone = true; break; }
+      }
     }
-    if (P.dist >= P.max) { G.proj.splice(i, 1); burst(P.x, P.y - 20, 4, '#ff3a4e'); }
+    if (gone || P.dist >= P.max) { G.proj.splice(i, 1); burst(P.x, P.y - 20, 4, P.col || '#ff3a4e'); }
   }
+}
+
+/* ------------------------------------------------------------ Geschosse der Figuren */
+function fireProj(p, A) {
+  const P = A.proj;
+  G.proj.push({ x: p.x + Math.cos(p.aim) * 12, y: p.y + Math.sin(p.aim) * 12, a: p.aim, sp: P.sp, dist: 0, max: P.max, dmg: A.dmg * (p.str * sunFactor(p) / 10), hit: new Set(), col: P.col, kind: P.kind, pierce: P.pierce, double: A.double, poise: A.poise || 1, heavy: !!A.double || !!A.poise, kb: A.double ? 200 : 90 });
+  sfx(P.kind === 'water' ? 'splat' : 'whip', 0, 0.03);
+  if (A.double) { // Telekinese + Wasser gleichzeitig: ein zweiter Stoss von der Seite
+    const f = nearestFoe(p, 220);
+    if (f) later(0.12, () => { if (f.state !== 'down') { damageFoe(f, A.dmg * 0.5 * (p.str / 10), { kb: 160, ang: p.aim + 1.2, poise: 2, heavy: true }); burst(f.x, f.y - 30, 10, '#c8a0ff'); floatText(f.x, f.y - 92, 'DOPPELT', '#c8a0ff'); } });
+  }
+}
+
+/* ------------------------------------------------------------ Tag-Team */
+function swapTo(i, forced) {
+  const m = G.party[i];
+  if (!m || m === G.player || m.state === 'down' || (!forced && G.swapCd > 0)) return;
+  const old = G.player;
+  if (old.state === 'charge') setState(old, 'idle');
+  G.player = m; G.swapCd = 0.6; INPUT.atkHeld = false;
+  burst(m.x, m.y - 30, 10, LOOKS[m.char].rim || '#8ad8ff'); sfx('dodge');
+  floatText(m.x, m.y - 86, CHARS[m.char].name, LOOKS[m.char].rim || '#fff');
+  if (UI.cache) UI.cache.party = null;
+}
+function updateAlly(e, dt) {
+  if (e.state === 'down') { updateFighter(e, dt, 0, 0); return; }
+  e.aiCd -= dt;
+  const f = nearestFoe(e, 600);
+  let mx = 0, my = 0;
+  if (f) {
+    const dx = f.x - e.x, dy = f.y - e.y, d = Math.hypot(dx, dy) || 1;
+    // angekuendigten Angriffen ausweichen
+    if (f.state === 'wind' && f.target === e && f.stateT > f.atk.wind - 0.16 && !e.aiDodged) { e.aiDodged = true; if (Math.random() < 0.65) tryDodge(e, [-dy / d, dx / d]); }
+    if (f.state !== 'wind') e.aiDodged = false;
+    const want = e.range;
+    if (d > want + 8) { mx = dx / d; my = dy / d; } else if (d < want * 0.6 && want > 60) { mx = -dx / d; my = -dy / d; }
+    else if (e.aiCd <= 0 && e.state === 'idle' && e.stam > 25) { e.aiCd = rand(0.5, 1.1); startAttack(e, e.aiStep = ((e.aiStep || 0) + 1) % KITS[e.kit].combo.length); }
+  } else {
+    const p = G.player, dx = p.x - e.x, dy = p.y - e.y, d = Math.hypot(dx, dy);
+    if (d > 60) { mx = dx / d * 0.8; my = dy / d * 0.8; }
+  }
+  updateFighter(e, dt, mx * 0.85, my * 0.85);
+  if (Math.abs(mx) > 0.1 && e.state === 'idle') e.face = mx > 0 ? 1 : -1;
+}
+
+/* ------------------------------------------------------------ Flash Step, Hammer Strike (Kap. 39–40) */
+function castFlashStep(p) {
+  const Q = SAVE.quinn;
+  if (p.char !== 'quinn' || !Q.skills.includes('flashstep') || p.state === 'down') return;
+  if (Q.stats.agi < 15) { floatText(p.x, p.y - 80, 'Braucht Agilität 15', '#ffd04a'); return; }
+  if (p.stam < 35) { tired(p); return; }
+  spendStam(p, 35, 0.6);
+  const [mx, my] = readMove();
+  const a = (mx || my) ? Math.atan2(my, mx) : (p.face > 0 ? 0 : Math.PI);
+  for (let k = 0; k < 5; k++) G.fx.push({ k: 'spark', x: p.x + Math.cos(a) * k * 12, y: p.y - 30 + Math.sin(a) * k * 12, vx: 0, vy: 0, life: 0.25, t: 0, col: '#bfe0ff', size: 5 });
+  p.x += Math.cos(a) * 62; p.y += Math.sin(a) * 62; collideArena(p);
+  p.iframes = Math.max(p.iframes, 0.2); setState(p, 'idle');
+  if (Math.cos(a)) p.face = Math.cos(a) > 0 ? 1 : -1;
+  sfx('shadowstep'); dust(p.x, p.y, 6, 1);
+}
+function castHammer(p) {
+  const Q = SAVE.quinn;
+  if (p.char !== 'quinn' || !Q.skills.includes('hammer') || p.state === 'down') return;
+  if (Q.stats.str < 15) { floatText(p.x, p.y - 80, 'Braucht Stärke 15', '#ffd04a'); return; }
+  if ((p.hammerCd || 0) > G.t) return;
+  if (p.stam < 30) { tired(p); return; }
+  p.hammerCd = G.t + 3;
+  startAttack(p, 0, false, HAMMER);
 }

@@ -124,3 +124,17 @@ canvas#game { position: absolute; inset: 0; display: block; touch-action: none; 
 .strow b { min-width: 28px; text-align: right; font-variant-numeric: tabular-nums; }
 .strow .plus { width: 40px; height: 40px; border-radius: 8px; border: 1.5px solid var(--sysline); background: #10284a; color: #fff; font-size: 22px; font-weight: 800; }
 .strow .plus:disabled { opacity: .3; }
+
+.pad .skill.s2 { right: 4px; bottom: 182px; border-color: rgba(150,210,255,.75); background: radial-gradient(circle at 40% 35%, rgba(60,120,200,.7), rgba(6,16,34,.85)); }
+.pad .skill.s3 { right: 80px; bottom: 180px; border-color: rgba(255,210,120,.75); background: radial-gradient(circle at 40% 35%, rgba(200,150,60,.7), rgba(34,22,6,.85)); }
+.pad { height: 260px; }
+.hud .party { position: absolute; left: calc(10px + var(--safe-l)); bottom: calc(18px + var(--safe-b)); display: flex; flex-direction: column; gap: 6px; pointer-events: none; z-index: 2; }
+.hud .party .pm { pointer-events: auto; width: 96px; height: 40px; border-radius: 10px; border: 1.5px solid var(--c); background: rgba(6,10,20,.75); color: #fff;
+  font-family: 'Cinzel', serif; font-size: 11px; font-weight: 800; letter-spacing: .06em; position: relative; overflow: hidden; text-align: left; padding: 4px 8px; }
+.hud .party .pm i { position: absolute; left: 0; bottom: 0; height: 4px; background: var(--c); }
+.hud .party .pm.on { background: rgba(40,60,100,.85); box-shadow: 0 0 12px var(--c); }
+.hud .party .pm.dead { opacity: .35; }
+.hud .bank { position: absolute; left: calc(12px + var(--safe-l)); top: calc(120px + var(--safe-t)); display: flex; align-items: center; gap: 6px; font-family: 'Cinzel', serif; font-size: 10px; color: #ffb0b8; text-shadow: 0 1px 2px #000; }
+.hud .bank i { display: block; width: 70px; height: 6px; background: rgba(0,0,0,.6); border: 1px solid rgba(255,90,110,.5); border-radius: 3px; overflow: hidden; }
+.hud .bank i b { display: block; height: 100%; background: linear-gradient(90deg, #8a0a1e, #ff4a5a); }
+.hud .bank small { font-size: 10px; }

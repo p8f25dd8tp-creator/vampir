@@ -125,6 +125,24 @@ function drawPerson(g, P, L) {
       limb(g, A.ex, A.ey, A.hx, A.hy, 2.1, 1.8); paint(g, shade(L.top, dk - 0.05), 'rgba(0,0,0,0.6)', 0.6);
       g.beginPath(); g.arc(A.hx, A.hy, 1.9, 0, TAU); paint(g, shade(L.skin, dk), 'rgba(40,20,20,0.7)', 0.5);
     }
+    if (L.gauntlets && !claws) { // schwarze Handschuhe mit kleinen Hoernern
+      const a = Math.atan2(A.hy - A.ey, A.hx - A.ex);
+      g.beginPath(); g.arc(A.hx, A.hy, 2.5, 0, TAU); paint(g, '#141016', 'rgba(0,0,0,0.8)', 0.5);
+      g.fillStyle = '#d8d0c0'; g.beginPath(); g.moveTo(A.hx + Math.cos(a - 1.6) * 2, A.hy + Math.sin(a - 1.6) * 2); g.lineTo(A.hx + Math.cos(a - 2.2) * 5, A.hy + Math.sin(a - 2.2) * 5); g.lineTo(A.hx + Math.cos(a - 1.2) * 2.2, A.hy + Math.sin(a - 1.2) * 2.2); g.fill();
+    }
+    if (front && L.weapon === 'bow') {
+      g.save(); g.translate(A.hx, A.hy); g.rotate(P.cast > 0.1 ? P.aim : -0.3);
+      g.strokeStyle = '#5a3a2a'; g.lineWidth = 1.4; g.beginPath(); g.arc(-3, 0, 9, -1.2, 1.2); g.stroke();
+      g.strokeStyle = 'rgba(230,230,240,0.8)'; g.lineWidth = 0.5; g.beginPath(); g.moveTo(-3 + Math.cos(-1.2) * 9, Math.sin(-1.2) * 9); g.lineTo(-3 - P.cast * 4, 0); g.lineTo(-3 + Math.cos(1.2) * 9, Math.sin(1.2) * 9); g.stroke();
+      g.restore();
+    }
+    if (front && L.weapon === 'sword') {
+      const a = P.cast > 0.1 ? P.aim - 0.4 : -1.1;
+      g.save(); g.translate(A.hx, A.hy); g.rotate(a);
+      g.fillStyle = lg(g, 0, -1, 0, 1, [0, '#ffffff', 1, '#9ab8d8']); g.beginPath(); g.moveTo(2, -1); g.lineTo(22, -0.4); g.lineTo(24, 0.4); g.lineTo(2, 1); g.closePath(); g.fill();
+      g.fillStyle = '#2a3a5a'; g.fillRect(-3, -1.2, 5, 2.4); g.fillRect(1.5, -3, 1.2, 6);
+      g.restore();
+    }
     if (front && L.handGlow && P.cast > 0.05) glowDot(g, A.hx, A.hy, 5 + P.cast * 5, L.handGlow, 0.7 * P.cast);
   };
   leg(P.legB, -0.38); arm(P.armB, -0.38, false);
@@ -157,7 +175,8 @@ function drawPerson(g, P, L) {
   g.quadraticCurveTo(-3, 5, -4.4, 1.8); g.closePath();
   paint(g, lg(g, 2, -6, -3, 5, [0, shade(L.skin, 0.3), 0.6, L.skin, 1, L.skinD]), 'rgba(50,30,30,0.7)', 0.55);
   g.beginPath(); g.moveTo(-1.8, -1.4); g.lineTo(-4.2, -3.6); g.lineTo(-2.2, 1.2); g.closePath(); paint(g, L.skinD, 'rgba(50,30,30,0.6)', 0.4);
-  if (L.glow) eye(g, 2.6, -1.6, 1, L.eye);
+  if (L.blind) { g.strokeStyle = 'rgba(60,40,30,0.8)'; g.lineWidth = 0.6; g.beginPath(); g.moveTo(1.6, -1.6); g.lineTo(3.8, -1.4); g.stroke(); }
+  else if (L.glow) eye(g, 2.6, -1.6, 1, L.eye);
   else { g.fillStyle = '#fff'; g.beginPath(); g.ellipse(2.5, -1.6, 0.9, 0.7, 0, 0, TAU); g.fill(); g.fillStyle = L.eye; g.beginPath(); g.arc(2.8, -1.6, 0.5, 0, TAU); g.fill(); }
   g.strokeStyle = shade(L.hair, 0.1); g.lineWidth = 0.8; g.beginPath(); g.moveTo(1, -3); g.lineTo(4, L.angry ? -2 : -2.6); g.stroke();
   if (L.glasses) {
@@ -195,8 +214,8 @@ const LOOKS = {
   quinn: { outfit: 'hoodie', top: '#5c5e6c', topL: '#8a8c9a', topD: '#2c2e38', leg: '#34405a', legD: '#1a2030', shoe: '#e8e8ea', skin: '#e8c6ac', skinD: '#b08a74', hair: '#2a1c16', eye: '#6a4a2a', glasses: true, hairStyle: 'messy', rim: '#9ab0ff' },
   peter: { outfit: 'uniform', top: '#4a5a44', topL: '#76866e', topD: '#222a1e', leg: '#2e3628', legD: '#161a12', shoe: '#2a2420', skin: '#e8cdb0', skinD: '#a88a70', hair: '#8a6a3a', eye: '#4a6a3a', hairStyle: 'short', trim: '#b0a070', rim: '#9aff9a' },
   vorden: { outfit: 'uniform', top: '#2a3a5a', topL: '#4a5e8a', topD: '#10182a', leg: '#1e2638', legD: '#0c1018', shoe: '#1a1a20', skin: '#f0dccc', skinD: '#b09888', hair: '#e8cf7a', eye: '#4a7ac8', hairStyle: 'short', trim: '#e8cf7a', rim: '#ffd27a' },
-  layla: { outfit: 'uniform', top: '#3a2a5a', topL: '#5e4a8a', topD: '#180e2a', leg: '#221a30', legD: '#100c18', shoe: '#1a1620', skin: '#f0d8cc', skinD: '#b0968a', hair: '#2a1a2a', eye: '#6a4a8a', hairStyle: 'long', trim: '#c8a0ff', rim: '#c8a0ff' },
-  erin: { outfit: 'uniform', top: '#2a3a4a', topL: '#4a6278', topD: '#101a24', leg: '#1e2630', legD: '#0c1016', shoe: '#1a1a1e', skin: '#f4e4dc', skinD: '#b8a49c', hair: '#dce4f0', eye: '#6aa8d8', hairStyle: 'bun', trim: '#9ad8ff', rim: '#9ad8ff' },
+  layla: { weapon: 'bow', outfit: 'uniform', top: '#3a2a5a', topL: '#5e4a8a', topD: '#180e2a', leg: '#221a30', legD: '#100c18', shoe: '#1a1620', skin: '#f0d8cc', skinD: '#b0968a', hair: '#2a1a2a', eye: '#6a4a8a', hairStyle: 'long', trim: '#c8a0ff', rim: '#c8a0ff' },
+  erin: { weapon: 'sword', outfit: 'uniform', top: '#2a3a4a', topL: '#4a6278', topD: '#101a24', leg: '#1e2630', legD: '#0c1016', shoe: '#1a1a1e', skin: '#f4e4dc', skinD: '#b8a49c', hair: '#dce4f0', eye: '#6aa8d8', hairStyle: 'bun', trim: '#9ad8ff', rim: '#9ad8ff' },
   mono: { outfit: 'uniform', top: '#1a2440', topL: '#3a4a78', topD: '#080c18', leg: '#141a2a', legD: '#080a12', shoe: '#101014', skin: '#e8d0c0', skinD: '#a88878', hair: '#2a1e14', eye: '#6ab0ff', hairStyle: 'short', trim: '#6ab0ff', rim: '#6ab0ff' },
   zweit: { outfit: 'uniform', top: '#3a3040', topL: '#5e5068', topD: '#18121c', leg: '#201a24', legD: '#0e0a10', shoe: '#141014', skin: '#e0c4a8', skinD: '#a08468', hair: '#3a2a1e', eye: '#5a4a3a', hairStyle: 'spiky', trim: '#b0a070', rim: '#b0a0c0' },
   jane: { outfit: 'uniform', top: '#3a4a3a', topL: '#5e7260', topD: '#182018', leg: '#222a22', legD: '#0e120e', shoe: '#141410', skin: '#e8ccb4', skinD: '#a88c74', hair: '#5a3a24', eye: '#4a5a3a', hairStyle: 'bun', trim: '#e0c050', rim: '#e0c050' },
@@ -208,6 +227,12 @@ const LOOKS = {
   rylee: { outfit: 'uniform', top: '#4a3a2a', topL: '#76604a', topD: '#201810', leg: '#2a2218', legD: '#120e0a', shoe: '#1a1410', skin: '#e4c4a4', skinD: '#a48464', hair: '#5a3a1a', eye: '#6a5a3a', hairStyle: 'short', trim: '#b0a070', angry: true, rim: '#c0c8d0' },
   dan: { outfit: 'uniform', top: '#2a2a30', topL: '#4e4e58', topD: '#101014', leg: '#1e1e24', legD: '#0c0c10', shoe: '#101012', skin: '#c8a080', skinD: '#886040', hair: '#101010', eye: '#3a2a1a', hairStyle: 'short', trim: '#909098', angry: true, rim: '#d0a060' },
   hayley: { outfit: 'shirt', top: '#e8ecf0', topL: '#ffffff', topD: '#a8b0b8', leg: '#3a4a5a', legD: '#1a222a', shoe: '#e8e8ea', skin: '#f0d4c0', skinD: '#b09480', hair: '#c86a3a', eye: '#4a6a3a', hairStyle: 'bun', rim: '#9ad8ff' },
+  raten: { outfit: 'uniform', top: '#2a3a5a', topL: '#4a5e8a', topD: '#10182a', leg: '#1e2638', legD: '#0c1018', shoe: '#1a1a20', skin: '#f0dccc', skinD: '#b09888', hair: '#e8cf7a', eye: '#ff5a3a', glow: true, angry: true, hairStyle: 'spiky', trim: '#ff8a3a', rim: '#ff8a3a', handGlow: '#6ec8ff' },
+  fei: { outfit: 'uniform', top: '#4a2a3a', topL: '#76465e', topD: '#200e18', leg: '#241820', legD: '#100a0e', shoe: '#141014', skin: '#e8ccb8', skinD: '#a88c78', hair: '#1a1a1a', eye: '#5a3a3a', hairStyle: 'long', trim: '#b0a070', angry: true, rim: '#d0a0c0' },
+  loop: { outfit: 'uniform', top: '#3a3a2a', topL: '#62624a', topD: '#1a1a10', leg: '#20201a', legD: '#0e0e0a', shoe: '#141410', skin: '#d8b494', skinD: '#987454', hair: '#8a5a2a', eye: '#4a3a2a', hairStyle: 'messy', trim: '#b0a070', angry: true, rim: '#c0b080' },
+  brandon: { outfit: 'uniform', top: '#2a4a3a', topL: '#46765e', topD: '#10201a', leg: '#1a2a22', legD: '#0a120e', shoe: '#101410', skin: '#ecd0b8', skinD: '#ac9078', hair: '#c8a060', eye: '#3a5a4a', hairStyle: 'short', trim: '#b0a070', angry: true, rim: '#9ad0b0', weapon: 'sword' },
+  leo: { outfit: 'shirt', top: '#2a2420', topL: '#4a4038', topD: '#100c0a', leg: '#1a1612', legD: '#0a0806', shoe: '#1a1410', skin: '#d8b89a', skinD: '#987858', hair: '#d8b89a', eye: '#d8d8d8', hairStyle: 'short', rim: '#5ff0d0', weapon: 'sword', blind: true },
+  fay: { outfit: 'uniform', top: '#5a4a2a', topL: '#8a7648', topD: '#2a200e', leg: '#2a2418', legD: '#14100a', shoe: '#1a1410', skin: '#f0d8c8', skinD: '#b09888', hair: '#e8e0d0', eye: '#6a8aa8', hairStyle: 'bun', trim: '#e0c050', rim: '#e0c050', weapon: 'sword' },
   kyle: { outfit: 'uniform', top: '#6a2a1e', topL: '#9a4a36', topD: '#30100a', leg: '#2a1c18', legD: '#140c0a', shoe: '#1a1414', skin: '#e0b894', skinD: '#9a7458', hair: '#c8781e', eye: '#ffa030', hairStyle: 'spiky', trim: '#d0a060', angry: true, rim: '#ff9a3a' }
 };
 const HUMAN_BOX = 120;

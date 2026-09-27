@@ -172,13 +172,30 @@ function renderFight() {
     const sway = Math.sin(G.t * 1.2 + x) * 1.5;
     for (const [dx, dy, r, c] of [[0, -40, 22, '#2e5a28'], [-12, -32, 15, '#3a6a30'], [12, -34, 16, '#3a6a30'], [4, -46, 13, '#4a7a3a']]) { g.fillStyle = A.night ? shade(c, -0.55) : c; g.beginPath(); g.arc(x + dx + sway, y + dy, r, 0, TAU); g.fill(); }
   }
-  // Blood Swipe
+  // Geschosse: Blood Swipe, Pfeile, Wasser
   for (const P of G.proj || []) {
     g.save(); g.translate(P.x, P.y - 22); g.rotate(P.a);
-    g.fillStyle = '#6a0010'; g.beginPath(); g.arc(-6, 0, 14, -1.2, 1.2); g.arc(-12, 0, 11, 1.1, -1.1, true); g.closePath(); g.fill();
-    g.globalCompositeOperation = 'lighter'; g.fillStyle = 'rgba(255,40,70,0.85)'; g.beginPath(); g.arc(-6, 0, 13, -1.1, 1.1); g.arc(-11, 0, 11, 1.0, -1.0, true); g.closePath(); g.fill();
-    g.drawImage(glowSprite('#ff2a40'), -20, -18, 36, 36);
+    if (P.kind === 'arrow') {
+      g.strokeStyle = '#e8e0d0'; g.lineWidth = 1.6; g.beginPath(); g.moveTo(-14, 0); g.lineTo(6, 0); g.stroke();
+      g.fillStyle = P.col; g.beginPath(); g.moveTo(6, -2.6); g.lineTo(12, 0); g.lineTo(6, 2.6); g.fill();
+      g.globalCompositeOperation = 'lighter'; g.globalAlpha = 0.6; g.drawImage(glowSprite(P.col), -16, -8, 26, 16);
+    } else if (P.kind === 'water') {
+      g.globalCompositeOperation = 'lighter';
+      for (let k = 0; k < 4; k++) g.drawImage(glowSprite('#6ec8ff'), -8 - k * 7, -8 + Math.sin(G.t * 20 + k) * 3, 18, 16);
+      g.fillStyle = 'rgba(200,240,255,0.9)'; g.beginPath(); g.ellipse(0, 0, 8, 5, 0, 0, TAU); g.fill();
+    } else {
+      g.fillStyle = '#6a0010'; g.beginPath(); g.arc(-6, 0, 14, -1.2, 1.2); g.arc(-12, 0, 11, 1.1, -1.1, true); g.closePath(); g.fill();
+      g.globalCompositeOperation = 'lighter'; g.fillStyle = 'rgba(255,40,70,0.85)'; g.beginPath(); g.arc(-6, 0, 13, -1.1, 1.1); g.arc(-11, 0, 11, 1.0, -1.0, true); g.closePath(); g.fill();
+      g.drawImage(glowSprite('#ff2a40'), -20, -18, 36, 36);
+    }
     g.restore();
+  }
+  // Tag-Team: Markierung ueber der gesteuerten Figur, Leisten ueber den anderen
+  if (G.party && G.party.length > 1) for (const m of G.party) {
+    if (m.state === 'down') continue;
+    const col = LOOKS[m.char].rim || '#fff';
+    if (m === G.player) { g.fillStyle = col; g.beginPath(); g.moveTo(m.x - 5, m.y - 84); g.lineTo(m.x + 5, m.y - 84); g.lineTo(m.x, m.y - 78); g.fill(); }
+    else { g.fillStyle = 'rgba(0,0,0,0.6)'; g.fillRect(m.x - 14, m.y - 80, 28, 4); g.fillStyle = col; g.fillRect(m.x - 14, m.y - 80, 28 * m.hp / m.maxHp, 4); }
   }
   // Haertung (Rylee): graue Platte auf der gehaerteten Seite
   for (const e of G.ents) if (e.ai && e.ai.harden && e.state !== 'down') {

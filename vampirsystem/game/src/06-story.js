@@ -135,10 +135,14 @@ function buildHud(opt) {
     <button class="pause" id="pauseBtn">❚❚</button>
     ${opt.hub ? '<button class="pause statusbtn" id="statusBtn">☰</button>' : ''}
     <div class="hint" id="hint"></div>
+    <div class="party" id="party"></div>
+    <div class="bank" id="bank"></div>
     <div class="stickzone" id="sz"><div class="stick" style="display:none"><i></i></div></div>
     <div class="pad">
       <button class="insp ${opt.inspect || SAVE.quinn.skills.includes('inspect') ? '' : 'off'}" id="bInsp">INSPECT</button>
       ${SAVE.quinn.skills.includes('bloodswipe') && !opt.hub ? '<button class="skill" id="bSkill">BLOOD<br>SWIPE<small>1 HP</small></button>' : ''}
+      ${SAVE.quinn.skills.includes('flashstep') && !opt.hub ? '<button class="skill s2" id="bSkill2">FLASH<br>STEP</button>' : ''}
+      ${SAVE.quinn.skills.includes('hammer') && !opt.hub ? '<button class="skill s3" id="bSkill3">HAMMER<br>STRIKE</button>' : ''}
       <button class="dodge" id="bDodge">AUS-<br>WEICHEN</button>
       <button class="atk" id="bAtk">ANGRIFF</button>
     </div>
@@ -151,6 +155,8 @@ function buildHud(opt) {
   bindButton($('#bDodge'), () => pushInput('dodge'));
   bindButton($('#bInsp'), () => pushInput('inspect'));
   if ($('#bSkill')) bindButton($('#bSkill'), () => pushInput('skill1'));
+  if ($('#bSkill2')) bindButton($('#bSkill2'), () => pushInput('skill2'));
+  if ($('#bSkill3')) bindButton($('#bSkill3'), () => pushInput('skill3'));
   $('#pauseBtn').addEventListener('pointerup', () => showPause());
   if (opt.hub) $('#statusBtn').addEventListener('pointerup', () => { if (!G) return; G.paused = true; showStatus(() => { if (G) G.paused = false; }); });
   UI.cache = {};
@@ -158,8 +164,8 @@ function buildHud(opt) {
 function updateHud() {
   if (!UI.hud || !G) return;
   const p = G.player, C = UI.cache;
-  const hpK = p.hp + '/' + p.maxHp;
-  if (C.hp !== hpK) { C.hp = hpK; $('#hpb').style.width = (p.hp / p.maxHp * 100) + '%'; $('#hpn').textContent = `HP ${Math.ceil(p.hp)} / ${p.maxHp}`; }
+  const hpK = p.char + p.hp + '/' + p.maxHp;
+  if (C.hp !== hpK) { C.hp = hpK; $('#hpb').style.width = (p.hp / p.maxHp * 100) + '%'; $('#hpn').textContent = `${CHARS[p.char] ? CHARS[p.char].name.toUpperCase() + ' · ' : ''}HP ${Math.ceil(p.hp)} / ${p.maxHp}`; }
   const xk = SAVE.quinn.level + ':' + SAVE.quinn.exp + ':' + Math.round(G.expGain || 0);
   if (C.xp !== xk) { C.xp = xk; $('#lvl').textContent = 'Stufe ' + SAVE.quinn.level + (SAVE.quinn.points ? ' · +' + SAVE.quinn.points : ''); $('#xpb').style.width = Math.min(100, (SAVE.quinn.exp + (G.expGain || 0)) / expNeed(SAVE.quinn.level) * 100) + '%'; }
   const st = Math.round(p.stam);
@@ -173,6 +179,21 @@ function updateHud() {
   if (C.hint !== h) { C.hint = h; $('#hint').innerHTML = h; }
   const ch = p.state === 'charge' && p.stateT > 0.45;
   if (C.ch !== ch) { C.ch = ch; $('#bAtk').classList.toggle('charge', ch); }
+  // Tag-Team-Knoepfe
+  if (G.party && G.party.length > 1) {
+    const pk = G.party.map((m) => m.char + (m === G.player ? '*' : '') + Math.ceil(m.hp) + m.state.slice(0, 1)).join('|');
+    if (C.party !== pk) {
+      C.party = pk;
+      const box = $('#party');
+      box.innerHTML = G.party.map((m, i) => `<button class="pm ${m === G.player ? 'on' : ''} ${m.state === 'down' ? 'dead' : ''}" data-i="${i}" style="--c:${LOOKS[m.char].rim}"><b>${CHARS[m.char].name}</b><i style="width:${Math.max(0, m.hp / m.maxHp * 100)}%"></i></button>`).join('');
+      box.querySelectorAll('.pm').forEach((b) => bindButton(b, () => pushInput('swap' + b.dataset.i)));
+    }
+  }
+  // Skills nur fuer Quinn
+  const isQ = p.char === 'quinn';
+  if (C.isQ !== isQ) { C.isQ = isQ; UI.hud.querySelectorAll('.pad .skill, .pad .insp').forEach((b) => { b.style.visibility = isQ ? '' : 'hidden'; }); }
+  const bk = SAVE.quinn.skills.includes('bloodbank') && !G.opt.hub ? SAVE.quinn.bank : -1;
+  if (C.bank !== bk) { C.bank = bk; $('#bank').innerHTML = bk >= 0 ? `<span>BLUTBANK</span><i><b style="width:${bk}%"></b></i><small>${bk} ml</small>` : ''; }
   const atkTxt = G.poi ? (G.poi.btn || 'LOS') : 'ANGRIFF';
   if (C.atk !== atkTxt) { C.atk = atkTxt; $('#bAtk').textContent = atkTxt; $('#bAtk').classList.toggle('act', !!G.poi); }
   const sun = !!G.inSun;

@@ -49,7 +49,7 @@ function shade(h, f) {
 const SAVE_KEY = 'mvs.save.v1';
 const DEFAULT_SAVE = {
   progress: {},        // missionId -> { done, best }
-  quinn: { level: 1, exp: 0, points: 0, stats: { str: 10, agi: 10, sta: 10 }, skills: [], blood: {} },
+  quinn: { level: 1, exp: 0, points: 0, stats: { str: 10, agi: 10, sta: 10 }, skills: [], blood: {}, gear: {}, bank: 0, bloodFrom: {} },
   day: { n: 1, night: false, sun: 0, water: false },
   flags: {},
   credits: 10,
