@@ -7,7 +7,7 @@
    ========================================================================== */
 
 const cv = document.getElementById('game');
-const ctx = cv.getContext('2d', { alpha: false });
+const ctx = cv.getContext('2d', { alpha: true });
 const VIEW = { cssW: 0, cssH: 0, dpr: 1, zoom: 1, w: 0, h: 0 };
 function resizeCanvas() {
   VIEW.cssW = window.innerWidth; VIEW.cssH = window.innerHeight;

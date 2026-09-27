@@ -36,10 +36,12 @@ function showSettings() {
     <button class="btn" id="sSfx">Ton: ${S.sfx > 0 ? 'an' : 'aus'}</button>
     <button class="btn" id="sDodge">Weites Ausweich-Fenster: ${S.wideDodge ? 'an' : 'aus'}</button>
     <button class="btn" id="sShake">Bildschirmwackeln: ${S.shake > 0 ? 'an' : 'aus'}</button>
+    <button class="btn" id="s3d">3D-Grafik (Test): ${S.gfx3d !== false ? 'an' : 'aus'}</button>
     <button class="btn ghost" id="sBack">Zurück</button>`, 'dim');
   el.querySelector('#sSfx').onclick = () => { S.sfx = S.sfx > 0 ? 0 : 0.8; writeSave(); AudioSys.applyVolumes && AudioSys.applyVolumes(); showSettings(); };
   el.querySelector('#sDodge').onclick = () => { S.wideDodge = !S.wideDodge; writeSave(); showSettings(); };
   el.querySelector('#sShake').onclick = () => { S.shake = S.shake > 0 ? 0 : 1; writeSave(); showSettings(); };
+  el.querySelector('#s3d').onclick = () => { S.gfx3d = S.gfx3d === false; writeSave(); showSettings(); };
   el.querySelector('#sBack').onclick = showTitle;
 }
 
@@ -134,7 +136,8 @@ function frame(now) {
   const rdt = Math.min(0.05, (now - _last) / 1000); _last = now;
   try {
     if (G && !G.paused) updateFight(rdt);
-    if (G) { renderFight(); updateHud(); } else renderSceneBg(now / 1000);
+    if (G && r3Wanted()) { render3d(rdt); updateHud(); }
+    else { hide3d(); if (G) { renderFight(); updateHud(); } else renderSceneBg(now / 1000); }
   } catch (err) { console.error(err); }
   AudioSys.musicTick && AudioSys.musicTick(rdt, G ? 0.4 : 0.1);
   requestAnimationFrame(frame);
