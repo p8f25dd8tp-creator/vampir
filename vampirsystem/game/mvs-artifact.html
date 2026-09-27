@@ -1006,8 +1006,14 @@ window.addEventListener('keyup', (e) => {
 
 // Stick-Zone und Knoepfe werden vom HUD angelegt und hier verdrahtet
 const STICK_R = 52;
+function resetInput() { INPUT.stick = null; INPUT.mx = 0; INPUT.my = 0; INPUT.atkHeld = false; }
+// Loslassen auch dann erkennen, wenn die Stick-Zone waehrend der Beruehrung verschwunden ist (Kampfende, Szenenwechsel)
+for (const ev of ['pointerup', 'pointercancel']) window.addEventListener(ev, (e) => { if (INPUT.stick && INPUT.stick.id === e.pointerId) { INPUT.stick = null; INPUT.mx = 0; INPUT.my = 0; } });
+window.addEventListener('blur', resetInput);
+document.addEventListener('visibilitychange', () => { if (document.hidden) resetInput(); });
 function bindStick(zone, knobEl) {
   const base = knobEl.parentElement;
+  resetInput(); // neues HUD: alte, haengende Beruehrungen verwerfen
   zone.addEventListener('pointerdown', (e) => {
     if (INPUT.stick) return;
     e.preventDefault(); zone.setPointerCapture(e.pointerId);
