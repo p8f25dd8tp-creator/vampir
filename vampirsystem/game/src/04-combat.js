@@ -199,7 +199,7 @@ function updateFighter(p, dt, mx, my) {
   p.stamDelay -= dt;
   if (p.stamDelay <= 0 && p.state !== 'charge') p.stam = Math.min(p.maxStam, p.stam + 42 * dt);
   if (p.maxMc && !G.opt.leere) p.mc = Math.min(p.maxMc, p.mc + 2.5 * dt); // in der Schattenleere laedt MC nicht // MC (Schatten) laedt im Spiel schneller als im Roman
-  if (p === G.player) G.inSun = inSun(p);
+  if (p === G.player) G.inSun = p.char === 'quinn' && inSun(p);
   const sunK = sunFactor(p);
   const spd = 120 * Math.pow(p.agi * sunK / 10, 0.35);
   // Blutbank: heilt Quinn automatisch unter 5 HP (10 ml = 5 HP)

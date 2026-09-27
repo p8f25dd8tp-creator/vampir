@@ -167,7 +167,7 @@ const AI_DALKI = { skin: true,
 /* ------------------------------------------------------------ Hilfen */
 function umbrella(G) { // Laylas Schirm: Schatten wandert mit Quinn (volle Kraft darunter)
   const q = G.party.find((m) => m.char === 'quinn');
-  if (q && q.state !== 'down') G.arena.shade = [{ x: q.x - 16, y: q.y - 14, w: 32, h: 22 }];
+  if (q && q.state !== 'down') G.arena.shade = [{ x: q.x - 16, y: q.y - 14, w: 32, h: 22, umb: true }];
 }
 function beastPack(kind, draw, ai, n, spots, hp, info) {
   return Array.from({ length: n }, (_, i) => ({ id: kind + i, draw, name: info.name, hp, poise: 3, r: 14, at: spots[i % spots.length], ai, expRate: 1, expKill: 12, info }));

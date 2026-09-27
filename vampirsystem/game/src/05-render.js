@@ -141,7 +141,7 @@ function renderFight() {
   g.drawImage(A.bg, 0, 0, A.w, A.h);
   // Sonnenflaechen
   for (const r of A.sun || []) { g.save(); g.globalCompositeOperation = 'lighter'; g.fillStyle = 'rgba(255,230,160,0.18)'; g.fillRect(r.x, r.y, r.w, r.h); g.restore(); }
-  for (const r of A.shade || []) { g.fillStyle = 'rgba(20,30,60,0.28)'; g.fillRect(r.x, r.y, r.w, r.h); }
+  for (const r of A.shade || []) { g.fillStyle = 'rgba(20,30,60,0.28)'; if (r.umb) { g.beginPath(); g.ellipse(r.x + r.w / 2, r.y + r.h / 2, r.w * 0.75, r.h * 0.6, 0, 0, TAU); g.fill(); } else g.fillRect(r.x, r.y, r.w, r.h); }
   // Interaktionspunkte
   for (const P of A.pois || []) {
     if (P.hidden && P.hidden()) continue;
