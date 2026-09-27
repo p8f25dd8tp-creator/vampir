@@ -23,7 +23,7 @@ KITS.metall = { // Metallspiesse (von Ian kopiert), aufgeladen ein durchschlagen
   combo: [{ dmg: 1.2, win: 0.12, act: 0.05, rec: 0.24, cost: 8, lunge: -20, proj: { sp: 470, max: 230, col: '#c8d8f0', kind: 'spike' } }],
   charged: { dmg: 3, win: 0.1, act: 0.05, rec: 0.4, cost: 20, lunge: -40, poise: 3, proj: { sp: 580, max: 300, col: '#e8eef8', kind: 'spike', pierce: true } }
 };
-CHARS.kleiner = { name: 'Der Kleine', look: 'kleiner', kit: 'metall', hp: 22, str: 12, agi: 12, range: 140 };
+CHARS.kleiner = { name: 'Der Kleine', look: 'kleiner', kit: 'metall', hp: 28, str: 12, agi: 12, range: 140 };
 
 /* ------------------------------------------------------------ Szenen-Hintergruende */
 SCENE_ART.rotplanet = function (g, W, H, u, t, glowField) {
@@ -252,9 +252,9 @@ const BS_ATK = {
 };
 // der Bloodsucker (Kap. 80–81): schnell, regeneriert, wirft die Metallspiesse zurueck
 const AI_BLOODSUCKER = {
-  params: () => ({ range: 36, speed: 150, cd: 0.7 }),
+  params: () => ({ range: 36, speed: 140, cd: 0.95 }),
   choose: (e, d) => (d > 110 && G.t - (e.backT || 0) > 5 ? ((e.backT = G.t), BS_ATK.back) : d > 80 ? BS_ATK.leap : d < 56 ? BS_ATK.claw : null),
-  onTick: (e, dt) => { e.hp = Math.min(e.maxHp, e.hp + 0.45 * dt); }
+  onTick: (e, dt) => { e.hp = Math.min(e.maxHp, e.hp + 0.2 * dt); }
 };
 const VORDEN_ATK = {
   balls: { type: 'beam', wind: 0.55, act: 0.12, rec: 0.55, len: 210, width: 18, dmg: 1, col: '#c8d0dc', shout: 'Metall' },
@@ -488,7 +488,7 @@ Object.assign(MISSIONS, {
       arena: { art: 'dom', w: 360, h: 560, night: true, blocks: [{ x: 40, y: 150, w: 56, h: 36, invisible: true }, { x: 264, y: 400, w: 56, h: 36, invisible: true }] },
       playerAt: [180, 420], party: ['kleiner'], inspect: false,
       npcs: [{ id: 'ian', at: [110, 470], pose: 'cower', watch: 'foe' }],
-      foes: [{ id: 'bloodsucker', name: 'Bloodsucker', hp: 42, poise: 5, at: [180, 200], ai: AI_BLOODSUCKER, expRate: 0, info: { name: '???', race: 'Bloodsucker', ability: 'Regeneration', blood: '—' } }],
+      foes: [{ id: 'bloodsucker', name: 'Bloodsucker', hp: 36, poise: 5, at: [180, 200], ai: AI_BLOODSUCKER, expRate: 0, info: { name: '???', race: 'Bloodsucker', ability: 'Regeneration', blood: '—' } }],
       expBonus: () => 20,
       onTick: (G) => {
         const b = G.foe;
