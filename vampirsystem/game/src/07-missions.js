@@ -182,7 +182,7 @@ const MISSIONS = {
     fight: {
       arena: { art: 'kantine', w: 340, h: 600, blocks: [{ x: 18, y: 150, w: 70, h: 26 }, { x: 252, y: 150, w: 70, h: 26 }, { x: 18, y: 440, w: 70, h: 26 }, { x: 252, y: 440, w: 70, h: 26 }] },
       playerAt: [170, 400],
-      foes: [{ id: 'kyle', name: 'Kyle · Fähigkeit: Tigerkrallen', hp: 26, poise: 4, at: [170, 260], ai: AI_KYLE, expRate: 1, expKill: 20, info: { name: 'Kyle Main', race: 'Mensch', ability: 'Verwandlung (Tigerkrallen)', blood: 'B+' } }],
+      foes: [{ id: 'kyle', name: 'Kyle · Fähigkeit: Tigerkrallen', hp: 22, poise: 4, at: [170, 260], ai: AI_KYLE, expRate: 1, expKill: 20, info: { name: 'Kyle Main', race: 'Mensch', ability: 'Verwandlung (Tigerkrallen)', blood: 'B+' } }],
       npcs: [{ id: 'peter', at: [300, 320], pose: 'cower', face: -1 }, { id: 's1', at: [45, 200], pose: 'cheer', watch: 'foe' }, { id: 's2', at: [60, 240], watch: 'foe' }, { id: 's3', at: [300, 205], pose: 'cheer', watch: 'foe' }, { id: 's4', at: [45, 500], watch: 'foe' }, { id: 'zweit', at: [295, 505], pose: 'cheer', watch: 'foe' }],
       inspect: false,
       onTick: tutorialTick
