@@ -321,11 +321,13 @@ function learn(...ids) { const Q = SAVE.quinn; for (const s of ids) if (!Q.skill
 /* ------------------------------------------------------------ Kampf-Hilfen */
 function ratPack(n, spots, t0, dt) {
   return Array.from({ length: n }, (_, i) => ({ id: 'rat' + i, draw: 'rattaclaw', name: 'Rattaclaw', hp: 4, poise: 2, r: 13, at: spots[i % spots.length].map((v, j) => v + (j ? (i >> 2) * 12 : 0)), ai: AI_RAT, expRate: 1, expKill: 14,
-    info: { name: 'Rattaclaw', race: 'Bestie · Basic-Stufe', ability: 'Rudeljäger, scharfe Krallen', blood: 'giftig – nicht trinkbar' } })).map((f, i) => Object.assign(f, { wake: t0 + i * dt }));
+    info: { name: 'Rattaclaw', race: 'Bestie · Basic-Stufe', ability: 'Rudeljäger, scharfe Krallen', blood: 'giftig – nicht trinkbar' } }));
 }
-function wakeTick(G) { // Weckzeiten aus der Kampfdefinition uebernehmen
-  if (G.woke) return; G.woke = true;
-  G.ents.forEach((e) => { const f = G.opt.foes.find((x) => x.id === e.kind); if (f && f.wake !== undefined) e.wakeT = f.wake; });
+function wakeTick(G, maxAwake) { // Rudel: hoechstens maxAwake greifen gleichzeitig an, die naechste folgt mit kurzem Abstand
+  const rats = G.ents.filter((e) => e.team === 1 && e.ai === AI_RAT);
+  const busy = rats.filter((e) => e.state !== 'down' && !ratAsleep(e)).length;
+  const next = rats.find((e) => e.state !== 'down' && e.wakeT === undefined);
+  if (next && busy < maxAwake && G.t - (G.lastWake || -9) > 1.2) { next.wakeT = G.t; G.lastWake = G.t; }
 }
 function lowHpStart(frac) {
   return (G) => { if (G.lowSet) return; G.lowSet = true; const p = G.player; p.hp = Math.max(1, Math.ceil(p.maxHp * frac)); };
@@ -367,7 +369,7 @@ Object.assign(MISSIONS, {
       arena: { art: 'ruine', w: 340, h: 600, night: true, blocks: [{ x: 0, y: 206, w: 132, h: 26, invisible: true }, { x: 208, y: 206, w: 132, h: 26, invisible: true }] },
       playerAt: [170, 150], inspect: true, noFoeBar: true,
       foes: ratPack(10, [[60, 470], [280, 480], [170, 560], [100, 360], [250, 350]], 0.6, 1.8),
-      onTick: (G) => { wakeTick(G); const n = G.ents.filter((e) => e.team === 1 && e.state !== 'down').length; G.hint = { text: G.t < 5 ? 'Halte die Treppe. <b>BLOOD SPRAY</b> trifft mehrere' : `Rattaclaws: ${n}` }; }
+      onTick: (G) => { wakeTick(G, 3); const n = G.ents.filter((e) => e.team === 1 && e.state !== 'down').length; G.hint = { text: G.t < 5 ? 'Halte die Treppe. <b>BLOOD SPRAY</b> trifft mehrere' : `Rattaclaws: ${n}` }; }
     },
     won: [
       { bg: 'system' },
@@ -455,7 +457,7 @@ Object.assign(MISSIONS, {
       arena: { art: 'dom', w: 360, h: 560, night: true, blocks: [{ x: 40, y: 150, w: 56, h: 36, invisible: true }, { x: 264, y: 400, w: 56, h: 36, invisible: true }] },
       playerAt: [180, 460], inspect: true, noFoeBar: true,
       foes: ratPack(5, [[80, 90], [280, 100], [180, 70]], 0.4, 1.1),
-      onTick: (G) => { wakeTick(G); lowHpStart(0.4)(G); G.hint = G.t < 4 ? { text: 'Wenig HP · weich aus und kontere' } : null; }
+      onTick: (G) => { wakeTick(G, 2); lowHpStart(0.4)(G); G.hint = G.t < 4 ? { text: 'Wenig HP · weich aus und kontere' } : null; }
     },
     won: [
       { bg: 'rotplanet', portrait: 'quinn' },
