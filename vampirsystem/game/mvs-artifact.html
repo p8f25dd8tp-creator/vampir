@@ -3677,7 +3677,7 @@ function learn(...ids) { const Q = SAVE.quinn; for (const s of ids) if (!Q.skill
 
 /* ------------------------------------------------------------ Kampf-Hilfen */
 function ratPack(n, spots, t0, dt) {
-  return Array.from({ length: n }, (_, i) => ({ id: 'rat' + i, draw: 'rattaclaw', name: 'Rattaclaw', hp: 4, poise: 2, r: 13, at: spots[i % spots.length].map((v, j) => v + (j ? (i >> 2) * 12 : 0)), ai: AI_RAT, expRate: 1, expKill: 14,
+  return Array.from({ length: n }, (_, i) => ({ id: 'rat' + i, draw: 'rattaclaw', name: 'Rattaclaw', hp: 3, poise: 2, r: 13, at: spots[i % spots.length].map((v, j) => v + (j ? (i >> 2) * 12 : 0)), ai: AI_RAT, expRate: 1, expKill: 14,
     info: { name: 'Rattaclaw', race: 'Bestie · Basic-Stufe', ability: 'Rudeljäger, scharfe Krallen', blood: 'giftig – nicht trinkbar' } }));
 }
 function wakeTick(G, maxAwake) { // Rudel: hoechstens maxAwake greifen gleichzeitig an, die naechste folgt mit kurzem Abstand
