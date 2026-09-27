@@ -23,11 +23,19 @@ Wer im letzten Moment ausweicht (die rote Bodenfläche ist gerade voll), löst e
 **perfektes Ausweichen** aus: kurze Zeitlupe und ein Konterfenster mit doppeltem Schaden.
 Angriffe und Ausweichen kosten **Ausdauer**.
 
-## Stand: Etappe 1
+## Stand: Etappe 2
 
 * Prolog „Das schwarze Buch“ (Kap. 1–3): das System erwacht, Statusfenster, Tagesquests, Sonne.
-* „Der erste Kampf“ (Kap. 10–11): Kyle mit den Tigerkrallen, Verwandlung ab halber Kraft,
-  Tutorial im Kampf. Belohnung: 50 EP und Inspect.
+* Der Fähigkeitstest (Kap. 4–7): Vordens Handschlag, die Testgruppe, Messung in der Sonne mit
+  halben Werten, die Ergebnisse der anderen.
+* **Die Akademie als Hub** (Kap. 8–14): Schulhof mit Wohnheim, Bibliothek, Kantine und
+  Trainingshalle. Tage und Nächte, Tagesquests „2 Liter Wasser“ und „Meide die Sonne“ (im Licht
+  sind die Werte halbiert, der überdachte Hauptweg und die Gebäudeschatten schützen).
+* „Der erste Kampf“ (Kap. 10–11): Kyle mit den Tigerkrallen. Belohnung: 50 EP und Inspect.
+* „Training bei Nacht“ (Kap. 12): Ausweichtest gegen ein Trainingsgerät, Layla schaut zu.
+* „Ungeschriebene Regeln“ (Kap. 13–14): Mono weicht jedem Angriff aus; Inspect ist in der
+  Sonne nicht lesbar.
+* INSPECT-Knopf: zeigt Name, Rasse, Fähigkeit, HP und Blutgruppe des nächsten Ziels.
 
 ## Aufbau
 

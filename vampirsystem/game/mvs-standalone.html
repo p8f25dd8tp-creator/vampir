@@ -114,6 +114,16 @@ canvas#game { position: absolute; inset: 0; display: block; touch-action: none; 
   background: radial-gradient(circle at 40% 35%, rgba(200,230,255,.8), rgba(80,130,210,.6)); box-shadow: 0 0 12px rgba(120,180,255,.5); }
 .inspect { position: absolute; left: 50%; bottom: calc(230px + var(--safe-b)); transform: translateX(-50%); width: min(86vw, 340px); pointer-events: none; }
 
+.hud .goal { margin-top: 8px; font-size: 14px; text-shadow: 0 1px 3px #000, 0 0 6px #000; }
+.hud .goal .gh { font-family: 'Cinzel', serif; font-weight: 800; font-size: 11px; letter-spacing: .14em; color: var(--sys); }
+.hud .goal .gq { color: #ffe6a0; margin-top: 2px; }
+.hud .goal .gd { color: #cfe0f0; font-size: 13px; }
+.hud .goal .gd.bad { color: #ff8a8a; }
+.sunchip { position: absolute; left: 50%; transform: translateX(-50%); top: calc(150px + var(--safe-t)); white-space: nowrap; padding: 5px 12px; border-radius: 20px;
+  background: rgba(255,190,60,.85); color: #2a1604; font-family: 'Cinzel', serif; font-weight: 800; font-size: 11px; letter-spacing: .1em; opacity: 0; transition: opacity .2s; }
+.sunchip.on { opacity: 1; }
+.pad .atk.act { background: radial-gradient(circle at 40% 35%, rgba(255,210,120,.7), rgba(80,50,10,.8)); border-color: #ffe6a0; font-size: 13px; }
+
 </style>
 </head>
 <body>
@@ -173,6 +183,8 @@ const SAVE_KEY = 'mvs.save.v1';
 const DEFAULT_SAVE = {
   progress: {},        // missionId -> { done, best }
   quinn: { level: 1, exp: 0, points: 0, stats: { str: 10, agi: 10, sta: 10 }, skills: [], blood: {} },
+  day: { n: 1, night: false, sun: 0, water: false },
+  flags: {},
   settings: { sfx: 0.8, music: 0.5, shake: 1, easyCombo: false, wideDodge: false }
 };
 let SAVE = loadSave();
@@ -821,6 +833,13 @@ function drawPerson(g, P, L) {
 const LOOKS = {
   quinn: { outfit: 'hoodie', top: '#5c5e6c', topL: '#8a8c9a', topD: '#2c2e38', leg: '#34405a', legD: '#1a2030', shoe: '#e8e8ea', skin: '#e8c6ac', skinD: '#b08a74', hair: '#2a1c16', eye: '#6a4a2a', glasses: true, hairStyle: 'messy', rim: '#9ab0ff' },
   peter: { outfit: 'uniform', top: '#4a5a44', topL: '#76866e', topD: '#222a1e', leg: '#2e3628', legD: '#161a12', shoe: '#2a2420', skin: '#e8cdb0', skinD: '#a88a70', hair: '#8a6a3a', eye: '#4a6a3a', hairStyle: 'short', trim: '#b0a070', rim: '#9aff9a' },
+  vorden: { outfit: 'uniform', top: '#2a3a5a', topL: '#4a5e8a', topD: '#10182a', leg: '#1e2638', legD: '#0c1018', shoe: '#1a1a20', skin: '#f0dccc', skinD: '#b09888', hair: '#e8cf7a', eye: '#4a7ac8', hairStyle: 'short', trim: '#e8cf7a', rim: '#ffd27a' },
+  layla: { outfit: 'uniform', top: '#3a2a5a', topL: '#5e4a8a', topD: '#180e2a', leg: '#221a30', legD: '#100c18', shoe: '#1a1620', skin: '#f0d8cc', skinD: '#b0968a', hair: '#2a1a2a', eye: '#6a4a8a', hairStyle: 'long', trim: '#c8a0ff', rim: '#c8a0ff' },
+  erin: { outfit: 'uniform', top: '#2a3a4a', topL: '#4a6278', topD: '#101a24', leg: '#1e2630', legD: '#0c1016', shoe: '#1a1a1e', skin: '#f4e4dc', skinD: '#b8a49c', hair: '#dce4f0', eye: '#6aa8d8', hairStyle: 'bun', trim: '#9ad8ff', rim: '#9ad8ff' },
+  mono: { outfit: 'uniform', top: '#1a2440', topL: '#3a4a78', topD: '#080c18', leg: '#141a2a', legD: '#080a12', shoe: '#101014', skin: '#e8d0c0', skinD: '#a88878', hair: '#2a1e14', eye: '#6ab0ff', hairStyle: 'short', trim: '#6ab0ff', rim: '#6ab0ff' },
+  zweit: { outfit: 'uniform', top: '#3a3040', topL: '#5e5068', topD: '#18121c', leg: '#201a24', legD: '#0e0a10', shoe: '#141014', skin: '#e0c4a8', skinD: '#a08468', hair: '#3a2a1e', eye: '#5a4a3a', hairStyle: 'spiky', trim: '#b0a070', rim: '#b0a0c0' },
+  jane: { outfit: 'uniform', top: '#3a4a3a', topL: '#5e7260', topD: '#182018', leg: '#222a22', legD: '#0e120e', shoe: '#141410', skin: '#e8ccb4', skinD: '#a88c74', hair: '#5a3a24', eye: '#4a5a3a', hairStyle: 'bun', trim: '#e0c050', rim: '#e0c050' },
+  del: { outfit: 'uniform', top: '#4a4a3a', topL: '#727260', topD: '#20201a', leg: '#28281e', legD: '#12120c', shoe: '#141410', skin: '#dcbc9c', skinD: '#9a7c60', hair: '#9a9a9a', eye: '#4a4a3a', hairStyle: 'short', trim: '#e0c050', rim: '#e0c050' },
   kyle: { outfit: 'uniform', top: '#6a2a1e', topL: '#9a4a36', topD: '#30100a', leg: '#2a1c18', legD: '#140c0a', shoe: '#1a1414', skin: '#e0b894', skinD: '#9a7458', hair: '#c8781e', eye: '#ffa030', hairStyle: 'spiky', trim: '#d0a060', angry: true, rim: '#ff9a3a' }
 };
 const HUMAN_BOX = 120;
@@ -954,7 +973,7 @@ function newFight(opt) {
   G.player = p;
   for (const f of opt.foes) {
     const e = mkEnt(f.id, LOOKS[f.look || f.id], f.at[0], f.at[1]);
-    Object.assign(e, { team: 1, name: f.name, maxHp: f.hp, hp: f.hp, ai: f.ai, poise: f.poise || 3, maxPoise: f.poise || 3, poiseT: 0, phase: 1, cd: 0.8 });
+    Object.assign(e, { team: 1, name: f.name, maxHp: f.hp, hp: f.hp, ai: f.ai, poise: f.poise || 3, maxPoise: f.poise || 3, poiseT: 0, phase: 1, cd: f.cd || 0.8, info: f.info, draw: f.draw, fixed: f.fixed, r: f.r || 11 });
     e.face = -1;
     G.foe = G.foe || e;
   }
@@ -981,7 +1000,9 @@ function updateFight(rdt) {
   const dt = rdt * G.scale;
   G.t += dt;
   for (let i = G.later.length - 1; i >= 0; i--) { const L = G.later[i]; L.t -= dt; if (L.t <= 0) { G.later.splice(i, 1); L.fn(); if (!G) return; } }
+  if (G.arena.pois) updatePois();
   handleInput(dt);
+  if (!G) return;
   updatePlayer(dt);
   for (const e of G.ents) if (e.team === 1) updateFoe(e, dt);
   for (const e of G.ents) if (e.npc) updateNpc(e, dt);
@@ -1016,7 +1037,9 @@ function handleInput(dt) {
   while (INPUT.events.length) {
     const ev = INPUT.events.shift();
     if (G.state !== 'play') continue;
+    if (ev === 'atkDown' && G.poi) { const P = G.poi; G.poi = null; P.action(P); if (!G) return; continue; }
     if (ev === 'atkDown') { p.holdT = 0; tryAttack(p); }
+    else if (ev === 'inspect') doInspect(p);
     else if (ev === 'atkUp') { if (p.state === 'charge') releaseCharge(p); p.holdT = -1; }
     else if (ev === 'dodge') tryDodge(p);
   }
@@ -1071,7 +1094,9 @@ function updatePlayer(dt) {
   p.buffer = Math.max(0, p.buffer - dt);
   p.stamDelay -= dt;
   if (p.stamDelay <= 0 && p.state !== 'charge') p.stam = Math.min(p.maxStam, p.stam + 42 * dt);
-  const spd = 120 * Math.pow(p.agi / 10, 0.35);
+  G.inSun = inSun(p);
+  const sunK = G.inSun ? 0.5 : 1;
+  const spd = 120 * Math.pow(p.agi * sunK / 10, 0.35);
   const [mx, my] = readMove();
   let tvx = 0, tvy = 0;
   if (p.state === 'idle') {
@@ -1122,7 +1147,8 @@ function playerHit(p, A) {
     if (e.team !== 1 || e.state === 'down' || e.state === 'transform') continue;
     const d = Math.hypot(e.x - p.x, e.y - p.y);
     if (d > A.reach + e.r || !inArc(e.x, e.y, p.x, p.y, p.aim, A.arc)) continue;
-    let dmg = A.dmg * (p.str / 10);
+    if (e.ai && e.ai.foresight && e.state !== 'stagger') { foresee(e, p); continue; }
+    let dmg = A.dmg * (p.str * (G.inSun ? 0.5 : 1) / 10);
     const counter = p.counterT > 0;
     if (counter) { dmg *= 2; p.counterT = 0; }
     hitAny = true;
@@ -1163,7 +1189,7 @@ function damagePlayer(src, dmg, ang, kb) {
     if (p.state === 'dodge' && G.t - p.dodgeStart <= win && !p.perfectUsed) perfectDodge(p, src);
     return 'dodged';
   }
-  p.hp = Math.max(0, p.hp - dmg);
+  p.hp = Math.max(G.opt.noDeath ? 1 : 0, p.hp - dmg);
   G.stats.taken += dmg;
   p.iframes = 0.6; p.flash = 0.12; p.anim.hurt = 1;
   p.vx = Math.cos(ang) * kb; p.vy = Math.sin(ang) * kb * 0.7;
@@ -1215,7 +1241,17 @@ function updateFoe(e, dt) {
   } else if (e.state === 'active') {
     const A = e.atk;
     e.anim.cast = 1;
-    if (A.type === 'lunge') {
+    if (A.type === 'beam') {
+      if (!e.hitDone) {
+        e.hitDone = true;
+        const L = A.len, ax = Math.cos(e.aim), ay = Math.sin(e.aim);
+        const rx = p.x - e.x, ry = p.y - e.y, along = rx * ax + ry * ay, across = Math.abs(-rx * ay + ry * ax);
+        if (along > 0 && along < L && across < A.width / 2 + p.r) damagePlayer(e, A.dmg, e.aim, 140);
+        G.fx.push({ k: 'beam', x: e.x, y: e.y - 24, a: e.aim, len: L, w: A.width, col: A.col || '#ff6a4a', life: 0.2, t: 0 });
+        sfx('enemyShot', 0, 0.02);
+      }
+      if (e.stateT >= A.act) setState(e, 'recover');
+    } else if (A.type === 'lunge') {
       tvx = Math.cos(e.aim) * A.speed; tvy = Math.sin(e.aim) * A.speed;
       if (!e.hitDone && Math.hypot(p.x - e.x, p.y - e.y) < e.r + p.r + 10) { e.hitDone = true; damagePlayer(e, A.dmg, e.aim, 220); }
       if (e.stateT >= A.act) { setState(e, 'recover'); }
@@ -1237,10 +1273,13 @@ function updateFoe(e, dt) {
   } else if (e.state === 'stagger') {
     e.anim.hurt = 0.8;
     if (e.stateT >= 0.9) { setState(e, 'idle'); e.cd = 0.3; }
+  } else if (e.state === 'evade') {
+    if (e.stateT >= 0.25) setState(e, 'idle');
   } else if (e.state === 'transform') {
     e.anim.cast = 0.5 + Math.sin(e.stateT * 30) * 0.2;
     if (e.stateT >= 1.5) { setState(e, 'idle'); e.cd = 0.5; }
   }
+  if (e.fixed) { tvx = 0; tvy = 0; }
   const k = e.state === 'active' && e.atk && e.atk.type === 'lunge' ? 40 : 10;
   e.vx = lerp(e.vx, tvx, 1 - Math.exp(-dt * k)); e.vy = lerp(e.vy, tvy, 1 - Math.exp(-dt * k));
 }
@@ -1251,7 +1290,7 @@ function startFoeAttack(e, A) {
   if (A.shout) floatText(e.x, e.y - 80, A.shout, '#ffb040');
 }
 function addTele(e, A) {
-  const T = { owner: e, type: A.type, x: e.x, y: e.y, a: e.aim, r: A.type === 'lunge' ? A.speed * A.act + 20 : A.reach, arc: A.arc || 0.2, t: 0, dur: A.wind };
+  const T = { owner: e, type: A.type, x: e.x, y: e.y, a: e.aim, r: A.type === 'lunge' ? A.speed * A.act + 20 : A.type === 'beam' ? A.len : A.reach, w: A.width || 18, arc: A.arc || 0.2, t: 0, dur: A.wind };
   G.tele.push(T);
   return T;
 }
@@ -1276,8 +1315,8 @@ function updateCamera(rdt) {
   let tx = p.x, ty = p.y - 20;
   if (f && f.state !== 'down') { tx = lerp(p.x, f.x, 0.3); ty = lerp(p.y, f.y, 0.3) - 20; }
   const A = G.arena, hw = VIEW.w / 2, hh = VIEW.h / 2;
-  tx = A.w > VIEW.w ? clamp(tx, hw - 20, A.w - hw + 20) : A.w / 2;
-  ty = A.h > VIEW.h - 60 ? clamp(ty, hh - 90, A.h - hh + 70) : A.h / 2;
+  tx = A.w > VIEW.w ? clamp(tx, hw, A.w - hw) : A.w / 2;
+  ty = A.h > VIEW.h ? clamp(ty, hh - 60, A.h - hh + 40) : A.h / 2;
   G.cam.x = lerp(G.cam.x, tx, 1 - Math.exp(-rdt * 6)); G.cam.y = lerp(G.cam.y, ty, 1 - Math.exp(-rdt * 6));
   G.shake = Math.max(0, G.shake - rdt * 30);
 }
@@ -1291,6 +1330,39 @@ function floatText(x, y, txt, col) { G.texts.push({ x, y, txt, col, t: 0, life: 
 function updateFx(dt) {
   for (let i = G.fx.length - 1; i >= 0; i--) { const f = G.fx[i]; f.t += dt; if (f.k === 'spark') { f.x += f.vx * dt; f.y += f.vy * dt; f.vy += 300 * dt; f.vx *= Math.exp(-dt * 4); } if (f.t >= f.life) G.fx.splice(i, 1); }
   for (let i = G.texts.length - 1; i >= 0; i--) { const T = G.texts[i]; T.t += dt; T.y -= 34 * dt; if (T.t >= T.life) G.texts.splice(i, 1); }
+}
+
+/* ------------------------------------------------------------ Sonne, Inspect, Voraussicht, Hub */
+function inRects(e, list) { for (const r of list || []) if (e.x > r.x && e.x < r.x + r.w && e.y > r.y && e.y < r.y + r.h) return true; return false; }
+function inSun(e) { return !inRects(e, G.arena.shade) && inRects(e, G.arena.sun); }
+function doInspect(p) {
+  if (!SAVE.quinn.skills.includes('inspect')) return;
+  const f = nearestFoe(p, 260) || G.ents.find((e) => e.npc && e.npc.info && dist2(e.x, e.y, p.x, p.y) < 260 * 260);
+  if (!f) { sysMsg({ head: 'INSPECT', lines: ['Kein Ziel in der Nähe.'] }, 1600); return; }
+  sfx('card');
+  if (G.inSun) { sysMsg({ head: 'INSPECT', lines: ['Im direkten Sonnenlicht nicht lesbar.'] }, 2400); if (G.opt.onInspect) G.opt.onInspect(G, f, false); return; }
+  const I = f.info || (f.npc && f.npc.info) || {};
+  sysMsg({ head: 'INSPECT', kv: [['Name', I.name || f.name || '?'], ['Rasse', I.race || 'Mensch'], ['Fähigkeit', I.ability || '?'], ['HP', f.team === 1 ? Math.ceil(f.hp) + ' / ' + f.maxHp : '—'], ['Blutgruppe', I.blood || '?']] }, 3400);
+  if (G.opt.onInspect) G.opt.onInspect(G, f, true);
+}
+function foresee(e, p) {
+  // weicht dem Angriff aus, bevor er trifft (sieht ihn kommen)
+  const a = Math.atan2(e.y - p.y, e.x - p.x) + (Math.random() < 0.5 ? 1.2 : -1.2);
+  e.vx = Math.cos(a) * 260; e.vy = Math.sin(a) * 260;
+  setState(e, 'evade');
+  G.stats.evaded = (G.stats.evaded || 0) + 1;
+  floatText(e.x, e.y - 76, 'ausgewichen', '#8ad8ff');
+  sfx('dodge', 0, 0.05);
+  if (G.opt.onEvade) G.opt.onEvade(G, e);
+}
+function updatePois() {
+  const p = G.player; let best = null, bd = 1e9;
+  for (const P of G.arena.pois || []) {
+    if (P.hidden && P.hidden()) continue;
+    const d = Math.hypot(p.x - P.x, p.y - P.y);
+    if (d < (P.r || 34) && d < bd) { bd = d; best = P; }
+  }
+  G.poi = best;
 }
 
 /* ---- src/05-render.js ---- */
@@ -1326,6 +1398,76 @@ ARENA_ART.kantine = function (A) {
   g.strokeStyle = 'rgba(0,0,0,0.25)'; g.lineWidth = 3; g.strokeRect(1.5, 1.5, A.w - 3, A.h - 3);
   return c;
 };
+// Schulhof: Kaserne oben (wirft Schatten), Wege, Rasen, Sonnenflaechen
+ARENA_ART.hof = function (A) {
+  const S = 2, c = mkCanvas(A.w * S, A.h * S), g = c.getContext('2d');
+  g.scale(S, S);
+  const rnd = mulberry(5);
+  g.fillStyle = '#6a8a4a'; g.fillRect(0, 0, A.w, A.h);
+  for (let i = 0; i < 900; i++) { g.fillStyle = rnd() < 0.5 ? 'rgba(40,70,30,0.35)' : 'rgba(140,180,90,0.25)'; g.fillRect(rnd() * A.w, rnd() * A.h, 2, 2); }
+  // Wege
+  for (const r of A.paths || []) {
+    g.fillStyle = '#b8b2a4'; g.fillRect(r.x, r.y, r.w, r.h);
+    g.strokeStyle = 'rgba(0,0,0,0.12)'; g.lineWidth = 1;
+    for (let x = r.x; x < r.x + r.w; x += 16) { g.beginPath(); g.moveTo(x, r.y); g.lineTo(x, r.y + r.h); g.stroke(); }
+    for (let y = r.y; y < r.y + r.h; y += 16) { g.beginPath(); g.moveTo(r.x, y); g.lineTo(r.x + r.w, y); g.stroke(); }
+  }
+  // Gebaeude
+  for (const b of A.buildings || []) {
+    g.fillStyle = lg(g, 0, b.y, 0, b.y + b.h, [0, '#8a94a8', 1, '#5a6478']); g.fillRect(b.x, b.y, b.w, b.h);
+    g.fillStyle = '#3a4252'; g.fillRect(b.x, b.y + b.h - 6, b.w, 6);
+    for (let x = b.x + 10; x < b.x + b.w - 16; x += 22) for (let y = b.y + 8; y < b.y + b.h - 26; y += 20) { g.fillStyle = '#a8c8e0'; g.fillRect(x, y, 12, 10); }
+    if (b.door) { g.fillStyle = '#2a2018'; g.fillRect(b.door - 11, b.y + b.h - 26, 22, 20); g.fillStyle = '#c8a060'; g.fillRect(b.door + 6, b.y + b.h - 17, 2, 2); }
+    g.font = '700 9px Cinzel, serif'; g.textAlign = 'center'; g.fillStyle = '#eef'; g.fillText(b.label || '', b.x + b.w / 2, b.y + 12);
+  }
+  return c;
+};
+// Pruefhalle im Freien: Sand, Messsaeule
+ARENA_ART.pruefplatz = function (A) {
+  const S = 2, c = mkCanvas(A.w * S, A.h * S), g = c.getContext('2d');
+  g.scale(S, S);
+  const rnd = mulberry(9);
+  g.fillStyle = '#c8b48a'; g.fillRect(0, 0, A.w, A.h);
+  for (let i = 0; i < 1200; i++) { g.fillStyle = rnd() < 0.5 ? 'rgba(120,100,60,0.25)' : 'rgba(255,240,200,0.25)'; g.fillRect(rnd() * A.w, rnd() * A.h, 2, 2); }
+  g.strokeStyle = 'rgba(255,255,255,0.6)'; g.lineWidth = 2; g.strokeRect(20, 60, A.w - 40, A.h - 90);
+  g.beginPath(); g.arc(A.w / 2, A.h / 2 + 15, 50, 0, TAU); g.stroke();
+  g.fillStyle = lg(g, 0, 0, 0, 44, [0, '#5a6272', 1, '#8a94a8']); g.fillRect(0, 0, A.w, 44);
+  g.fillStyle = '#3a4252'; g.fillRect(0, 42, A.w, 4);
+  return c;
+};
+// Trainingshalle bei Nacht
+ARENA_ART.halle = function (A) {
+  const S = 2, c = mkCanvas(A.w * S, A.h * S), g = c.getContext('2d');
+  g.scale(S, S);
+  g.fillStyle = '#3a3040'; g.fillRect(0, 0, A.w, A.h);
+  for (let y = 44; y < A.h; y += 22) { g.fillStyle = y / 22 % 2 ? '#40364a' : '#382e42'; g.fillRect(0, y, A.w, 22); }
+  g.strokeStyle = 'rgba(0,0,0,0.3)'; for (let x = 0; x < A.w; x += 44) { g.beginPath(); g.moveTo(x, 44); g.lineTo(x, A.h); g.stroke(); }
+  g.fillStyle = '#1e1a26'; g.fillRect(0, 0, A.w, 44);
+  for (let x = 30; x < A.w - 30; x += 80) { g.fillStyle = '#10141e'; g.fillRect(x, 8, 40, 24); g.fillStyle = 'rgba(160,190,255,0.4)'; g.fillRect(x + 2, 10, 36, 20); }
+  g.fillStyle = 'rgba(200,210,255,0.08)'; g.beginPath(); g.ellipse(A.w / 2, A.h / 2, A.w * 0.4, A.h * 0.3, 0, 0, TAU); g.fill();
+  g.strokeStyle = 'rgba(255,220,150,0.35)'; g.lineWidth = 2; g.strokeRect(24, 64, A.w - 48, A.h - 96);
+  return c;
+};
+// Nicht-menschliche Ziele (Messsaeule, Trainingsgeraet)
+const OBJ_ART = {
+  saeule(g, e) {
+    g.fillStyle = 'rgba(0,0,0,0.3)'; g.beginPath(); g.ellipse(e.x, e.y + 2, 18, 6, 0, 0, TAU); g.fill();
+    g.fillStyle = lg(g, e.x - 12, 0, e.x + 12, 0, [0, '#5a6272', 0.5, '#c8d0dc', 1, '#4a5262']); g.fillRect(e.x - 12, e.y - 64, 24, 64);
+    g.fillStyle = '#2a303c'; g.fillRect(e.x - 14, e.y - 68, 28, 6); g.fillRect(e.x - 14, e.y - 4, 28, 6);
+    const k = e.meter || 0;
+    g.fillStyle = '#10141e'; g.fillRect(e.x - 5, e.y - 58, 10, 48);
+    g.fillStyle = lg(g, 0, e.y - 10, 0, e.y - 58, [0, '#4affa0', 0.6, '#ffe04a', 1, '#ff4a4a']); g.fillRect(e.x - 5, e.y - 10 - 48 * k, 10, 48 * k);
+    if (e.flash > 0) { g.fillStyle = `rgba(255,255,255,${e.flash * 6})`; g.fillRect(e.x - 12, e.y - 64, 24, 64); }
+  },
+  geraet(g, e) {
+    g.fillStyle = 'rgba(0,0,0,0.35)'; g.beginPath(); g.ellipse(e.x, e.y + 2, 20, 7, 0, 0, TAU); g.fill();
+    g.fillStyle = lg(g, 0, e.y - 36, 0, e.y, [0, '#8a94a8', 1, '#3a4252']); g.beginPath(); g.moveTo(e.x - 18, e.y); g.lineTo(e.x - 12, e.y - 30); g.lineTo(e.x + 12, e.y - 30); g.lineTo(e.x + 18, e.y); g.closePath(); g.fill();
+    g.save(); g.translate(e.x, e.y - 32); g.rotate(e.aim || 0);
+    g.fillStyle = '#2a303c'; g.fillRect(-8, -7, 26, 14); g.fillStyle = e.state === 'wind' ? '#ff5a4a' : '#8ad8ff'; g.fillRect(16, -4, 5, 8);
+    g.restore();
+    glowDot(g, e.x, e.y - 32, 16, e.state === 'wind' ? '#ff5a4a' : '#8ad8ff', 0.35);
+  }
+};
 function drawTable(g, b) {
   // Tischplatte mit Beinen, von schraeg oben
   g.fillStyle = 'rgba(0,0,0,0.25)'; g.fillRect(b.x + 3, b.y + 6, b.w, b.h);
@@ -1348,14 +1490,27 @@ function renderFight() {
   const A = G.arena;
   if (!A.bg) A.bg = ARENA_ART[A.art](A);
   g.drawImage(A.bg, 0, 0, A.w, A.h);
+  // Sonnenflaechen
+  for (const r of A.sun || []) { g.save(); g.globalCompositeOperation = 'lighter'; g.fillStyle = 'rgba(255,230,160,0.18)'; g.fillRect(r.x, r.y, r.w, r.h); g.restore(); }
+  for (const r of A.shade || []) { g.fillStyle = 'rgba(20,30,60,0.28)'; g.fillRect(r.x, r.y, r.w, r.h); }
+  // Interaktionspunkte
+  for (const P of A.pois || []) {
+    if (P.hidden && P.hidden()) continue;
+    const on = G.poi === P, pulse = 0.5 + Math.sin(G.t * 4) * 0.5;
+    g.save(); g.globalCompositeOperation = 'lighter'; g.globalAlpha = on ? 0.9 : 0.35 + pulse * 0.3;
+    g.strokeStyle = P.col || '#8ad8ff'; g.lineWidth = 2; g.beginPath(); g.ellipse(P.x, P.y, 20, 8, 0, 0, TAU); g.stroke();
+    g.drawImage(glowSprite(P.col || '#8ad8ff'), P.x - 22, P.y - 30, 44, 40);
+    g.restore();
+    g.font = '800 10px Cinzel, serif'; g.textAlign = 'center'; g.lineWidth = 3; g.strokeStyle = 'rgba(0,0,0,0.8)'; g.strokeText(P.label, P.x, P.y - 34); g.fillStyle = on ? '#ffffff' : (P.col || '#bfe6ff'); g.fillText(P.label, P.x, P.y - 34);
+  }
   // Angriffsmarkierungen auf dem Boden
   for (const T of G.tele) drawTele(g, T);
   // Schatten unter allen Figuren
-  for (const e of G.ents) { g.fillStyle = 'rgba(0,0,0,0.3)'; g.beginPath(); g.ellipse(e.x, e.y + 1, 13, 4.5, 0, 0, TAU); g.fill(); }
+  for (const e of G.ents) { if (e.draw) continue; g.fillStyle = 'rgba(0,0,0,0.3)'; g.beginPath(); g.ellipse(e.x, e.y + 1, 13, 4.5, 0, 0, TAU); g.fill(); }
   // Tische und Figuren nach Tiefe sortiert
   const list = [];
-  for (const b of A.blocks || []) list.push({ y: b.y + b.h, draw: () => drawTable(g, b) });
-  for (const e of G.ents) list.push({ y: e.y, draw: () => drawEnt(g, e) });
+  for (const b of A.blocks || []) if (!b.invisible) list.push({ y: b.y + b.h, draw: () => drawTable(g, b) });
+  for (const e of G.ents) list.push({ y: e.y, draw: () => (e.draw ? OBJ_ART[e.draw](g, e) : drawEnt(g, e)) });
   list.sort((a, b) => a.y - b.y);
   for (const it of list) it.draw();
   // Effekte
@@ -1363,12 +1518,19 @@ function renderFight() {
   for (const f of G.fx) {
     const k = f.t / f.life;
     if (f.k === 'spark') { g.globalAlpha = 1 - k; g.drawImage(glowSprite(f.col), f.x - f.size * 2, f.y - f.size * 2, f.size * 4, f.size * 4); }
+    else if (f.k === 'beam') { g.save(); g.translate(f.x, f.y); g.rotate(f.a); g.globalAlpha = 1 - k; g.fillStyle = f.col; g.fillRect(0, -f.w / 2 * (1 - k), f.len, f.w * (1 - k)); g.fillStyle = '#ffffff'; g.fillRect(0, -2, f.len, 4); g.restore(); }
     else if (f.k === 'slash') {
       g.globalAlpha = (1 - k) * 0.9; g.strokeStyle = f.col; g.lineWidth = 5 * (1 - k) + 1;
       g.beginPath(); g.arc(f.x, f.y + 20, f.r * 0.85, f.a - f.arc, f.a + f.arc); g.stroke();
     }
   }
   g.restore();
+  // Nacht: dunkel, nur um Quinn herum Licht (Nachtsicht)
+  if (A.night) {
+    const p0 = G.player;
+    g.fillStyle = rg(g, p0.x, p0.y - 30, 40, 260, [0, 'rgba(8,10,30,0.15)', 1, 'rgba(4,6,20,0.72)']);
+    g.fillRect(G.cam.x - VIEW.w, G.cam.y - VIEW.h, VIEW.w * 2, VIEW.h * 2);
+  }
   // Zahlen und Texte
   g.textAlign = 'center';
   for (const T of G.texts) {
@@ -1392,11 +1554,12 @@ function drawTele(g, T) {
   const k = clamp(T.t / T.dur, 0, 1), done = T.t >= T.dur;
   g.save(); g.translate(T.x, T.y);
   const col = done ? 'rgba(255,255,255,0.55)' : `rgba(255,60,40,${0.18 + k * 0.22})`;
-  if (T.type === 'lunge') {
+  if (T.type === 'lunge' || T.type === 'beam') {
+    const w = T.type === 'beam' ? T.w : 18;
     g.rotate(T.a);
-    g.fillStyle = col; g.fillRect(0, -9, T.r, 18);
-    g.fillStyle = 'rgba(255,90,60,0.55)'; g.fillRect(0, -9, T.r * k, 18);
-    g.strokeStyle = 'rgba(255,120,90,0.8)'; g.lineWidth = 1.2; g.strokeRect(0, -9, T.r, 18);
+    g.fillStyle = col; g.fillRect(0, -w / 2, T.r, w);
+    g.fillStyle = 'rgba(255,90,60,0.55)'; g.fillRect(0, -w / 2, T.r * k, w);
+    g.strokeStyle = 'rgba(255,120,90,0.8)'; g.lineWidth = 1.2; g.strokeRect(0, -w / 2, T.r, w);
   } else {
     g.scale(1, 0.72);
     g.fillStyle = col;
@@ -1510,13 +1673,15 @@ function buildHud(opt) {
   UI.root.innerHTML = `<div class="hud">
     <div class="me"><div class="nm">QUINN TALEN<small id="lvl">Stufe ${SAVE.quinn.level}</small></div>
       <div class="bar hp"><i id="hpb"></i></div><div class="hpnum" id="hpn"></div>
-      <div class="bar st" id="stbw"><i id="stb"></i></div></div>
+      <div class="bar st" id="stbw"><i id="stb"></i></div>
+      <div class="goal" id="goal"></div></div>
+    <div class="sunchip" id="sun">☀ SONNE · WERTE HALBIERT</div>
     <div class="foe" id="foe" style="display:none"><div class="nm" id="foen"></div><div class="bar"><i id="foeb"></i></div></div>
     <button class="pause" id="pauseBtn">❚❚</button>
     <div class="hint" id="hint"></div>
     <div class="stickzone" id="sz"><div class="stick" style="display:none"><i></i></div></div>
     <div class="pad">
-      <button class="insp ${opt.inspect ? '' : 'off'}" id="bInsp">INSPECT</button>
+      <button class="insp ${opt.inspect || SAVE.quinn.skills.includes('inspect') ? '' : 'off'}" id="bInsp">INSPECT</button>
       <button class="dodge" id="bDodge">AUS-<br>WEICHEN</button>
       <button class="atk" id="bAtk">ANGRIFF</button>
     </div>
@@ -1547,6 +1712,18 @@ function updateHud() {
   if (C.hint !== h) { C.hint = h; $('#hint').innerHTML = h; }
   const ch = p.state === 'charge' && p.stateT > 0.45;
   if (C.ch !== ch) { C.ch = ch; $('#bAtk').classList.toggle('charge', ch); }
+  const atkTxt = G.poi ? (G.poi.btn || 'LOS') : 'ANGRIFF';
+  if (C.atk !== atkTxt) { C.atk = atkTxt; $('#bAtk').textContent = atkTxt; $('#bAtk').classList.toggle('act', !!G.poi); }
+  const sun = !!G.inSun;
+  if (C.sun !== sun) { C.sun = sun; $('#sun').classList.toggle('on', sun); }
+  if (G.hubInfo) {
+    const D = SAVE.day, gk = G.hubInfo.goal + D.water + Math.round(D.sun) + D.n + D.night;
+    if (C.goal !== gk) {
+      C.goal = gk;
+      $('#goal').innerHTML = `<div class="gh">TAG ${D.n}${D.night ? ' · NACHT' : ''}</div>${G.hubInfo.goal ? `<div class="gq">▸ ${G.hubInfo.goal}</div>` : ''}` +
+        (D.night ? '' : `<div class="gd">${D.water ? '✔' : '▫'} 2 Liter Wasser trinken</div><div class="gd ${D.sun >= 6 ? 'bad' : ''}">${D.sun < 6 ? '▫' : '✘'} Sonne meiden (${Math.min(6, D.sun).toFixed(0)} / 6 s)</div>`);
+    }
+  }
   const lowD = p.stam < 18;
   if (C.lowD !== lowD) { C.lowD = lowD; $('#bDodge').classList.toggle('cd', lowD); }
 }
@@ -1608,6 +1785,19 @@ const AI_KYLE = {
   }
 };
 
+/* ------------------------------------------------------------ KI: Trainingsgeraet, Mono */
+const GERAET_ATK = { type: 'beam', wind: 0.7, act: 0.12, rec: 0.35, len: 420, width: 26, dmg: 1 };
+const AI_GERAET = {
+  params: (e) => ({ range: 999, speed: 0, cd: Math.max(0.45, 1.1 - G.t * 0.03) }),
+  choose: () => GERAET_ATK
+};
+const MONO_ATK = { type: 'swipe', wind: 0.5, act: 0.1, rec: 0.6, reach: 40, arc: 0.9, dmg: 1, col: '#6ab0ff' };
+const AI_MONO = {
+  foresight: true,
+  params: () => ({ range: 60, speed: 90, cd: 1.6 }),
+  choose: (e, d) => (d < 55 ? MONO_ATK : null)
+};
+
 /* ------------------------------------------------------------ Missionen */
 const MISSIONS = {
   prolog: {
@@ -1624,16 +1814,60 @@ const MISSIONS = {
       { bg: 'zimmer', portrait: 'quinn' },
       { who: 'Quinn', text: 'Ein Statusfenster? Wie in einem Spiel …' },
       { bg: 'bus', portrait: null },
-      { narr: 'Am nächsten Morgen bringt ihn ein Transport zur Militärschule. Draußen in der Sonne fühlt er sich seltsam kraftlos.' },
-      { sys: { head: 'SYSTEM', lines: ['Warnung: Direktes Sonnenlicht halbiert alle Werte.'], quests: ['Tagesquest: Meide 8 Stunden die Sonne'] } }
+      { narr: 'Am nächsten Morgen bringt ihn ein Transport in eine Militärstadt voller Technik. Draußen in der Sonne fühlt er sich seltsam kraftlos.' },
+      { sys: { head: 'SYSTEM', lines: ['Warnung: Direktes Sonnenlicht halbiert alle Werte.'], quests: ['Tagesquest: Meide die Sonne'] } }
     ],
-    next: 'kyle'
+    next: 'test'
   },
+
+  /* Faehigkeitstest (Kap. 4–7) */
+  test: {
+    id: 'test', title: 'Der Fähigkeitstest', src: 'Kapitel 4–7', type: 'pruefung',
+    scene: [
+      { bg: 'kantine', portrait: 'vorden' },
+      { narr: 'Auf dem Prüfplatz stehen die Neuen in Gruppen. Ein blonder Junge streckt Quinn freundlich die Hand entgegen.' },
+      { who: 'Vorden', text: 'Ich bin Vorden. Wir sind in derselben Testgruppe, schätze ich.' },
+      { bg: 'system', portrait: null },
+      { sys: { head: 'SYSTEM', lines: ['Eine fremde Fähigkeit hat versucht, auf dich zuzugreifen.', 'Zugriff blockiert.'] } },
+      { bg: 'kantine', portrait: 'peter' },
+      { narr: 'In Quinns Gruppe sind außerdem Peter, der vor Nervosität zittert, Layla mit einem Bogen aus Bestienmaterial und Erin, deren Kälte man fast spürt.' },
+      { portrait: 'jane' },
+      { who: 'Jane', text: 'Wer noch keine Fähigkeit hat, bekommt ein kostenloses Fähigkeitsbuch. Danach wird gemessen. Nächster.' },
+      { portrait: 'quinn' },
+      { narr: 'Quinn lehnt das Buch ab. Er will wissen, was das System mit ihm vorhat. Der Test findet draußen statt – mitten in der Sonne.' },
+      { bg: 'system', portrait: null },
+      { sys: { head: 'PRÜFUNG', lines: ['Triff die Messsäule so oft und so hart du kannst.', 'Die Sonne halbiert deine Werte.'], kv: [['Zeit', '12 Sekunden']] } }
+    ],
+    fight: {
+      arena: { art: 'pruefplatz', w: 340, h: 680, sun: [{ x: 0, y: 0, w: 340, h: 680 }] },
+      playerAt: [170, 440],
+      foes: [{ id: 'saeule', name: 'Messsäule', hp: 9999, poise: 999, at: [170, 330], draw: 'saeule', fixed: true, r: 14, ai: { params: () => ({ range: 999, speed: 0, cd: 99 }), choose: () => null } }],
+      inspect: false, noFoeBar: true,
+      onTick: testTick
+    },
+    won: [
+      { bg: 'kantine', portrait: 'layla' },
+      { narr: 'Die Ergebnisse werden laut vorgelesen. Layla lässt ihren Pfeil mit schwacher Telekinese nachlenken: Stufe 2.' },
+      { portrait: 'erin' },
+      { narr: 'Erin lässt Eissäulen aus dem Boden schießen: Stufe 5. Vorden berührt sie kurz an der Schulter – und wirft danach dasselbe Eis. Ebenfalls Stufe 5.' },
+      { portrait: 'quinn' },
+      { narr: 'Quinn, geschwächt von der Sonne: Stufe 1. Die anderen lachen. Nur ein Offizier am Rand sieht ihm länger nach, als nötig wäre.' },
+      { portrait: 'vorden' },
+      { who: 'Quinn', text: 'Du kopierst Fähigkeiten, wenn du jemanden berührst. Deshalb der Handschlag.' },
+      { who: 'Vorden', text: 'Scharf beobachtet. Dann teilen wir uns wohl besser ein Zimmer.' }
+    ],
+    reward: { exp: 0 },
+    next: 'akademie'
+  },
+
+  /* Akademie: begehbarer Hub mit Tagesquests */
+  akademie: { id: 'akademie', title: 'Die Akademie', src: 'Kapitel 8–14', type: 'hub' },
+
   kyle: {
     id: 'kyle', title: 'Der erste Kampf', src: 'Kapitel 10–11', type: 'gefecht',
     scene: [
       { bg: 'kantine', portrait: 'peter' },
-      { narr: 'Die Kantine der Militärschule. Ein Schüler mit Fähigkeit bedrängt einen schmächtigen Jungen namens Peter. Niemand greift ein.' },
+      { narr: 'Die Kantine. Ein Schüler mit Fähigkeitsstufe 1 bedrängt Peter. Niemand greift ein.' },
       { portrait: 'kyle' },
       { who: 'Kyle', text: 'Wer keine Fähigkeit hat, tut, was ich sage. Kapiert?' },
       { portrait: 'quinn' },
@@ -1653,15 +1887,193 @@ const MISSIONS = {
       { bg: 'kantine', portrait: 'peter' },
       { who: 'Peter', text: 'Danke … Bisher hat sich noch nie jemand für mich eingesetzt.' },
       { bg: 'system', portrait: null },
-      { sys: { head: 'QUEST ERFÜLLT', lines: ['Erster Kampf gewonnen.'], kv: [['EP', '+50'], ['Bis Stufe 2', '50 / 100']] } },
-      { sys: { head: 'NEUE FÄHIGKEIT', lines: ['Inspect (Stufe 1)', 'Zeigt Name, Rasse, Fähigkeitstyp, HP und Blutgruppe eines Ziels.'] } },
-      { bg: 'nacht' },
-      { narr: 'Ende der ersten Etappe. Als Nächstes: die Akademie, der Fähigkeitstest und das erste Duell.' }
+      { sys: { head: 'QUEST ERFÜLLT', lines: ['Erster Kampf gewonnen.'], kv: [['EP', '+50']] } },
+      { sys: { head: 'NEUE FÄHIGKEIT', lines: ['Inspect (Stufe 1)', 'Zeigt Name, Rasse, Fähigkeitstyp, HP und Blutgruppe eines Ziels. Knopf INSPECT.'] } },
+      { sys: { head: 'OPTIONALE QUEST', lines: ['Trinke das Blut deines Gegners.'], kv: [['Belohnung', '1 Wertepunkt']] } },
+      { bg: 'kantine', portrait: 'quinn' },
+      { narr: 'Quinn lehnt ab – und kann trotzdem den Blick nicht vom Blut auf dem Boden lösen.' }
     ],
-    reward: { exp: 50, skills: ['inspect'] }
+    reward: { exp: 50, skills: ['inspect'] },
+    after: () => { SAVE.day.night = true; SAVE.flags.kyle = true; },
+    next: 'akademie'
+  },
+
+  /* Heimliches Nachttraining (Kap. 12) */
+  nacht: {
+    id: 'nacht', title: 'Training bei Nacht', src: 'Kapitel 12', type: 'pruefung',
+    scene: [
+      { bg: 'nacht', portrait: 'quinn' },
+      { narr: 'Seine Wunden aus dem Kampf sind schon fast verheilt – und die Heilung macht ihn hungrig. Nachts schleicht Quinn in die Trainingshalle. Ohne Sonne will er wissen, was er wirklich kann.' },
+      { bg: 'system', portrait: null },
+      { sys: { head: 'AUSWEICHTEST', lines: ['Das Trainingsgerät feuert Strahlen. Die rote Bahn zeigt, wohin.', 'Halte 20 Sekunden durch.'] } }
+    ],
+    fight: {
+      arena: { art: 'halle', w: 340, h: 680 },
+      playerAt: [170, 460],
+      foes: [{ id: 'geraet', name: 'Trainingsgerät', hp: 9999, poise: 999, at: [170, 280], draw: 'geraet', fixed: true, r: 16, cd: 1.2, ai: AI_GERAET, info: { name: 'Trainingsgerät', race: '—', ability: 'Strahl', blood: '—' } }],
+      inspect: true, noDeath: true, noFoeBar: true,
+      onTick: survivalTick(20)
+    },
+    won: [
+      { bg: 'system', portrait: null },
+      { sys: { head: 'ERGEBNIS', lines: ['Ohne Sonne entsprechen deine Werte genau den Werten des Systems.'] } },
+      { bg: 'nacht', portrait: 'layla' },
+      { narr: 'Was Quinn nicht bemerkt: Hinter der Tür der Halle steht Layla und hat alles gesehen. Sie ist jetzt sehr neugierig.' }
+    ],
+    reward: { exp: 0 },
+    after: () => { SAVE.flags.nacht = true; },
+    next: 'akademie'
+  },
+
+  /* Monos Warnung (Kap. 13–14) */
+  mono: {
+    id: 'mono', title: 'Ungeschriebene Regeln', src: 'Kapitel 13–14', type: 'duell',
+    scene: [
+      { bg: 'kantine', portrait: 'vorden' },
+      { narr: 'In der Kantine sitzt jeder nach seiner Stufe. Vorden, ein Original mit Stufe 5, setzt sich demonstrativ zu den Stufe-1ern.' },
+      { narr: 'Nach dem Essen holen sechs Zweitjährige Quinn, Vorden und Peter ab und führen sie nach draußen.' },
+      { portrait: 'mono' },
+      { who: 'Mono', text: 'Hier gibt es Regeln, die nirgends stehen. Wer sie nicht kennt, lernt sie auf die harte Tour.' },
+      { bg: 'system', portrait: null },
+      { sys: { head: 'KAMPF', lines: ['Mono, Stufe 6.', 'Versuche, ihn zu treffen. Probier auch INSPECT.'] } }
+    ],
+    fight: {
+      arena: { art: 'hof', w: 440, h: 700, sun: [{ x: 0, y: 0, w: 440, h: 700 }], paths: [{ x: 192, y: 0, w: 56, h: 700 }] },
+      playerAt: [220, 440],
+      foes: [{ id: 'mono', name: 'Mono · Stufe 6', hp: 60, poise: 99, at: [220, 320], ai: AI_MONO, info: { name: 'Mono', race: 'Mensch', ability: '?', blood: '?' } }],
+      npcs: [{ id: 'peter', at: [120, 380], pose: 'cower', face: 1 }, { id: 'vorden', at: [330, 400], face: -1 }, { id: 'zweit', at: [110, 250], face: 1 }, { id: 'zweit', at: [340, 260], face: -1 }],
+      inspect: true, noDeath: true,
+      onInspect: (G) => { (G.tut || (G.tut = { t: 0 })).inspected = true; },
+      onTick: monoTick
+    },
+    won: [
+      { bg: 'kantine', portrait: 'mono' },
+      { narr: 'Egal wie Quinn angreift – Mono ist immer schon einen Schritt weiter, als hätte er den Schlag vorher gesehen.' },
+      { who: 'Mono', text: 'Das reicht. Merkt euch einfach, wo euer Platz ist.' },
+      { portrait: 'quinn' },
+      { narr: 'Er sieht voraus, was passiert, denkt Quinn. Und im Sonnenlicht konnte das System ihn nicht einmal lesen.' },
+      { bg: 'nacht', portrait: null },
+      { narr: 'Ende der zweiten Etappe. Als Nächstes: Credits, eine schwarze Maske – und Rylee.' }
+    ],
+    reward: { exp: 10 },
+    after: () => { SAVE.flags.mono = true; },
+    next: null
   }
 };
-const MISSION_ORDER = ['prolog', 'kyle'];
+const MISSION_ORDER = ['prolog', 'test', 'kyle', 'nacht', 'mono'];
+
+/* ------------------------------------------------------------ Ablauf-Hilfen */
+function testTick(G, dt) {
+  const T = G.tut || (G.tut = { t: 0, best: 0, total: 0 });
+  T.t += dt;
+  const s = G.foe;
+  s.meter = Math.max(0, (s.meter || 0) - dt * 0.6);
+  const dealt = s.maxHp - s.hp;
+  if (dealt > T.total) { s.meter = Math.min(1, s.meter + (dealt - T.total) * 0.12); T.total = dealt; }
+  G.hint = { text: T.t < 12 ? `Messung läuft · ${Math.ceil(12 - T.t)} s<br><b>ANGRIFF</b> tippen oder halten` : 'Messung beendet' };
+  if (T.t >= 12 && G.state === 'play') {
+    G.state = 'won'; G.result = { total: T.total };
+    sysMsg({ head: 'MESSUNG', kv: [['Gesamtwert', T.total.toFixed(1)], ['Einstufung', 'Stufe 1']] }, 2600);
+    later(2.4, () => G.opt.onWin(G));
+  }
+}
+function survivalTick(sec) {
+  return function (G, dt) {
+    const T = G.tut || (G.tut = { t: 0 });
+    T.t += dt;
+    G.hint = { text: T.t < sec ? `Durchhalten · ${Math.ceil(sec - T.t)} s` : '' };
+    if (T.t >= sec && G.state === 'play') { G.state = 'won'; G.tele.length = 0; banner('GESCHAFFT'); later(1.2, () => G.opt.onWin(G)); }
+  };
+}
+function monoTick(G, dt) {
+  const T = G.tut || (G.tut = { t: 0 });
+  T.t += dt;
+  const ev = G.stats.evaded || 0;
+  G.hint = { text: ev < 2 ? 'Greif Mono an' : T.inspected ? '' : 'Tippe <b>INSPECT</b>' };
+  if ((ev >= 6 && T.inspected) || T.t > 32) { if (G.state === 'play') { G.state = 'won'; G.tele.length = 0; later(0.8, () => G.opt.onWin(G)); } }
+}
+
+/* ------------------------------------------------------------ Hub: die Akademie */
+function hubSetup() {
+  const D = SAVE.day, F = SAVE.flags, night = D.night;
+  const W = 440, H = 700;
+  const buildings = [
+    { x: 20, y: 20, w: 180, h: 110, door: 110, label: 'WOHNHEIM' },
+    { x: 240, y: 20, w: 180, h: 110, door: 330, label: 'BIBLIOTHEK' },
+    { x: 20, y: 300, w: 170, h: 100, door: 105, label: 'KANTINE' },
+    { x: 250, y: 300, w: 170, h: 100, door: 335, label: 'TRAININGSHALLE' }
+  ];
+  const pois = [];
+  const go = (id) => () => leaveHub(() => startMission(id));
+  // Bibliothek (Kap. 9): Buch ueber Vampire
+  pois.push({ x: 330, y: 150, label: 'Bibliothek', hidden: () => F.book || night, action: () => leaveHub(() => runScene(SCENE_BOOK, () => { F.book = true; addExp(10); writeSave(); startMission('akademie'); })) });
+  // Wohnheim: Zimmer 23 (Kap. 8–9), Schlafen
+  pois.push({ x: 110, y: 150, label: F.room ? 'Zimmer 23 · Schlafen' : 'Zimmer 23', col: '#ffe6a0', hidden: () => !canSleep() && F.room, action: () => leaveHub(() => (F.room ? sleep() : runScene(SCENE_ROOM, () => { F.room = true; writeSave(); startMission('akademie'); }))) });
+  // Kantine: Kyle (Tag 2), Mono (Tag 3)
+  pois.push({ x: 105, y: 420, label: 'Kantine', col: '#ffb040', hidden: () => night || !(D.n === 2 && !F.kyle) && !(D.n >= 3 && F.nacht && !F.mono), action: () => leaveHub(() => startMission(D.n === 2 ? 'kyle' : 'mono')) });
+  // Wasserspender (Tagesquest)
+  pois.push({ x: 175, y: 440, label: 'Wasser trinken', col: '#6ec8ff', hidden: () => night || D.water, action: () => { D.water = true; writeSave(); sfx('heal'); sysMsg({ head: 'TAGESQUEST ERFÜLLT', lines: ['2 Liter Wasser getrunken.'], kv: [['EP', '+5']] }); addExp(5); } });
+  // Trainingshalle nachts (Kap. 12)
+  pois.push({ x: 335, y: 420, label: 'Trainingshalle', col: '#c8a0ff', hidden: () => !(night && F.kyle && !F.nacht), action: go('nacht') });
+  const blocks = buildings.map((b) => ({ x: b.x, y: b.y, w: b.w, h: b.h - 8, invisible: true }));
+  // Schatten: unter den Gebaeuden und unter dem ueberdachten Hauptweg (sicherer Weg durch den Hof)
+  const shade = buildings.map((b) => ({ x: b.x - 4, y: b.y + b.h - 8, w: b.w + 8, h: 46 })).concat([{ x: 192, y: 130, w: 56, h: H - 130 }]);
+  return {
+    arena: { art: 'hof', w: W, h: H, buildings, blocks, pois, paths: [{ x: 192, y: 130, w: 56, h: H - 130 }, { x: 0, y: 452, w: W, h: 44 }, { x: 0, y: 160, w: W, h: 40 }],
+      sun: night ? [] : [{ x: 0, y: 0, w: W, h: H }], shade, night },
+    playerAt: [220, 620], foes: [], npcs: [], inspect: SAVE.quinn.skills.includes('inspect'), hub: true, onTick: hubTick
+  };
+}
+function canSleep() {
+  const D = SAVE.day, F = SAVE.flags;
+  if (D.n === 1) return F.book && F.room;
+  if (D.n === 2) return F.kyle && F.nacht;
+  return false;
+}
+function hubGoal() {
+  const D = SAVE.day, F = SAVE.flags;
+  if (D.n === 1) return !F.room ? 'Sieh dir Zimmer 23 im Wohnheim an' : !F.book ? 'Rundgang: Besuche die Bibliothek' : 'Geh schlafen (Zimmer 23)';
+  if (D.n === 2 && !F.kyle) return 'Geh in die Kantine';
+  if (D.n === 2 && !F.nacht) return 'Nacht: Schleich in die Trainingshalle';
+  if (D.n === 2) return 'Geh schlafen (Zimmer 23)';
+  if (!F.mono) return 'Geh in die Kantine';
+  return '';
+}
+function hubTick(G, dt) {
+  const D = SAVE.day;
+  if (G.inSun) D.sun += dt;
+  G.hint = null;
+  G.hubInfo = { goal: hubGoal(), sun: G.inSun };
+}
+function leaveHub(fn) { G = null; writeSave(); fn(); }
+function addExp(n) { SAVE.quinn.exp += n; writeSave(); }
+function sleep() {
+  const D = SAVE.day, sunOk = D.sun < 6, lines = [];
+  let ep = 0;
+  lines.push(D.water ? '✔ 2 Liter Wasser getrunken (+5 EP)' : '✘ Kein Wasser getrunken');
+  if (D.water) ep += 5;
+  lines.push(sunOk ? '✔ Die Sonne gemieden (+5 EP)' : `✘ Zu lange in der Sonne (${Math.round(D.sun)} s)`);
+  if (sunOk) ep += 5;
+  addExp(ep - (D.water ? 5 : 0)); // Wasser wurde schon beim Trinken gutgeschrieben
+  const n = D.n;
+  SAVE.day = { n: n + 1, night: false, sun: 0, water: false };
+  writeSave();
+  SCENE_BG.cur = 'nacht';
+  runScene([{ bg: 'system' }, { sys: { head: `TAG ${n} BEENDET`, lines } }, { sys: { head: 'NEUER TAG', lines: [`Tag ${n + 1}`], quests: ['Tagesquest: Trinke 2 Liter Wasser', 'Tagesquest: Meide die Sonne'] } }], () => startMission('akademie'));
+}
+const SCENE_BOOK = [
+  { bg: 'zimmer', portrait: null },
+  { narr: 'Die Bibliothek hat drei Etagen. In einem abgelegenen Regal findet Quinn ein Buch über Vampire – eigentlich eine Sammlung von Legenden.' },
+  { bg: 'system' },
+  { sys: { head: 'SYSTEM', lines: ['Wissen erlangt.'], kv: [['EP', '+10']] } }
+];
+const SCENE_ROOM = [
+  { bg: 'zimmer', portrait: 'vorden' },
+  { narr: 'Zimmer 23. Vorden hat dafür gesorgt, dass er mit Quinn zusammenwohnt. Der Dritte im Zimmer ist Peter.' },
+  { who: 'Vorden', text: 'Ein Originalkind, ein Stufe-1er und einer ohne Fähigkeit. Das wird lustig.' },
+  { portrait: 'peter' },
+  { who: 'Peter', text: 'Ich … versuche einfach, niemandem im Weg zu stehen.' }
+];
 
 /* ------------------------------------------------------------ Tutorial im ersten Kampf */
 function tutorialTick(G, dt) {
@@ -1704,12 +2116,16 @@ function showTitle() {
     <button class="btn" id="tNew">${started ? 'Von vorn beginnen' : 'Spiel starten'}</button>
     ${started ? '<button class="btn" id="tCont">Fortsetzen</button>' : ''}
     <button class="btn ghost" id="tSet">Einstellungen</button>
-    <div class="foot">Private Fan-Umsetzung von „My Vampire System“.<br>Frühe Testversion · Etappe 1</div>`, '');
+    <div class="foot">Private Fan-Umsetzung von „My Vampire System“.<br>Frühe Testversion · Etappe 2</div>`, '');
   el.querySelector('#tNew').onclick = () => { AudioSys.init(); if (started) resetSave(); startMission('prolog'); };
   if (started) el.querySelector('#tCont').onclick = () => { AudioSys.init(); startMission(nextMission()); };
   el.querySelector('#tSet').onclick = showSettings;
 }
-function nextMission() { for (const id of MISSION_ORDER) if (!SAVE.progress[id] || !SAVE.progress[id].done) return id; return MISSION_ORDER[MISSION_ORDER.length - 1]; }
+function nextMission() {
+  if (!SAVE.progress.prolog) return 'prolog';
+  if (!SAVE.progress.test) return 'test';
+  return SAVE.flags.mono ? 'ende' : 'akademie';
+}
 function showSettings() {
   const S = SAVE.settings;
   const el = uiShow(`${sysBox({ head: 'EINSTELLUNGEN', lines: ['Tippe zum Umschalten.'] })}
@@ -1724,7 +2140,9 @@ function showSettings() {
 }
 
 function startMission(id, skipScene) {
+  if (id === 'ende') return showEnd();
   const M = MISSIONS[id]; MISSION = M; G = null;
+  if (M.type === 'hub') return beginHub(M);
   const go = () => (M.fight ? beginFight(M) : finishMission(M, true));
   if (M.scene && !skipScene) runScene(M.scene, go); else go();
 }
@@ -1734,9 +2152,18 @@ function beginFight(M) {
     onWin: () => finishMission(M, true),
     onLose: () => showLost(M)
   }));
-  G.showFoe = true;
+  G.showFoe = !M.fight.noFoeBar;
   buildHud(M.fight);
   banner(M.title.toUpperCase());
+}
+function beginHub(M) {
+  INPUT.events.length = 0; INPUT.atkHeld = false;
+  const opt = hubSetup();
+  newFight(opt);
+  G.showFoe = false;
+  buildHud(opt);
+  const key = SAVE.day.n + '' + SAVE.day.night;
+  if (beginHub.shown !== key) { beginHub.shown = key; banner(SAVE.day.night ? 'NACHT' : 'TAG ' + SAVE.day.n); }
 }
 function finishMission(M, won) {
   const P = SAVE.progress[M.id] || (SAVE.progress[M.id] = {});
@@ -1747,6 +2174,7 @@ function finishMission(M, won) {
     Q.exp += M.reward.exp || 0;
     (M.reward.skills || []).forEach((s) => { if (!Q.skills.includes(s)) Q.skills.push(s); });
   }
+  if (M.after) M.after();
   writeSave();
   G = null;
   const after = () => (M.next ? startMission(M.next) : showEnd(M));
@@ -1759,13 +2187,15 @@ function showLost(M) {
   el.querySelector('#lRe').onclick = () => startMission(M.id, true);
   el.querySelector('#lMenu').onclick = showTitle;
 }
-function showEnd(M) {
-  SCENE_BG.cur = 'nacht';
+function showEnd() {
+  G = null; SCENE_BG.cur = 'nacht';
   const Q = SAVE.quinn;
   const el = uiShow(`${sysBox({ head: 'STATUS', kv: [['Name', 'Quinn Talen'], ['Rasse', 'Mensch'], ['Stufe', Q.level], ['EP', Q.exp + ' / 100'], ['Fähigkeiten', Q.skills.includes('inspect') ? 'Inspect' : '—']], quests: ['Hauptquest: Erreiche Stufe 10'] })}
-    <div class="subtitle">Etappe 1 geschafft · Fortsetzung folgt</div>
-    <button class="btn" id="eRe">Kampf gegen Kyle wiederholen</button><button class="btn ghost" id="eMenu">Hauptmenü</button>`, 'dim');
-  el.querySelector('#eRe').onclick = () => startMission('kyle', true);
+    <div class="subtitle">Etappe 2 geschafft · Fortsetzung folgt</div>
+    <button class="btn" id="eK">Kyle wiederholen</button><button class="btn" id="eN">Nachttraining wiederholen</button><button class="btn" id="eM">Mono wiederholen</button><button class="btn ghost" id="eMenu">Hauptmenü</button>`, 'dim');
+  el.querySelector('#eK').onclick = () => { MISSIONS.kyle.replay = true; startMission('kyle', true); };
+  el.querySelector('#eN').onclick = () => startMission('nacht', true);
+  el.querySelector('#eM').onclick = () => startMission('mono', true);
   el.querySelector('#eMenu').onclick = showTitle;
 }
 
@@ -1773,11 +2203,10 @@ function showEnd(M) {
 let _last = performance.now();
 function frame(now) {
   const rdt = Math.min(0.05, (now - _last) / 1000); _last = now;
-  if (G) {
-    if (!G.paused) updateFight(rdt);
-    renderFight();
-    updateHud();
-  } else renderSceneBg(now / 1000);
+  try {
+    if (G && !G.paused) updateFight(rdt);
+    if (G) { renderFight(); updateHud(); } else renderSceneBg(now / 1000);
+  } catch (err) { console.error(err); }
   AudioSys.musicTick && AudioSys.musicTick(rdt, G ? 0.4 : 0.1);
   requestAnimationFrame(frame);
 }

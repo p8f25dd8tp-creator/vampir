@@ -78,13 +78,15 @@ function buildHud(opt) {
   UI.root.innerHTML = `<div class="hud">
     <div class="me"><div class="nm">QUINN TALEN<small id="lvl">Stufe ${SAVE.quinn.level}</small></div>
       <div class="bar hp"><i id="hpb"></i></div><div class="hpnum" id="hpn"></div>
-      <div class="bar st" id="stbw"><i id="stb"></i></div></div>
+      <div class="bar st" id="stbw"><i id="stb"></i></div>
+      <div class="goal" id="goal"></div></div>
+    <div class="sunchip" id="sun">☀ SONNE · WERTE HALBIERT</div>
     <div class="foe" id="foe" style="display:none"><div class="nm" id="foen"></div><div class="bar"><i id="foeb"></i></div></div>
     <button class="pause" id="pauseBtn">❚❚</button>
     <div class="hint" id="hint"></div>
     <div class="stickzone" id="sz"><div class="stick" style="display:none"><i></i></div></div>
     <div class="pad">
-      <button class="insp ${opt.inspect ? '' : 'off'}" id="bInsp">INSPECT</button>
+      <button class="insp ${opt.inspect || SAVE.quinn.skills.includes('inspect') ? '' : 'off'}" id="bInsp">INSPECT</button>
       <button class="dodge" id="bDodge">AUS-<br>WEICHEN</button>
       <button class="atk" id="bAtk">ANGRIFF</button>
     </div>
@@ -115,6 +117,18 @@ function updateHud() {
   if (C.hint !== h) { C.hint = h; $('#hint').innerHTML = h; }
   const ch = p.state === 'charge' && p.stateT > 0.45;
   if (C.ch !== ch) { C.ch = ch; $('#bAtk').classList.toggle('charge', ch); }
+  const atkTxt = G.poi ? (G.poi.btn || 'LOS') : 'ANGRIFF';
+  if (C.atk !== atkTxt) { C.atk = atkTxt; $('#bAtk').textContent = atkTxt; $('#bAtk').classList.toggle('act', !!G.poi); }
+  const sun = !!G.inSun;
+  if (C.sun !== sun) { C.sun = sun; $('#sun').classList.toggle('on', sun); }
+  if (G.hubInfo) {
+    const D = SAVE.day, gk = G.hubInfo.goal + D.water + Math.round(D.sun) + D.n + D.night;
+    if (C.goal !== gk) {
+      C.goal = gk;
+      $('#goal').innerHTML = `<div class="gh">TAG ${D.n}${D.night ? ' · NACHT' : ''}</div>${G.hubInfo.goal ? `<div class="gq">▸ ${G.hubInfo.goal}</div>` : ''}` +
+        (D.night ? '' : `<div class="gd">${D.water ? '✔' : '▫'} 2 Liter Wasser trinken</div><div class="gd ${D.sun >= 6 ? 'bad' : ''}">${D.sun < 6 ? '▫' : '✘'} Sonne meiden (${Math.min(6, D.sun).toFixed(0)} / 6 s)</div>`);
+    }
+  }
   const lowD = p.stam < 18;
   if (C.lowD !== lowD) { C.lowD = lowD; $('#bDodge').classList.toggle('cd', lowD); }
 }

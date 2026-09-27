@@ -188,6 +188,13 @@ function drawPerson(g, P, L) {
 const LOOKS = {
   quinn: { outfit: 'hoodie', top: '#5c5e6c', topL: '#8a8c9a', topD: '#2c2e38', leg: '#34405a', legD: '#1a2030', shoe: '#e8e8ea', skin: '#e8c6ac', skinD: '#b08a74', hair: '#2a1c16', eye: '#6a4a2a', glasses: true, hairStyle: 'messy', rim: '#9ab0ff' },
   peter: { outfit: 'uniform', top: '#4a5a44', topL: '#76866e', topD: '#222a1e', leg: '#2e3628', legD: '#161a12', shoe: '#2a2420', skin: '#e8cdb0', skinD: '#a88a70', hair: '#8a6a3a', eye: '#4a6a3a', hairStyle: 'short', trim: '#b0a070', rim: '#9aff9a' },
+  vorden: { outfit: 'uniform', top: '#2a3a5a', topL: '#4a5e8a', topD: '#10182a', leg: '#1e2638', legD: '#0c1018', shoe: '#1a1a20', skin: '#f0dccc', skinD: '#b09888', hair: '#e8cf7a', eye: '#4a7ac8', hairStyle: 'short', trim: '#e8cf7a', rim: '#ffd27a' },
+  layla: { outfit: 'uniform', top: '#3a2a5a', topL: '#5e4a8a', topD: '#180e2a', leg: '#221a30', legD: '#100c18', shoe: '#1a1620', skin: '#f0d8cc', skinD: '#b0968a', hair: '#2a1a2a', eye: '#6a4a8a', hairStyle: 'long', trim: '#c8a0ff', rim: '#c8a0ff' },
+  erin: { outfit: 'uniform', top: '#2a3a4a', topL: '#4a6278', topD: '#101a24', leg: '#1e2630', legD: '#0c1016', shoe: '#1a1a1e', skin: '#f4e4dc', skinD: '#b8a49c', hair: '#dce4f0', eye: '#6aa8d8', hairStyle: 'bun', trim: '#9ad8ff', rim: '#9ad8ff' },
+  mono: { outfit: 'uniform', top: '#1a2440', topL: '#3a4a78', topD: '#080c18', leg: '#141a2a', legD: '#080a12', shoe: '#101014', skin: '#e8d0c0', skinD: '#a88878', hair: '#2a1e14', eye: '#6ab0ff', hairStyle: 'short', trim: '#6ab0ff', rim: '#6ab0ff' },
+  zweit: { outfit: 'uniform', top: '#3a3040', topL: '#5e5068', topD: '#18121c', leg: '#201a24', legD: '#0e0a10', shoe: '#141014', skin: '#e0c4a8', skinD: '#a08468', hair: '#3a2a1e', eye: '#5a4a3a', hairStyle: 'spiky', trim: '#b0a070', rim: '#b0a0c0' },
+  jane: { outfit: 'uniform', top: '#3a4a3a', topL: '#5e7260', topD: '#182018', leg: '#222a22', legD: '#0e120e', shoe: '#141410', skin: '#e8ccb4', skinD: '#a88c74', hair: '#5a3a24', eye: '#4a5a3a', hairStyle: 'bun', trim: '#e0c050', rim: '#e0c050' },
+  del: { outfit: 'uniform', top: '#4a4a3a', topL: '#727260', topD: '#20201a', leg: '#28281e', legD: '#12120c', shoe: '#141410', skin: '#dcbc9c', skinD: '#9a7c60', hair: '#9a9a9a', eye: '#4a4a3a', hairStyle: 'short', trim: '#e0c050', rim: '#e0c050' },
   kyle: { outfit: 'uniform', top: '#6a2a1e', topL: '#9a4a36', topD: '#30100a', leg: '#2a1c18', legD: '#140c0a', shoe: '#1a1414', skin: '#e0b894', skinD: '#9a7458', hair: '#c8781e', eye: '#ffa030', hairStyle: 'spiky', trim: '#d0a060', angry: true, rim: '#ff9a3a' }
 };
 const HUMAN_BOX = 120;

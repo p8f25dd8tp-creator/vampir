@@ -29,7 +29,7 @@ function newFight(opt) {
   G.player = p;
   for (const f of opt.foes) {
     const e = mkEnt(f.id, LOOKS[f.look || f.id], f.at[0], f.at[1]);
-    Object.assign(e, { team: 1, name: f.name, maxHp: f.hp, hp: f.hp, ai: f.ai, poise: f.poise || 3, maxPoise: f.poise || 3, poiseT: 0, phase: 1, cd: 0.8 });
+    Object.assign(e, { team: 1, name: f.name, maxHp: f.hp, hp: f.hp, ai: f.ai, poise: f.poise || 3, maxPoise: f.poise || 3, poiseT: 0, phase: 1, cd: f.cd || 0.8, info: f.info, draw: f.draw, fixed: f.fixed, r: f.r || 11 });
     e.face = -1;
     G.foe = G.foe || e;
   }
@@ -56,7 +56,9 @@ function updateFight(rdt) {
   const dt = rdt * G.scale;
   G.t += dt;
   for (let i = G.later.length - 1; i >= 0; i--) { const L = G.later[i]; L.t -= dt; if (L.t <= 0) { G.later.splice(i, 1); L.fn(); if (!G) return; } }
+  if (G.arena.pois) updatePois();
   handleInput(dt);
+  if (!G) return;
   updatePlayer(dt);
   for (const e of G.ents) if (e.team === 1) updateFoe(e, dt);
   for (const e of G.ents) if (e.npc) updateNpc(e, dt);
@@ -91,7 +93,9 @@ function handleInput(dt) {
   while (INPUT.events.length) {
     const ev = INPUT.events.shift();
     if (G.state !== 'play') continue;
+    if (ev === 'atkDown' && G.poi) { const P = G.poi; G.poi = null; P.action(P); if (!G) return; continue; }
     if (ev === 'atkDown') { p.holdT = 0; tryAttack(p); }
+    else if (ev === 'inspect') doInspect(p);
     else if (ev === 'atkUp') { if (p.state === 'charge') releaseCharge(p); p.holdT = -1; }
     else if (ev === 'dodge') tryDodge(p);
   }
@@ -146,7 +150,9 @@ function updatePlayer(dt) {
   p.buffer = Math.max(0, p.buffer - dt);
   p.stamDelay -= dt;
   if (p.stamDelay <= 0 && p.state !== 'charge') p.stam = Math.min(p.maxStam, p.stam + 42 * dt);
-  const spd = 120 * Math.pow(p.agi / 10, 0.35);
+  G.inSun = inSun(p);
+  const sunK = G.inSun ? 0.5 : 1;
+  const spd = 120 * Math.pow(p.agi * sunK / 10, 0.35);
   const [mx, my] = readMove();
   let tvx = 0, tvy = 0;
   if (p.state === 'idle') {
@@ -197,7 +203,8 @@ function playerHit(p, A) {
     if (e.team !== 1 || e.state === 'down' || e.state === 'transform') continue;
     const d = Math.hypot(e.x - p.x, e.y - p.y);
     if (d > A.reach + e.r || !inArc(e.x, e.y, p.x, p.y, p.aim, A.arc)) continue;
-    let dmg = A.dmg * (p.str / 10);
+    if (e.ai && e.ai.foresight && e.state !== 'stagger') { foresee(e, p); continue; }
+    let dmg = A.dmg * (p.str * (G.inSun ? 0.5 : 1) / 10);
     const counter = p.counterT > 0;
     if (counter) { dmg *= 2; p.counterT = 0; }
     hitAny = true;
@@ -238,7 +245,7 @@ function damagePlayer(src, dmg, ang, kb) {
     if (p.state === 'dodge' && G.t - p.dodgeStart <= win && !p.perfectUsed) perfectDodge(p, src);
     return 'dodged';
   }
-  p.hp = Math.max(0, p.hp - dmg);
+  p.hp = Math.max(G.opt.noDeath ? 1 : 0, p.hp - dmg);
   G.stats.taken += dmg;
   p.iframes = 0.6; p.flash = 0.12; p.anim.hurt = 1;
   p.vx = Math.cos(ang) * kb; p.vy = Math.sin(ang) * kb * 0.7;
@@ -290,7 +297,17 @@ function updateFoe(e, dt) {
   } else if (e.state === 'active') {
     const A = e.atk;
     e.anim.cast = 1;
-    if (A.type === 'lunge') {
+    if (A.type === 'beam') {
+      if (!e.hitDone) {
+        e.hitDone = true;
+        const L = A.len, ax = Math.cos(e.aim), ay = Math.sin(e.aim);
+        const rx = p.x - e.x, ry = p.y - e.y, along = rx * ax + ry * ay, across = Math.abs(-rx * ay + ry * ax);
+        if (along > 0 && along < L && across < A.width / 2 + p.r) damagePlayer(e, A.dmg, e.aim, 140);
+        G.fx.push({ k: 'beam', x: e.x, y: e.y - 24, a: e.aim, len: L, w: A.width, col: A.col || '#ff6a4a', life: 0.2, t: 0 });
+        sfx('enemyShot', 0, 0.02);
+      }
+      if (e.stateT >= A.act) setState(e, 'recover');
+    } else if (A.type === 'lunge') {
       tvx = Math.cos(e.aim) * A.speed; tvy = Math.sin(e.aim) * A.speed;
       if (!e.hitDone && Math.hypot(p.x - e.x, p.y - e.y) < e.r + p.r + 10) { e.hitDone = true; damagePlayer(e, A.dmg, e.aim, 220); }
       if (e.stateT >= A.act) { setState(e, 'recover'); }
@@ -312,10 +329,13 @@ function updateFoe(e, dt) {
   } else if (e.state === 'stagger') {
     e.anim.hurt = 0.8;
     if (e.stateT >= 0.9) { setState(e, 'idle'); e.cd = 0.3; }
+  } else if (e.state === 'evade') {
+    if (e.stateT >= 0.25) setState(e, 'idle');
   } else if (e.state === 'transform') {
     e.anim.cast = 0.5 + Math.sin(e.stateT * 30) * 0.2;
     if (e.stateT >= 1.5) { setState(e, 'idle'); e.cd = 0.5; }
   }
+  if (e.fixed) { tvx = 0; tvy = 0; }
   const k = e.state === 'active' && e.atk && e.atk.type === 'lunge' ? 40 : 10;
   e.vx = lerp(e.vx, tvx, 1 - Math.exp(-dt * k)); e.vy = lerp(e.vy, tvy, 1 - Math.exp(-dt * k));
 }
@@ -326,7 +346,7 @@ function startFoeAttack(e, A) {
   if (A.shout) floatText(e.x, e.y - 80, A.shout, '#ffb040');
 }
 function addTele(e, A) {
-  const T = { owner: e, type: A.type, x: e.x, y: e.y, a: e.aim, r: A.type === 'lunge' ? A.speed * A.act + 20 : A.reach, arc: A.arc || 0.2, t: 0, dur: A.wind };
+  const T = { owner: e, type: A.type, x: e.x, y: e.y, a: e.aim, r: A.type === 'lunge' ? A.speed * A.act + 20 : A.type === 'beam' ? A.len : A.reach, w: A.width || 18, arc: A.arc || 0.2, t: 0, dur: A.wind };
   G.tele.push(T);
   return T;
 }
@@ -351,8 +371,8 @@ function updateCamera(rdt) {
   let tx = p.x, ty = p.y - 20;
   if (f && f.state !== 'down') { tx = lerp(p.x, f.x, 0.3); ty = lerp(p.y, f.y, 0.3) - 20; }
   const A = G.arena, hw = VIEW.w / 2, hh = VIEW.h / 2;
-  tx = A.w > VIEW.w ? clamp(tx, hw - 20, A.w - hw + 20) : A.w / 2;
-  ty = A.h > VIEW.h - 60 ? clamp(ty, hh - 90, A.h - hh + 70) : A.h / 2;
+  tx = A.w > VIEW.w ? clamp(tx, hw, A.w - hw) : A.w / 2;
+  ty = A.h > VIEW.h ? clamp(ty, hh - 60, A.h - hh + 40) : A.h / 2;
   G.cam.x = lerp(G.cam.x, tx, 1 - Math.exp(-rdt * 6)); G.cam.y = lerp(G.cam.y, ty, 1 - Math.exp(-rdt * 6));
   G.shake = Math.max(0, G.shake - rdt * 30);
 }
@@ -366,4 +386,37 @@ function floatText(x, y, txt, col) { G.texts.push({ x, y, txt, col, t: 0, life: 
 function updateFx(dt) {
   for (let i = G.fx.length - 1; i >= 0; i--) { const f = G.fx[i]; f.t += dt; if (f.k === 'spark') { f.x += f.vx * dt; f.y += f.vy * dt; f.vy += 300 * dt; f.vx *= Math.exp(-dt * 4); } if (f.t >= f.life) G.fx.splice(i, 1); }
   for (let i = G.texts.length - 1; i >= 0; i--) { const T = G.texts[i]; T.t += dt; T.y -= 34 * dt; if (T.t >= T.life) G.texts.splice(i, 1); }
+}
+
+/* ------------------------------------------------------------ Sonne, Inspect, Voraussicht, Hub */
+function inRects(e, list) { for (const r of list || []) if (e.x > r.x && e.x < r.x + r.w && e.y > r.y && e.y < r.y + r.h) return true; return false; }
+function inSun(e) { return !inRects(e, G.arena.shade) && inRects(e, G.arena.sun); }
+function doInspect(p) {
+  if (!SAVE.quinn.skills.includes('inspect')) return;
+  const f = nearestFoe(p, 260) || G.ents.find((e) => e.npc && e.npc.info && dist2(e.x, e.y, p.x, p.y) < 260 * 260);
+  if (!f) { sysMsg({ head: 'INSPECT', lines: ['Kein Ziel in der Nähe.'] }, 1600); return; }
+  sfx('card');
+  if (G.inSun) { sysMsg({ head: 'INSPECT', lines: ['Im direkten Sonnenlicht nicht lesbar.'] }, 2400); if (G.opt.onInspect) G.opt.onInspect(G, f, false); return; }
+  const I = f.info || (f.npc && f.npc.info) || {};
+  sysMsg({ head: 'INSPECT', kv: [['Name', I.name || f.name || '?'], ['Rasse', I.race || 'Mensch'], ['Fähigkeit', I.ability || '?'], ['HP', f.team === 1 ? Math.ceil(f.hp) + ' / ' + f.maxHp : '—'], ['Blutgruppe', I.blood || '?']] }, 3400);
+  if (G.opt.onInspect) G.opt.onInspect(G, f, true);
+}
+function foresee(e, p) {
+  // weicht dem Angriff aus, bevor er trifft (sieht ihn kommen)
+  const a = Math.atan2(e.y - p.y, e.x - p.x) + (Math.random() < 0.5 ? 1.2 : -1.2);
+  e.vx = Math.cos(a) * 260; e.vy = Math.sin(a) * 260;
+  setState(e, 'evade');
+  G.stats.evaded = (G.stats.evaded || 0) + 1;
+  floatText(e.x, e.y - 76, 'ausgewichen', '#8ad8ff');
+  sfx('dodge', 0, 0.05);
+  if (G.opt.onEvade) G.opt.onEvade(G, e);
+}
+function updatePois() {
+  const p = G.player; let best = null, bd = 1e9;
+  for (const P of G.arena.pois || []) {
+    if (P.hidden && P.hidden()) continue;
+    const d = Math.hypot(p.x - P.x, p.y - P.y);
+    if (d < (P.r || 34) && d < bd) { bd = d; best = P; }
+  }
+  G.poi = best;
 }

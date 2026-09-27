@@ -16,12 +16,16 @@ function showTitle() {
     <button class="btn" id="tNew">${started ? 'Von vorn beginnen' : 'Spiel starten'}</button>
     ${started ? '<button class="btn" id="tCont">Fortsetzen</button>' : ''}
     <button class="btn ghost" id="tSet">Einstellungen</button>
-    <div class="foot">Private Fan-Umsetzung von „My Vampire System“.<br>Frühe Testversion · Etappe 1</div>`, '');
+    <div class="foot">Private Fan-Umsetzung von „My Vampire System“.<br>Frühe Testversion · Etappe 2</div>`, '');
   el.querySelector('#tNew').onclick = () => { AudioSys.init(); if (started) resetSave(); startMission('prolog'); };
   if (started) el.querySelector('#tCont').onclick = () => { AudioSys.init(); startMission(nextMission()); };
   el.querySelector('#tSet').onclick = showSettings;
 }
-function nextMission() { for (const id of MISSION_ORDER) if (!SAVE.progress[id] || !SAVE.progress[id].done) return id; return MISSION_ORDER[MISSION_ORDER.length - 1]; }
+function nextMission() {
+  if (!SAVE.progress.prolog) return 'prolog';
+  if (!SAVE.progress.test) return 'test';
+  return SAVE.flags.mono ? 'ende' : 'akademie';
+}
 function showSettings() {
   const S = SAVE.settings;
   const el = uiShow(`${sysBox({ head: 'EINSTELLUNGEN', lines: ['Tippe zum Umschalten.'] })}
@@ -36,7 +40,9 @@ function showSettings() {
 }
 
 function startMission(id, skipScene) {
+  if (id === 'ende') return showEnd();
   const M = MISSIONS[id]; MISSION = M; G = null;
+  if (M.type === 'hub') return beginHub(M);
   const go = () => (M.fight ? beginFight(M) : finishMission(M, true));
   if (M.scene && !skipScene) runScene(M.scene, go); else go();
 }
@@ -46,9 +52,18 @@ function beginFight(M) {
     onWin: () => finishMission(M, true),
     onLose: () => showLost(M)
   }));
-  G.showFoe = true;
+  G.showFoe = !M.fight.noFoeBar;
   buildHud(M.fight);
   banner(M.title.toUpperCase());
+}
+function beginHub(M) {
+  INPUT.events.length = 0; INPUT.atkHeld = false;
+  const opt = hubSetup();
+  newFight(opt);
+  G.showFoe = false;
+  buildHud(opt);
+  const key = SAVE.day.n + '' + SAVE.day.night;
+  if (beginHub.shown !== key) { beginHub.shown = key; banner(SAVE.day.night ? 'NACHT' : 'TAG ' + SAVE.day.n); }
 }
 function finishMission(M, won) {
   const P = SAVE.progress[M.id] || (SAVE.progress[M.id] = {});
@@ -59,6 +74,7 @@ function finishMission(M, won) {
     Q.exp += M.reward.exp || 0;
     (M.reward.skills || []).forEach((s) => { if (!Q.skills.includes(s)) Q.skills.push(s); });
   }
+  if (M.after) M.after();
   writeSave();
   G = null;
   const after = () => (M.next ? startMission(M.next) : showEnd(M));
@@ -71,13 +87,15 @@ function showLost(M) {
   el.querySelector('#lRe').onclick = () => startMission(M.id, true);
   el.querySelector('#lMenu').onclick = showTitle;
 }
-function showEnd(M) {
-  SCENE_BG.cur = 'nacht';
+function showEnd() {
+  G = null; SCENE_BG.cur = 'nacht';
   const Q = SAVE.quinn;
   const el = uiShow(`${sysBox({ head: 'STATUS', kv: [['Name', 'Quinn Talen'], ['Rasse', 'Mensch'], ['Stufe', Q.level], ['EP', Q.exp + ' / 100'], ['Fähigkeiten', Q.skills.includes('inspect') ? 'Inspect' : '—']], quests: ['Hauptquest: Erreiche Stufe 10'] })}
-    <div class="subtitle">Etappe 1 geschafft · Fortsetzung folgt</div>
-    <button class="btn" id="eRe">Kampf gegen Kyle wiederholen</button><button class="btn ghost" id="eMenu">Hauptmenü</button>`, 'dim');
-  el.querySelector('#eRe').onclick = () => startMission('kyle', true);
+    <div class="subtitle">Etappe 2 geschafft · Fortsetzung folgt</div>
+    <button class="btn" id="eK">Kyle wiederholen</button><button class="btn" id="eN">Nachttraining wiederholen</button><button class="btn" id="eM">Mono wiederholen</button><button class="btn ghost" id="eMenu">Hauptmenü</button>`, 'dim');
+  el.querySelector('#eK').onclick = () => { MISSIONS.kyle.replay = true; startMission('kyle', true); };
+  el.querySelector('#eN').onclick = () => startMission('nacht', true);
+  el.querySelector('#eM').onclick = () => startMission('mono', true);
   el.querySelector('#eMenu').onclick = showTitle;
 }
 
@@ -85,11 +103,10 @@ function showEnd(M) {
 let _last = performance.now();
 function frame(now) {
   const rdt = Math.min(0.05, (now - _last) / 1000); _last = now;
-  if (G) {
-    if (!G.paused) updateFight(rdt);
-    renderFight();
-    updateHud();
-  } else renderSceneBg(now / 1000);
+  try {
+    if (G && !G.paused) updateFight(rdt);
+    if (G) { renderFight(); updateHud(); } else renderSceneBg(now / 1000);
+  } catch (err) { console.error(err); }
   AudioSys.musicTick && AudioSys.musicTick(rdt, G ? 0.4 : 0.1);
   requestAnimationFrame(frame);
 }
