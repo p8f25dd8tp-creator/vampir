@@ -37,6 +37,16 @@ Angriffe und Ausweichen kosten **Ausdauer**.
   Sonne nicht lesbar.
 * INSPECT-Knopf: zeigt Name, Rasse, Fähigkeit, HP und Blutgruppe des nächsten Ziels.
 
+## EP und Stufen (frei, nicht an die Story gebunden)
+
+* EP gibt es für Schaden und Siege im Kampf, für Messwert, Ausweichen und Durchhalten, für
+  Tagesquests, die Bibliothek und für freies **Training (EP)** in der Trainingshalle (ab Tag 2,
+  beliebig oft). Auch Wiederholungen und Niederlagen geben die im Kampf verdienten EP.
+* Jede Stufe gibt **einen Wertepunkt** (wie im Roman) für Stärke (Schaden), Agilität (Tempo,
+  Ausweichen) oder Ausdauer (+1 HP, mehr Ausdauer). Verteilen im Status-Fenster (☰ im Hof,
+  Pause-Menü oder nach dem Kampfbericht).
+* Evolutionen (Halbling usw.) bleiben an die Story gebunden.
+
 ## Aufbau
 
 | Datei | Inhalt |

@@ -195,6 +195,10 @@ const LOOKS = {
   zweit: { outfit: 'uniform', top: '#3a3040', topL: '#5e5068', topD: '#18121c', leg: '#201a24', legD: '#0e0a10', shoe: '#141014', skin: '#e0c4a8', skinD: '#a08468', hair: '#3a2a1e', eye: '#5a4a3a', hairStyle: 'spiky', trim: '#b0a070', rim: '#b0a0c0' },
   jane: { outfit: 'uniform', top: '#3a4a3a', topL: '#5e7260', topD: '#182018', leg: '#222a22', legD: '#0e120e', shoe: '#141410', skin: '#e8ccb4', skinD: '#a88c74', hair: '#5a3a24', eye: '#4a5a3a', hairStyle: 'bun', trim: '#e0c050', rim: '#e0c050' },
   del: { outfit: 'uniform', top: '#4a4a3a', topL: '#727260', topD: '#20201a', leg: '#28281e', legD: '#12120c', shoe: '#141410', skin: '#dcbc9c', skinD: '#9a7c60', hair: '#9a9a9a', eye: '#4a4a3a', hairStyle: 'short', trim: '#e0c050', rim: '#e0c050' },
+  s1: { outfit: 'uniform', top: '#3a4a5a', topL: '#5e7288', topD: '#18202a', leg: '#222a34', legD: '#0e1218', shoe: '#1a1a1e', skin: '#d8b090', skinD: '#987050', hair: '#1a1410', eye: '#3a2a1a', hairStyle: 'short', trim: '#a0a8b0', rim: '#a0b0c0' },
+  s2: { outfit: 'uniform', top: '#3a4a5a', topL: '#5e7288', topD: '#18202a', leg: '#222a34', legD: '#0e1218', shoe: '#1a1a1e', skin: '#f0d8c4', skinD: '#b09888', hair: '#8a4a2a', eye: '#4a6a3a', hairStyle: 'long', trim: '#a0a8b0', rim: '#a0b0c0' },
+  s3: { outfit: 'uniform', top: '#3a4a5a', topL: '#5e7288', topD: '#18202a', leg: '#222a34', legD: '#0e1218', shoe: '#1a1a1e', skin: '#8a5a40', skinD: '#5a3a28', hair: '#0e0a08', eye: '#2a1a10', hairStyle: 'messy', trim: '#a0a8b0', rim: '#a0b0c0' },
+  s4: { outfit: 'uniform', top: '#3a4a5a', topL: '#5e7288', topD: '#18202a', leg: '#222a34', legD: '#0e1218', shoe: '#1a1a1e', skin: '#ecd0b8', skinD: '#ac9078', hair: '#d8c070', eye: '#4a5a7a', hairStyle: 'bun', trim: '#a0a8b0', rim: '#a0b0c0' },
   kyle: { outfit: 'uniform', top: '#6a2a1e', topL: '#9a4a36', topD: '#30100a', leg: '#2a1c18', legD: '#140c0a', shoe: '#1a1414', skin: '#e0b894', skinD: '#9a7458', hair: '#c8781e', eye: '#ffa030', hairStyle: 'spiky', trim: '#d0a060', angry: true, rim: '#ff9a3a' }
 };
 const HUMAN_BOX = 120;

@@ -90,7 +90,9 @@ const MISSIONS = {
       arena: { art: 'pruefplatz', w: 340, h: 680, sun: [{ x: 0, y: 0, w: 340, h: 680 }] },
       playerAt: [170, 440],
       foes: [{ id: 'saeule', name: 'Messsäule', hp: 9999, poise: 999, at: [170, 330], draw: 'saeule', fixed: true, r: 14, ai: { params: () => ({ range: 999, speed: 0, cd: 99 }), choose: () => null } }],
+      npcs: [{ id: 'jane', at: [80, 300], face: 1 }, { id: 'layla', at: [280, 420], watch: 'player' }, { id: 'erin', at: [300, 360], watch: 'player' }, { id: 'vorden', at: [60, 420], watch: 'player' }, { id: 'peter', at: [50, 470], pose: 'cower' }, { id: 's1', at: [290, 250] }, { id: 's3', at: [300, 300] }],
       inspect: false, noFoeBar: true,
+      expBonus: (G) => Math.round((G.tut && G.tut.total) || 0),
       onTick: testTick
     },
     won: [
@@ -126,8 +128,8 @@ const MISSIONS = {
     fight: {
       arena: { art: 'kantine', w: 340, h: 600, blocks: [{ x: 18, y: 150, w: 70, h: 26 }, { x: 252, y: 150, w: 70, h: 26 }, { x: 18, y: 440, w: 70, h: 26 }, { x: 252, y: 440, w: 70, h: 26 }] },
       playerAt: [170, 400],
-      foes: [{ id: 'kyle', name: 'Kyle · Fähigkeit: Tigerkrallen', hp: 26, poise: 4, at: [170, 260], ai: AI_KYLE }],
-      npcs: [{ id: 'peter', at: [300, 320], pose: 'cower', face: -1 }],
+      foes: [{ id: 'kyle', name: 'Kyle · Fähigkeit: Tigerkrallen', hp: 26, poise: 4, at: [170, 260], ai: AI_KYLE, expRate: 1, expKill: 20, info: { name: 'Kyle Main', race: 'Mensch', ability: 'Verwandlung (Tigerkrallen)', blood: 'B+' } }],
+      npcs: [{ id: 'peter', at: [300, 320], pose: 'cower', face: -1 }, { id: 's1', at: [45, 200], pose: 'cheer', watch: 'foe' }, { id: 's2', at: [60, 240], watch: 'foe' }, { id: 's3', at: [300, 205], pose: 'cheer', watch: 'foe' }, { id: 's4', at: [45, 500], watch: 'foe' }, { id: 'zweit', at: [295, 505], pose: 'cheer', watch: 'foe' }],
       inspect: false,
       onTick: tutorialTick
     },
@@ -141,7 +143,7 @@ const MISSIONS = {
       { bg: 'kantine', portrait: 'quinn' },
       { narr: 'Quinn lehnt ab – und kann trotzdem den Blick nicht vom Blut auf dem Boden lösen.' }
     ],
-    reward: { exp: 50, skills: ['inspect'] },
+    reward: { exp: 50, skills: ['inspect'] }, // Quest-Belohnung beim ersten Sieg
     after: () => { SAVE.day.night = true; SAVE.flags.kyle = true; },
     next: 'akademie'
   },
@@ -160,6 +162,7 @@ const MISSIONS = {
       playerAt: [170, 460],
       foes: [{ id: 'geraet', name: 'Trainingsgerät', hp: 9999, poise: 999, at: [170, 280], draw: 'geraet', fixed: true, r: 16, cd: 1.2, ai: AI_GERAET, info: { name: 'Trainingsgerät', race: '—', ability: 'Strahl', blood: '—' } }],
       inspect: true, noDeath: true, noFoeBar: true,
+      expBonus: (G) => Math.round(Math.min(20, (G.tut && G.tut.t) || 0) * 2 + G.stats.perfect * 6),
       onTick: survivalTick(20)
     },
     won: [
@@ -192,6 +195,7 @@ const MISSIONS = {
       npcs: [{ id: 'peter', at: [120, 380], pose: 'cower', face: 1 }, { id: 'vorden', at: [330, 400], face: -1 }, { id: 'zweit', at: [110, 250], face: 1 }, { id: 'zweit', at: [340, 260], face: -1 }],
       inspect: true, noDeath: true,
       onInspect: (G) => { (G.tut || (G.tut = { t: 0 })).inspected = true; },
+      expBonus: (G) => Math.min(40, (G.stats.evaded || 0) * 4),
       onTick: monoTick
     },
     won: [
@@ -207,6 +211,18 @@ const MISSIONS = {
     after: () => { SAVE.flags.mono = true; },
     next: null
   }
+};
+MISSIONS.training = {
+  id: 'training', title: 'Training', src: 'frei', type: 'pruefung',
+  fight: {
+    arena: { art: 'halle', w: 340, h: 680 },
+    playerAt: [170, 460],
+    foes: [{ id: 'geraet', name: 'Trainingsgerät', hp: 9999, poise: 999, at: [170, 280], draw: 'geraet', fixed: true, r: 16, cd: 1.2, ai: AI_GERAET, info: { name: 'Trainingsgerät', race: '—', ability: 'Strahl', blood: '—' } }],
+    inspect: true, noDeath: true, noFoeBar: true,
+    expBonus: (G) => Math.round(Math.min(30, (G.tut && G.tut.t) || 0) * 2 + G.stats.perfect * 5 - G.stats.taken * 2),
+    onTick: survivalTick(30)
+  },
+  next: 'akademie', repeat: true
 };
 const MISSION_ORDER = ['prolog', 'test', 'kyle', 'nacht', 'mono'];
 
@@ -261,6 +277,8 @@ function hubSetup() {
   pois.push({ x: 105, y: 420, label: 'Kantine', col: '#ffb040', hidden: () => night || !(D.n === 2 && !F.kyle) && !(D.n >= 3 && F.nacht && !F.mono), action: () => leaveHub(() => startMission(D.n === 2 ? 'kyle' : 'mono')) });
   // Wasserspender (Tagesquest)
   pois.push({ x: 175, y: 440, label: 'Wasser trinken', col: '#6ec8ff', hidden: () => night || D.water, action: () => { D.water = true; writeSave(); sfx('heal'); sysMsg({ head: 'TAGESQUEST ERFÜLLT', lines: ['2 Liter Wasser getrunken.'], kv: [['EP', '+5']] }); addExp(5); } });
+  // Trainingshalle tagsueber: freies Training fuer EP
+  pois.push({ x: 335, y: 420, label: 'Training (EP)', col: '#9ad8ff', hidden: () => night || D.n < 2, action: go('training') });
   // Trainingshalle nachts (Kap. 12)
   pois.push({ x: 335, y: 420, label: 'Trainingshalle', col: '#c8a0ff', hidden: () => !(night && F.kyle && !F.nacht), action: go('nacht') });
   const blocks = buildings.map((b) => ({ x: b.x, y: b.y, w: b.w, h: b.h - 8, invisible: true }));
@@ -268,8 +286,16 @@ function hubSetup() {
   const shade = buildings.map((b) => ({ x: b.x - 4, y: b.y + b.h - 8, w: b.w + 8, h: 46 })).concat([{ x: 192, y: 130, w: 56, h: H - 130 }]);
   return {
     arena: { art: 'hof', w: W, h: H, buildings, blocks, pois, paths: [{ x: 192, y: 130, w: 56, h: H - 130 }, { x: 0, y: 452, w: W, h: 44 }, { x: 0, y: 160, w: W, h: 40 }],
-      sun: night ? [] : [{ x: 0, y: 0, w: W, h: H }], shade, night },
-    playerAt: [220, 620], foes: [], npcs: [], inspect: SAVE.quinn.skills.includes('inspect'), hub: true, onTick: hubTick
+      sun: night ? [] : [{ x: 0, y: 0, w: W, h: H }], shade, night,
+      trees: [[40, 520], [400, 510], [30, 650], [410, 660], [150, 250], [300, 255]], benches: [[130, 560], [300, 580]] },
+    playerAt: [220, 620], foes: [],
+    npcs: night ? [] : [
+      { id: 's1', at: [60, 540], path: [[60, 540], [150, 600], [60, 620]] },
+      { id: 's2', at: [380, 560], path: [[380, 560], [300, 640], [390, 620]], speed: 45 },
+      { id: 's3', at: [300, 230], path: [[300, 230], [420, 240], [360, 270]] },
+      { id: 's4', at: [80, 240], path: [[80, 240], [20, 270], [150, 280]], speed: 40 }
+    ],
+    inspect: SAVE.quinn.skills.includes('inspect'), hub: true, onTick: hubTick
   };
 }
 function canSleep() {
@@ -294,7 +320,6 @@ function hubTick(G, dt) {
   G.hubInfo = { goal: hubGoal(), sun: G.inSun };
 }
 function leaveHub(fn) { G = null; writeSave(); fn(); }
-function addExp(n) { SAVE.quinn.exp += n; writeSave(); }
 function sleep() {
   const D = SAVE.day, sunOk = D.sun < 6, lines = [];
   let ep = 0;

@@ -49,8 +49,8 @@ function startMission(id, skipScene) {
 function beginFight(M) {
   INPUT.events.length = 0; INPUT.atkHeld = false;
   newFight(Object.assign({}, M.fight, {
-    onWin: () => finishMission(M, true),
-    onLose: () => showLost(M)
+    onWin: (G0) => finishMission(M, true, G0),
+    onLose: (G0) => showLost(M, G0)
   }));
   G.showFoe = !M.fight.noFoeBar;
   buildHud(M.fight);
@@ -65,32 +65,46 @@ function beginHub(M) {
   const key = SAVE.day.n + '' + SAVE.day.night;
   if (beginHub.shown !== key) { beginHub.shown = key; banner(SAVE.day.night ? 'NACHT' : 'TAG ' + SAVE.day.n); }
 }
-function finishMission(M, won) {
+function finishMission(M, won, G0) {
   const P = SAVE.progress[M.id] || (SAVE.progress[M.id] = {});
   const first = !P.done;
   P.done = true;
+  const rep = G0 ? fightReport(G0, true) : null;
   if (first && M.reward) {
     const Q = SAVE.quinn;
-    Q.exp += M.reward.exp || 0;
+    if (M.reward.exp) { const l0 = Q.level; gainExp(M.reward.exp); if (rep) { rep.kv.push(['Quest-Belohnung', '+' + M.reward.exp]); if (Q.level > l0) rep.up = true; } }
     (M.reward.skills || []).forEach((s) => { if (!Q.skills.includes(s)) Q.skills.push(s); });
   }
-  if (M.after) M.after();
+  if (first && M.after) M.after();
   writeSave();
   G = null;
   const after = () => (M.next ? startMission(M.next) : showEnd(M));
-  if (M.won) runScene(M.won, after); else after();
+  const story = () => (M.won && (first || !M.repeat) && !M.replayNoScene ? runScene(M.won, after) : after());
+  if (rep) showReport(rep, story); else story();
 }
-function showLost(M) {
+function showReport(rep, done) {
+  SCENE_BG.cur = 'system';
+  const Q = SAVE.quinn;
+  if (rep.up) { sfx('level'); rep.lines.unshift(`STUFENAUFSTIEG · Stufe ${Q.level}`); }
+  rep.kv.push(['Stufe', Q.level], ['EP', Q.exp + ' / ' + expNeed(Q.level)]);
+  const el = uiShow(`${sysBox(rep)}${Q.points ? `<button class="btn" id="rStat">Wertepunkte verteilen (${Q.points})</button>` : ''}<button class="btn ${Q.points ? 'ghost' : ''}" id="rGo">Weiter</button>`, 'dim');
+  if (Q.points) el.querySelector('#rStat').onclick = () => showStatus(() => showReport({ head: rep.head, lines: [], kv: [] }, done));
+  el.querySelector('#rGo').onclick = done;
+}
+function showLost(M, G0) {
+  const rep = G0 ? fightReport(G0, false) : { kv: [] };
   G = null; SCENE_BG.cur = 'kantine';
-  const el = uiShow(`${sysBox({ head: 'NIEDERLAGE', lines: ['Quinn ist zu Boden gegangen.', 'Tipp: Achte auf die rote Fläche. Wer im letzten Moment ausweicht, bekommt ein Konterfenster mit doppeltem Schaden.'] })}
+  const el = uiShow(`${sysBox({ head: 'NIEDERLAGE', lines: ['Quinn ist zu Boden gegangen.', 'Tipp: Achte auf die rote Fläche. Wer im letzten Moment ausweicht, bekommt ein Konterfenster mit doppeltem Schaden. Mit mehr Stufen und Wertepunkten wird es leichter.'], kv: rep.kv })}
+    ${SAVE.quinn.points ? `<button class="btn" id="lStat">Wertepunkte verteilen (${SAVE.quinn.points})</button>` : ''}
     <button class="btn" id="lRe">Noch einmal</button><button class="btn ghost" id="lMenu">Hauptmenü</button>`, 'dim');
   el.querySelector('#lRe').onclick = () => startMission(M.id, true);
+  if (SAVE.quinn.points) el.querySelector('#lStat').onclick = () => showStatus();
   el.querySelector('#lMenu').onclick = showTitle;
 }
 function showEnd() {
   G = null; SCENE_BG.cur = 'nacht';
   const Q = SAVE.quinn;
-  const el = uiShow(`${sysBox({ head: 'STATUS', kv: [['Name', 'Quinn Talen'], ['Rasse', 'Mensch'], ['Stufe', Q.level], ['EP', Q.exp + ' / 100'], ['Fähigkeiten', Q.skills.includes('inspect') ? 'Inspect' : '—']], quests: ['Hauptquest: Erreiche Stufe 10'] })}
+  const el = uiShow(`${sysBox({ head: 'STATUS', kv: [['Name', 'Quinn Talen'], ['Rasse', 'Mensch'], ['Stufe', Q.level], ['EP', Q.exp + ' / ' + expNeed(Q.level)], ['Fähigkeiten', Q.skills.includes('inspect') ? 'Inspect' : '—']], quests: ['Hauptquest: Erreiche Stufe 10'] })}
     <div class="subtitle">Etappe 2 geschafft · Fortsetzung folgt</div>
     <button class="btn" id="eK">Kyle wiederholen</button><button class="btn" id="eN">Nachttraining wiederholen</button><button class="btn" id="eM">Mono wiederholen</button><button class="btn ghost" id="eMenu">Hauptmenü</button>`, 'dim');
   el.querySelector('#eK').onclick = () => { MISSIONS.kyle.replay = true; startMission('kyle', true); };

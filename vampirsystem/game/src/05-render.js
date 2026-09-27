@@ -44,6 +44,8 @@ ARENA_ART.hof = function (A) {
     for (let x = r.x; x < r.x + r.w; x += 16) { g.beginPath(); g.moveTo(x, r.y); g.lineTo(x, r.y + r.h); g.stroke(); }
     for (let y = r.y; y < r.y + r.h; y += 16) { g.beginPath(); g.moveTo(r.x, y); g.lineTo(r.x + r.w, y); g.stroke(); }
   }
+  // Baenke
+  for (const [x, y] of A.benches || []) { g.fillStyle = 'rgba(0,0,0,0.25)'; g.fillRect(x - 16, y + 2, 34, 6); g.fillStyle = '#7a5a3a'; g.fillRect(x - 17, y - 6, 34, 8); g.fillStyle = '#5a3e28'; g.fillRect(x - 15, y + 2, 3, 5); g.fillRect(x + 12, y + 2, 3, 5); }
   // Gebaeude
   for (const b of A.buildings || []) {
     g.fillStyle = lg(g, 0, b.y, 0, b.y + b.h, [0, '#8a94a8', 1, '#5a6478']); g.fillRect(b.x, b.y, b.w, b.h);
@@ -116,9 +118,10 @@ function renderFight() {
   g.setTransform(1, 0, 0, 1, 0, 0);
   g.fillStyle = '#0a0c12'; g.fillRect(0, 0, cv.width, cv.height);
   if (!G) return;
-  const z = VIEW.zoom * VIEW.dpr, sh = G.shake * (SAVE.settings.shake || 1);
-  const ox = -G.cam.x + VIEW.w / 2 + rand(-sh, sh) / VIEW.zoom, oy = -G.cam.y + VIEW.h / 2 + rand(-sh, sh) / VIEW.zoom;
-  g.setTransform(z, 0, 0, z, ox * z, oy * z);
+  G.punch = Math.max(0, (G.punch || 0) - 1 / 60 * 5);
+  const z = VIEW.zoom * VIEW.dpr * (1 + (G.punch || 0) * 0.05 * (SAVE.settings.shake || 0)), sh = G.shake * (SAVE.settings.shake || 1);
+  const cx = cv.width / 2 + rand(-sh, sh) * VIEW.dpr, cy = cv.height / 2 + rand(-sh, sh) * VIEW.dpr;
+  g.setTransform(z, 0, 0, z, cx - G.cam.x * z, cy - G.cam.y * z);
   const A = G.arena;
   if (!A.bg) A.bg = ARENA_ART[A.art](A);
   g.drawImage(A.bg, 0, 0, A.w, A.h);
@@ -139,17 +142,36 @@ function renderFight() {
   for (const T of G.tele) drawTele(g, T);
   // Schatten unter allen Figuren
   for (const e of G.ents) { if (e.draw) continue; g.fillStyle = 'rgba(0,0,0,0.3)'; g.beginPath(); g.ellipse(e.x, e.y + 1, 13, 4.5, 0, 0, TAU); g.fill(); }
+  for (const f of G.fx) if (f.k === 'dust') { const k = f.t / f.life; g.globalAlpha = 0.35 * (1 - k); g.fillStyle = A.night ? '#8a90a8' : '#e8e0d0'; g.beginPath(); g.ellipse(f.x, f.y, f.size * (1 + k), f.size * 0.45 * (1 + k), 0, 0, TAU); g.fill(); }
+  g.globalAlpha = 1;
+  for (const f of G.fx) if (f.k === 'ghost') { const k = f.t / f.life; g.save(); g.translate(f.x, f.y); g.scale(f.face / f.px, 1 / f.px); g.globalAlpha = 0.4 * (1 - k); g.drawImage(flashSprite(f.img, f.col), -f.S / 2, -f.ay); g.restore(); }
   // Tische und Figuren nach Tiefe sortiert
   const list = [];
   for (const b of A.blocks || []) if (!b.invisible) list.push({ y: b.y + b.h, draw: () => drawTable(g, b) });
   for (const e of G.ents) list.push({ y: e.y, draw: () => (e.draw ? OBJ_ART[e.draw](g, e) : drawEnt(g, e)) });
   list.sort((a, b) => a.y - b.y);
   for (const it of list) it.draw();
+  // Baumkronen
+  for (const [x, y] of A.trees || []) {
+    g.fillStyle = 'rgba(10,30,10,0.28)'; g.beginPath(); g.ellipse(x + 8, y + 6, 30, 12, 0, 0, TAU); g.fill();
+    g.fillStyle = '#4a3020'; g.fillRect(x - 3, y - 22, 6, 24);
+    const sway = Math.sin(G.t * 1.2 + x) * 1.5;
+    for (const [dx, dy, r, c] of [[0, -40, 22, '#2e5a28'], [-12, -32, 15, '#3a6a30'], [12, -34, 16, '#3a6a30'], [4, -46, 13, '#4a7a3a']]) { g.fillStyle = A.night ? shade(c, -0.55) : c; g.beginPath(); g.arc(x + dx + sway, y + dy, r, 0, TAU); g.fill(); }
+  }
   // Effekte
   g.save(); g.globalCompositeOperation = 'lighter';
   for (const f of G.fx) {
     const k = f.t / f.life;
     if (f.k === 'spark') { g.globalAlpha = 1 - k; g.drawImage(glowSprite(f.col), f.x - f.size * 2, f.y - f.size * 2, f.size * 4, f.size * 4); }
+    else if (f.k === 'swoosh') {
+      const e0 = easeOut(k);
+      g.globalAlpha = (1 - k) * 0.95; g.strokeStyle = f.col; g.lineCap = 'round';
+      const a0 = f.a - f.arc * f.dir, a1 = f.a + f.arc * f.dir * (e0 * 2 - 1);
+      g.save(); g.translate(f.x, f.y + 18); g.scale(1, 0.75);
+      g.lineWidth = f.w * (1 - k * 0.6); g.beginPath(); g.arc(0, 0, f.r * 0.9, Math.min(a0, a1), Math.max(a0, a1)); g.stroke();
+      g.globalAlpha *= 0.5; g.lineWidth = f.w * 2.2; g.beginPath(); g.arc(0, 0, f.r * 0.8, Math.min(a0, a1), Math.max(a0, a1)); g.stroke();
+      g.restore();
+    }
     else if (f.k === 'beam') { g.save(); g.translate(f.x, f.y); g.rotate(f.a); g.globalAlpha = 1 - k; g.fillStyle = f.col; g.fillRect(0, -f.w / 2 * (1 - k), f.len, f.w * (1 - k)); g.fillStyle = '#ffffff'; g.fillRect(0, -2, f.len, 4); g.restore(); }
     else if (f.k === 'slash') {
       g.globalAlpha = (1 - k) * 0.9; g.strokeStyle = f.col; g.lineWidth = 5 * (1 - k) + 1;
@@ -176,6 +198,7 @@ function renderFight() {
   // Bildschirmeffekte
   g.setTransform(1, 0, 0, 1, 0, 0);
   const W = cv.width, H = cv.height;
+  if (G.whiteFlash > 0) { G.whiteFlash -= 1 / 60; g.fillStyle = `rgba(255,245,220,${Math.max(0, G.whiteFlash) * 2})`; g.fillRect(0, 0, W, H); }
   const slow = clamp((1 - G.scale) / 0.7, 0, 1);
   if (slow > 0.01) { g.fillStyle = rg(g, W / 2, H / 2, Math.min(W, H) * 0.3, Math.max(W, H) * 0.75, [0, 'rgba(20,60,120,0)', 1, `rgba(20,60,140,${0.45 * slow})`]); g.fillRect(0, 0, W, H); }
   const p = G.player;
@@ -208,7 +231,9 @@ function figPx() { return Math.max(1.5, Math.min(4, VIEW.zoom * VIEW.dpr)); }
 function drawEnt(g, e) {
   const px = figPx();
   const st = { t: e.anim.t, run: e.anim.run, phase: e.anim.phase, cast: e.anim.cast, hurt: e.anim.hurt, dodge: e.anim.dodge, aim: e.anim.aim, dead: e.state === 'down' ? Math.min(1, e.stateT * 1.5) : 0 };
-  e.spr = renderFigure(e.look, st, px, e.spr, e.extra);
+  // Nebenfiguren seltener neu zeichnen (spart am Handy viel Rechenzeit)
+  const main = e.team === 0 || e.team === 1;
+  if (!e.spr || main || e.spr.px !== px || G.t - (e.sprT || -9) > (Math.hypot(e.vx, e.vy) > 10 ? 0.06 : 0.16)) { e.spr = renderFigure(e.look, st, px, e.spr, e.extra); e.spr.px = px; e.sprT = G.t; }
   const S = e.spr.S;
   g.save();
   g.translate(e.x, e.y);

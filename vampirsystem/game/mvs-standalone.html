@@ -124,6 +124,19 @@ canvas#game { position: absolute; inset: 0; display: block; touch-action: none; 
 .sunchip.on { opacity: 1; }
 .pad .atk.act { background: radial-gradient(circle at 40% 35%, rgba(255,210,120,.7), rgba(80,50,10,.8)); border-color: #ffe6a0; font-size: 13px; }
 
+.bar.xp { height: 4px; margin-top: 3px; }
+.bar.xp i { background: linear-gradient(90deg, #3a8ad0, #9ad8ff); }
+.hud .statusbtn { right: calc(62px + var(--safe-r)); font-size: 20px; }
+.statuswin .expbar { height: 8px; background: rgba(0,0,0,.5); border: 1px solid #2a4a70; border-radius: 4px; margin-top: 8px; overflow: hidden; }
+.statuswin .expbar i { display: block; height: 100%; background: linear-gradient(90deg, #3a8ad0, #9ad8ff); }
+.statuswin .expnum { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: #9ab; margin-top: 2px; }
+.strow { display: flex; align-items: center; gap: 10px; margin-top: 8px; font-family: 'Cormorant Garamond', serif; font-size: 18px; color: #e6f4ff; }
+.strow span { flex: 1; display: flex; flex-direction: column; }
+.strow small { font-size: 13px; color: #8a9ab0; }
+.strow b { min-width: 28px; text-align: right; font-variant-numeric: tabular-nums; }
+.strow .plus { width: 40px; height: 40px; border-radius: 8px; border: 1.5px solid var(--sysline); background: #10284a; color: #fff; font-size: 22px; font-weight: 800; }
+.strow .plus:disabled { opacity: .3; }
+
 </style>
 </head>
 <body>
@@ -840,6 +853,10 @@ const LOOKS = {
   zweit: { outfit: 'uniform', top: '#3a3040', topL: '#5e5068', topD: '#18121c', leg: '#201a24', legD: '#0e0a10', shoe: '#141014', skin: '#e0c4a8', skinD: '#a08468', hair: '#3a2a1e', eye: '#5a4a3a', hairStyle: 'spiky', trim: '#b0a070', rim: '#b0a0c0' },
   jane: { outfit: 'uniform', top: '#3a4a3a', topL: '#5e7260', topD: '#182018', leg: '#222a22', legD: '#0e120e', shoe: '#141410', skin: '#e8ccb4', skinD: '#a88c74', hair: '#5a3a24', eye: '#4a5a3a', hairStyle: 'bun', trim: '#e0c050', rim: '#e0c050' },
   del: { outfit: 'uniform', top: '#4a4a3a', topL: '#727260', topD: '#20201a', leg: '#28281e', legD: '#12120c', shoe: '#141410', skin: '#dcbc9c', skinD: '#9a7c60', hair: '#9a9a9a', eye: '#4a4a3a', hairStyle: 'short', trim: '#e0c050', rim: '#e0c050' },
+  s1: { outfit: 'uniform', top: '#3a4a5a', topL: '#5e7288', topD: '#18202a', leg: '#222a34', legD: '#0e1218', shoe: '#1a1a1e', skin: '#d8b090', skinD: '#987050', hair: '#1a1410', eye: '#3a2a1a', hairStyle: 'short', trim: '#a0a8b0', rim: '#a0b0c0' },
+  s2: { outfit: 'uniform', top: '#3a4a5a', topL: '#5e7288', topD: '#18202a', leg: '#222a34', legD: '#0e1218', shoe: '#1a1a1e', skin: '#f0d8c4', skinD: '#b09888', hair: '#8a4a2a', eye: '#4a6a3a', hairStyle: 'long', trim: '#a0a8b0', rim: '#a0b0c0' },
+  s3: { outfit: 'uniform', top: '#3a4a5a', topL: '#5e7288', topD: '#18202a', leg: '#222a34', legD: '#0e1218', shoe: '#1a1a1e', skin: '#8a5a40', skinD: '#5a3a28', hair: '#0e0a08', eye: '#2a1a10', hairStyle: 'messy', trim: '#a0a8b0', rim: '#a0b0c0' },
+  s4: { outfit: 'uniform', top: '#3a4a5a', topL: '#5e7288', topD: '#18202a', leg: '#222a34', legD: '#0e1218', shoe: '#1a1a1e', skin: '#ecd0b8', skinD: '#ac9078', hair: '#d8c070', eye: '#4a5a7a', hairStyle: 'bun', trim: '#a0a8b0', rim: '#a0b0c0' },
   kyle: { outfit: 'uniform', top: '#6a2a1e', topL: '#9a4a36', topD: '#30100a', leg: '#2a1c18', legD: '#140c0a', shoe: '#1a1414', skin: '#e0b894', skinD: '#9a7458', hair: '#c8781e', eye: '#ffa030', hairStyle: 'spiky', trim: '#d0a060', angry: true, rim: '#ff9a3a' }
 };
 const HUMAN_BOX = 120;
@@ -965,15 +982,13 @@ function newFight(opt) {
     arena: opt.arena, ents: [], tele: [], fx: [], texts: [], later: [],
     cam: { x: 0, y: 0 }, hint: null, counterFlash: 0, opt, stats: { hits: 0, perfect: 0, taken: 0 }
   };
-  const Q = SAVE.quinn;
   const p = mkEnt('quinn', LOOKS.quinn, opt.playerAt[0], opt.playerAt[1]);
-  p.team = 0; p.maxHp = 10 + (Q.stats.sta - 10); p.hp = p.maxHp;
-  p.str = Q.stats.str; p.agi = Q.stats.agi;
-  p.stam = 100; p.maxStam = 100; p.stamDelay = 0; p.counterT = 0; p.combo = 0; p.buffer = 0; p.holdT = 0; p.dodgeStart = -9;
+  p.team = 0; applyStats(p); p.hp = p.maxHp;
+  p.stam = p.maxStam; p.stamDelay = 0; p.counterT = 0; p.combo = 0; p.buffer = 0; p.holdT = 0; p.dodgeStart = -9;
   G.player = p;
   for (const f of opt.foes) {
     const e = mkEnt(f.id, LOOKS[f.look || f.id], f.at[0], f.at[1]);
-    Object.assign(e, { team: 1, name: f.name, maxHp: f.hp, hp: f.hp, ai: f.ai, poise: f.poise || 3, maxPoise: f.poise || 3, poiseT: 0, phase: 1, cd: f.cd || 0.8, info: f.info, draw: f.draw, fixed: f.fixed, r: f.r || 11 });
+    Object.assign(e, { team: 1, name: f.name, maxHp: f.hp, hp: f.hp, ai: f.ai, poise: f.poise || 3, maxPoise: f.poise || 3, poiseT: 0, phase: 1, cd: f.cd || 0.8, info: f.info, draw: f.draw, fixed: f.fixed, r: f.r || 11, expRate: f.expRate || 0, expKill: f.expKill || 0 });
     e.face = -1;
     G.foe = G.foe || e;
   }
@@ -1013,7 +1028,9 @@ function updateFight(rdt) {
     e.anim.t += dt;
     const sp = Math.hypot(e.vx, e.vy);
     e.anim.run = lerp(e.anim.run, clamp(sp / 150, 0, 1), 1 - Math.exp(-dt * 12));
+    const ph0 = e.anim.phase;
     e.anim.phase += sp * dt / 20;
+    if (sp > 60 && Math.floor(ph0 / Math.PI) !== Math.floor(e.anim.phase / Math.PI) && !e.draw) dust(e.x - e.vx * 0.02, e.y, 2, 0.5);
     e.anim.cast = Math.max(0, e.anim.cast - dt * 3.5);
     e.anim.hurt = Math.max(0, e.anim.hurt - dt * 4);
   }
@@ -1083,7 +1100,7 @@ function tryDodge(p) {
   const [mx, my] = readMove();
   let a = (mx || my) ? Math.atan2(my, mx) : (p.face > 0 ? Math.PI : 0);
   p.dodgeA = a; p.dodgeStart = G.t; p.iframes = SAVE.settings.wideDodge ? 0.34 : 0.26;
-  setState(p, 'dodge'); sfx('dodge');
+  setState(p, 'dodge'); sfx('dodge'); dust(p.x, p.y, 5, 1);
   if (Math.cos(a) !== 0 && (mx || my)) p.face = Math.cos(a) > 0 ? 1 : -1;
 }
 
@@ -1122,6 +1139,8 @@ function updatePlayer(dt) {
     if (p.stateT > 0.45 && !p.chargeReady) { p.chargeReady = true; sfx('card'); burst(p.x + p.face * 10, p.y - 36, 6, '#ffd070'); }
   } else if (p.state === 'dodge') {
     const k = p.stateT / 0.3;
+    p.ghostT = (p.ghostT || 0) - dt;
+    if (p.ghostT <= 0 && p.spr) { p.ghostT = 0.045; const c = mkCanvas(p.spr.out.width, p.spr.out.height); c.getContext('2d').drawImage(p.spr.out, 0, 0); G.fx.push({ k: 'ghost', x: p.x, y: p.y, face: p.face, img: c, S: p.spr.S, ay: p.spr.anchorY, px: figPx(), life: 0.28, t: 0, col: p.counterT > 0 ? '#ffd070' : '#8ad8ff' }); }
     const v = 330 * Math.pow(p.agi / 10, 0.3) * (1 - k * 0.7);
     tvx = Math.cos(p.dodgeA) * v; tvy = Math.sin(p.dodgeA) * v;
     p.anim.dodge = Math.sin(Math.min(1, k) * Math.PI);
@@ -1143,6 +1162,8 @@ function inArc(ex, ey, x, y, ang, half) { return Math.abs(angDiff(ang, Math.atan
 
 function playerHit(p, A) {
   let hitAny = false;
+  const heavy = A.kick || p.charged || p.counterT > 0;
+  G.fx.push({ k: 'swoosh', x: p.x, y: p.y - 26, a: p.aim, r: A.reach + 4, arc: A.arc * 0.9, col: p.counterT > 0 ? '#ffd070' : heavy ? '#e8f4ff' : '#bfe0ff', w: heavy ? 7 : 4, life: 0.16, t: 0, dir: p.combo % 2 ? -1 : 1 });
   for (const e of G.ents) {
     if (e.team !== 1 || e.state === 'down' || e.state === 'transform') continue;
     const d = Math.hypot(e.x - p.x, e.y - p.y);
@@ -1162,8 +1183,11 @@ function damageFoe(e, dmg, o) {
   e.flash = 0.1; e.anim.hurt = o.heavy ? 1 : 0.6;
   e.vx += Math.cos(o.ang) * o.kb; e.vy += Math.sin(o.ang) * o.kb * 0.7;
   G.stats.hits++;
+  G.expGain = (G.expGain || 0) + dmg * (e.expRate || 0);
   e.poise -= o.poise || 1; e.poiseT = 2;
   G.hitstop = o.heavy ? 0.075 : 0.035; G.shake = Math.max(G.shake, o.heavy ? 6 : 2.5);
+  if (o.heavy) G.punch = Math.max(G.punch || 0, o.counter ? 1 : 0.6);
+  if (o.counter) G.whiteFlash = 0.18;
   sfx(o.heavy ? 'crit' : 'hit', 0, 0.02); haptic(o.heavy ? 20 : 8);
   burst(e.x - Math.cos(o.ang) * 6, e.y - 30, o.heavy ? 12 : 6, o.counter ? '#ffd070' : '#ffffff');
   floatText(e.x + rand(-6, 6), e.y - 72, (Number.isInteger(dmg) ? dmg : dmg.toFixed(1)) + (o.counter ? ' KONTER' : ''), o.counter ? '#ffd070' : '#ffffff');
@@ -1172,6 +1196,7 @@ function damageFoe(e, dmg, o) {
   if (e.ai && e.ai.onHurt) e.ai.onHurt(e);
 }
 function foeDown(e) {
+  G.expGain = (G.expGain || 0) + (e.expKill || 0);
   setState(e, 'down'); e.anim.hurt = 1; G.tele = G.tele.filter((T) => T.owner !== e);
   G.hitstop = 0.18; G.slowT = 0.8; G.shake = 10; sfx('kill'); sfx('crit');
   if (G.ents.every((x) => x.team !== 1 || x.state === 'down')) {
@@ -1295,9 +1320,20 @@ function addTele(e, A) {
   return T;
 }
 function updateNpc(e, dt) {
+  const n = e.npc, p = G.player;
+  if (n.path) { // laeuft zwischen Punkten hin und her
+    n.i = n.i || 0; n.wait = (n.wait || 0) - dt;
+    const tg = n.path[n.i], dx = tg[0] - e.x, dy = tg[1] - e.y, d = Math.hypot(dx, dy);
+    if (n.wait > 0 || d < 4) { e.vx *= Math.exp(-dt * 8); e.vy *= Math.exp(-dt * 8); if (d < 4 && n.wait <= 0) { n.wait = rand(1, 3); n.i = (n.i + 1) % n.path.length; } }
+    else { const sp = n.speed || 55; e.vx = dx / d * sp; e.vy = dy / d * sp; e.face = dx > 0 ? 1 : -1; }
+    return;
+  }
   e.vx *= Math.exp(-dt * 8); e.vy *= Math.exp(-dt * 8);
-  if (e.npc.pose === 'cower') { e.anim.hurt = 0.55 + Math.sin(e.anim.t * 6) * 0.08; }
-  const p = G.player; e.face = p.x > e.x ? 1 : -1;
+  if (n.pose === 'cower') { e.anim.hurt = 0.55 + Math.sin(e.anim.t * 6) * 0.08; }
+  if (n.pose === 'cheer') { e.anim.cast = G.stats.hits && Math.sin(e.anim.t * 5 + e.id) > 0.6 ? 0.7 : 0; }
+  const f = G.foe && G.foe.state !== 'down' ? G.foe : null;
+  const look = n.watch === 'foe' && f ? f : p;
+  e.face = look.x > e.x ? 1 : -1;
 }
 
 /* ------------------------------------------------------------ Arena */
@@ -1325,10 +1361,11 @@ function updateCamera(rdt) {
 function burst(x, y, n, col) {
   for (let i = 0; i < n; i++) { const a = rand(0, TAU), s = rand(60, 220); G.fx.push({ k: 'spark', x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 40, life: rand(0.18, 0.4), t: 0, col, size: rand(2, 4.5) }); }
 }
+function dust(x, y, n, s) { for (let i = 0; i < n; i++) G.fx.push({ k: 'dust', x: x + rand(-4, 4), y: y + rand(-2, 2), vx: rand(-20, 20), vy: rand(-8, 4), life: rand(0.35, 0.6), t: 0, size: rand(4, 7) * (s || 1) }); }
 function slash(x, y, a, r, arc, col) { G.fx.push({ k: 'slash', x, y, a, r, arc, col, life: 0.18, t: 0 }); }
 function floatText(x, y, txt, col) { G.texts.push({ x, y, txt, col, t: 0, life: 0.9 }); }
 function updateFx(dt) {
-  for (let i = G.fx.length - 1; i >= 0; i--) { const f = G.fx[i]; f.t += dt; if (f.k === 'spark') { f.x += f.vx * dt; f.y += f.vy * dt; f.vy += 300 * dt; f.vx *= Math.exp(-dt * 4); } if (f.t >= f.life) G.fx.splice(i, 1); }
+  for (let i = G.fx.length - 1; i >= 0; i--) { const f = G.fx[i]; f.t += dt; if (f.k === 'spark') { f.x += f.vx * dt; f.y += f.vy * dt; f.vy += 300 * dt; f.vx *= Math.exp(-dt * 4); } else if (f.k === 'dust') { f.x += f.vx * dt; f.y += f.vy * dt; } if (f.t >= f.life) G.fx.splice(i, 1); }
   for (let i = G.texts.length - 1; i >= 0; i--) { const T = G.texts[i]; T.t += dt; T.y -= 34 * dt; if (T.t >= T.life) G.texts.splice(i, 1); }
 }
 
@@ -1412,6 +1449,8 @@ ARENA_ART.hof = function (A) {
     for (let x = r.x; x < r.x + r.w; x += 16) { g.beginPath(); g.moveTo(x, r.y); g.lineTo(x, r.y + r.h); g.stroke(); }
     for (let y = r.y; y < r.y + r.h; y += 16) { g.beginPath(); g.moveTo(r.x, y); g.lineTo(r.x + r.w, y); g.stroke(); }
   }
+  // Baenke
+  for (const [x, y] of A.benches || []) { g.fillStyle = 'rgba(0,0,0,0.25)'; g.fillRect(x - 16, y + 2, 34, 6); g.fillStyle = '#7a5a3a'; g.fillRect(x - 17, y - 6, 34, 8); g.fillStyle = '#5a3e28'; g.fillRect(x - 15, y + 2, 3, 5); g.fillRect(x + 12, y + 2, 3, 5); }
   // Gebaeude
   for (const b of A.buildings || []) {
     g.fillStyle = lg(g, 0, b.y, 0, b.y + b.h, [0, '#8a94a8', 1, '#5a6478']); g.fillRect(b.x, b.y, b.w, b.h);
@@ -1484,9 +1523,10 @@ function renderFight() {
   g.setTransform(1, 0, 0, 1, 0, 0);
   g.fillStyle = '#0a0c12'; g.fillRect(0, 0, cv.width, cv.height);
   if (!G) return;
-  const z = VIEW.zoom * VIEW.dpr, sh = G.shake * (SAVE.settings.shake || 1);
-  const ox = -G.cam.x + VIEW.w / 2 + rand(-sh, sh) / VIEW.zoom, oy = -G.cam.y + VIEW.h / 2 + rand(-sh, sh) / VIEW.zoom;
-  g.setTransform(z, 0, 0, z, ox * z, oy * z);
+  G.punch = Math.max(0, (G.punch || 0) - 1 / 60 * 5);
+  const z = VIEW.zoom * VIEW.dpr * (1 + (G.punch || 0) * 0.05 * (SAVE.settings.shake || 0)), sh = G.shake * (SAVE.settings.shake || 1);
+  const cx = cv.width / 2 + rand(-sh, sh) * VIEW.dpr, cy = cv.height / 2 + rand(-sh, sh) * VIEW.dpr;
+  g.setTransform(z, 0, 0, z, cx - G.cam.x * z, cy - G.cam.y * z);
   const A = G.arena;
   if (!A.bg) A.bg = ARENA_ART[A.art](A);
   g.drawImage(A.bg, 0, 0, A.w, A.h);
@@ -1507,17 +1547,36 @@ function renderFight() {
   for (const T of G.tele) drawTele(g, T);
   // Schatten unter allen Figuren
   for (const e of G.ents) { if (e.draw) continue; g.fillStyle = 'rgba(0,0,0,0.3)'; g.beginPath(); g.ellipse(e.x, e.y + 1, 13, 4.5, 0, 0, TAU); g.fill(); }
+  for (const f of G.fx) if (f.k === 'dust') { const k = f.t / f.life; g.globalAlpha = 0.35 * (1 - k); g.fillStyle = A.night ? '#8a90a8' : '#e8e0d0'; g.beginPath(); g.ellipse(f.x, f.y, f.size * (1 + k), f.size * 0.45 * (1 + k), 0, 0, TAU); g.fill(); }
+  g.globalAlpha = 1;
+  for (const f of G.fx) if (f.k === 'ghost') { const k = f.t / f.life; g.save(); g.translate(f.x, f.y); g.scale(f.face / f.px, 1 / f.px); g.globalAlpha = 0.4 * (1 - k); g.drawImage(flashSprite(f.img, f.col), -f.S / 2, -f.ay); g.restore(); }
   // Tische und Figuren nach Tiefe sortiert
   const list = [];
   for (const b of A.blocks || []) if (!b.invisible) list.push({ y: b.y + b.h, draw: () => drawTable(g, b) });
   for (const e of G.ents) list.push({ y: e.y, draw: () => (e.draw ? OBJ_ART[e.draw](g, e) : drawEnt(g, e)) });
   list.sort((a, b) => a.y - b.y);
   for (const it of list) it.draw();
+  // Baumkronen
+  for (const [x, y] of A.trees || []) {
+    g.fillStyle = 'rgba(10,30,10,0.28)'; g.beginPath(); g.ellipse(x + 8, y + 6, 30, 12, 0, 0, TAU); g.fill();
+    g.fillStyle = '#4a3020'; g.fillRect(x - 3, y - 22, 6, 24);
+    const sway = Math.sin(G.t * 1.2 + x) * 1.5;
+    for (const [dx, dy, r, c] of [[0, -40, 22, '#2e5a28'], [-12, -32, 15, '#3a6a30'], [12, -34, 16, '#3a6a30'], [4, -46, 13, '#4a7a3a']]) { g.fillStyle = A.night ? shade(c, -0.55) : c; g.beginPath(); g.arc(x + dx + sway, y + dy, r, 0, TAU); g.fill(); }
+  }
   // Effekte
   g.save(); g.globalCompositeOperation = 'lighter';
   for (const f of G.fx) {
     const k = f.t / f.life;
     if (f.k === 'spark') { g.globalAlpha = 1 - k; g.drawImage(glowSprite(f.col), f.x - f.size * 2, f.y - f.size * 2, f.size * 4, f.size * 4); }
+    else if (f.k === 'swoosh') {
+      const e0 = easeOut(k);
+      g.globalAlpha = (1 - k) * 0.95; g.strokeStyle = f.col; g.lineCap = 'round';
+      const a0 = f.a - f.arc * f.dir, a1 = f.a + f.arc * f.dir * (e0 * 2 - 1);
+      g.save(); g.translate(f.x, f.y + 18); g.scale(1, 0.75);
+      g.lineWidth = f.w * (1 - k * 0.6); g.beginPath(); g.arc(0, 0, f.r * 0.9, Math.min(a0, a1), Math.max(a0, a1)); g.stroke();
+      g.globalAlpha *= 0.5; g.lineWidth = f.w * 2.2; g.beginPath(); g.arc(0, 0, f.r * 0.8, Math.min(a0, a1), Math.max(a0, a1)); g.stroke();
+      g.restore();
+    }
     else if (f.k === 'beam') { g.save(); g.translate(f.x, f.y); g.rotate(f.a); g.globalAlpha = 1 - k; g.fillStyle = f.col; g.fillRect(0, -f.w / 2 * (1 - k), f.len, f.w * (1 - k)); g.fillStyle = '#ffffff'; g.fillRect(0, -2, f.len, 4); g.restore(); }
     else if (f.k === 'slash') {
       g.globalAlpha = (1 - k) * 0.9; g.strokeStyle = f.col; g.lineWidth = 5 * (1 - k) + 1;
@@ -1544,6 +1603,7 @@ function renderFight() {
   // Bildschirmeffekte
   g.setTransform(1, 0, 0, 1, 0, 0);
   const W = cv.width, H = cv.height;
+  if (G.whiteFlash > 0) { G.whiteFlash -= 1 / 60; g.fillStyle = `rgba(255,245,220,${Math.max(0, G.whiteFlash) * 2})`; g.fillRect(0, 0, W, H); }
   const slow = clamp((1 - G.scale) / 0.7, 0, 1);
   if (slow > 0.01) { g.fillStyle = rg(g, W / 2, H / 2, Math.min(W, H) * 0.3, Math.max(W, H) * 0.75, [0, 'rgba(20,60,120,0)', 1, `rgba(20,60,140,${0.45 * slow})`]); g.fillRect(0, 0, W, H); }
   const p = G.player;
@@ -1576,7 +1636,9 @@ function figPx() { return Math.max(1.5, Math.min(4, VIEW.zoom * VIEW.dpr)); }
 function drawEnt(g, e) {
   const px = figPx();
   const st = { t: e.anim.t, run: e.anim.run, phase: e.anim.phase, cast: e.anim.cast, hurt: e.anim.hurt, dodge: e.anim.dodge, aim: e.anim.aim, dead: e.state === 'down' ? Math.min(1, e.stateT * 1.5) : 0 };
-  e.spr = renderFigure(e.look, st, px, e.spr, e.extra);
+  // Nebenfiguren seltener neu zeichnen (spart am Handy viel Rechenzeit)
+  const main = e.team === 0 || e.team === 1;
+  if (!e.spr || main || e.spr.px !== px || G.t - (e.sprT || -9) > (Math.hypot(e.vx, e.vy) > 10 ? 0.06 : 0.16)) { e.spr = renderFigure(e.look, st, px, e.spr, e.extra); e.spr.px = px; e.sprT = G.t; }
   const S = e.spr.S;
   g.save();
   g.translate(e.x, e.y);
@@ -1644,40 +1706,91 @@ function runScene(beats, done) {
 const WHO_COL = { Quinn: '#9ab0ff', Peter: '#9aff9a', Kyle: '#ffb040', Vorden: '#ffd27a', Layla: '#c8a0ff' };
 function drawPortrait(c, id, extra, who) {
   const W = 360, H = 360; c.width = W * VIEW.dpr; c.height = H * VIEW.dpr;
-  const g = c.getContext('2d');
-  const px = 5.2 * VIEW.dpr;
-  const talking = who && LOOKS[id] && who.toLowerCase() === id;
-  const spr = renderFigure(LOOKS[id], { t: 1 + (talking ? performance.now() / 1000 : 0), run: 0, cast: 0 }, px, null, extra);
-  g.globalAlpha = 0.95;
-  g.drawImage(spr.out, c.width / 2 - spr.S / 2, c.height * 0.98 - spr.anchorY);
+  UI.portrait = { c, id, extra, talking: who && LOOKS[id] && who.toLowerCase() === id, spr: null, t0: performance.now() };
+  paintPortrait(performance.now());
 }
-// Hintergruende fuer Szenen ohne Kampf
+function paintPortrait(now) {
+  const P = UI.portrait; if (!P || !P.c.isConnected) { UI.portrait = null; return; }
+  const g = P.c.getContext('2d'), px = 5.2 * VIEW.dpr;
+  const t = (now - P.t0) / 1000;
+  // Atmen; wer spricht, gestikuliert leicht
+  const cast = P.talking ? Math.max(0, Math.sin(t * 3.1)) * 0.35 : 0;
+  P.spr = renderFigure(LOOKS[P.id], { t: 1 + t, run: 0, cast, aim: -0.2 }, px, P.spr, P.extra);
+  g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, P.c.width, P.c.height);
+  const k = Math.min(1, t * 4);
+  g.globalAlpha = k;
+  g.drawImage(P.spr.out, P.c.width / 2 - P.spr.S / 2 + (1 - k) * 30, P.c.height * 0.98 - P.spr.anchorY);
+  g.globalAlpha = 1;
+}
+// Hintergruende fuer Szenen ohne Kampf (gezeichnet, eigene Gestaltung)
 const SCENE_BG = { cur: 'zimmer' };
 function renderSceneBg(t) {
-  const g = ctx, W = cv.width, H = cv.height;
+  const g = ctx, W = cv.width, H = cv.height, u = Math.min(W, H) / 100;
   g.setTransform(1, 0, 0, 1, 0, 0);
-  const B = { zimmer: ['#1a1624', '#07060c', '#6a4a2a'], nacht: ['#0c1428', '#03050c', '#4a6aa0'], kantine: ['#3a4250', '#12161e', '#c8d0dc'], bus: ['#2a2e3a', '#0a0c12', '#8a9ab0'], system: ['#0a1a34', '#02060e', '#6ec8ff'] }[SCENE_BG.cur] || ['#101018', '#040408', '#888'];
-  g.fillStyle = rg(g, W / 2, H * 0.3, 10, Math.max(W, H), [0, B[0], 1, B[1]]); g.fillRect(0, 0, W, H);
-  // leichtes Glimmen / Staub
-  g.globalCompositeOperation = 'lighter';
-  for (let i = 0; i < 24; i++) {
-    const x = (hash2(i, 1, 3) % 1000) / 1000 * W, y = ((hash2(i, 2, 3) % 1000) / 1000 * H + t * 12 * (1 + i % 3)) % H;
-    g.globalAlpha = 0.08 + 0.06 * Math.sin(t + i);
-    g.drawImage(glowSprite(B[2]), x - 20, y - 20, 40, 40);
-  }
-  g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
+  const id = SCENE_BG.cur;
+  const glowField = (col, n) => { g.globalCompositeOperation = 'lighter'; for (let i = 0; i < n; i++) { const x = (hash2(i, 1, 3) % 1000) / 1000 * W, y = ((hash2(i, 2, 3) % 1000) / 1000 * H - t * 10 * (1 + i % 3) + H * 10) % H; g.globalAlpha = 0.07 + 0.05 * Math.sin(t + i); g.drawImage(glowSprite(col), x - 3 * u, y - 3 * u, 6 * u, 6 * u); } g.globalAlpha = 1; g.globalCompositeOperation = 'source-over'; };
+  if (id === 'zimmer') {
+    // kleines Zimmer bei Nacht: Wand, Fenster, Schreibtisch mit dem schwarzen Buch
+    g.fillStyle = lg(g, 0, 0, 0, H, [0, '#1c1826', 1, '#0c0a12']); g.fillRect(0, 0, W, H);
+    g.fillStyle = '#16121e'; g.fillRect(0, H * 0.62, W, H * 0.38);
+    const wx = W * 0.62, wy = H * 0.12, ww = W * 0.3, wh = H * 0.22;
+    g.fillStyle = lg(g, 0, wy, 0, wy + wh, [0, '#1a2a4a', 1, '#2a3a5a']); g.fillRect(wx, wy, ww, wh);
+    g.fillStyle = '#e8ecf8'; g.beginPath(); g.arc(wx + ww * 0.7, wy + wh * 0.35, u * 3, 0, TAU); g.fill();
+    g.strokeStyle = '#0c0a12'; g.lineWidth = u; g.strokeRect(wx, wy, ww, wh); g.beginPath(); g.moveTo(wx + ww / 2, wy); g.lineTo(wx + ww / 2, wy + wh); g.stroke();
+    g.globalCompositeOperation = 'lighter'; g.fillStyle = 'rgba(120,150,220,0.06)'; g.beginPath(); g.moveTo(wx, wy + wh); g.lineTo(wx + ww, wy + wh); g.lineTo(wx + ww * 0.6, H); g.lineTo(wx - ww * 0.7, H); g.fill(); g.globalCompositeOperation = 'source-over';
+    const dx = W * 0.08, dy = H * 0.6; g.fillStyle = '#3a2a20'; g.fillRect(dx, dy, W * 0.44, u * 3); g.fillRect(dx + u * 2, dy, u * 2, H * 0.2); g.fillRect(dx + W * 0.44 - u * 4, dy, u * 2, H * 0.2);
+    // das Buch
+    const bx = dx + W * 0.14, by = dy - u * 2.4;
+    g.fillStyle = '#08060a'; g.fillRect(bx, by, u * 14, u * 2.6); g.fillStyle = '#2a0a12'; g.fillRect(bx, by + u * 2, u * 14, u * 0.6);
+    g.globalCompositeOperation = 'lighter'; g.globalAlpha = 0.25 + Math.sin(t * 2) * 0.1; g.drawImage(glowSprite('#ff2a40'), bx - u * 6, by - u * 8, u * 26, u * 18); g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
+  } else if (id === 'bus') {
+    // Transport: Fensterreihe, draussen zieht die Militaerstadt vorbei
+    g.fillStyle = '#1a1c24'; g.fillRect(0, 0, W, H);
+    const wy = H * 0.14, wh = H * 0.3;
+    g.fillStyle = lg(g, 0, wy, 0, wy + wh, [0, '#8ab8e8', 1, '#e8d8b0']); g.fillRect(0, wy, W, wh);
+    for (let i = 0; i < 14; i++) { const bw = W * (0.08 + (hash2(i, 5, 1) % 100) / 900), bh = wh * (0.3 + (hash2(i, 6, 1) % 100) / 160); const x = ((i * W * 0.14 - t * W * 0.12) % (W * 1.9) + W * 1.9) % (W * 1.9) - W * 0.3; g.fillStyle = i % 2 ? '#5a6a82' : '#4a5870'; g.fillRect(x, wy + wh - bh, bw, bh); g.fillStyle = 'rgba(255,240,200,0.5)'; for (let k = 0; k < 4; k++) g.fillRect(x + bw * 0.2, wy + wh - bh + k * bh / 4 + u, bw * 0.2, u * 0.8); }
+    g.fillStyle = '#2a2e3a'; for (let x = 0; x < W; x += W / 3) g.fillRect(x - u, wy, u * 2.4, wh);
+    g.fillStyle = '#12141a'; g.fillRect(0, wy + wh, W, H);
+    for (let x = W * 0.05; x < W; x += W * 0.3) { g.fillStyle = '#3a2a4a'; g.fillRect(x, H * 0.62, W * 0.2, H * 0.12); g.fillStyle = '#2a1e36'; g.fillRect(x, H * 0.5, W * 0.2, H * 0.12); }
+  } else if (id === 'kantine') {
+    g.fillStyle = lg(g, 0, 0, 0, H, [0, '#4a5262', 1, '#2a2e38']); g.fillRect(0, 0, W, H * 0.5);
+    for (let x = W * 0.05; x < W; x += W * 0.24) { g.fillStyle = '#9ec8e8'; g.fillRect(x, H * 0.08, W * 0.16, H * 0.16); g.strokeStyle = '#2a303c'; g.lineWidth = u; g.strokeRect(x, H * 0.08, W * 0.16, H * 0.16); }
+    const T = u * 9; for (let y = H * 0.5; y < H; y += T) for (let x = 0; x < W; x += T) { g.fillStyle = ((x + y) / T | 0) % 2 ? '#9a9ea8' : '#8a8e98'; g.fillRect(x, y, T, T); }
+    g.fillStyle = 'rgba(10,12,18,0.35)'; g.fillRect(0, 0, W, H);
+    for (const [x, y] of [[0.05, 0.56], [0.6, 0.6], [0.2, 0.78]]) { g.fillStyle = '#6a4a30'; g.fillRect(W * x, H * y, W * 0.35, u * 4); }
+  } else if (id === 'nacht') {
+    g.fillStyle = lg(g, 0, 0, 0, H, [0, '#060a1c', 0.7, '#101a34', 1, '#1a2438']); g.fillRect(0, 0, W, H);
+    for (let i = 0; i < 70; i++) { const x = (hash2(i, 9, 2) % 1000) / 1000 * W, y = (hash2(i, 8, 2) % 1000) / 1000 * H * 0.6; g.globalAlpha = 0.3 + 0.5 * Math.abs(Math.sin(t * 0.8 + i)); g.fillStyle = '#fff'; g.fillRect(x, y, u * 0.35, u * 0.35); }
+    g.globalAlpha = 1;
+    g.fillStyle = '#e8ecf8'; g.beginPath(); g.arc(W * 0.78, H * 0.14, u * 5, 0, TAU); g.fill(); glowField('#9ab0ff', 6);
+    g.fillStyle = '#070912'; g.beginPath(); g.moveTo(0, H * 0.7);
+    for (let i = 0; i <= 12; i++) { const x = W * i / 12, h = H * (0.08 + (hash2(i, 3, 3) % 100) / 700); g.lineTo(x, H * 0.7 - h); g.lineTo(x + W / 12, H * 0.7 - h); }
+    g.lineTo(W, H); g.lineTo(0, H); g.fill();
+    for (let i = 0; i < 26; i++) { g.fillStyle = 'rgba(255,220,150,0.6)'; g.fillRect((hash2(i, 4, 7) % 1000) / 1000 * W, H * (0.6 + (hash2(i, 5, 7) % 100) / 1000), u * 0.8, u * 0.8); }
+  } else if (id === 'system') {
+    g.fillStyle = rg(g, W / 2, H * 0.45, u * 4, Math.max(W, H) * 0.8, [0, '#0e2a54', 1, '#02060e']); g.fillRect(0, 0, W, H);
+    g.strokeStyle = 'rgba(110,200,255,0.08)'; g.lineWidth = 1;
+    const gs = u * 8, off = (t * u * 3) % gs;
+    for (let x = -gs; x < W + gs; x += gs) { g.beginPath(); g.moveTo(x + off, 0); g.lineTo(x + off, H); g.stroke(); }
+    for (let y = -gs; y < H + gs; y += gs) { g.beginPath(); g.moveTo(0, y + off); g.lineTo(W, y + off); g.stroke(); }
+    glowField('#6ec8ff', 18);
+  } else { g.fillStyle = '#08080e'; g.fillRect(0, 0, W, H); }
+  if (id !== 'system') glowField(id === 'zimmer' ? '#ff6a7a' : '#aab8d8', 10);
+  if (UI.portrait) paintPortrait(performance.now());
 }
 
 /* ------------------------------------------------------------ Kampf-HUD */
 function buildHud(opt) {
   UI.root.innerHTML = `<div class="hud">
     <div class="me"><div class="nm">QUINN TALEN<small id="lvl">Stufe ${SAVE.quinn.level}</small></div>
+      <div class="bar xp"><i id="xpb"></i></div>
       <div class="bar hp"><i id="hpb"></i></div><div class="hpnum" id="hpn"></div>
       <div class="bar st" id="stbw"><i id="stb"></i></div>
       <div class="goal" id="goal"></div></div>
     <div class="sunchip" id="sun">☀ SONNE · WERTE HALBIERT</div>
     <div class="foe" id="foe" style="display:none"><div class="nm" id="foen"></div><div class="bar"><i id="foeb"></i></div></div>
     <button class="pause" id="pauseBtn">❚❚</button>
+    ${opt.hub ? '<button class="pause statusbtn" id="statusBtn">☰</button>' : ''}
     <div class="hint" id="hint"></div>
     <div class="stickzone" id="sz"><div class="stick" style="display:none"><i></i></div></div>
     <div class="pad">
@@ -1694,6 +1807,7 @@ function buildHud(opt) {
   bindButton($('#bDodge'), () => pushInput('dodge'));
   bindButton($('#bInsp'), () => pushInput('inspect'));
   $('#pauseBtn').addEventListener('pointerup', () => showPause());
+  if (opt.hub) $('#statusBtn').addEventListener('pointerup', () => { if (!G) return; G.paused = true; showStatus(() => { if (G) G.paused = false; }); });
   UI.cache = {};
 }
 function updateHud() {
@@ -1701,8 +1815,10 @@ function updateHud() {
   const p = G.player, C = UI.cache;
   const hpK = p.hp + '/' + p.maxHp;
   if (C.hp !== hpK) { C.hp = hpK; $('#hpb').style.width = (p.hp / p.maxHp * 100) + '%'; $('#hpn').textContent = `HP ${Math.ceil(p.hp)} / ${p.maxHp}`; }
+  const xk = SAVE.quinn.level + ':' + SAVE.quinn.exp + ':' + Math.round(G.expGain || 0);
+  if (C.xp !== xk) { C.xp = xk; $('#lvl').textContent = 'Stufe ' + SAVE.quinn.level + (SAVE.quinn.points ? ' · +' + SAVE.quinn.points : ''); $('#xpb').style.width = Math.min(100, (SAVE.quinn.exp + (G.expGain || 0)) / expNeed(SAVE.quinn.level) * 100) + '%'; }
   const st = Math.round(p.stam);
-  if (C.st !== st) { C.st = st; $('#stb').style.width = st + '%'; $('#stbw').classList.toggle('low', st < 25); }
+  if (C.st !== st) { C.st = st; $('#stb').style.width = (p.stam / p.maxStam * 100) + '%'; $('#stbw').classList.toggle('low', st < 25); }
   const f = G.foe;
   if (f && G.showFoe) {
     const k = f.name + f.hp;
@@ -1742,9 +1858,10 @@ function showPause() {
   G.paused = true;
   const el = document.createElement('div'); el.className = 'screen dim'; el.style.pointerEvents = 'auto';
   el.innerHTML = `${sysBox({ head: 'PAUSE', lines: [MISSION ? MISSION.title : ''], kv: [['Treffer gelandet', G.stats.hits], ['Perfekt ausgewichen', G.stats.perfect], ['Schaden erlitten', G.stats.taken]] })}
-    <button class="btn" id="pRes">Weiter</button><button class="btn ghost" id="pRe">Kampf neu starten</button><button class="btn ghost" id="pMenu">Hauptmenü</button>`;
+    <button class="btn" id="pRes">Weiter</button><button class="btn" id="pStat">Status${SAVE.quinn.points ? ' · +' + SAVE.quinn.points : ''}</button><button class="btn ghost" id="pRe">Kampf neu starten</button><button class="btn ghost" id="pMenu">Hauptmenü</button>`;
   UI.root.appendChild(el);
   el.querySelector('#pRes').onclick = () => { el.remove(); G.paused = false; };
+  el.querySelector('#pStat').onclick = () => showStatus();
   el.querySelector('#pRe').onclick = () => { el.remove(); startMission(MISSION.id, true); };
   el.querySelector('#pMenu').onclick = () => { G = null; showTitle(); };
 }
@@ -1842,7 +1959,9 @@ const MISSIONS = {
       arena: { art: 'pruefplatz', w: 340, h: 680, sun: [{ x: 0, y: 0, w: 340, h: 680 }] },
       playerAt: [170, 440],
       foes: [{ id: 'saeule', name: 'Messsäule', hp: 9999, poise: 999, at: [170, 330], draw: 'saeule', fixed: true, r: 14, ai: { params: () => ({ range: 999, speed: 0, cd: 99 }), choose: () => null } }],
+      npcs: [{ id: 'jane', at: [80, 300], face: 1 }, { id: 'layla', at: [280, 420], watch: 'player' }, { id: 'erin', at: [300, 360], watch: 'player' }, { id: 'vorden', at: [60, 420], watch: 'player' }, { id: 'peter', at: [50, 470], pose: 'cower' }, { id: 's1', at: [290, 250] }, { id: 's3', at: [300, 300] }],
       inspect: false, noFoeBar: true,
+      expBonus: (G) => Math.round((G.tut && G.tut.total) || 0),
       onTick: testTick
     },
     won: [
@@ -1878,8 +1997,8 @@ const MISSIONS = {
     fight: {
       arena: { art: 'kantine', w: 340, h: 600, blocks: [{ x: 18, y: 150, w: 70, h: 26 }, { x: 252, y: 150, w: 70, h: 26 }, { x: 18, y: 440, w: 70, h: 26 }, { x: 252, y: 440, w: 70, h: 26 }] },
       playerAt: [170, 400],
-      foes: [{ id: 'kyle', name: 'Kyle · Fähigkeit: Tigerkrallen', hp: 26, poise: 4, at: [170, 260], ai: AI_KYLE }],
-      npcs: [{ id: 'peter', at: [300, 320], pose: 'cower', face: -1 }],
+      foes: [{ id: 'kyle', name: 'Kyle · Fähigkeit: Tigerkrallen', hp: 26, poise: 4, at: [170, 260], ai: AI_KYLE, expRate: 1, expKill: 20, info: { name: 'Kyle Main', race: 'Mensch', ability: 'Verwandlung (Tigerkrallen)', blood: 'B+' } }],
+      npcs: [{ id: 'peter', at: [300, 320], pose: 'cower', face: -1 }, { id: 's1', at: [45, 200], pose: 'cheer', watch: 'foe' }, { id: 's2', at: [60, 240], watch: 'foe' }, { id: 's3', at: [300, 205], pose: 'cheer', watch: 'foe' }, { id: 's4', at: [45, 500], watch: 'foe' }, { id: 'zweit', at: [295, 505], pose: 'cheer', watch: 'foe' }],
       inspect: false,
       onTick: tutorialTick
     },
@@ -1893,7 +2012,7 @@ const MISSIONS = {
       { bg: 'kantine', portrait: 'quinn' },
       { narr: 'Quinn lehnt ab – und kann trotzdem den Blick nicht vom Blut auf dem Boden lösen.' }
     ],
-    reward: { exp: 50, skills: ['inspect'] },
+    reward: { exp: 50, skills: ['inspect'] }, // Quest-Belohnung beim ersten Sieg
     after: () => { SAVE.day.night = true; SAVE.flags.kyle = true; },
     next: 'akademie'
   },
@@ -1912,6 +2031,7 @@ const MISSIONS = {
       playerAt: [170, 460],
       foes: [{ id: 'geraet', name: 'Trainingsgerät', hp: 9999, poise: 999, at: [170, 280], draw: 'geraet', fixed: true, r: 16, cd: 1.2, ai: AI_GERAET, info: { name: 'Trainingsgerät', race: '—', ability: 'Strahl', blood: '—' } }],
       inspect: true, noDeath: true, noFoeBar: true,
+      expBonus: (G) => Math.round(Math.min(20, (G.tut && G.tut.t) || 0) * 2 + G.stats.perfect * 6),
       onTick: survivalTick(20)
     },
     won: [
@@ -1944,6 +2064,7 @@ const MISSIONS = {
       npcs: [{ id: 'peter', at: [120, 380], pose: 'cower', face: 1 }, { id: 'vorden', at: [330, 400], face: -1 }, { id: 'zweit', at: [110, 250], face: 1 }, { id: 'zweit', at: [340, 260], face: -1 }],
       inspect: true, noDeath: true,
       onInspect: (G) => { (G.tut || (G.tut = { t: 0 })).inspected = true; },
+      expBonus: (G) => Math.min(40, (G.stats.evaded || 0) * 4),
       onTick: monoTick
     },
     won: [
@@ -1959,6 +2080,18 @@ const MISSIONS = {
     after: () => { SAVE.flags.mono = true; },
     next: null
   }
+};
+MISSIONS.training = {
+  id: 'training', title: 'Training', src: 'frei', type: 'pruefung',
+  fight: {
+    arena: { art: 'halle', w: 340, h: 680 },
+    playerAt: [170, 460],
+    foes: [{ id: 'geraet', name: 'Trainingsgerät', hp: 9999, poise: 999, at: [170, 280], draw: 'geraet', fixed: true, r: 16, cd: 1.2, ai: AI_GERAET, info: { name: 'Trainingsgerät', race: '—', ability: 'Strahl', blood: '—' } }],
+    inspect: true, noDeath: true, noFoeBar: true,
+    expBonus: (G) => Math.round(Math.min(30, (G.tut && G.tut.t) || 0) * 2 + G.stats.perfect * 5 - G.stats.taken * 2),
+    onTick: survivalTick(30)
+  },
+  next: 'akademie', repeat: true
 };
 const MISSION_ORDER = ['prolog', 'test', 'kyle', 'nacht', 'mono'];
 
@@ -2013,6 +2146,8 @@ function hubSetup() {
   pois.push({ x: 105, y: 420, label: 'Kantine', col: '#ffb040', hidden: () => night || !(D.n === 2 && !F.kyle) && !(D.n >= 3 && F.nacht && !F.mono), action: () => leaveHub(() => startMission(D.n === 2 ? 'kyle' : 'mono')) });
   // Wasserspender (Tagesquest)
   pois.push({ x: 175, y: 440, label: 'Wasser trinken', col: '#6ec8ff', hidden: () => night || D.water, action: () => { D.water = true; writeSave(); sfx('heal'); sysMsg({ head: 'TAGESQUEST ERFÜLLT', lines: ['2 Liter Wasser getrunken.'], kv: [['EP', '+5']] }); addExp(5); } });
+  // Trainingshalle tagsueber: freies Training fuer EP
+  pois.push({ x: 335, y: 420, label: 'Training (EP)', col: '#9ad8ff', hidden: () => night || D.n < 2, action: go('training') });
   // Trainingshalle nachts (Kap. 12)
   pois.push({ x: 335, y: 420, label: 'Trainingshalle', col: '#c8a0ff', hidden: () => !(night && F.kyle && !F.nacht), action: go('nacht') });
   const blocks = buildings.map((b) => ({ x: b.x, y: b.y, w: b.w, h: b.h - 8, invisible: true }));
@@ -2020,8 +2155,16 @@ function hubSetup() {
   const shade = buildings.map((b) => ({ x: b.x - 4, y: b.y + b.h - 8, w: b.w + 8, h: 46 })).concat([{ x: 192, y: 130, w: 56, h: H - 130 }]);
   return {
     arena: { art: 'hof', w: W, h: H, buildings, blocks, pois, paths: [{ x: 192, y: 130, w: 56, h: H - 130 }, { x: 0, y: 452, w: W, h: 44 }, { x: 0, y: 160, w: W, h: 40 }],
-      sun: night ? [] : [{ x: 0, y: 0, w: W, h: H }], shade, night },
-    playerAt: [220, 620], foes: [], npcs: [], inspect: SAVE.quinn.skills.includes('inspect'), hub: true, onTick: hubTick
+      sun: night ? [] : [{ x: 0, y: 0, w: W, h: H }], shade, night,
+      trees: [[40, 520], [400, 510], [30, 650], [410, 660], [150, 250], [300, 255]], benches: [[130, 560], [300, 580]] },
+    playerAt: [220, 620], foes: [],
+    npcs: night ? [] : [
+      { id: 's1', at: [60, 540], path: [[60, 540], [150, 600], [60, 620]] },
+      { id: 's2', at: [380, 560], path: [[380, 560], [300, 640], [390, 620]], speed: 45 },
+      { id: 's3', at: [300, 230], path: [[300, 230], [420, 240], [360, 270]] },
+      { id: 's4', at: [80, 240], path: [[80, 240], [20, 270], [150, 280]], speed: 40 }
+    ],
+    inspect: SAVE.quinn.skills.includes('inspect'), hub: true, onTick: hubTick
   };
 }
 function canSleep() {
@@ -2046,7 +2189,6 @@ function hubTick(G, dt) {
   G.hubInfo = { goal: hubGoal(), sun: G.inSun };
 }
 function leaveHub(fn) { G = null; writeSave(); fn(); }
-function addExp(n) { SAVE.quinn.exp += n; writeSave(); }
 function sleep() {
   const D = SAVE.day, sunOk = D.sun < 6, lines = [];
   let ep = 0;
@@ -2095,6 +2237,92 @@ function tutorialTick(G, dt) {
     G.hint = { text: '<b>ANGRIFF</b> gedrückt halten: aufgeladener Schlag, bricht die Deckung' };
     if (T.t > 6) { T.step = 4; G.hint = null; }
   }
+}
+
+/* ---- src/09-progress.js ---- */
+'use strict';
+/* ==========================================================================
+   FORTSCHRITT — EP, Stufen und Wertepunkte (frei, nicht an die Story gebunden)
+   Jede Stufe gibt einen Wertepunkt (wie im Roman) fuer Staerke, Agilitaet
+   oder Ausdauer. Evolutionen bleiben an die Story gebunden.
+   ========================================================================== */
+
+function expNeed(level) { return 100 + (level - 1) * 40; }
+// EP gutschreiben; liefert die Zahl der Stufenaufstiege
+function gainExp(n) {
+  const Q = SAVE.quinn;
+  n = Math.max(0, Math.round(n));
+  Q.exp += n;
+  let ups = 0;
+  while (Q.exp >= expNeed(Q.level)) { Q.exp -= expNeed(Q.level); Q.level++; Q.points++; ups++; }
+  writeSave();
+  return ups;
+}
+function addExp(n) {
+  const ups = gainExp(n);
+  if (ups && G && UI.hud) { banner('STUFE ' + SAVE.quinn.level); sfx('level'); sysMsg({ head: 'STUFENAUFSTIEG', lines: [`Stufe ${SAVE.quinn.level}`, `+${ups} Wertepunkt${ups > 1 ? 'e' : ''} – verteilen im Status`] }, 3200); }
+  return ups;
+}
+// abgeleitete Werte
+function quinnStats() {
+  const S = SAVE.quinn.stats;
+  return { maxHp: 10 + (S.sta - 10), maxStam: 100 + (S.sta - 10) * 4, str: S.str, agi: S.agi };
+}
+const STAT_INFO = {
+  str: { name: 'Stärke', desc: 'mehr Schaden pro Schlag' },
+  agi: { name: 'Agilität', desc: 'schneller laufen und ausweichen' },
+  sta: { name: 'Ausdauer', desc: '+1 HP und mehr Ausdauer' }
+};
+
+/* ------------------------------------------------------------ Status-Fenster */
+function statusHtml() {
+  const Q = SAVE.quinn, S = Q.stats, D = quinnStats();
+  const rows = Object.keys(STAT_INFO).map((k) => `<div class="strow"><span>${STAT_INFO[k].name}<small>${STAT_INFO[k].desc}</small></span><b>${S[k]}</b>
+    <button class="plus" data-stat="${k}" ${Q.points ? '' : 'disabled'}>+</button></div>`).join('');
+  return `<div class="sys statuswin"><div class="head">[ STATUS ]</div>
+    <div class="kv"><span>Name</span><span>Quinn Talen</span><span>Rasse</span><span>${Q.race || 'Mensch'}</span>
+      <span>Stufe</span><span>${Q.level}</span><span>HP</span><span>${D.maxHp}</span></div>
+    <div class="expbar"><i style="width:${(Q.exp / expNeed(Q.level) * 100).toFixed(0)}%"></i></div>
+    <div class="expnum">EP ${Q.exp} / ${expNeed(Q.level)}</div>
+    <div class="line" style="margin-top:6px">Freie Wertepunkte: <b style="color:#ffe6a0">${Q.points}</b></div>
+    ${rows}
+    <div class="line" style="margin-top:8px;font-size:15px;color:#9ab">Fähigkeiten: ${Q.skills.length ? Q.skills.map((s) => SKILL_NAMES[s] || s).join(', ') : '—'}</div></div>`;
+}
+const SKILL_NAMES = { inspect: 'Inspect' };
+function showStatus(back) {
+  const el = document.createElement('div');
+  el.className = 'screen dim'; el.style.pointerEvents = 'auto'; el.style.zIndex = 20;
+  const draw = () => {
+    el.innerHTML = statusHtml() + '<button class="btn" id="stBack">Zurück</button>';
+    el.querySelectorAll('.plus').forEach((b) => b.addEventListener('click', () => {
+      const Q = SAVE.quinn; if (!Q.points) return;
+      Q.points--; Q.stats[b.dataset.stat]++; writeSave(); sfx('card');
+      if (G && G.player) applyStats(G.player);
+      draw();
+    }));
+    el.querySelector('#stBack').onclick = () => { el.remove(); back && back(); };
+  };
+  draw();
+  UI.root.appendChild(el);
+}
+function applyStats(p) {
+  const D = quinnStats();
+  const gain = D.maxHp - (p.maxHp || D.maxHp);
+  p.maxHp = D.maxHp; p.hp = Math.min(D.maxHp, p.hp + Math.max(0, gain));
+  p.maxStam = D.maxStam; p.str = D.str; p.agi = D.agi;
+}
+
+/* ------------------------------------------------------------ Kampfbericht */
+function fightReport(G, won) {
+  const lines = [], kv = [];
+  let ep = Math.round(G.expGain || 0);
+  if (G.opt.expBonus) ep += G.opt.expBonus(G, won);
+  kv.push(['EP aus dem Kampf', '+' + ep]);
+  if (G.stats.perfect) kv.push(['Perfekt ausgewichen', G.stats.perfect]);
+  const lvl0 = SAVE.quinn.level;
+  gainExp(ep);
+  if (SAVE.quinn.level > lvl0) lines.push(`Stufenaufstieg! Stufe ${SAVE.quinn.level} · freie Wertepunkte: ${SAVE.quinn.points}`);
+  return { head: won ? 'KAMPFBERICHT' : 'KAMPFBERICHT · NIEDERLAGE', lines, kv, up: SAVE.quinn.level > lvl0 };
 }
 
 /* ---- src/08-main.js ---- */
@@ -2149,8 +2377,8 @@ function startMission(id, skipScene) {
 function beginFight(M) {
   INPUT.events.length = 0; INPUT.atkHeld = false;
   newFight(Object.assign({}, M.fight, {
-    onWin: () => finishMission(M, true),
-    onLose: () => showLost(M)
+    onWin: (G0) => finishMission(M, true, G0),
+    onLose: (G0) => showLost(M, G0)
   }));
   G.showFoe = !M.fight.noFoeBar;
   buildHud(M.fight);
@@ -2165,32 +2393,46 @@ function beginHub(M) {
   const key = SAVE.day.n + '' + SAVE.day.night;
   if (beginHub.shown !== key) { beginHub.shown = key; banner(SAVE.day.night ? 'NACHT' : 'TAG ' + SAVE.day.n); }
 }
-function finishMission(M, won) {
+function finishMission(M, won, G0) {
   const P = SAVE.progress[M.id] || (SAVE.progress[M.id] = {});
   const first = !P.done;
   P.done = true;
+  const rep = G0 ? fightReport(G0, true) : null;
   if (first && M.reward) {
     const Q = SAVE.quinn;
-    Q.exp += M.reward.exp || 0;
+    if (M.reward.exp) { const l0 = Q.level; gainExp(M.reward.exp); if (rep) { rep.kv.push(['Quest-Belohnung', '+' + M.reward.exp]); if (Q.level > l0) rep.up = true; } }
     (M.reward.skills || []).forEach((s) => { if (!Q.skills.includes(s)) Q.skills.push(s); });
   }
-  if (M.after) M.after();
+  if (first && M.after) M.after();
   writeSave();
   G = null;
   const after = () => (M.next ? startMission(M.next) : showEnd(M));
-  if (M.won) runScene(M.won, after); else after();
+  const story = () => (M.won && (first || !M.repeat) && !M.replayNoScene ? runScene(M.won, after) : after());
+  if (rep) showReport(rep, story); else story();
 }
-function showLost(M) {
+function showReport(rep, done) {
+  SCENE_BG.cur = 'system';
+  const Q = SAVE.quinn;
+  if (rep.up) { sfx('level'); rep.lines.unshift(`STUFENAUFSTIEG · Stufe ${Q.level}`); }
+  rep.kv.push(['Stufe', Q.level], ['EP', Q.exp + ' / ' + expNeed(Q.level)]);
+  const el = uiShow(`${sysBox(rep)}${Q.points ? `<button class="btn" id="rStat">Wertepunkte verteilen (${Q.points})</button>` : ''}<button class="btn ${Q.points ? 'ghost' : ''}" id="rGo">Weiter</button>`, 'dim');
+  if (Q.points) el.querySelector('#rStat').onclick = () => showStatus(() => showReport({ head: rep.head, lines: [], kv: [] }, done));
+  el.querySelector('#rGo').onclick = done;
+}
+function showLost(M, G0) {
+  const rep = G0 ? fightReport(G0, false) : { kv: [] };
   G = null; SCENE_BG.cur = 'kantine';
-  const el = uiShow(`${sysBox({ head: 'NIEDERLAGE', lines: ['Quinn ist zu Boden gegangen.', 'Tipp: Achte auf die rote Fläche. Wer im letzten Moment ausweicht, bekommt ein Konterfenster mit doppeltem Schaden.'] })}
+  const el = uiShow(`${sysBox({ head: 'NIEDERLAGE', lines: ['Quinn ist zu Boden gegangen.', 'Tipp: Achte auf die rote Fläche. Wer im letzten Moment ausweicht, bekommt ein Konterfenster mit doppeltem Schaden. Mit mehr Stufen und Wertepunkten wird es leichter.'], kv: rep.kv })}
+    ${SAVE.quinn.points ? `<button class="btn" id="lStat">Wertepunkte verteilen (${SAVE.quinn.points})</button>` : ''}
     <button class="btn" id="lRe">Noch einmal</button><button class="btn ghost" id="lMenu">Hauptmenü</button>`, 'dim');
   el.querySelector('#lRe').onclick = () => startMission(M.id, true);
+  if (SAVE.quinn.points) el.querySelector('#lStat').onclick = () => showStatus();
   el.querySelector('#lMenu').onclick = showTitle;
 }
 function showEnd() {
   G = null; SCENE_BG.cur = 'nacht';
   const Q = SAVE.quinn;
-  const el = uiShow(`${sysBox({ head: 'STATUS', kv: [['Name', 'Quinn Talen'], ['Rasse', 'Mensch'], ['Stufe', Q.level], ['EP', Q.exp + ' / 100'], ['Fähigkeiten', Q.skills.includes('inspect') ? 'Inspect' : '—']], quests: ['Hauptquest: Erreiche Stufe 10'] })}
+  const el = uiShow(`${sysBox({ head: 'STATUS', kv: [['Name', 'Quinn Talen'], ['Rasse', 'Mensch'], ['Stufe', Q.level], ['EP', Q.exp + ' / ' + expNeed(Q.level)], ['Fähigkeiten', Q.skills.includes('inspect') ? 'Inspect' : '—']], quests: ['Hauptquest: Erreiche Stufe 10'] })}
     <div class="subtitle">Etappe 2 geschafft · Fortsetzung folgt</div>
     <button class="btn" id="eK">Kyle wiederholen</button><button class="btn" id="eN">Nachttraining wiederholen</button><button class="btn" id="eM">Mono wiederholen</button><button class="btn ghost" id="eMenu">Hauptmenü</button>`, 'dim');
   el.querySelector('#eK').onclick = () => { MISSIONS.kyle.replay = true; startMission('kyle', true); };

@@ -21,15 +21,13 @@ function newFight(opt) {
     arena: opt.arena, ents: [], tele: [], fx: [], texts: [], later: [],
     cam: { x: 0, y: 0 }, hint: null, counterFlash: 0, opt, stats: { hits: 0, perfect: 0, taken: 0 }
   };
-  const Q = SAVE.quinn;
   const p = mkEnt('quinn', LOOKS.quinn, opt.playerAt[0], opt.playerAt[1]);
-  p.team = 0; p.maxHp = 10 + (Q.stats.sta - 10); p.hp = p.maxHp;
-  p.str = Q.stats.str; p.agi = Q.stats.agi;
-  p.stam = 100; p.maxStam = 100; p.stamDelay = 0; p.counterT = 0; p.combo = 0; p.buffer = 0; p.holdT = 0; p.dodgeStart = -9;
+  p.team = 0; applyStats(p); p.hp = p.maxHp;
+  p.stam = p.maxStam; p.stamDelay = 0; p.counterT = 0; p.combo = 0; p.buffer = 0; p.holdT = 0; p.dodgeStart = -9;
   G.player = p;
   for (const f of opt.foes) {
     const e = mkEnt(f.id, LOOKS[f.look || f.id], f.at[0], f.at[1]);
-    Object.assign(e, { team: 1, name: f.name, maxHp: f.hp, hp: f.hp, ai: f.ai, poise: f.poise || 3, maxPoise: f.poise || 3, poiseT: 0, phase: 1, cd: f.cd || 0.8, info: f.info, draw: f.draw, fixed: f.fixed, r: f.r || 11 });
+    Object.assign(e, { team: 1, name: f.name, maxHp: f.hp, hp: f.hp, ai: f.ai, poise: f.poise || 3, maxPoise: f.poise || 3, poiseT: 0, phase: 1, cd: f.cd || 0.8, info: f.info, draw: f.draw, fixed: f.fixed, r: f.r || 11, expRate: f.expRate || 0, expKill: f.expKill || 0 });
     e.face = -1;
     G.foe = G.foe || e;
   }
@@ -69,7 +67,9 @@ function updateFight(rdt) {
     e.anim.t += dt;
     const sp = Math.hypot(e.vx, e.vy);
     e.anim.run = lerp(e.anim.run, clamp(sp / 150, 0, 1), 1 - Math.exp(-dt * 12));
+    const ph0 = e.anim.phase;
     e.anim.phase += sp * dt / 20;
+    if (sp > 60 && Math.floor(ph0 / Math.PI) !== Math.floor(e.anim.phase / Math.PI) && !e.draw) dust(e.x - e.vx * 0.02, e.y, 2, 0.5);
     e.anim.cast = Math.max(0, e.anim.cast - dt * 3.5);
     e.anim.hurt = Math.max(0, e.anim.hurt - dt * 4);
   }
@@ -139,7 +139,7 @@ function tryDodge(p) {
   const [mx, my] = readMove();
   let a = (mx || my) ? Math.atan2(my, mx) : (p.face > 0 ? Math.PI : 0);
   p.dodgeA = a; p.dodgeStart = G.t; p.iframes = SAVE.settings.wideDodge ? 0.34 : 0.26;
-  setState(p, 'dodge'); sfx('dodge');
+  setState(p, 'dodge'); sfx('dodge'); dust(p.x, p.y, 5, 1);
   if (Math.cos(a) !== 0 && (mx || my)) p.face = Math.cos(a) > 0 ? 1 : -1;
 }
 
@@ -178,6 +178,8 @@ function updatePlayer(dt) {
     if (p.stateT > 0.45 && !p.chargeReady) { p.chargeReady = true; sfx('card'); burst(p.x + p.face * 10, p.y - 36, 6, '#ffd070'); }
   } else if (p.state === 'dodge') {
     const k = p.stateT / 0.3;
+    p.ghostT = (p.ghostT || 0) - dt;
+    if (p.ghostT <= 0 && p.spr) { p.ghostT = 0.045; const c = mkCanvas(p.spr.out.width, p.spr.out.height); c.getContext('2d').drawImage(p.spr.out, 0, 0); G.fx.push({ k: 'ghost', x: p.x, y: p.y, face: p.face, img: c, S: p.spr.S, ay: p.spr.anchorY, px: figPx(), life: 0.28, t: 0, col: p.counterT > 0 ? '#ffd070' : '#8ad8ff' }); }
     const v = 330 * Math.pow(p.agi / 10, 0.3) * (1 - k * 0.7);
     tvx = Math.cos(p.dodgeA) * v; tvy = Math.sin(p.dodgeA) * v;
     p.anim.dodge = Math.sin(Math.min(1, k) * Math.PI);
@@ -199,6 +201,8 @@ function inArc(ex, ey, x, y, ang, half) { return Math.abs(angDiff(ang, Math.atan
 
 function playerHit(p, A) {
   let hitAny = false;
+  const heavy = A.kick || p.charged || p.counterT > 0;
+  G.fx.push({ k: 'swoosh', x: p.x, y: p.y - 26, a: p.aim, r: A.reach + 4, arc: A.arc * 0.9, col: p.counterT > 0 ? '#ffd070' : heavy ? '#e8f4ff' : '#bfe0ff', w: heavy ? 7 : 4, life: 0.16, t: 0, dir: p.combo % 2 ? -1 : 1 });
   for (const e of G.ents) {
     if (e.team !== 1 || e.state === 'down' || e.state === 'transform') continue;
     const d = Math.hypot(e.x - p.x, e.y - p.y);
@@ -218,8 +222,11 @@ function damageFoe(e, dmg, o) {
   e.flash = 0.1; e.anim.hurt = o.heavy ? 1 : 0.6;
   e.vx += Math.cos(o.ang) * o.kb; e.vy += Math.sin(o.ang) * o.kb * 0.7;
   G.stats.hits++;
+  G.expGain = (G.expGain || 0) + dmg * (e.expRate || 0);
   e.poise -= o.poise || 1; e.poiseT = 2;
   G.hitstop = o.heavy ? 0.075 : 0.035; G.shake = Math.max(G.shake, o.heavy ? 6 : 2.5);
+  if (o.heavy) G.punch = Math.max(G.punch || 0, o.counter ? 1 : 0.6);
+  if (o.counter) G.whiteFlash = 0.18;
   sfx(o.heavy ? 'crit' : 'hit', 0, 0.02); haptic(o.heavy ? 20 : 8);
   burst(e.x - Math.cos(o.ang) * 6, e.y - 30, o.heavy ? 12 : 6, o.counter ? '#ffd070' : '#ffffff');
   floatText(e.x + rand(-6, 6), e.y - 72, (Number.isInteger(dmg) ? dmg : dmg.toFixed(1)) + (o.counter ? ' KONTER' : ''), o.counter ? '#ffd070' : '#ffffff');
@@ -228,6 +235,7 @@ function damageFoe(e, dmg, o) {
   if (e.ai && e.ai.onHurt) e.ai.onHurt(e);
 }
 function foeDown(e) {
+  G.expGain = (G.expGain || 0) + (e.expKill || 0);
   setState(e, 'down'); e.anim.hurt = 1; G.tele = G.tele.filter((T) => T.owner !== e);
   G.hitstop = 0.18; G.slowT = 0.8; G.shake = 10; sfx('kill'); sfx('crit');
   if (G.ents.every((x) => x.team !== 1 || x.state === 'down')) {
@@ -351,9 +359,20 @@ function addTele(e, A) {
   return T;
 }
 function updateNpc(e, dt) {
+  const n = e.npc, p = G.player;
+  if (n.path) { // laeuft zwischen Punkten hin und her
+    n.i = n.i || 0; n.wait = (n.wait || 0) - dt;
+    const tg = n.path[n.i], dx = tg[0] - e.x, dy = tg[1] - e.y, d = Math.hypot(dx, dy);
+    if (n.wait > 0 || d < 4) { e.vx *= Math.exp(-dt * 8); e.vy *= Math.exp(-dt * 8); if (d < 4 && n.wait <= 0) { n.wait = rand(1, 3); n.i = (n.i + 1) % n.path.length; } }
+    else { const sp = n.speed || 55; e.vx = dx / d * sp; e.vy = dy / d * sp; e.face = dx > 0 ? 1 : -1; }
+    return;
+  }
   e.vx *= Math.exp(-dt * 8); e.vy *= Math.exp(-dt * 8);
-  if (e.npc.pose === 'cower') { e.anim.hurt = 0.55 + Math.sin(e.anim.t * 6) * 0.08; }
-  const p = G.player; e.face = p.x > e.x ? 1 : -1;
+  if (n.pose === 'cower') { e.anim.hurt = 0.55 + Math.sin(e.anim.t * 6) * 0.08; }
+  if (n.pose === 'cheer') { e.anim.cast = G.stats.hits && Math.sin(e.anim.t * 5 + e.id) > 0.6 ? 0.7 : 0; }
+  const f = G.foe && G.foe.state !== 'down' ? G.foe : null;
+  const look = n.watch === 'foe' && f ? f : p;
+  e.face = look.x > e.x ? 1 : -1;
 }
 
 /* ------------------------------------------------------------ Arena */
@@ -381,10 +400,11 @@ function updateCamera(rdt) {
 function burst(x, y, n, col) {
   for (let i = 0; i < n; i++) { const a = rand(0, TAU), s = rand(60, 220); G.fx.push({ k: 'spark', x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 40, life: rand(0.18, 0.4), t: 0, col, size: rand(2, 4.5) }); }
 }
+function dust(x, y, n, s) { for (let i = 0; i < n; i++) G.fx.push({ k: 'dust', x: x + rand(-4, 4), y: y + rand(-2, 2), vx: rand(-20, 20), vy: rand(-8, 4), life: rand(0.35, 0.6), t: 0, size: rand(4, 7) * (s || 1) }); }
 function slash(x, y, a, r, arc, col) { G.fx.push({ k: 'slash', x, y, a, r, arc, col, life: 0.18, t: 0 }); }
 function floatText(x, y, txt, col) { G.texts.push({ x, y, txt, col, t: 0, life: 0.9 }); }
 function updateFx(dt) {
-  for (let i = G.fx.length - 1; i >= 0; i--) { const f = G.fx[i]; f.t += dt; if (f.k === 'spark') { f.x += f.vx * dt; f.y += f.vy * dt; f.vy += 300 * dt; f.vx *= Math.exp(-dt * 4); } if (f.t >= f.life) G.fx.splice(i, 1); }
+  for (let i = G.fx.length - 1; i >= 0; i--) { const f = G.fx[i]; f.t += dt; if (f.k === 'spark') { f.x += f.vx * dt; f.y += f.vy * dt; f.vy += 300 * dt; f.vx *= Math.exp(-dt * 4); } else if (f.k === 'dust') { f.x += f.vx * dt; f.y += f.vy * dt; } if (f.t >= f.life) G.fx.splice(i, 1); }
   for (let i = G.texts.length - 1; i >= 0; i--) { const T = G.texts[i]; T.t += dt; T.y -= 34 * dt; if (T.t >= T.life) G.texts.splice(i, 1); }
 }
 
