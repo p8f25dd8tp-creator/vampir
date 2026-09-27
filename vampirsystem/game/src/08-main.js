@@ -139,7 +139,7 @@ function frame(now) {
   const rdt = Math.min(0.05, (now - _last) / 1000); _last = now;
   try {
     if (G && !G.paused) updateFight(rdt);
-    if (G && r3Wanted()) { render3d(rdt); updateHud(); }
+    if (G && r3Wanted()) { try { render3d(rdt); } catch (err) { R3.errs = (R3.errs || 0) + 1; if (R3.errs > 30) { R3.failed = true; hide3d(); } throw err; } updateHud(); }
     else { hide3d(); if (G) { renderFight(); updateHud(); } else renderSceneBg(now / 1000); }
   } catch (err) { console.error(err); }
   AudioSys.musicTick && AudioSys.musicTick(rdt, G ? 0.4 : 0.1);

@@ -58,6 +58,7 @@ function paintPortrait(now) {
   const t = (now - P.t0) / 1000;
   // Atmen; wer spricht, gestikuliert leicht
   const cast = P.talking ? Math.max(0, Math.sin(t * 3.1)) * 0.35 : 0;
+  if (SAVE.settings.gfx3d !== false && window.THREE && typeof r3Portrait === 'function' && r3Portrait(P, t, cast, g)) return;
   P.spr = renderFigure(LOOKS[P.id], { t: 1 + t, run: 0, cast, aim: -0.2 }, px, P.spr, P.extra);
   g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, P.c.width, P.c.height);
   const k = Math.min(1, t * 4);

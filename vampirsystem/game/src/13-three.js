@@ -12,7 +12,7 @@
 const S3 = 1 / 34; // Welteinheiten (Pixel der Kampflogik) -> Meter
 const R3 = { ready: false, G: null, rigs: new Map(), fx: new Map(), tele: new Map(), proj: new Map(), ghosts: [], impacts: [], lines: 0, perf: { n: 0, t: 0, done: false } };
 const ARENA3D = {};
-function r3Wanted() { return SAVE.settings.gfx3d !== false && !!window.THREE && !!G && !!ARENA3D[G.arena.art]; }
+function r3Wanted() { return !R3.failed && SAVE.settings.gfx3d !== false && !!window.THREE && !!G && !!ARENA3D[G.arena.art]; }
 
 /* ------------------------------------------------------------ Grundlagen */
 function r3Init() {
@@ -100,9 +100,9 @@ function r3PerfCheck(rdt) {
 /* ------------------------------------------------------------ Szene fuer einen Kampf aufbauen */
 function r3Build() {
   const T = THREE;
-  R3.slams = []; R3.rigs.clear(); R3.fx.clear(); R3.tele.clear(); R3.proj.clear(); R3.ghosts.length = 0; R3.impacts.length = 0;
+  R3.slams = []; R3.poiMeshes = null; R3.rigs.clear(); R3.fx.clear(); R3.tele.clear(); R3.proj.clear(); R3.ghosts.length = 0; R3.impacts.length = 0;
   const scene = new T.Scene();
-  R3.motes = null;
+  R3.motes = null; R3.fade = [];
   ARENA3D[G.arena.art](G.arena, scene);
   const mkPts = (n, add, size) => {
     const geo = new T.BufferGeometry(); geo.setAttribute('position', new T.BufferAttribute(new Float32Array(n * 3), 3)); geo.setAttribute('color', new T.BufferAttribute(new Float32Array(n * 3), 3));
@@ -117,14 +117,14 @@ function r3Build() {
 
 /* ------------------------------------------------------------ Rendern */
 function render3d(rdt) {
-  if (!R3.ready) r3Init();
+  if (!R3.ready) { try { r3Init(); } catch (err) { console.warn('WebGL nicht verfügbar – 2D', err); R3.failed = true; if (R3.canvas) R3.canvas.remove(); return; } }
   if (R3.G !== G) r3Build();
   const scene = R3.scene;
   R3.canvas.style.display = 'block';
   r3PerfCheck(rdt);
   const seen = new Set();
   for (const e of G.ents) {
-    if (e.draw) continue; // Bestien/Objekte kommen in 3D spaeter
+    if (e.draw) { if (typeof OBJ3D !== 'undefined' && OBJ3D[e.draw]) { seen.add(e.id); r3Obj(e); } continue; }
     seen.add(e.id);
     let R = R3.rigs.get(e.id);
     if (!R || R.look !== e.look || R.extra !== e.extra) {
@@ -172,8 +172,10 @@ function render3d(rdt) {
     R.root.visible = !(e.team === 0 && e.iframes > 0 && e.state !== 'dodge' && e.state !== 'down' && Math.sin(G.t * 40) < -0.3);
   }
   for (const [id, R] of R3.rigs) if (!seen.has(id)) { R.root.removeFromParent(); R3.rigs.delete(id); }
-  r3Ghosts(rdt); r3Tele(); r3Fx(rdt); r3Proj(); r3Impacts(rdt);
+  r3Ghosts(rdt); r3Tele(); r3Fx(rdt); r3Proj(); r3Impacts(rdt); r3Pois();
   if (R3.motes) r3Motes(rdt);
+  // Verdeckendes ausblenden (z. B. Dach ueber dem Weg), wenn die Figur darunter ist
+  for (const F of R3.fade) { const px = G.player.x * S3, pz = G.player.y * S3, inside = px > F.x0 && px < F.x1 && pz > F.z0 && pz < F.z1; F.mat.opacity = lerpA(F.mat.opacity, inside ? 0.18 : 1, 1 - Math.exp(-rdt * 8)); F.mat.depthWrite = F.mat.opacity > 0.9; }
   const p = G.player;
   R3.playerLight.position.set(p.x * S3, 2.2, p.y * S3); R3.playerLight.intensity = G.arena.night ? 6 : 0;
   r3Camera(rdt);
@@ -192,7 +194,7 @@ function render3d(rdt) {
 // zoomt bei schweren Treffern und Kontern heran
 function r3Target() {
   const p = G.player; let best = null, bd = 320 * 320;
-  for (const e of G.ents) if (e.team === 1 && e.state !== 'down' && !e.draw) { const d = dist2(e.x, e.y, p.x, p.y) * (e === R3.lock ? 0.6 : 1); if (d < bd) { bd = d; best = e; } }
+  for (const e of G.ents) if (e.team === 1 && e.state !== 'down' && (!e.draw || (typeof OBJ3D !== 'undefined' && OBJ3D[e.draw]))) { const d = dist2(e.x, e.y, p.x, p.y) * (e === R3.lock ? 0.6 : 1); if (d < bd) { bd = d; best = e; } }
   R3.lock = best; return best;
 }
 function r3Camera(rdt) {
@@ -211,6 +213,35 @@ function r3Camera(rdt) {
   cam.position.set(tx + rand(-sh, sh), 0.9 + Math.sin(C.pitch) * C.d + rand(-sh, sh), tz + Math.cos(C.pitch) * C.d);
   cam.lookAt(tx, 1.05, tz - 0.4);
   if (window.R3CAM) window.R3CAM(cam);
+}
+
+// Objekte und Bestien mit eigener 3D-Fassung (OBJ3D in den Orts-Dateien)
+function r3Obj(e) {
+  let R = R3.rigs.get(e.id);
+  if (!R) { R = OBJ3D[e.draw](e); R.obj = true; R.flashK = 0; R3.rigs.set(e.id, R); R3.scene.add(R.root); R.root.traverse((o) => { if (o.isMesh && o.material && o.material.isMeshToonMaterial) { o.material = o.material.clone(); (R.mats || (R.mats = [])).push(o.material); } }); }
+  R.root.position.set(e.x * S3, 0, e.y * S3);
+  if (e.flash > R.flashK + 0.02) r3Impact(e);
+  R.flashK = e.flash;
+  const f = Math.min(1, e.flash * 9); for (const m of R.mats || []) m.emissive.setRGB(f, f, f);
+  if (R.update) R.update(e);
+}
+// Interaktionspunkte (Hub): leuchtender Ring am Boden, Beschriftung in der 2D-Ebene
+function r3Pois() {
+  const list = G.arena.pois || [];
+  if (!R3.poiMeshes) {
+    R3.poiMeshes = list.map((P) => {
+      const g = new THREE.Group(); g.position.set(P.x * S3, 0.03, P.y * S3);
+      const ring = new THREE.Mesh(fgeo('pring', () => new THREE.RingGeometry(0.5, 0.6, 32)), new THREE.MeshBasicMaterial({ color: P.col || '#8ad8ff', transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
+      ring.rotation.x = -Math.PI / 2; g.add(ring);
+      const gl = glowSprite3(P.col || '#8ad8ff', 1.6, 0.5); gl.position.y = 0.5; g.add(gl);
+      R3.scene.add(g); return { P, g, ring, gl };
+    });
+  }
+  for (const M of R3.poiMeshes) {
+    const vis = !(M.P.hidden && M.P.hidden()); M.g.visible = vis; if (!vis) continue;
+    const on = G.poi === M.P, pulse = 0.5 + Math.sin(G.t * 4) * 0.5;
+    M.ring.scale.setScalar(on ? 1.25 : 1 + pulse * 0.08); M.ring.material.opacity = on ? 1 : 0.5 + pulse * 0.3; M.gl.material.opacity = on ? 0.9 : 0.35 + pulse * 0.2;
+  }
 }
 
 /* ------------------------------------------------------------ Einschlaege, Nachbilder */
@@ -419,6 +450,12 @@ function renderOverlay3d() {
     g.restore();
   }
   g.textAlign = 'center';
+  for (const M of R3.poiMeshes || []) {
+    if (!M.g.visible) continue;
+    const [sx, sy, ok] = r3Screen(M.P.x, M.P.y, 1.45); if (!ok) continue;
+    const on = G.poi === M.P;
+    g.font = `800 ${(on ? 14 : 11) * d}px Cinzel, serif`; g.lineWidth = 4 * d; g.strokeStyle = 'rgba(0,0,0,0.85)'; g.strokeText(M.P.label, sx, sy); g.fillStyle = on ? '#ffffff' : (M.P.col || '#bfe6ff'); g.fillText(M.P.label, sx, sy);
+  }
   for (const T of G.texts) {
     const k = T.t / T.life; if (T._y0 === undefined) T._y0 = T.y + 72;
     const [sx, sy] = r3Screen(T.x, T._y0, 2.0 + k * 0.6), pop = k < 0.12 ? 1 + (1 - k / 0.12) * 0.5 : 1;
@@ -451,4 +488,41 @@ function r3Hud() {
   const C = R3.combo || (R3.combo = { hits: 0, n: 0, t: 0, pop: 0 });
   if (G.stats.hits > C.hits) { C.n += G.stats.hits - C.hits; C.t = 2; C.pop = 1; }
   C.hits = G.stats.hits; C.t -= 1 / 60; C.pop = Math.max(0, C.pop - 0.08); if (C.t <= 0) C.n = 0;
+}
+
+/* ------------------------------------------------------------ 3D-Portraets fuer Szenen */
+function r3Portrait(P, t, cast, g) {
+  const T = THREE;
+  if (R3.failed) return false;
+  if (!R3.ready) { try { r3Init(); } catch (err) { R3.failed = true; return false; } }
+  if (!R3.pp) {
+    const c = document.createElement('canvas');
+    const r = new T.WebGLRenderer({ canvas: c, alpha: true, antialias: true });
+    r.outputColorSpace = T.SRGBColorSpace; r.toneMapping = T.ACESFilmicToneMapping; r.toneMappingExposure = 1.1; r.setClearColor(0x000000, 0);
+    const scene = new T.Scene();
+    scene.add(new T.HemisphereLight('#dfe6ff', '#4a3a40', 1.1));
+    const key = new T.DirectionalLight('#fff0dc', 2.4); key.position.set(1.5, 2.5, 2.5); scene.add(key);
+    const rim = new T.DirectionalLight('#7aa0ff', 2.2); rim.position.set(-2, 2, -2.5); scene.add(rim);
+    const cam = new T.PerspectiveCamera(26, 1, 0.1, 20);
+    R3.pp = { r, scene, cam, rigs: new Map(), cur: null };
+  }
+  const PP = R3.pp, L = LOOKS[P.id]; if (!L) return false;
+  const key = P.id + (P.extra ? JSON.stringify(P.extra) : '');
+  let R = PP.rigs.get(key);
+  if (!R) { R = buildHuman(L, P.extra); R.yaw = 0; PP.rigs.set(key, R); }
+  if (PP.cur !== R) { if (PP.cur) PP.scene.remove(PP.cur.root); PP.scene.add(R.root); PP.cur = R; R.fake = { anim: { t: 0, run: 0, phase: 0, cast: 0, hurt: 0 }, state: 'idle', stateT: 0, npc: {}, team: 0, vx: 0, vy: 0, id: -1 }; }
+  const W = P.c.width, H = P.c.height;
+  if (PP.w !== W || PP.h !== H) { PP.r.setPixelRatio(1); PP.r.setSize(W, H, false); PP.cam.aspect = W / H; PP.cam.updateProjectionMatrix(); PP.w = W; PP.h = H; }
+  const f = R.fake, dt = Math.min(0.05, Math.max(0.001, t - (PP.lastT || t)) || 0.016); PP.lastT = t;
+  f.anim.t = t + 1; f.anim.cast = cast;
+  poseHuman(R, f, dt);
+  // leicht zur Kamera gedreht, sprechende Figur mit kleiner Geste
+  R.root.rotation.y = 0.32 + Math.sin(t * 0.7) * 0.04;
+  const k = Math.min(1, t * 4);
+  R.root.position.set((1 - k) * 0.35, 0, 0);
+  PP.cam.position.set(0.25, 1.52, 1.75); PP.cam.lookAt(0, 1.38, 0);
+  PP.r.render(PP.scene, PP.cam);
+  g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, W, H);
+  g.globalAlpha = k; g.drawImage(PP.r.domElement, 0, 0, W, H); g.globalAlpha = 1;
+  return true;
 }

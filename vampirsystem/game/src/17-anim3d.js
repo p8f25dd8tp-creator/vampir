@@ -96,7 +96,7 @@ function timeline(e) {
 
 /* ------------------------------------------------------------ Pose je Figur und Zustand */
 function stanceOf(e) {
-  if (e.npc) return P_NEUTRAL;
+  if (e.npc || (G.opt && G.opt.hub)) return P_NEUTRAL;
   if (e.kind === 'kyle' && e.phase === 2) return P_PROWL;
   if (e.team === 0 && (e.kit === 'fist' || e.kit === 'raten' || e.kit === 'sil' || e.kit === 'feuer')) return P_GUARD;
   return e.team === 1 ? P_LOOSE : P_GUARD;
