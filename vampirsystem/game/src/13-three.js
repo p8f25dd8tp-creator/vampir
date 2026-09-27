@@ -100,7 +100,7 @@ function r3PerfCheck(rdt) {
 /* ------------------------------------------------------------ Szene fuer einen Kampf aufbauen */
 function r3Build() {
   const T = THREE;
-  R3.rigs.clear(); R3.fx.clear(); R3.tele.clear(); R3.proj.clear(); R3.ghosts.length = 0; R3.impacts.length = 0;
+  R3.slams = []; R3.rigs.clear(); R3.fx.clear(); R3.tele.clear(); R3.proj.clear(); R3.ghosts.length = 0; R3.impacts.length = 0;
   const scene = new T.Scene();
   R3.motes = null;
   ARENA3D[G.arena.art](G.arena, scene);
@@ -138,15 +138,26 @@ function render3d(rdt) {
     // Blickrichtung
     let a = null;
     if ((e.state === 'attack' || e.state === 'charge' || e.state === 'wind' || e.state === 'active' || e.state === 'recover') && e.aim !== undefined) a = e.aim;
-    else if (e.state === 'dodge' && e.dodgeA !== undefined) a = e.dodgeA;
+    else if (e.state === 'dodge') { const L = e.team === 0 ? R3.lock : e.target; a = L ? Math.atan2(L.y - e.y, L.x - e.x) : e.dodgeA; }
     else if (Math.hypot(e.vx, e.vy) > 25) a = Math.atan2(e.vy, e.vx);
     else if (e.team === 1 && e.target) a = Math.atan2(e.target.y - e.y, e.target.x - e.x);
     else if (e.team === 0) { const f = nearestFoe(e, 300); if (f) a = Math.atan2(f.y - e.y, f.x - e.x); }
     else if (e.npc) { const f = G.foe && G.foe.state !== 'down' ? G.foe : G.player; a = Math.atan2(f.y - e.y, f.x - e.x); }
+    const y0 = R.yaw;
     if (a !== null) { const want = Math.atan2(Math.cos(a), Math.sin(a)); R.yaw += angDiff(R.yaw, want) * (1 - Math.exp(-rdt * (e.state === 'attack' ? 35 : 12))); }
+    R.turnV = lerpA(R.turnV || 0, rdt > 0 ? angDiff(y0, R.yaw) / rdt * (e.anim.run || 0) : 0, 1 - Math.exp(-rdt * 8));
     R.root.rotation.y = R.yaw;
+    // Blitzschritt: Sprung der Position -> Kette aus Nachbildern entlang des Weges
+    if (e.team === 0 && R.px !== undefined && e.state !== 'down' && Math.hypot(e.x - R.px, e.y - R.py) > 40 && Math.hypot(e.x - R.px, e.y - R.py) < 90) { for (let k = 1; k <= 5; k++) { R.root.position.set(lerpA(R.px, e.x, k / 6) * S3, 0, lerpA(R.py, e.y, k / 6) * S3); r3Ghost(R, '#9ad8ff'); } }
+    R.px = e.x; R.py = e.y;
     R.root.position.set(e.x * S3, 0, e.y * S3);
-    if (e.flash > R.flashK + 0.02) { r3Impact(e); R.hitK = Math.min(1, R.hitK + 0.8); }
+    if (e.flash > R.flashK + 0.02) {
+      r3Impact(e);
+      const face = Math.atan2(Math.cos(R.yaw), Math.sin(R.yaw)), push = Math.atan2(e.vy, e.vx), rel = angDiff(face, push);
+      R.hit = { t: 0, dir: Math.abs(rel) > 2.2 ? 'front' : Math.abs(rel) < 0.9 ? 'back' : 'side', side: rel > 0 ? 1 : -1, heavy: e.anim.hurt >= 0.99 || G.hitstop >= 0.07 };
+    }
+    // Hammerschlag: Aufprall mit Stosswelle und Bodenriss
+    if (e.state === 'attack' && e.atk && e.atk.hammer) { if (!R.slam && e.stateT >= e.atk.win) { R.slam = true; r3Slam(e); } } else R.slam = false;
     R.flashK = e.flash;
     poseHuman(R, e, rdt);
     const f = Math.min(1, e.flash * 9);
@@ -214,7 +225,29 @@ function r3Impact(e) {
   R3.impacts.push({ s, gl, ring, streaks, t: 0, big: heavy ? 1.6 : 1 });
   if (heavy && e.team === 1) { R3.lines = 0.22; R3.linesAt = [e.x, e.y]; }
 }
+function r3Slam(e) {
+  const T = THREE, x = (e.x + Math.cos(e.aim || 0) * 18) * S3, z = (e.y + Math.sin(e.aim || 0) * 18) * S3;
+  if (!R3.crackTex) R3.crackTex = canvasTex(256, (g) => { g.translate(128, 128); g.strokeStyle = 'rgba(20,10,10,0.9)'; const rnd = mulberry(3); for (let i = 0; i < 11; i++) { let a = i / 11 * TAU + rnd() * 0.3, r = 10; g.lineWidth = 5; g.beginPath(); g.moveTo(0, 0); while (r < 120) { r += 12 + rnd() * 14; a += (rnd() - 0.5) * 0.5; g.lineTo(Math.cos(a) * r, Math.sin(a) * r); g.lineWidth = Math.max(1, g.lineWidth - 0.5); } g.stroke(); } const gr = g.createRadialGradient(0, 0, 0, 0, 0, 40); gr.addColorStop(0, 'rgba(0,0,0,0.6)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.fillRect(-128, -128, 256, 256); });
+  const crack = new T.Mesh(new T.PlaneGeometry(2.6, 2.6), new T.MeshBasicMaterial({ map: R3.crackTex, transparent: true, depthWrite: false, opacity: 0.9 }));
+  crack.rotation.x = -Math.PI / 2; crack.rotation.z = rand(0, TAU); crack.position.set(x, 0.015, z); R3.scene.add(crack);
+  const ring = new T.Mesh(fgeo('sring', () => new T.RingGeometry(0.5, 0.75, 40)), new T.MeshBasicMaterial({ color: '#ffd8a0', transparent: true, opacity: 0.9, blending: T.AdditiveBlending, depthWrite: false, side: T.DoubleSide }));
+  ring.rotation.x = -Math.PI / 2; ring.position.set(x, 0.05, z); R3.scene.add(ring);
+  const gl = glowSprite3('#ffc070', 2.5, 1); gl.position.set(x, 0.4, z); R3.scene.add(gl);
+  R3.slams = R3.slams || []; R3.slams.push({ crack, ring, gl, t: 0 });
+  for (let i = 0; i < 18; i++) { const a = i / 18 * TAU; G.fx.push({ k: 'dust', x: e.x + Math.cos(e.aim || 0) * 18 + Math.cos(a) * 10, y: e.y + Math.sin(e.aim || 0) * 18 + Math.sin(a) * 10, vx: Math.cos(a) * 90, vy: Math.sin(a) * 90, life: 0.7, t: 0, size: 8 }); }
+  G.shake = Math.max(G.shake, 12); G.punch = 1;
+}
+function r3Slams(dt) {
+  for (let i = (R3.slams || []).length - 1; i >= 0; i--) {
+    const S = R3.slams[i]; S.t += dt;
+    S.ring.scale.setScalar(1 + S.t * 9); S.ring.material.opacity = Math.max(0, 0.9 - S.t * 2.5);
+    S.gl.material.opacity = Math.max(0, 1 - S.t * 4);
+    S.crack.material.opacity = S.t < 1.2 ? 0.9 : Math.max(0, 0.9 - (S.t - 1.2));
+    if (S.t > 2.2) { for (const o of [S.crack, S.ring, S.gl]) { o.removeFromParent(); o.material.dispose(); } S.crack.geometry.dispose(); R3.slams.splice(i, 1); }
+  }
+}
 function r3Impacts(dt) {
+  r3Slams(dt);
   for (let i = R3.impacts.length - 1; i >= 0; i--) {
     const I = R3.impacts[i]; I.t += dt; const k = I.t / 0.24;
     I.s.scale.setScalar((0.3 + easeSnap(Math.min(1, k * 2)) * 1.1) * I.big); I.s.material.opacity = Math.max(0, 1 - k * 1.2);
