@@ -115,9 +115,9 @@ function drawPerson(g, P, L) {
   const arm = (A, dk, front) => {
     limb(g, A.sx, A.sy, A.ex, A.ey, 2.6, 2.1); paint(g, lg(g, A.sx, A.sy, A.ex, A.ey, [0, shade(L.topL, dk - 0.1), 1, shade(L.top, dk)]), 'rgba(0,0,0,0.6)', 0.6);
     if (claws) { // Unterarm verwandelt sich: Fell mit Streifen, grosse Pranke
-      limb(g, A.ex, A.ey, A.hx, A.hy, 2.1 + claws * 0.9, 1.8 + claws * 1.4); paint(g, shade('#d8862a', dk), 'rgba(0,0,0,0.7)', 0.6);
+      limb(g, A.ex, A.ey, A.hx, A.hy, 2.1 + claws * 0.9, 1.8 + claws * 1.4); paint(g, shade(L.clawCol || '#d8862a', dk), 'rgba(0,0,0,0.7)', 0.6);
       g.strokeStyle = shade('#2a1406', dk); g.lineWidth = 0.7;
-      for (let k = 1; k <= 3; k++) { const s = k / 4, x = lerp(A.ex, A.hx, s), y = lerp(A.ey, A.hy, s), a0 = Math.atan2(A.hy - A.ey, A.hx - A.ex) + Math.PI / 2; g.beginPath(); g.moveTo(x - Math.cos(a0) * 1.8, y - Math.sin(a0) * 1.8); g.lineTo(x + Math.cos(a0) * 1.2, y + Math.sin(a0) * 1.2); g.stroke(); }
+      if (!L.clawCol) for (let k = 1; k <= 3; k++) { const s = k / 4, x = lerp(A.ex, A.hx, s), y = lerp(A.ey, A.hy, s), a0 = Math.atan2(A.hy - A.ey, A.hx - A.ex) + Math.PI / 2; g.beginPath(); g.moveTo(x - Math.cos(a0) * 1.8, y - Math.sin(a0) * 1.8); g.lineTo(x + Math.cos(a0) * 1.2, y + Math.sin(a0) * 1.2); g.stroke(); }
       const a = Math.atan2(A.hy - A.ey, A.hx - A.ex);
       g.fillStyle = '#f4ecdc';
       for (let k = -1; k <= 1; k++) { const b = a + k * 0.35; g.beginPath(); g.moveTo(A.hx + Math.cos(b + 1.4) * 1.1, A.hy + Math.sin(b + 1.4) * 1.1); g.lineTo(A.hx + Math.cos(b) * (3 + claws * 4), A.hy + Math.sin(b) * (3 + claws * 4)); g.lineTo(A.hx + Math.cos(b - 1.4) * 1.1, A.hy + Math.sin(b - 1.4) * 1.1); g.fill(); }
@@ -192,7 +192,8 @@ function drawPerson(g, P, L) {
   }
   g.beginPath();
   const hs = L.hairStyle || 'messy';
-  if (hs === 'short') { g.moveTo(-5, -1); g.quadraticCurveTo(-6, -6, -2, -7.8); g.quadraticCurveTo(3, -8.6, 4.6, -4.6); g.quadraticCurveTo(2, -5.8, -0.5, -5.4); g.quadraticCurveTo(-2.5, -4, -3, -1); }
+  if (hs === 'bald') { g.moveTo(-4.6, -2); g.quadraticCurveTo(-5.6, -4.6, -3.6, -6.2); g.lineTo(-3.2, -5.4); g.quadraticCurveTo(-4.4, -3.6, -3.8, -1.6); }
+  else if (hs === 'short') { g.moveTo(-5, -1); g.quadraticCurveTo(-6, -6, -2, -7.8); g.quadraticCurveTo(3, -8.6, 4.6, -4.6); g.quadraticCurveTo(2, -5.8, -0.5, -5.4); g.quadraticCurveTo(-2.5, -4, -3, -1); }
   else if (hs === 'spiky') { g.moveTo(-5, 0); g.lineTo(-7, -4); g.lineTo(-4.5, -5); g.lineTo(-5.5, -9); g.lineTo(-2, -7.5); g.lineTo(-0.5, -11); g.lineTo(1.5, -7.8); g.lineTo(4.5, -9.5); g.lineTo(3.6, -6.4); g.lineTo(6, -5); g.quadraticCurveTo(2, -5.6, -0.5, -5); g.quadraticCurveTo(-2.5, -3.5, -3, -0.5); }
   else if (hs === 'bun') { g.moveTo(-5, 0); g.quadraticCurveTo(-6.5, -6, -2, -8); g.quadraticCurveTo(3.5, -8.4, 4.8, -4.4); g.quadraticCurveTo(2, -5.8, -0.5, -5.3); g.quadraticCurveTo(-2.5, -3.5, -3, 0); g.closePath(); g.moveTo(-3.5, -7.5); g.arc(-4.5, -8.6, 2.4, 0, TAU); }
   else if (hs === 'long') { g.moveTo(-5, 2); g.quadraticCurveTo(-7, -6, -2, -8.2); g.quadraticCurveTo(4, -8.6, 5, -4); g.quadraticCurveTo(2, -6, -0.5, -5.2); g.quadraticCurveTo(-2.5, -3.5, -2.8, 2); }

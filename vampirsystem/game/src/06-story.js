@@ -67,6 +67,7 @@ function paintPortrait(now) {
 }
 // Hintergruende fuer Szenen ohne Kampf (gezeichnet, eigene Gestaltung)
 const SCENE_BG = { cur: 'zimmer' };
+const SCENE_ART = {}; // weitere Szenen-Hintergruende (spaetere Etappen)
 function renderSceneBg(t) {
   const g = ctx, W = cv.width, H = cv.height, u = Math.min(W, H) / 100;
   g.setTransform(1, 0, 0, 1, 0, 0);
@@ -117,7 +118,8 @@ function renderSceneBg(t) {
     for (let x = -gs; x < W + gs; x += gs) { g.beginPath(); g.moveTo(x + off, 0); g.lineTo(x + off, H); g.stroke(); }
     for (let y = -gs; y < H + gs; y += gs) { g.beginPath(); g.moveTo(0, y + off); g.lineTo(W, y + off); g.stroke(); }
     glowField('#6ec8ff', 18);
-  } else { g.fillStyle = '#08080e'; g.fillRect(0, 0, W, H); }
+  } else if (SCENE_ART[id]) SCENE_ART[id](g, W, H, u, t, glowField);
+  else { g.fillStyle = '#08080e'; g.fillRect(0, 0, W, H); }
   if (id !== 'system') glowField(id === 'zimmer' ? '#ff6a7a' : '#aab8d8', 10);
   if (UI.portrait) paintPortrait(performance.now());
 }
@@ -129,6 +131,7 @@ function buildHud(opt) {
       <div class="bar xp"><i id="xpb"></i></div>
       <div class="bar hp"><i id="hpb"></i></div><div class="hpnum" id="hpn"></div>
       <div class="bar st" id="stbw"><i id="stb"></i></div>
+      ${SAVE.quinn.skills.includes('schatten') && !opt.hub ? '<div class="bar mc" id="mcw"><i id="mcb"></i></div>' : ''}
       <div class="goal" id="goal"></div></div>
     <div class="sunchip" id="sun">☀ SONNE · WERTE HALBIERT</div>
     <div class="foe" id="foe" style="display:none"><div class="nm" id="foen"></div><div class="bar"><i id="foeb"></i></div></div>
@@ -143,6 +146,8 @@ function buildHud(opt) {
       ${SAVE.quinn.skills.includes('bloodswipe') && !opt.hub ? '<button class="skill" id="bSkill">BLOOD<br>SWIPE<small>1 HP</small></button>' : ''}
       ${SAVE.quinn.skills.includes('flashstep') && !opt.hub ? '<button class="skill s2" id="bSkill2">FLASH<br>STEP</button>' : ''}
       ${SAVE.quinn.skills.includes('hammer') && !opt.hub ? '<button class="skill s3" id="bSkill3">HAMMER<br>STRIKE</button>' : ''}
+      ${SAVE.quinn.skills.includes('bloodspray') && !opt.hub ? '<button class="skill s4" id="bSkill4">BLOOD<br>SPRAY<small>5 HP</small></button>' : ''}
+      ${SAVE.quinn.skills.includes('schatten') && !opt.hub ? '<button class="skill s5" id="bSkill5">SCHAT-<br>TEN<small>25 MC</small></button>' : ''}
       <button class="dodge" id="bDodge">AUS-<br>WEICHEN</button>
       <button class="atk" id="bAtk">ANGRIFF</button>
     </div>
@@ -157,6 +162,8 @@ function buildHud(opt) {
   if ($('#bSkill')) bindButton($('#bSkill'), () => pushInput('skill1'));
   if ($('#bSkill2')) bindButton($('#bSkill2'), () => pushInput('skill2'));
   if ($('#bSkill3')) bindButton($('#bSkill3'), () => pushInput('skill3'));
+  if ($('#bSkill4')) bindButton($('#bSkill4'), () => pushInput('skill4'));
+  if ($('#bSkill5')) bindButton($('#bSkill5'), () => pushInput('skill5'));
   $('#pauseBtn').addEventListener('pointerup', () => showPause());
   if (opt.hub) $('#statusBtn').addEventListener('pointerup', () => { if (!G) return; G.paused = true; showStatus(() => { if (G) G.paused = false; }); });
   UI.cache = {};
@@ -170,6 +177,8 @@ function updateHud() {
   if (C.xp !== xk) { C.xp = xk; $('#lvl').textContent = 'Stufe ' + SAVE.quinn.level + (SAVE.quinn.points ? ' · +' + SAVE.quinn.points : ''); $('#xpb').style.width = Math.min(100, (SAVE.quinn.exp + (G.expGain || 0)) / expNeed(SAVE.quinn.level) * 100) + '%'; }
   const st = Math.round(p.stam);
   if (C.st !== st) { C.st = st; $('#stb').style.width = (p.stam / p.maxStam * 100) + '%'; $('#stbw').classList.toggle('low', st < 25); }
+  const mcK = p.maxMc ? Math.round(p.mc) : -1;
+  if ($('#mcw') && C.mc !== mcK) { C.mc = mcK; $('#mcw').style.visibility = mcK < 0 ? 'hidden' : ''; if (mcK >= 0) $('#mcb').style.width = (p.mc / p.maxMc * 100) + '%'; }
   const f = G.foe;
   if (f && G.showFoe) {
     const k = f.name + f.hp;

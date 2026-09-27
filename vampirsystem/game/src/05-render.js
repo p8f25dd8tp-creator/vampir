@@ -179,6 +179,9 @@ function renderFight() {
       g.strokeStyle = '#e8e0d0'; g.lineWidth = 1.6; g.beginPath(); g.moveTo(-14, 0); g.lineTo(6, 0); g.stroke();
       g.fillStyle = P.col; g.beginPath(); g.moveTo(6, -2.6); g.lineTo(12, 0); g.lineTo(6, 2.6); g.fill();
       g.globalCompositeOperation = 'lighter'; g.globalAlpha = 0.6; g.drawImage(glowSprite(P.col), -16, -8, 26, 16);
+    } else if (P.kind === 'spike') {
+      g.fillStyle = lg(g, -12, 0, 8, 0, [0, '#5a6272', 1, '#e8eef8']); g.beginPath(); g.moveTo(-12, -1.4); g.lineTo(6, -1.4); g.lineTo(12, 0); g.lineTo(6, 1.4); g.lineTo(-12, 1.4); g.closePath(); g.fill();
+      g.globalCompositeOperation = 'lighter'; g.globalAlpha = 0.4; g.drawImage(glowSprite('#c8d8f0'), -14, -7, 24, 14);
     } else if (P.kind === 'water') {
       g.globalCompositeOperation = 'lighter';
       for (let k = 0; k < 4; k++) g.drawImage(glowSprite('#6ec8ff'), -8 - k * 7, -8 + Math.sin(G.t * 20 + k) * 3, 18, 16);
@@ -196,6 +199,13 @@ function renderFight() {
     const col = LOOKS[m.char].rim || '#fff';
     if (m === G.player) { g.fillStyle = col; g.beginPath(); g.moveTo(m.x - 5, m.y - 84); g.lineTo(m.x + 5, m.y - 84); g.lineTo(m.x, m.y - 78); g.fill(); }
     else { g.fillStyle = 'rgba(0,0,0,0.6)'; g.fillRect(m.x - 14, m.y - 80, 28, 4); g.fillStyle = col; g.fillRect(m.x - 14, m.y - 80, 28 * m.hp / m.maxHp, 4); }
+  }
+  // Schattengriff: dunkle Ranken um die Fuesse
+  for (const e of G.ents) if (e.rootT > 0 && e.state !== 'down') {
+    g.save(); g.fillStyle = 'rgba(10,0,20,0.75)'; g.beginPath(); g.ellipse(e.x, e.y + 1, e.r + 8, (e.r + 8) * 0.38, 0, 0, TAU); g.fill();
+    g.strokeStyle = 'rgba(40,10,60,0.95)'; g.lineWidth = 2.2; g.lineCap = 'round';
+    for (let k = 0; k < 5; k++) { const a = k / 5 * TAU + G.t, sx = e.x + Math.cos(a) * (e.r + 6), sy = e.y + Math.sin(a) * 4; g.beginPath(); g.moveTo(sx, sy); g.quadraticCurveTo(sx + Math.sin(G.t * 5 + k) * 5, sy - 10, e.x + Math.cos(a) * 3, e.y - 14 - k % 2 * 4); g.stroke(); }
+    g.restore();
   }
   // Haertung (Rylee): graue Platte auf der gehaerteten Seite
   for (const e of G.ents) if (e.ai && e.ai.harden && e.state !== 'down') {

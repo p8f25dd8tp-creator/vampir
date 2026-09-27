@@ -617,7 +617,7 @@ function stepDone(id) { SAVE.flags[id] = true; SAVE.flags[id + 'Day'] = SAVE.day
 function story4State() {
   const F = SAVE.flags, D = SAVE.day;
   if (!F.biss) return null;
-  const st = STORY4.concat(typeof STORY5 !== 'undefined' ? STORY5 : []).find((x) => !F[x.id]);
+  const st = STORY4.concat(typeof STORY5 !== 'undefined' ? STORY5 : [], typeof STORY6 !== 'undefined' ? STORY6 : []).find((x) => !F[x.id]);
   if (!st) return null;
   if (st.newDay && D.n <= (F[st.need + 'Day'] || 0)) return { st, need: 'sleep' };
   if (st.night && !D.night) return { st, need: 'wait' };

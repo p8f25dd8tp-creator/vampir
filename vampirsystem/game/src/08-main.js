@@ -16,7 +16,7 @@ function showTitle() {
     <button class="btn" id="tNew">${started ? 'Von vorn beginnen' : 'Spiel starten'}</button>
     ${started ? '<button class="btn" id="tCont">Fortsetzen</button>' : ''}
     <button class="btn ghost" id="tSet">Einstellungen</button>
-    <div class="foot">Private Fan-Umsetzung von „My Vampire System“.<br>Frühe Testversion · Etappe 5</div>`, '');
+    <div class="foot">Private Fan-Umsetzung von „My Vampire System“.<br>Frühe Testversion · Etappe 6</div>`, '');
   el.querySelector('#tNew').onclick = () => { AudioSys.init(); if (started) resetSave(); startMission('prolog'); };
   if (started) el.querySelector('#tCont').onclick = () => { AudioSys.init(); startMission(nextMission()); };
   el.querySelector('#tSet').onclick = showSettings;
@@ -24,7 +24,10 @@ function showTitle() {
 function nextMission() {
   if (!SAVE.progress.prolog) return 'prolog';
   if (!SAVE.progress.test) return 'test';
-  return SAVE.flags.earl ? 'ende' : 'akademie';
+  const F = SAVE.flags;
+  if (F.logan2) return 'ende';
+  if (F.earl && !F.rettung) return E6_CHAIN.find((id) => !(SAVE.progress[id] && SAVE.progress[id].done)) || 'akademie';
+  return 'akademie';
 }
 function showSettings() {
   const S = SAVE.settings;
@@ -107,10 +110,10 @@ function showLost(M, G0) {
 function showEnd() {
   G = null; SCENE_BG.cur = 'nacht';
   const Q = SAVE.quinn;
-  const el = uiShow(`${sysBox({ head: 'STATUS', kv: [['Name', 'Quinn Talen'], ['Rasse', Q.race || 'Mensch'], ['Stufe', Q.level], ['EP', Q.exp + ' / ' + expNeed(Q.level)], ['Fähigkeiten', Q.skills.map((k) => SKILL_NAMES[k] || k).join(', ') || '—']], quests: ['Hauptquest: Erreiche Stufe 10'] })}
-    <div class="subtitle">Etappe 5 geschafft · Fortsetzung folgt</div>
+  const el = uiShow(`${sysBox({ head: 'STATUS', kv: [['Name', 'Quinn Talen'], ['Rasse', Q.race || 'Mensch'], ['Stufe', Q.level], ['EP', Q.exp + ' / ' + expNeed(Q.level)], ['Fähigkeiten', Q.skills.map((k) => SKILL_NAMES[k] || k).join(', ') || '—']], quests: [SAVE.quinn.race === 'Vampir' ? 'Hauptquest: Werde stärker' : 'Hauptquest: Erreiche Stufe 10'] })}
+    <div class="subtitle">Etappe 6 geschafft · Fortsetzung folgt</div>
     <div class="subtitle" style="font-size:13px">Kämpfe wiederholen (für EP):</div>
-    <button class="btn" id="eK">Kyle</button><button class="btn" id="eM">Mono</button><button class="btn" id="eR">Rylee im Park</button><button class="btn" id="eB">Brandon</button><button class="btn" id="eA">Aula</button><button class="btn" id="eA2">Raten gegen Mono</button><button class="btn" id="eT">Power Fighter (VR)</button>
+    <button class="btn" id="eK">Kyle</button><button class="btn" id="eM">Mono</button><button class="btn" id="eR">Rylee im Park</button><button class="btn" id="eB">Brandon</button><button class="btn" id="eA">Aula</button><button class="btn" id="eA2">Raten gegen Mono</button><button class="btn" id="eT">Power Fighter (VR)</button><button class="btn" id="e6a">Rattaclaws</button><button class="btn" id="e6b">Scordana</button><button class="btn" id="e6c">Bloodsucker</button><button class="btn" id="e6d">Übungskampf Vorden</button><button class="btn" id="e6e">Erdnutzer (VR)</button>
     <button class="btn ghost" id="eStat">Status${SAVE.quinn.points ? ' · +' + SAVE.quinn.points : ''}</button><button class="btn ghost" id="eMenu">Hauptmenü</button>`, 'dim');
   el.querySelector('#eK').onclick = () => startMission('kyle', true, true);
   el.querySelector('#eM').onclick = () => startMission('mono', true, true);
@@ -119,6 +122,7 @@ function showEnd() {
   el.querySelector('#eA').onclick = () => startMission('aula', true, true);
   el.querySelector('#eA2').onclick = () => startMission('aula2', true, true);
   el.querySelector('#eT').onclick = () => showVrMenu(showEnd);
+  [['#e6a', 'rattaclaw'], ['#e6b', 'scordana'], ['#e6c', 'bloodsucker'], ['#e6d', 'schatten'], ['#e6e', 'vrerde']].forEach(([s, id]) => { el.querySelector(s).onclick = () => startMission(id, true, true); });
   el.querySelector('#eStat').onclick = () => showStatus(showEnd);
   el.querySelector('#eMenu').onclick = showTitle;
 }

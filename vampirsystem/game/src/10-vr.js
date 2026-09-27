@@ -198,11 +198,9 @@ Object.assign(MISSIONS, {
       { narr: 'Schließlich empfängt General Duke Peter persönlich. Als Lohn bietet er Fähigkeitsbücher für Erde – wenn bei der ersten Portalmission jemand aus Peters Team verschwindet.' },
       { portrait: 'peter' },
       { narr: 'Peter sagt nichts. Aber er nimmt die Bücher.' },
-      { bg: 'nacht', portrait: null },
-      { narr: 'Ende der fünften Etappe. Als Nächstes: das rote Portal.' }
     ],
     after: () => { stepDone('earl'); },
-    next: null
+    next: 'portalsturz'
   }
 });
 MISSION_ORDER.push('vrintro', 'windklinge', 'nate', 'sonne', 'portalteam', 'logan', 'earl');

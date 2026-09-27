@@ -57,7 +57,7 @@ function newFight(opt) {
   (opt.party || ['quinn']).forEach((cid, i) => {
     const C = CHARS[cid], e = mkEnt(cid, LOOKS[C.look], opt.playerAt[0] + (i ? (i % 2 ? -34 : 34) : 0), opt.playerAt[1] + (i ? 22 : 0));
     e.team = 0; e.char = cid; e.kit = C.kit; e.range = C.range || 30;
-    if (cid === 'quinn') { applyStats(e); if (opt.vr) e.look = LOOKS.bloodevolver; e.hp = Math.max(1, e.maxHp - (SAVE.quinn.thirst || 0)); if (opt.mask) e.extra = { mask: true }; if (SAVE.quinn.gear.hands) e.extra = Object.assign({}, e.extra, { gauntlets: true }); }
+    if (cid === 'quinn') { applyStats(e); if (opt.vr) e.look = LOOKS.bloodevolver; else if (SAVE.quinn.race === 'Vampir' && LOOKS.quinnvamp) e.look = LOOKS.quinnvamp; if (SAVE.quinn.skills.includes('schatten')) { e.maxMc = 100; e.mc = 100; } e.hp = Math.max(1, e.maxHp - (SAVE.quinn.thirst || 0)); if (opt.mask) e.extra = { mask: true }; if (SAVE.quinn.gear.hands) e.extra = Object.assign({}, e.extra, { gauntlets: true }); }
     else { e.maxHp = e.hp = C.hp; e.str = C.str; e.agi = C.agi; e.maxStam = 100; }
     e.stam = e.maxStam; e.stamDelay = 0; e.counterT = 0; e.combo = 0; e.buffer = 0; e.holdT = 0; e.dodgeStart = -9; e.aiCd = rand(0.3, 0.8);
     G.party.push(e);
@@ -140,6 +140,8 @@ function handleInput(dt) {
     else if (ev === 'skill1') castBloodSwipe(p);
     else if (ev === 'skill2') castFlashStep(p);
     else if (ev === 'skill3') castHammer(p);
+    else if (ev === 'skill4') castBloodSpray(p);
+    else if (ev === 'skill5') castShadow(p);
     else if (ev.startsWith && ev.startsWith('swap')) swapTo(+ev.slice(4));
     else if (ev === 'atkUp') { if (p.state === 'charge') releaseCharge(p); p.holdT = -1; }
     else if (ev === 'dodge') tryDodge(p);
@@ -196,6 +198,7 @@ function updateFighter(p, dt, mx, my) {
   p.buffer = Math.max(0, p.buffer - dt);
   p.stamDelay -= dt;
   if (p.stamDelay <= 0 && p.state !== 'charge') p.stam = Math.min(p.maxStam, p.stam + 42 * dt);
+  if (p.maxMc) p.mc = Math.min(p.maxMc, p.mc + 2.5 * dt); // MC (Schatten) laedt im Spiel schneller als im Roman
   if (p === G.player) G.inSun = inSun(p);
   const sunK = sunFactor(p);
   const spd = 120 * Math.pow(p.agi * sunK / 10, 0.35);
@@ -267,6 +270,7 @@ function playerHit(p, A) {
     if (A.ice) { e.slowT = 2.5; burst(e.x, e.y - 30, 8, '#bfe8ff'); floatText(e.x, e.y - 88, 'EIS', '#bfe8ff'); }
     if (A.hammer) { setState(e, 'stagger'); G.shake = 10; dust(e.x, e.y, 10, 1.4); }
   }
+  if (A.hammer && hitAny && SAVE.quinn.skills.includes('hammerspray') && p.char === 'quinn') hammerSpray(p);
   if (!hitAny) sfx('whip', 0, 0.05);
 }
 
@@ -417,6 +421,7 @@ function updateFoe(e, dt) {
     if (e.stateT >= 1.5) { setState(e, 'idle'); e.cd = 0.5; }
   }
   if (e.fixed) { tvx = 0; tvy = 0; }
+  if (e.rootT > 0) { e.rootT -= dt; tvx = 0; tvy = 0; } // Schattengriff haelt die Beine fest
   const k = e.state === 'active' && e.atk && e.atk.type === 'lunge' ? 40 : 10;
   e.vx = lerp(e.vx, tvx, 1 - Math.exp(-dt * k)); e.vy = lerp(e.vy, tvy, 1 - Math.exp(-dt * k));
 }
@@ -549,7 +554,7 @@ function updateProj(dt) {
         if (e.ai && e.ai.foresight && !P.double && e.state !== 'stagger') { foresee(e, P); continue; }
         if (e.ai && e.ai.cloak && P.kind === 'blood') { floatText(e.x, e.y - 86, 'UMHANG', '#d0c0a0'); burst(e.x, e.y - 30, 6, '#d0c0a0'); gone = true; break; }
         damageFoe(e, P.dmg, { kb: P.kb || 90, ang: P.a, poise: P.poise || 1, heavy: !!P.heavy });
-        if (!P.pierce && P.kind === 'arrow') { gone = true; break; }
+        if (!P.pierce && (P.kind === 'arrow' || P.kind === 'spike')) { gone = true; break; }
       }
     }
     if (gone || P.dist >= P.max) { G.proj.splice(i, 1); burst(P.x, P.y - 20, 4, P.col || '#ff3a4e'); }
