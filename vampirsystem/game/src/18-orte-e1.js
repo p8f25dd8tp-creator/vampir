@@ -30,7 +30,7 @@ function tree3d(scene, x, z, s, night) {
   for (const [dx, dy, dz, r, m] of [[0, 2.3, 0, 1.0, leaf], [-0.55, 1.95, 0.2, 0.7, leaf2], [0.55, 2.0, -0.15, 0.72, leaf2], [0.1, 2.85, 0.1, 0.62, leaf2]]) {
     const b = part(fgeo('leaf' + r, () => new T.IcosahedronGeometry(r, 1)), m, g, dx, dy, dz); b.receiveShadow = true;
   }
-  trunk.receiveShadow = true; scene.add(g); return g;
+  trunk.receiveShadow = true; scene.add(g); r3Occluder(g, x - 1.1 * (s || 1), x + 1.1 * (s || 1), z - 1.1 * (s || 1), z + 1.1 * (s || 1), 3.4 * (s || 1)); return g;
 }
 function bench3d(scene, x, z, rot) {
   const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = rot || 0;
@@ -44,7 +44,8 @@ function lampPost3d(scene, x, z, on) {
   const head = new T.Mesh(fgeo('lhead', () => new T.SphereGeometry(0.16, 12, 10)), new T.MeshBasicMaterial({ color: on ? '#fff0c8' : '#8a8a90' })); head.position.set(x, 3.25, z); scene.add(head);
   if (on) { const gl = glowSprite3('#ffd890', 0.8, 0.45); gl.position.set(x, 3.25, z); scene.add(gl); }
 }
-function building3d(scene, b, night) {
+function building3d(scene0, b, night) {
+  const scene = new THREE.Group(); scene0.add(scene);
   const T = THREE, x = (b.x + b.w / 2) * S3, z = (b.y + b.h / 2) * S3, w = b.w * S3, d = b.h * S3, h = 6.2;
   box3(scene, w, h, d, '#7e889c', x, h / 2, z);
   box3(scene, w + 0.3, 0.3, d + 0.3, '#4a5264', x, h + 0.1, z);
@@ -62,6 +63,7 @@ function building3d(scene, b, night) {
     box3(scene, 1.6, 0.12, 0.8, '#3a4252', dx, 2.05, front + 0.35);
     if (night) { const gl = glowSprite3('#ffd890', 0.8, 0.4); gl.position.set(dx, 1.95, front + 0.3); scene.add(gl); }
   }
+  r3Occluder(scene, x - w / 2, x + w / 2, z - d / 2, z + d / 2, h + 0.4);
   if (b.label) { const s = new T.Mesh(new T.PlaneGeometry(2.6, 0.5), new T.MeshBasicMaterial({ map: labelTex(b.label) })); s.position.set(x, h - 0.6, front + 0.02); scene.add(s); }
 }
 function sunLight(scene, cx, cz, span, col, inten, pos) {

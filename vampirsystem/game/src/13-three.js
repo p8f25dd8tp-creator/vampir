@@ -102,7 +102,7 @@ function r3Build() {
   const T = THREE;
   R3.slams = []; R3.poiMeshes = null; R3.rigs.clear(); R3.fx.clear(); R3.tele.clear(); R3.proj.clear(); R3.ghosts.length = 0; R3.impacts.length = 0;
   const scene = new T.Scene();
-  R3.motes = null; R3.fade = [];
+  R3.motes = null; R3.fade = []; R3.occ = [];
   ARENA3D[G.arena.art](G.arena, scene);
   const mkPts = (n, add, size) => {
     const geo = new T.BufferGeometry(); geo.setAttribute('position', new T.BufferAttribute(new Float32Array(n * 3), 3)); geo.setAttribute('color', new T.BufferAttribute(new Float32Array(n * 3), 3));
@@ -180,6 +180,7 @@ function render3d(rdt) {
   const p = G.player;
   R3.playerLight.position.set(p.x * S3, 2.2, p.y * S3); R3.playerLight.intensity = G.arena.night ? 6 : 0;
   r3Camera(rdt);
+  r3Occlusion(rdt);
   r3Hud();
   // Farbstimmung: Zeitlupe kuehl, Konter golden
   if (R3.grade) {
@@ -214,6 +215,40 @@ function r3Camera(rdt) {
   cam.position.set(tx + rand(-sh, sh), 0.9 + Math.sin(C.pitch) * C.d + rand(-sh, sh), tz + Math.cos(C.pitch) * C.d);
   cam.lookAt(tx, 1.05, tz - 0.4);
   if (window.R3CAM) window.R3CAM(cam);
+}
+
+// Verdeckung: alles, was zwischen Kamera und Figur steht (Gebaeude, Baeume), wird durchsichtig
+function r3Occluder(obj, x0, x1, z0, z1, top) {
+  if (!R3.occ) return;
+  const O = { x0, x1, z0, z1, top, k: 1, mats: new Set(), outs: [] };
+  obj.traverse((o) => {
+    if (!o.isMesh && !o.isSprite) return;
+    if (o.material === R3.outline || (o.material && o.material.uniforms && o.material.uniforms.w)) { O.outs.push(o); return; }
+    if (o.material) { o.material.transparent = true; O.mats.add(o.material); }
+  });
+  R3.occ.push(O);
+}
+function segBox(ax, ay, az, bx, by, bz, O) {
+  let t0 = 0, t1 = 1;
+  for (const [a, b, lo, hi] of [[ax, bx, O.x0 - 0.2, O.x1 + 0.2], [ay, by, 0, O.top], [az, bz, O.z0 - 0.2, O.z1 + 0.2]]) {
+    const d = b - a;
+    if (Math.abs(d) < 1e-6) { if (a < lo || a > hi) return false; continue; }
+    let u0 = (lo - a) / d, u1 = (hi - a) / d; if (u0 > u1) [u0, u1] = [u1, u0];
+    t0 = Math.max(t0, u0); t1 = Math.min(t1, u1); if (t0 > t1) return false;
+  }
+  return true;
+}
+function r3Occlusion(rdt) {
+  const c = R3.cam.position, p = G.player, px = p.x * S3, pz = p.y * S3;
+  const tg = R3.lock;
+  for (const O of R3.occ || []) {
+    const hit = segBox(c.x, c.y, c.z, px, 1.2, pz, O) || segBox(c.x, c.y, c.z, px, 0.3, pz, O) || (tg && segBox(c.x, c.y, c.z, tg.x * S3, 1.2, tg.y * S3, O));
+    const k = lerpA(O.k, hit ? 0.14 : 1, 1 - Math.exp(-rdt * 10));
+    if (Math.abs(k - O.k) < 0.001 && (k === 1 || k < 0.15)) { O.k = k; continue; }
+    O.k = k;
+    for (const m of O.mats) { m.opacity = k; m.depthWrite = k > 0.95; }
+    for (const o of O.outs) o.visible = k > 0.9;
+  }
 }
 
 // Objekte und Bestien mit eigener 3D-Fassung (OBJ3D in den Orts-Dateien)

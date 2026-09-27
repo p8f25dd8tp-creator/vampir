@@ -4603,7 +4603,7 @@ function r3Build() {
   const T = THREE;
   R3.slams = []; R3.poiMeshes = null; R3.rigs.clear(); R3.fx.clear(); R3.tele.clear(); R3.proj.clear(); R3.ghosts.length = 0; R3.impacts.length = 0;
   const scene = new T.Scene();
-  R3.motes = null; R3.fade = [];
+  R3.motes = null; R3.fade = []; R3.occ = [];
   ARENA3D[G.arena.art](G.arena, scene);
   const mkPts = (n, add, size) => {
     const geo = new T.BufferGeometry(); geo.setAttribute('position', new T.BufferAttribute(new Float32Array(n * 3), 3)); geo.setAttribute('color', new T.BufferAttribute(new Float32Array(n * 3), 3));
@@ -4681,6 +4681,7 @@ function render3d(rdt) {
   const p = G.player;
   R3.playerLight.position.set(p.x * S3, 2.2, p.y * S3); R3.playerLight.intensity = G.arena.night ? 6 : 0;
   r3Camera(rdt);
+  r3Occlusion(rdt);
   r3Hud();
   // Farbstimmung: Zeitlupe kuehl, Konter golden
   if (R3.grade) {
@@ -4715,6 +4716,40 @@ function r3Camera(rdt) {
   cam.position.set(tx + rand(-sh, sh), 0.9 + Math.sin(C.pitch) * C.d + rand(-sh, sh), tz + Math.cos(C.pitch) * C.d);
   cam.lookAt(tx, 1.05, tz - 0.4);
   if (window.R3CAM) window.R3CAM(cam);
+}
+
+// Verdeckung: alles, was zwischen Kamera und Figur steht (Gebaeude, Baeume), wird durchsichtig
+function r3Occluder(obj, x0, x1, z0, z1, top) {
+  if (!R3.occ) return;
+  const O = { x0, x1, z0, z1, top, k: 1, mats: new Set(), outs: [] };
+  obj.traverse((o) => {
+    if (!o.isMesh && !o.isSprite) return;
+    if (o.material === R3.outline || (o.material && o.material.uniforms && o.material.uniforms.w)) { O.outs.push(o); return; }
+    if (o.material) { o.material.transparent = true; O.mats.add(o.material); }
+  });
+  R3.occ.push(O);
+}
+function segBox(ax, ay, az, bx, by, bz, O) {
+  let t0 = 0, t1 = 1;
+  for (const [a, b, lo, hi] of [[ax, bx, O.x0 - 0.2, O.x1 + 0.2], [ay, by, 0, O.top], [az, bz, O.z0 - 0.2, O.z1 + 0.2]]) {
+    const d = b - a;
+    if (Math.abs(d) < 1e-6) { if (a < lo || a > hi) return false; continue; }
+    let u0 = (lo - a) / d, u1 = (hi - a) / d; if (u0 > u1) [u0, u1] = [u1, u0];
+    t0 = Math.max(t0, u0); t1 = Math.min(t1, u1); if (t0 > t1) return false;
+  }
+  return true;
+}
+function r3Occlusion(rdt) {
+  const c = R3.cam.position, p = G.player, px = p.x * S3, pz = p.y * S3;
+  const tg = R3.lock;
+  for (const O of R3.occ || []) {
+    const hit = segBox(c.x, c.y, c.z, px, 1.2, pz, O) || segBox(c.x, c.y, c.z, px, 0.3, pz, O) || (tg && segBox(c.x, c.y, c.z, tg.x * S3, 1.2, tg.y * S3, O));
+    const k = lerpA(O.k, hit ? 0.14 : 1, 1 - Math.exp(-rdt * 10));
+    if (Math.abs(k - O.k) < 0.001 && (k === 1 || k < 0.15)) { O.k = k; continue; }
+    O.k = k;
+    for (const m of O.mats) { m.opacity = k; m.depthWrite = k > 0.95; }
+    for (const o of O.outs) o.visible = k > 0.9;
+  }
 }
 
 // Objekte und Bestien mit eigener 3D-Fassung (OBJ3D in den Orts-Dateien)
@@ -5617,7 +5652,7 @@ function tree3d(scene, x, z, s, night) {
   for (const [dx, dy, dz, r, m] of [[0, 2.3, 0, 1.0, leaf], [-0.55, 1.95, 0.2, 0.7, leaf2], [0.55, 2.0, -0.15, 0.72, leaf2], [0.1, 2.85, 0.1, 0.62, leaf2]]) {
     const b = part(fgeo('leaf' + r, () => new T.IcosahedronGeometry(r, 1)), m, g, dx, dy, dz); b.receiveShadow = true;
   }
-  trunk.receiveShadow = true; scene.add(g); return g;
+  trunk.receiveShadow = true; scene.add(g); r3Occluder(g, x - 1.1 * (s || 1), x + 1.1 * (s || 1), z - 1.1 * (s || 1), z + 1.1 * (s || 1), 3.4 * (s || 1)); return g;
 }
 function bench3d(scene, x, z, rot) {
   const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = rot || 0;
@@ -5631,7 +5666,8 @@ function lampPost3d(scene, x, z, on) {
   const head = new T.Mesh(fgeo('lhead', () => new T.SphereGeometry(0.16, 12, 10)), new T.MeshBasicMaterial({ color: on ? '#fff0c8' : '#8a8a90' })); head.position.set(x, 3.25, z); scene.add(head);
   if (on) { const gl = glowSprite3('#ffd890', 0.8, 0.45); gl.position.set(x, 3.25, z); scene.add(gl); }
 }
-function building3d(scene, b, night) {
+function building3d(scene0, b, night) {
+  const scene = new THREE.Group(); scene0.add(scene);
   const T = THREE, x = (b.x + b.w / 2) * S3, z = (b.y + b.h / 2) * S3, w = b.w * S3, d = b.h * S3, h = 6.2;
   box3(scene, w, h, d, '#7e889c', x, h / 2, z);
   box3(scene, w + 0.3, 0.3, d + 0.3, '#4a5264', x, h + 0.1, z);
@@ -5649,6 +5685,7 @@ function building3d(scene, b, night) {
     box3(scene, 1.6, 0.12, 0.8, '#3a4252', dx, 2.05, front + 0.35);
     if (night) { const gl = glowSprite3('#ffd890', 0.8, 0.4); gl.position.set(dx, 1.95, front + 0.3); scene.add(gl); }
   }
+  r3Occluder(scene, x - w / 2, x + w / 2, z - d / 2, z + d / 2, h + 0.4);
   if (b.label) { const s = new T.Mesh(new T.PlaneGeometry(2.6, 0.5), new T.MeshBasicMaterial({ map: labelTex(b.label) })); s.position.set(x, h - 0.6, front + 0.02); scene.add(s); }
 }
 function sunLight(scene, cx, cz, span, col, inten, pos) {
