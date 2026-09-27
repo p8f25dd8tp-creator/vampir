@@ -3813,8 +3813,8 @@ Object.assign(MISSIONS, {
     fight: {
       arena: { art: 'dom', w: 360, h: 560, night: true, blocks: [{ x: 40, y: 150, w: 56, h: 36, invisible: true }, { x: 264, y: 400, w: 56, h: 36, invisible: true }] },
       playerAt: [180, 460], inspect: true, noFoeBar: true,
-      foes: ratPack(5, [[80, 90], [280, 100], [180, 70]], 0.4, 1.1),
-      onTick: (G) => { wakeTick(G, 2); lowHpStart(0.55)(G); G.hint = G.t < 4 ? { text: 'Wenig HP · weich aus und kontere' } : null; }
+      foes: ratPack(4, [[80, 90], [280, 100], [180, 70]], 0.4, 1.1),
+      onTick: (G) => { wakeTick(G, 2); lowHpStart(0.7)(G); G.hint = G.t < 4 ? { text: 'Wenig HP · weich aus und kontere' } : null; }
     },
     won: [
       { bg: 'rotplanet', portrait: 'quinn' },
