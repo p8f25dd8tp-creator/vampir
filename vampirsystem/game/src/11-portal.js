@@ -242,7 +242,7 @@ const AI_SCORDANA = {
   harden: true,
   params: (e) => ({ range: 58, speed: 58, cd: e.hp < e.maxHp / 2 ? 0.75 : 1.1 }),
   choose: (e, d) => (d < 74 ? SCOR_ATK.pincer : d < 170 && Math.random() < 0.6 ? SCOR_ATK.sting : null),
-  onTick: (e, dt) => turnShell(e, 1.7, dt)
+  onTick: (e, dt) => turnShell(e, 1.2, dt)
 };
 const AI_EGG = { params: () => ({ range: 9999, speed: 0, cd: 9 }), choose: () => null };
 const BS_ATK = {
