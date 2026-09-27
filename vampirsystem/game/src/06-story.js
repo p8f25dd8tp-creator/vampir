@@ -138,6 +138,7 @@ function buildHud(opt) {
     <div class="stickzone" id="sz"><div class="stick" style="display:none"><i></i></div></div>
     <div class="pad">
       <button class="insp ${opt.inspect || SAVE.quinn.skills.includes('inspect') ? '' : 'off'}" id="bInsp">INSPECT</button>
+      ${SAVE.quinn.skills.includes('bloodswipe') && !opt.hub ? '<button class="skill" id="bSkill">BLOOD<br>SWIPE<small>1 HP</small></button>' : ''}
       <button class="dodge" id="bDodge">AUS-<br>WEICHEN</button>
       <button class="atk" id="bAtk">ANGRIFF</button>
     </div>
@@ -149,6 +150,7 @@ function buildHud(opt) {
   bindButton($('#bAtk'), () => { INPUT.atkHeld = true; pushInput('atkDown'); }, () => { INPUT.atkHeld = false; pushInput('atkUp'); });
   bindButton($('#bDodge'), () => pushInput('dodge'));
   bindButton($('#bInsp'), () => pushInput('inspect'));
+  if ($('#bSkill')) bindButton($('#bSkill'), () => pushInput('skill1'));
   $('#pauseBtn').addEventListener('pointerup', () => showPause());
   if (opt.hub) $('#statusBtn').addEventListener('pointerup', () => { if (!G) return; G.paused = true; showStatus(() => { if (G) G.paused = false; }); });
   UI.cache = {};
@@ -180,7 +182,7 @@ function updateHud() {
     if (C.goal !== gk) {
       C.goal = gk;
       $('#goal').innerHTML = `<div class="gh">TAG ${D.n}${D.night ? ' · NACHT' : ''}</div>${G.hubInfo.goal ? `<div class="gq">▸ ${G.hubInfo.goal}</div>` : ''}` +
-        (D.night ? '' : `<div class="gd">${D.water ? '✔' : '▫'} 2 Liter Wasser trinken</div><div class="gd ${D.sun >= 6 ? 'bad' : ''}">${D.sun < 6 ? '▫' : '✘'} Sonne meiden (${Math.min(6, D.sun).toFixed(0)} / 6 s)</div>`);
+        (SAVE.quinn.thirst ? `<div class="gd bad">Blutdurst · HP −${SAVE.quinn.thirst}</div>` : '') + (D.night ? '' : `<div class="gd">${D.water ? '✔' : '▫'} 2 Liter Wasser trinken</div><div class="gd ${D.sun >= 6 ? 'bad' : ''}">${D.sun < 6 ? '▫' : '✘'} Sonne meiden (${Math.min(6, D.sun).toFixed(0)} / 6 s)</div>`);
     }
   }
   const lowD = p.stam < 18;

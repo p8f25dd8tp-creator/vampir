@@ -19,12 +19,13 @@ function newFight(opt) {
   G = {
     t: 0, scale: 1, slowT: 0, hitstop: 0, shake: 0, state: 'play',
     arena: opt.arena, ents: [], tele: [], fx: [], texts: [], later: [],
-    cam: { x: 0, y: 0 }, hint: null, counterFlash: 0, opt, stats: { hits: 0, perfect: 0, taken: 0 }
+    cam: { x: 0, y: 0 }, hint: null, proj: [], counterFlash: 0, opt, stats: { hits: 0, perfect: 0, taken: 0 }
   };
   const p = mkEnt('quinn', LOOKS.quinn, opt.playerAt[0], opt.playerAt[1]);
-  p.team = 0; applyStats(p); p.hp = p.maxHp;
+  p.team = 0; applyStats(p); p.hp = Math.max(1, p.maxHp - (SAVE.quinn.thirst || 0));
   p.stam = p.maxStam; p.stamDelay = 0; p.counterT = 0; p.combo = 0; p.buffer = 0; p.holdT = 0; p.dodgeStart = -9;
   G.player = p;
+  if (opt.mask) p.extra = { mask: true };
   for (const f of opt.foes) {
     const e = mkEnt(f.id, LOOKS[f.look || f.id], f.at[0], f.at[1]);
     Object.assign(e, { team: 1, name: f.name, maxHp: f.hp, hp: f.hp, ai: f.ai, poise: f.poise || 3, maxPoise: f.poise || 3, poiseT: 0, phase: 1, cd: f.cd || 0.8, info: f.info, draw: f.draw, fixed: f.fixed, r: f.r || 11, expRate: f.expRate || 0, expKill: f.expKill || 0 });
@@ -81,6 +82,7 @@ function updateFight(rdt) {
     if (d > 0 && d < m) { const k = (m - d) / 2; a.x -= dx / d * k; a.y -= dy / d * k; b.x += dx / d * k; b.y += dy / d * k; }
   }
   for (let i = G.tele.length - 1; i >= 0; i--) { const T = G.tele[i]; T.t += dt; if (T.t >= T.dur + 0.12) G.tele.splice(i, 1); }
+  updateProj(dt);
   updateFx(dt);
   updateCamera(rdt);
   G.counterFlash = Math.max(0, G.counterFlash - rdt);
@@ -96,6 +98,7 @@ function handleInput(dt) {
     if (ev === 'atkDown' && G.poi) { const P = G.poi; G.poi = null; P.action(P); if (!G) return; continue; }
     if (ev === 'atkDown') { p.holdT = 0; tryAttack(p); }
     else if (ev === 'inspect') doInspect(p);
+    else if (ev === 'skill1') castBloodSwipe(p);
     else if (ev === 'atkUp') { if (p.state === 'charge') releaseCharge(p); p.holdT = -1; }
     else if (ev === 'dodge') tryDodge(p);
   }
@@ -218,6 +221,17 @@ function playerHit(p, A) {
 }
 
 function damageFoe(e, dmg, o) {
+  if (e.ai && e.ai.harden && e.state !== 'stagger') {
+    const from = Math.atan2(-Math.sin(o.ang), -Math.cos(o.ang)); // Richtung, aus der der Treffer kommt
+    if (Math.abs(angDiff(e.hardDir || 0, from)) < 1.05) {
+      e.flash = 0.06; G.hitstop = 0.03; sfx('chain', 0, 0.03);
+      burst(e.x + Math.cos(from) * 8, e.y - 30, 5, '#c8d0dc');
+      floatText(e.x, e.y - 72, 'GEHÄRTET', '#c8d0dc');
+      e.vx += Math.cos(o.ang) * o.kb * 0.3; e.vy += Math.sin(o.ang) * o.kb * 0.2;
+      if (e.ai.onBlock) e.ai.onBlock(e);
+      return;
+    }
+  }
   e.hp = Math.max(0, e.hp - dmg);
   e.flash = 0.1; e.anim.hurt = o.heavy ? 1 : 0.6;
   e.vx += Math.cos(o.ang) * o.kb; e.vy += Math.sin(o.ang) * o.kb * 0.7;
@@ -285,6 +299,7 @@ function updateFoe(e, dt) {
   let tvx = 0, tvy = 0;
   if (e.state === 'down') { e.vx *= Math.exp(-dt * 5); e.vy *= Math.exp(-dt * 5); e.anim.hurt = 1; return; }
   if (G.state !== 'play') { e.vx *= Math.exp(-dt * 8); e.vy *= Math.exp(-dt * 8); return; }
+  if (AI.onTick) AI.onTick(e, dt);
   const P = AI.params(e);
   if (e.state === 'idle' || e.state === 'approach') {
     e.cd -= dt;
@@ -439,4 +454,33 @@ function updatePois() {
     if (d < (P.r || 34) && d < bd) { bd = d; best = P; }
   }
   G.poi = best;
+}
+
+/* ------------------------------------------------------------ Blood Swipe (ab Halbling)
+   Roman: keine Abklingzeit, kostet 1 HP pro Einsatz, Reichweite etwa 5 Meter. */
+function castBloodSwipe(p) {
+  if (!SAVE.quinn.skills.includes('bloodswipe') || p.state === 'down' || p.state === 'hurt') return;
+  if ((p.swipeCd || 0) > 0) return;
+  if (p.hp <= 1) { floatText(p.x, p.y - 72, 'Zu wenig HP', '#ff8a8a'); return; }
+  p.hp -= 1; p.swipeCd = 0.35; G.stats.swipes = (G.stats.swipes || 0) + 1;
+  const f = nearestFoe(p, 200);
+  const [mx, my] = readMove();
+  const a = f ? Math.atan2(f.y - p.y, f.x - p.x) : (mx || my) ? Math.atan2(my, mx) : (p.face > 0 ? 0 : Math.PI);
+  p.face = Math.cos(a) >= 0 ? 1 : -1; p.anim.cast = 1; p.anim.aim = p.face > 0 ? a : Math.PI - a;
+  G.proj.push({ x: p.x + Math.cos(a) * 12, y: p.y + Math.sin(a) * 12, a, sp: 300, dist: 0, max: 70, dmg: 2 * (p.str * (G.inSun ? 0.5 : 1) / 10), hit: new Set() });
+  floatText(p.x, p.y - 72, '-1 HP', '#ff5a6a');
+  sfx('whip', 0, 0.03); sfx('splat', 0, 0.05);
+}
+function updateProj(dt) {
+  const p = G.player;
+  p.swipeCd = Math.max(0, (p.swipeCd || 0) - dt);
+  for (let i = G.proj.length - 1; i >= 0; i--) {
+    const P = G.proj[i];
+    const step = P.sp * dt; P.x += Math.cos(P.a) * step; P.y += Math.sin(P.a) * step; P.dist += step;
+    for (const e of G.ents) {
+      if (e.team !== 1 || e.state === 'down' || P.hit.has(e.id)) continue;
+      if (Math.hypot(e.x - P.x, e.y - P.y) < e.r + 12) { P.hit.add(e.id); damageFoe(e, P.dmg, { kb: 90, ang: P.a, poise: 1, heavy: false }); }
+    }
+    if (P.dist >= P.max) { G.proj.splice(i, 1); burst(P.x, P.y - 20, 4, '#ff3a4e'); }
+  }
 }

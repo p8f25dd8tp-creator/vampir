@@ -46,6 +46,25 @@ const AI_MONO = {
   choose: (e, d) => (d < 55 ? MONO_ATK : null)
 };
 
+/* ------------------------------------------------------------ Rylee (Kap. 15–19)
+   Faehigkeit Verhaertung: immer nur EINE Koerperstelle. Die gehaertete Seite dreht
+   sich langsam zu Quinn; wer schnell die Seite wechselt (Ausweichen, Finte), trifft. */
+const RYLEE_ATK = {
+  punch: { type: 'swipe', wind: 0.45, act: 0.1, rec: 0.5, reach: 40, arc: 0.9, dmg: 1, col: '#c8d0dc' },
+  rush: { type: 'lunge', wind: 0.6, act: 0.24, rec: 0.7, speed: 300, dmg: 2, shout: '!' }
+};
+const AI_RYLEE = {
+  harden: true,
+  params: () => ({ range: 42, speed: 88, cd: 1.0 }),
+  choose: (e, d) => (d > 90 ? (Math.random() < 0.5 ? RYLEE_ATK.rush : null) : d < 60 ? RYLEE_ATK.punch : null),
+  onTick(e, dt) {
+    const p = G.player, want = Math.atan2(p.y - e.y, p.x - e.x);
+    if (e.hardDir === undefined) e.hardDir = want;
+    const turn = e.state === 'wind' || e.state === 'active' ? 1.2 : 2.2; // beim Angreifen dreht er langsamer
+    e.hardDir += clamp(angDiff(e.hardDir, want), -turn * dt, turn * dt);
+  }
+};
+
 /* ------------------------------------------------------------ Missionen */
 const MISSIONS = {
   prolog: {
@@ -209,6 +228,116 @@ const MISSIONS = {
     ],
     reward: { exp: 10 },
     after: () => { SAVE.flags.mono = true; },
+    next: 'credits'
+  },
+
+  /* Credits und Erpressung (Kap. 15) */
+  credits: {
+    id: 'credits', title: 'Credits', src: 'Kapitel 15',
+    scene: [
+      { bg: 'kantine', portrait: null },
+      { narr: 'An der Schule bekommt jeder Schüler zehn Credits am Tag. Dafür gibt es Essen, Kleidung und Kleinkram im Laden.' },
+      { portrait: 'rylee' },
+      { narr: 'Drei Schüler mit Stufe 2 verlangen von den Stufe-1ern ihre Credits – angeblich für einen gewissen Dan. Einer von ihnen heißt Rylee.' },
+      { bg: 'system', portrait: null },
+      { sys: { head: 'NEUE QUEST', lines: ['Besiege Rylee.', 'Bonus-EP für den Stufenunterschied.'] } },
+      { bg: 'kantine', portrait: 'quinn' },
+      { narr: 'Quinn will nicht, dass jemand ihn erkennt. Er braucht etwas, um sein Gesicht zu verbergen.' }
+    ],
+    after: () => { SAVE.flags.credits = true; },
+    next: 'akademie'
+  },
+
+  /* Rylee im Park (Kap. 16–17) */
+  rylee: {
+    id: 'rylee', title: 'Maske im Park', src: 'Kapitel 16–17', type: 'duell',
+    scene: [
+      { bg: 'nacht', portrait: 'quinn', extra: { mask: true } },
+      { narr: 'Nachts ist Quinns Körper ein anderer: Er läuft ohne Mühe, und im Dunkeln sieht er fast so gut wie am Tag.' },
+      { narr: 'Mit der schwarzen Maske wartet er im Park auf Rylee.' },
+      { portrait: 'rylee' },
+      { who: 'Rylee', text: 'Wer bist du denn? Nimm das Ding ab!' },
+      { bg: 'system', portrait: null },
+      { sys: { head: 'KAMPF', lines: ['Rylee kann immer nur EINE Körperstelle verhärten (graue Platte).', 'Schläge dorthin prallen ab. Wechsle schnell die Seite – z. B. durch Ausweichen – und triff, wo er weich ist.'] } }
+    ],
+    fight: {
+      arena: { art: 'park', w: 420, h: 700, night: true, lamps: [[120, 260], [300, 260], [120, 460], [300, 460]], trees: [[40, 150], [390, 170], [30, 600], [400, 620]] },
+      playerAt: [210, 470], mask: true,
+      foes: [{ id: 'rylee', name: 'Rylee · Verhärtung', hp: 22, poise: 3, at: [210, 300], ai: AI_RYLEE, expRate: 1.5, expKill: 25, info: { name: 'Rylee', race: 'Mensch', ability: 'Verhärtung (eine Körperstelle)', blood: '0+' } }],
+      inspect: true,
+      expBonus: (G, won) => (won ? 40 : 0)
+    },
+    won: [
+      { bg: 'nacht', portrait: 'quinn', extra: { mask: true } },
+      { narr: 'Rylee bleibt am Boden liegen. Quinn spürt, wie etwas in ihm zerreißt und neu zusammenwächst.' },
+      { bg: 'system', portrait: null },
+      { sys: { head: 'EVOLUTION', lines: ['Rasse: Mensch → Halbling'], kv: [['HP', '+5']] } },
+      { sys: { head: 'NEUE FÄHIGKEIT', lines: ['Blood Swipe (Stufe 1)', 'Ein Hieb aus Blut, etwa 5 Meter weit. Keine Abklingzeit – kostet 1 HP pro Einsatz.'] } },
+      { sys: { head: 'WARNUNG', lines: ['Blutdurst: Ohne Menschenblut verliert Quinn mit der Zeit HP.'] } },
+      { bg: 'nacht', portrait: 'quinn' },
+      { who: 'Quinn', text: 'Blut? Bin ich etwa … ein Vampir?' },
+      { narr: 'Er beugt sich über Rylee – und bringt es nicht fertig. Layla, die ihm heimlich gefolgt ist, versteht die Szene völlig falsch.' }
+    ],
+    reward: { exp: 0, skills: ['bloodswipe'] },
+    after: () => { const Q = SAVE.quinn; Q.race = 'Halbling'; Q.thirst = 10; SAVE.flags.rylee = true; },
+    next: 'akademie'
+  },
+
+  /* Durst, Rylee und Dan (Kap. 19) */
+  dan: {
+    id: 'dan', title: 'Durst', src: 'Kapitel 18–19', type: 'gefecht',
+    scene: [
+      { bg: 'zimmer', portrait: 'quinn' },
+      { narr: 'Über Nacht ist Quinn von 15 auf 5 HP gefallen. Seine Sinne sind überempfindlich, jeder Herzschlag im Raum dröhnt.' },
+      { bg: 'kantine', portrait: 'rylee' },
+      { who: 'Rylee', text: 'Du warst das im Park, oder? Das zahl ich dir heim.' },
+      { bg: 'system', portrait: null },
+      { sys: { head: 'KAMPF', lines: ['Nur 5 HP. Blood Swipe kostet Leben – überleg dir jeden Einsatz.'] } }
+    ],
+    fight: {
+      arena: { art: 'kantine', w: 340, h: 600, blocks: [{ x: 18, y: 150, w: 70, h: 26 }, { x: 252, y: 150, w: 70, h: 26 }, { x: 18, y: 440, w: 70, h: 26 }, { x: 252, y: 440, w: 70, h: 26 }] },
+      playerAt: [170, 400],
+      foes: [{ id: 'rylee', name: 'Rylee · Verhärtung', hp: 30, poise: 3, at: [170, 260], ai: AI_RYLEE, expRate: 1.5, info: { name: 'Rylee', race: 'Mensch', ability: 'Verhärtung (eine Körperstelle)', blood: '0+' } }],
+      npcs: [{ id: 'vorden', at: [300, 320], watch: 'player' }, { id: 'peter', at: [50, 330], pose: 'cower' }, { id: 's1', at: [300, 200], watch: 'foe' }, { id: 's4', at: [45, 500], watch: 'foe' }],
+      inspect: true, noDeath: true,
+      onTick: (G, dt) => {
+        const T = G.tut || (G.tut = { t: 0 });
+        T.t += dt;
+        if (G.state === 'play' && (T.t > 16 || G.foe.hp < G.foe.maxHp * 0.5 || G.player.hp <= 1)) {
+          G.state = 'won'; G.tele.length = 0; banner('DAN'); later(1.0, () => G.opt.onWin(G));
+        }
+      }
+    },
+    won: [
+      { bg: 'kantine', portrait: 'dan' },
+      { narr: 'Bevor Quinn sich auf Rylee stürzen kann, packt ihn ein riesiger Schüler und schleudert ihn quer durch den Raum: Dan, Rylees Beschützer.' },
+      { portrait: 'vorden' },
+      { who: 'Vorden', text: 'Stufe 5, Original. Willst du wirklich weitermachen?' },
+      { narr: 'Dan zögert – und zieht ab. Quinn liegt am Boden. Noch 1 HP.' }
+    ],
+    after: () => { SAVE.quinn.thirst = 14; SAVE.flags.dan = true; },
+    next: 'akademie'
+  },
+
+  /* Der Biss und die Abmachung (Kap. 19–23) */
+  biss: {
+    id: 'biss', title: 'Der erste Biss', src: 'Kapitel 19–23',
+    scene: [
+      { bg: 'zimmer', portrait: 'layla' },
+      { narr: 'In der Bibliothek lernt Layla allein. Quinn steht plötzlich hinter ihr – der Hunger ist stärker als er.' },
+      { narr: 'Der Biss lähmt sie, ohne ihr wehzutun. Quinn trinkt nur so viel, wie er braucht.' },
+      { bg: 'system', portrait: null },
+      { sys: { head: 'SYSTEM', lines: ['Blutdurst gestillt.', 'Blutgruppe A+ getrunken.'], kv: [['Stärke', '+1']] } },
+      { bg: 'zimmer', portrait: 'hayley' },
+      { narr: 'Quinn bringt Layla zur Schulärztin Hayley, die die kleinen Wunden schließt. Layla erzählt von einer Bestie und schweigt über den Rest.' },
+      { portrait: 'layla' },
+      { who: 'Layla', text: 'Ich weiß, was du bist. Und ich verrate dich nicht – aber du erklärst mir alles.' },
+      { portrait: 'quinn' },
+      { narr: 'Quinn behauptet, es sei ein seltenes Fähigkeitsbuch gewesen. Die beiden treffen eine Abmachung: Layla hält dicht, hilft ihm und gibt ihm ihr Blut, wenn er es braucht.' },
+      { bg: 'nacht', portrait: null },
+      { narr: 'Ende der dritten Etappe. Als Nächstes: Vordens Geheimnis und die Aula.' }
+    ],
+    after: () => { const Q = SAVE.quinn; Q.thirst = 0; Q.stats.str += 1; Q.blood['A+'] = (Q.blood['A+'] || 0) + 1; SAVE.flags.biss = true; },
     next: null
   }
 };
@@ -224,7 +353,7 @@ MISSIONS.training = {
   },
   next: 'akademie', repeat: true
 };
-const MISSION_ORDER = ['prolog', 'test', 'kyle', 'nacht', 'mono'];
+const MISSION_ORDER = ['prolog', 'test', 'kyle', 'nacht', 'mono', 'rylee', 'dan', 'biss'];
 
 /* ------------------------------------------------------------ Ablauf-Hilfen */
 function testTick(G, dt) {
@@ -270,11 +399,20 @@ function hubSetup() {
   const pois = [];
   const go = (id) => () => leaveHub(() => startMission(id));
   // Bibliothek (Kap. 9): Buch ueber Vampire
+  pois.push({ x: 330, y: 150, label: 'Bibliothek', col: '#ff6a7a', hidden: () => night || !(F.dan && !F.biss), action: go('biss') });
   pois.push({ x: 330, y: 150, label: 'Bibliothek', hidden: () => F.book || night, action: () => leaveHub(() => runScene(SCENE_BOOK, () => { F.book = true; addExp(10); writeSave(); startMission('akademie'); })) });
   // Wohnheim: Zimmer 23 (Kap. 8–9), Schlafen
   pois.push({ x: 110, y: 150, label: F.room ? 'Zimmer 23 · Schlafen' : 'Zimmer 23', col: '#ffe6a0', hidden: () => !canSleep() && F.room, action: () => leaveHub(() => (F.room ? sleep() : runScene(SCENE_ROOM, () => { F.room = true; writeSave(); startMission('akademie'); }))) });
   // Kantine: Kyle (Tag 2), Mono (Tag 3)
-  pois.push({ x: 105, y: 420, label: 'Kantine', col: '#ffb040', hidden: () => night || !(D.n === 2 && !F.kyle) && !(D.n >= 3 && F.nacht && !F.mono), action: () => leaveHub(() => startMission(D.n === 2 ? 'kyle' : 'mono')) });
+  pois.push({ x: 105, y: 420, label: 'Kantine', col: '#ffb040', hidden: () => night || (!(D.n === 2 && !F.kyle) && !(D.n >= 3 && F.nacht && !F.mono) && !(F.rylee && !F.dan && D.n >= 4)), action: () => leaveHub(() => startMission(D.n === 2 ? 'kyle' : !F.mono ? 'mono' : 'dan')) });
+  // Etappe 3: Vorden steckt Quinn Credits zu (Kap. 16)
+  pois.push({ x: 110, y: 150, label: 'Zimmer 23 · Vorden', col: '#ffd27a', hidden: () => night || !(F.credits && !F.vordenGift), action: () => leaveHub(() => runScene(SCENE_VORDEN_GIFT, () => { F.vordenGift = true; SAVE.credits += 20; writeSave(); startMission('akademie'); })) });
+  // Laden: schwarze Maske
+  pois.push({ x: 262, y: 470, label: 'Laden', col: '#e8c77a', hidden: () => night || !F.credits, action: () => { G.paused = true; showShop(() => { if (G) G.paused = false; startMission('akademie'); }); } });
+  // Bis zur Nacht warten (Tag 3)
+  pois.push({ x: 110, y: 150, label: 'Zimmer 23 · Bis zur Nacht warten', col: '#9ab0ff', hidden: () => night || !(F.mask && !F.rylee), action: () => leaveHub(() => { D.night = true; writeSave(); startMission('akademie'); }) });
+  // Park (Nacht, mit Maske)
+  pois.push({ x: 220, y: 680, label: 'Park', col: '#c8a0ff', hidden: () => !(night && F.mask && !F.rylee), action: go('rylee') });
   // Wasserspender (Tagesquest)
   pois.push({ x: 175, y: 440, label: 'Wasser trinken', col: '#6ec8ff', hidden: () => night || D.water, action: () => { D.water = true; writeSave(); sfx('heal'); sysMsg({ head: 'TAGESQUEST ERFÜLLT', lines: ['2 Liter Wasser getrunken.'], kv: [['EP', '+5']] }); addExp(5); } });
   // Trainingshalle tagsueber: freies Training fuer EP
@@ -302,6 +440,7 @@ function canSleep() {
   const D = SAVE.day, F = SAVE.flags;
   if (D.n === 1) return F.book && F.room;
   if (D.n === 2) return F.kyle && F.nacht;
+  if (D.n === 3) return F.rylee;
   return false;
 }
 function hubGoal() {
@@ -311,6 +450,12 @@ function hubGoal() {
   if (D.n === 2 && !F.nacht) return 'Nacht: Schleich in die Trainingshalle';
   if (D.n === 2) return 'Geh schlafen (Zimmer 23)';
   if (!F.mono) return 'Geh in die Kantine';
+  if (!F.vordenGift) return 'Geh ins Zimmer 23 (Vorden)';
+  if (!F.mask) return `Kaufe im Laden eine Maske (${SAVE.credits} Credits)`;
+  if (!F.rylee) return D.night ? 'Geh in den Park (unten)' : 'Warte im Zimmer 23 auf die Nacht';
+  if (D.n === 3) return 'Geh schlafen (Zimmer 23)';
+  if (!F.dan) return 'Geh in die Kantine';
+  if (!F.biss) return 'Geh in die Bibliothek – der Hunger ist unerträglich';
   return '';
 }
 function hubTick(G, dt) {
@@ -330,6 +475,7 @@ function sleep() {
   addExp(ep - (D.water ? 5 : 0)); // Wasser wurde schon beim Trinken gutgeschrieben
   const n = D.n;
   SAVE.day = { n: n + 1, night: false, sun: 0, water: false };
+  SAVE.credits += 10; lines.push('+10 Credits');
   writeSave();
   SCENE_BG.cur = 'nacht';
   runScene([{ bg: 'system' }, { sys: { head: `TAG ${n} BEENDET`, lines } }, { sys: { head: 'NEUER TAG', lines: [`Tag ${n + 1}`], quests: ['Tagesquest: Trinke 2 Liter Wasser', 'Tagesquest: Meide die Sonne'] } }], () => startMission('akademie'));
@@ -340,6 +486,28 @@ const SCENE_BOOK = [
   { bg: 'system' },
   { sys: { head: 'SYSTEM', lines: ['Wissen erlangt.'], kv: [['EP', '+10']] } }
 ];
+const SCENE_VORDEN_GIFT = [
+  { bg: 'zimmer', portrait: 'vorden' },
+  { narr: 'Vorden kommt spät zurück, mit aufgeschürften Fingerknöcheln. Wo er war, sagt er nicht.' },
+  { who: 'Vorden', text: 'Hier, nimm. Ich brauche die Credits gerade nicht.' },
+  { bg: 'system', portrait: null },
+  { sys: { head: 'SYSTEM', kv: [['Credits', '+20']] } }
+];
+function showShop(done) {
+  const el = document.createElement('div');
+  el.className = 'screen dim'; el.style.pointerEvents = 'auto'; el.style.zIndex = 20;
+  const draw = () => {
+    const F = SAVE.flags, price = 25;
+    el.innerHTML = `${sysBox({ head: 'LADEN', lines: ['Credits: ' + SAVE.credits], kv: [['Schwarze Maske (mit roten Spritzern)', F.mask ? 'gekauft' : price + ' Cr.']] })}
+      ${F.mask ? '' : `<button class="btn" id="buyMask" ${SAVE.credits >= price ? '' : 'disabled'}>Maske kaufen</button>`}
+      ${!F.mask && SAVE.credits < price ? '<div class="subtitle">Zu wenig Credits. Jeder Tag bringt 10 Credits.</div>' : ''}
+      <button class="btn ghost" id="shopBack">Zurück</button>`;
+    const b = el.querySelector('#buyMask');
+    if (b) b.onclick = () => { if (SAVE.credits < price) return; SAVE.credits -= price; F.mask = true; writeSave(); sfx('level'); draw(); };
+    el.querySelector('#shopBack').onclick = () => { el.remove(); done && done(); };
+  };
+  draw(); UI.root.appendChild(el);
+}
 const SCENE_ROOM = [
   { bg: 'zimmer', portrait: 'vorden' },
   { narr: 'Zimmer 23. Vorden hat dafür gesorgt, dass er mit Quinn zusammenwohnt. Der Dritte im Zimmer ist Peter.' },

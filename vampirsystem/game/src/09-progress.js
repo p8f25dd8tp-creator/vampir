@@ -24,7 +24,8 @@ function addExp(n) {
 // abgeleitete Werte
 function quinnStats() {
   const S = SAVE.quinn.stats;
-  return { maxHp: 10 + (S.sta - 10), maxStam: 100 + (S.sta - 10) * 4, str: S.str, agi: S.agi };
+  const race = SAVE.quinn.race === 'Halbling' ? 5 : 0;
+  return { maxHp: 10 + race + (S.sta - 10), maxStam: 100 + (S.sta - 10) * 4, str: S.str, agi: S.agi };
 }
 const STAT_INFO = {
   str: { name: 'Stärke', desc: 'mehr Schaden pro Schlag' },
@@ -42,11 +43,12 @@ function statusHtml() {
       <span>Stufe</span><span>${Q.level}</span><span>HP</span><span>${D.maxHp}</span></div>
     <div class="expbar"><i style="width:${(Q.exp / expNeed(Q.level) * 100).toFixed(0)}%"></i></div>
     <div class="expnum">EP ${Q.exp} / ${expNeed(Q.level)}</div>
+    <div class="line" style="margin-top:4px;font-size:15px">Credits: <b>${SAVE.credits}</b>${Q.thirst ? ` · <span style="color:#ff8a8a">Blutdurst: −${Q.thirst} HP</span>` : ''}</div>
     <div class="line" style="margin-top:6px">Freie Wertepunkte: <b style="color:#ffe6a0">${Q.points}</b></div>
     ${rows}
     <div class="line" style="margin-top:8px;font-size:15px;color:#9ab">Fähigkeiten: ${Q.skills.length ? Q.skills.map((s) => SKILL_NAMES[s] || s).join(', ') : '—'}</div></div>`;
 }
-const SKILL_NAMES = { inspect: 'Inspect' };
+const SKILL_NAMES = { inspect: 'Inspect', bloodswipe: 'Blood Swipe' };
 function showStatus(back) {
   const el = document.createElement('div');
   el.className = 'screen dim'; el.style.pointerEvents = 'auto'; el.style.zIndex = 20;

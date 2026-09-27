@@ -52,6 +52,7 @@ const DEFAULT_SAVE = {
   quinn: { level: 1, exp: 0, points: 0, stats: { str: 10, agi: 10, sta: 10 }, skills: [], blood: {} },
   day: { n: 1, night: false, sun: 0, water: false },
   flags: {},
+  credits: 10,
   settings: { sfx: 0.8, music: 0.5, shake: 1, easyCombo: false, wideDodge: false }
 };
 let SAVE = loadSave();

@@ -16,7 +16,7 @@ function showTitle() {
     <button class="btn" id="tNew">${started ? 'Von vorn beginnen' : 'Spiel starten'}</button>
     ${started ? '<button class="btn" id="tCont">Fortsetzen</button>' : ''}
     <button class="btn ghost" id="tSet">Einstellungen</button>
-    <div class="foot">Private Fan-Umsetzung von „My Vampire System“.<br>Frühe Testversion · Etappe 2</div>`, '');
+    <div class="foot">Private Fan-Umsetzung von „My Vampire System“.<br>Frühe Testversion · Etappe 3</div>`, '');
   el.querySelector('#tNew').onclick = () => { AudioSys.init(); if (started) resetSave(); startMission('prolog'); };
   if (started) el.querySelector('#tCont').onclick = () => { AudioSys.init(); startMission(nextMission()); };
   el.querySelector('#tSet').onclick = showSettings;
@@ -24,7 +24,7 @@ function showTitle() {
 function nextMission() {
   if (!SAVE.progress.prolog) return 'prolog';
   if (!SAVE.progress.test) return 'test';
-  return SAVE.flags.mono ? 'ende' : 'akademie';
+  return SAVE.flags.biss ? 'ende' : 'akademie';
 }
 function showSettings() {
   const S = SAVE.settings;
@@ -39,7 +39,9 @@ function showSettings() {
   el.querySelector('#sBack').onclick = showTitle;
 }
 
-function startMission(id, skipScene) {
+let REPLAY = false;
+function startMission(id, skipScene, replay) {
+  REPLAY = !!replay;
   if (id === 'ende') return showEnd();
   const M = MISSIONS[id]; MISSION = M; G = null;
   if (M.type === 'hub') return beginHub(M);
@@ -78,8 +80,8 @@ function finishMission(M, won, G0) {
   if (first && M.after) M.after();
   writeSave();
   G = null;
-  const after = () => (M.next ? startMission(M.next) : showEnd(M));
-  const story = () => (M.won && (first || !M.repeat) && !M.replayNoScene ? runScene(M.won, after) : after());
+  const after = () => (REPLAY ? showEnd() : M.next ? startMission(M.next) : showEnd(M));
+  const story = () => (M.won && (first || !M.repeat) && !REPLAY ? runScene(M.won, after) : after());
   if (rep) showReport(rep, story); else story();
 }
 function showReport(rep, done) {
@@ -104,12 +106,16 @@ function showLost(M, G0) {
 function showEnd() {
   G = null; SCENE_BG.cur = 'nacht';
   const Q = SAVE.quinn;
-  const el = uiShow(`${sysBox({ head: 'STATUS', kv: [['Name', 'Quinn Talen'], ['Rasse', 'Mensch'], ['Stufe', Q.level], ['EP', Q.exp + ' / ' + expNeed(Q.level)], ['Fähigkeiten', Q.skills.includes('inspect') ? 'Inspect' : '—']], quests: ['Hauptquest: Erreiche Stufe 10'] })}
-    <div class="subtitle">Etappe 2 geschafft · Fortsetzung folgt</div>
-    <button class="btn" id="eK">Kyle wiederholen</button><button class="btn" id="eN">Nachttraining wiederholen</button><button class="btn" id="eM">Mono wiederholen</button><button class="btn ghost" id="eMenu">Hauptmenü</button>`, 'dim');
-  el.querySelector('#eK').onclick = () => { MISSIONS.kyle.replay = true; startMission('kyle', true); };
-  el.querySelector('#eN').onclick = () => startMission('nacht', true);
-  el.querySelector('#eM').onclick = () => startMission('mono', true);
+  const el = uiShow(`${sysBox({ head: 'STATUS', kv: [['Name', 'Quinn Talen'], ['Rasse', Q.race || 'Mensch'], ['Stufe', Q.level], ['EP', Q.exp + ' / ' + expNeed(Q.level)], ['Fähigkeiten', Q.skills.map((k) => SKILL_NAMES[k] || k).join(', ') || '—']], quests: ['Hauptquest: Erreiche Stufe 10'] })}
+    <div class="subtitle">Etappe 3 geschafft · Fortsetzung folgt</div>
+    <div class="subtitle" style="font-size:13px">Kämpfe wiederholen (für EP):</div>
+    <button class="btn" id="eK">Kyle</button><button class="btn" id="eM">Mono</button><button class="btn" id="eR">Rylee im Park</button><button class="btn" id="eT">Training</button>
+    <button class="btn ghost" id="eStat">Status${SAVE.quinn.points ? ' · +' + SAVE.quinn.points : ''}</button><button class="btn ghost" id="eMenu">Hauptmenü</button>`, 'dim');
+  el.querySelector('#eK').onclick = () => startMission('kyle', true, true);
+  el.querySelector('#eM').onclick = () => startMission('mono', true, true);
+  el.querySelector('#eR').onclick = () => startMission('rylee', true, true);
+  el.querySelector('#eT').onclick = () => startMission('training', true, true);
+  el.querySelector('#eStat').onclick = () => showStatus(showEnd);
   el.querySelector('#eMenu').onclick = showTitle;
 }
 

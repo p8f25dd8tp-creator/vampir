@@ -82,6 +82,20 @@ ARENA_ART.halle = function (A) {
   g.strokeStyle = 'rgba(255,220,150,0.35)'; g.lineWidth = 2; g.strokeRect(24, 64, A.w - 48, A.h - 96);
   return c;
 };
+// Park bei Nacht: Rasen, Kieswege, Laternen
+ARENA_ART.park = function (A) {
+  const S = 2, c = mkCanvas(A.w * S, A.h * S), g = c.getContext('2d');
+  g.scale(S, S);
+  const rnd = mulberry(21);
+  g.fillStyle = '#3a5a34'; g.fillRect(0, 0, A.w, A.h);
+  for (let i = 0; i < 900; i++) { g.fillStyle = rnd() < 0.5 ? 'rgba(20,40,20,0.4)' : 'rgba(90,130,70,0.25)'; g.fillRect(rnd() * A.w, rnd() * A.h, 2, 2); }
+  g.fillStyle = '#8a8474';
+  g.beginPath(); g.ellipse(A.w / 2, A.h / 2, A.w * 0.38, A.h * 0.3, 0, 0, TAU); g.fill();
+  g.fillStyle = '#3a5a34'; g.beginPath(); g.ellipse(A.w / 2, A.h / 2, A.w * 0.28, A.h * 0.2, 0, 0, TAU); g.fill();
+  g.fillStyle = '#8a8474'; g.fillRect(A.w / 2 - 22, 0, 44, A.h * 0.25); g.fillRect(A.w / 2 - 22, A.h * 0.75, 44, A.h * 0.25);
+  for (let i = 0; i < 400; i++) { g.fillStyle = 'rgba(0,0,0,0.12)'; g.fillRect(rnd() * A.w, rnd() * A.h, 1.5, 1.5); }
+  return c;
+};
 // Nicht-menschliche Ziele (Messsaeule, Trainingsgeraet)
 const OBJ_ART = {
   saeule(g, e) {
@@ -158,6 +172,22 @@ function renderFight() {
     const sway = Math.sin(G.t * 1.2 + x) * 1.5;
     for (const [dx, dy, r, c] of [[0, -40, 22, '#2e5a28'], [-12, -32, 15, '#3a6a30'], [12, -34, 16, '#3a6a30'], [4, -46, 13, '#4a7a3a']]) { g.fillStyle = A.night ? shade(c, -0.55) : c; g.beginPath(); g.arc(x + dx + sway, y + dy, r, 0, TAU); g.fill(); }
   }
+  // Blood Swipe
+  for (const P of G.proj || []) {
+    g.save(); g.translate(P.x, P.y - 22); g.rotate(P.a);
+    g.fillStyle = '#6a0010'; g.beginPath(); g.arc(-6, 0, 14, -1.2, 1.2); g.arc(-12, 0, 11, 1.1, -1.1, true); g.closePath(); g.fill();
+    g.globalCompositeOperation = 'lighter'; g.fillStyle = 'rgba(255,40,70,0.85)'; g.beginPath(); g.arc(-6, 0, 13, -1.1, 1.1); g.arc(-11, 0, 11, 1.0, -1.0, true); g.closePath(); g.fill();
+    g.drawImage(glowSprite('#ff2a40'), -20, -18, 36, 36);
+    g.restore();
+  }
+  // Haertung (Rylee): graue Platte auf der gehaerteten Seite
+  for (const e of G.ents) if (e.ai && e.ai.harden && e.state !== 'down') {
+    const a = e.hardDir || 0, stag = e.state === 'stagger';
+    g.save(); g.translate(e.x, e.y - 30); g.globalAlpha = stag ? 0.25 : 0.85;
+    g.strokeStyle = '#d8e0ea'; g.lineWidth = 5; g.lineCap = 'round'; g.beginPath(); g.arc(0, 0, 20, a - 0.9, a + 0.9); g.stroke();
+    g.strokeStyle = '#6a7686'; g.lineWidth = 2; g.beginPath(); g.arc(0, 0, 23, a - 0.9, a + 0.9); g.stroke();
+    g.restore();
+  }
   // Effekte
   g.save(); g.globalCompositeOperation = 'lighter';
   for (const f of G.fx) {
@@ -184,6 +214,10 @@ function renderFight() {
     const p0 = G.player;
     g.fillStyle = rg(g, p0.x, p0.y - 30, 40, 260, [0, 'rgba(8,10,30,0.15)', 1, 'rgba(4,6,20,0.72)']);
     g.fillRect(G.cam.x - VIEW.w, G.cam.y - VIEW.h, VIEW.w * 2, VIEW.h * 2);
+  }
+  for (const [x, y] of A.lamps || []) {
+    g.save(); g.globalCompositeOperation = 'lighter'; g.globalAlpha = 0.55; g.drawImage(glowSprite('#ffd890'), x - 70, y - 50, 140, 100); g.restore();
+    g.fillStyle = '#1a1a20'; g.fillRect(x - 1.5, y - 46, 3, 46); g.fillStyle = '#fff4d0'; g.beginPath(); g.arc(x, y - 48, 3.5, 0, TAU); g.fill();
   }
   // Zahlen und Texte
   g.textAlign = 'center';

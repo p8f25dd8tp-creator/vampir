@@ -165,6 +165,12 @@ function drawPerson(g, P, L) {
     g.beginPath(); g.rect(1.2, -2.8, 3.4, 2.4); g.moveTo(1.2, -1.8); g.lineTo(-2, -2.4); g.stroke();
     g.fillStyle = 'rgba(200,220,255,0.25)'; g.fillRect(1.2, -2.8, 3.4, 2.4);
   }
+  if (L.mask) {
+    g.beginPath(); g.moveTo(-3.8, -3.6); g.quadraticCurveTo(1, -4.8, 4.4, -3.4); g.lineTo(5.6, 0); g.lineTo(4.1, 0.6); g.quadraticCurveTo(4.5, 1.8, 3.8, 2.6); g.quadraticCurveTo(3, 5, 0.8, 5.4); g.quadraticCurveTo(-3, 5, -4.2, 1.8); g.closePath();
+    paint(g, '#0c0a0e', 'rgba(0,0,0,0.8)', 0.5);
+    g.fillStyle = '#b0102a'; for (const [x, y, r] of [[2.5, 2, 0.7], [0.5, 3.4, 0.45], [3.6, 0.4, 0.4], [-1.5, 1.2, 0.35]]) { g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill(); }
+    g.fillStyle = L.eye; g.beginPath(); g.ellipse(2.7, -1.6, 0.9, 0.55, 0, 0, TAU); g.fill();
+  }
   g.beginPath();
   const hs = L.hairStyle || 'messy';
   if (hs === 'short') { g.moveTo(-5, -1); g.quadraticCurveTo(-6, -6, -2, -7.8); g.quadraticCurveTo(3, -8.6, 4.6, -4.6); g.quadraticCurveTo(2, -5.8, -0.5, -5.4); g.quadraticCurveTo(-2.5, -4, -3, -1); }
@@ -199,6 +205,9 @@ const LOOKS = {
   s2: { outfit: 'uniform', top: '#3a4a5a', topL: '#5e7288', topD: '#18202a', leg: '#222a34', legD: '#0e1218', shoe: '#1a1a1e', skin: '#f0d8c4', skinD: '#b09888', hair: '#8a4a2a', eye: '#4a6a3a', hairStyle: 'long', trim: '#a0a8b0', rim: '#a0b0c0' },
   s3: { outfit: 'uniform', top: '#3a4a5a', topL: '#5e7288', topD: '#18202a', leg: '#222a34', legD: '#0e1218', shoe: '#1a1a1e', skin: '#8a5a40', skinD: '#5a3a28', hair: '#0e0a08', eye: '#2a1a10', hairStyle: 'messy', trim: '#a0a8b0', rim: '#a0b0c0' },
   s4: { outfit: 'uniform', top: '#3a4a5a', topL: '#5e7288', topD: '#18202a', leg: '#222a34', legD: '#0e1218', shoe: '#1a1a1e', skin: '#ecd0b8', skinD: '#ac9078', hair: '#d8c070', eye: '#4a5a7a', hairStyle: 'bun', trim: '#a0a8b0', rim: '#a0b0c0' },
+  rylee: { outfit: 'uniform', top: '#4a3a2a', topL: '#76604a', topD: '#201810', leg: '#2a2218', legD: '#120e0a', shoe: '#1a1410', skin: '#e4c4a4', skinD: '#a48464', hair: '#5a3a1a', eye: '#6a5a3a', hairStyle: 'short', trim: '#b0a070', angry: true, rim: '#c0c8d0' },
+  dan: { outfit: 'uniform', top: '#2a2a30', topL: '#4e4e58', topD: '#101014', leg: '#1e1e24', legD: '#0c0c10', shoe: '#101012', skin: '#c8a080', skinD: '#886040', hair: '#101010', eye: '#3a2a1a', hairStyle: 'short', trim: '#909098', angry: true, rim: '#d0a060' },
+  hayley: { outfit: 'shirt', top: '#e8ecf0', topL: '#ffffff', topD: '#a8b0b8', leg: '#3a4a5a', legD: '#1a222a', shoe: '#e8e8ea', skin: '#f0d4c0', skinD: '#b09480', hair: '#c86a3a', eye: '#4a6a3a', hairStyle: 'bun', rim: '#9ad8ff' },
   kyle: { outfit: 'uniform', top: '#6a2a1e', topL: '#9a4a36', topD: '#30100a', leg: '#2a1c18', legD: '#140c0a', shoe: '#1a1414', skin: '#e0b894', skinD: '#9a7458', hair: '#c8781e', eye: '#ffa030', hairStyle: 'spiky', trim: '#d0a060', angry: true, rim: '#ff9a3a' }
 };
 const HUMAN_BOX = 120;

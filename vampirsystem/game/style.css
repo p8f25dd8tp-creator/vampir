@@ -89,7 +89,9 @@ canvas#game { position: absolute; inset: 0; display: block; touch-action: none; 
 .pad .atk { width: 96px; height: 96px; right: 0; bottom: 0; font-size: 14px; }
 .pad .atk.charge { box-shadow: 0 0 0 4px rgba(255,200,90,.7), 0 0 26px rgba(255,180,60,.7); }
 .pad .dodge { width: 68px; height: 68px; right: 104px; bottom: 4px; font-size: 10.5px; }
-.pad .insp { width: 58px; height: 58px; right: 70px; bottom: 108px; font-size: 10px; }
+.pad .insp { width: 58px; height: 58px; right: 78px; bottom: 112px; font-size: 10px; }
+.pad .skill { width: 68px; height: 68px; right: 4px; bottom: 106px; font-size: 10px; border-color: rgba(255,90,110,.75); background: radial-gradient(circle at 40% 35%, rgba(190,30,60,.7), rgba(40,4,12,.85)); flex-direction: column; }
+.pad .skill small { font-size: 9px; color: #ffb0b8; margin-top: 2px; }
 .pad .insp.off { display: none; }
 .pad button.cd { opacity: .45; }
 .stickzone { position: absolute; left: 0; bottom: 0; width: 55%; height: 62%; pointer-events: auto; touch-action: none; }
