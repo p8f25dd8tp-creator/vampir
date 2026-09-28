@@ -37,7 +37,7 @@ const FINN_TIERS = [
 /* ------------------------------------------------------------- Held */
 HEROES.finn = {
   name: 'Finn Müller', title: 'Vom Nichts zum Gottbezwinger', school: 'blood', diff: 2,
-  role: 'Evolution · beginnt ohne Kräfte · wird immer stärker',
+  role: 'Blut · Schatten · Qi · wächst mit der Geschichte',
   hp: 80, speed: 150, armor: 0, dodgeCd: 2.6, dodge: 'roll',
   start: null, slots: 0, evo: true,
   mech: { name: 'Evolution', desc: 'Im allerersten Lauf ist Finn ein Mensch ohne jede Fähigkeit und muss das Buch finden — danach ist er dauerhaft Halbling. Jede weitere Evolution ist dauerhaft und muss über viele Läufe verdient werden: Jeder Lauf bringt Blutessenz (Kills, Zeit, Stufe, Sieg). Hat Finn genug Essenz UND besteht im Lauf die Prüfung seiner Form, entwickelt er sich nach dem Lauf weiter. Im Lauf selbst kämpft er nur mit den Kräften seiner aktuellen Form und verbessert sie über Karten.' },

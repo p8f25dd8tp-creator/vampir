@@ -50,7 +50,7 @@ makeOffers = function () {
 
 // Finn in die Arcade-Heldenwahl (vor Sen Draco)
 (function () { if (!HERO_ORDER.includes('finn')) { const i = HERO_ORDER.indexOf('draco'); HERO_ORDER.splice(i >= 0 ? i : HERO_ORDER.length, 0, 'finn'); } })();
-HEROES.finn.mech = { name: 'Evolution im Lauf', desc: 'Finn beginnt als Mensch und muss das Buch finden. Danach wächst er im Lauf Form für Form – bis zur höchsten Form, die du in der Kampagne freigeschaltet hast. Jede Form bringt mehr Leben, Tempo und Kraft, neue eigene Fähigkeiten und mehr Plätze.' };
+HEROES.finn.mech = { name: 'Evolution', desc: 'Finn startet jeden Lauf in seiner höchsten freigeschalteten Form. Neue Formen öffnen sich mit der Geschichte – jede bringt mehr Leben, Tempo und Kraft, neue eigene Fähigkeiten und mehr Plätze. Nur beim allerersten Lauf ist er noch ein Mensch, der das Buch finden muss.' };
 
 const _poolOfArc = HEROES.finn.poolOf;
 HEROES.finn.poolOf = function (p) {
