@@ -235,7 +235,7 @@ function enemyMesh(art, role) {
   if (R3N.enemyMeshes[key]) return R3N.enemyMeshes[key];
   const C = spriteColors(art);
   if (role === 'bat') { C.main = '#' + new THREE.Color(C.main).lerp(new THREE.Color('#5a2a6a'), 0.6).getHexString(); C.dark = shadeHex(C.main, -0.45); }
-  const G = mergeParts(enemyParts(role, C));
+  const G = mergeParts(isHumanArt(art) ? humanParts(role, C, art) : enemyParts(role, C));
   const mat = toon('#ffffff', { vertexColors: true });
   const im = new THREE.InstancedMesh(G, mat, 300); im.frustumCulled = false; im.count = 0;
   im.instanceColor = new THREE.InstancedBufferAttribute(new Float32Array(300 * 3).fill(1), 3);
@@ -266,6 +266,48 @@ function buildBoss(e) {
   R3N.scene.add(root);
   return { root, body, mats, aura, yaw: 0 };
 }
+
+/* ------------------------------------------------------------ Menschliche Gegner
+   Schueler, Agenten, Soldaten, Waechter: Chibi-Menschen statt Monster.
+   (Vampire, Bestien, Dalki und Daemonen bleiben Kreaturen.) */
+function isHumanArt(art) { return /^h_/.test(art) && art !== 'h_rotvamp' || art === 'sendraco_h'; }
+const HUMAN_HAIR = ['#2a1c16', '#4a3020', '#1a1a1a', '#7a4a22', '#d8c070', '#3a2a1e'];
+const HUMAN_HELM = { h_wache: 1, h_sunshield: 1, h_blade: 1, h_ritter: 1, h_waechter: 1 };
+function humanParts(role, C, art) {
+  let hsh = 0; for (const ch of art) hsh = (hsh * 31 + ch.charCodeAt(0)) >>> 0;
+  const PL = (ENEMY_ART[art] && ENEMY_ART[art].pal && ENEMY_ART[art].pal[0] && ENEMY_ART[art].pal[0][1]) || {};
+  const skin = PL.skin || ['#f0d0b8', '#e0b898', '#c89070', '#f4dcc8'][hsh % 4], hair = PL.hair || HUMAN_HAIR[(hsh >> 3) % HUMAN_HAIR.length];
+  const top = PL.armorL || PL.coat || PL.robeL || PL.cloakL || C.main, pants = shadeHex(PL.armor || PL.coatD || PL.robe || PL.cloak || C.main, -0.35), acc = C.rim, P = [];
+  const big = role === 'brute' ? 1.35 : 1;
+  for (const sd of [-1, 1]) {
+    P.push({ g: CAP(), c: pants, p: [sd * 0.08, 0.13, 0], s: [0.065, 0.075, 0.065] });
+    P.push({ g: SPH(), c: '#1a1a1e', p: [sd * 0.08, 0.03, 0.03], s: [0.07, 0.045, 0.095] });
+    P.push({ g: CAP(), c: top, p: [sd * 0.2 * big, 0.36, 0.02], s: [0.05 * big, 0.09, 0.05 * big], r: [0.25, 0, sd * 0.2] });
+    P.push({ g: SPH(), c: skin, p: [sd * 0.23 * big, 0.23, 0.07], s: [0.05, 0.05, 0.05] });
+  }
+  P.push({ g: CAP(), c: top, p: [0, 0.37, 0], s: [0.16 * big, 0.11, 0.12 * big] });
+  P.push({ g: CYL(), c: shadeHex(top, -0.35), p: [0, 0.28, 0], s: [0.165 * big, 0.03, 0.125 * big] });
+  P.push({ g: CYL(), c: shadeHex(top, 0.25), p: [0, 0.47, 0.02], s: [0.1, 0.03, 0.09] });
+  // grosser Chibi-Kopf mit Frisur und ruhigen, dunklen Augen
+  P.push({ g: SPH(), c: skin, p: [0, 0.66, 0.02], s: [0.23, 0.21, 0.21] });
+  if (HUMAN_HELM[art]) { P.push({ g: SPH(), c: shadeHex(top, -0.15), p: [0, 0.73, -0.01], s: [0.25, 0.17, 0.23] }); P.push({ g: CYL(), c: shadeHex(top, -0.3), p: [0, 0.7, 0], s: [0.26, 0.02, 0.24] }); }
+  else { P.push({ g: SPH(), c: hair, p: [0, 0.72, -0.03], s: [0.24, 0.18, 0.22] }); P.push({ g: SPH(), c: hair, p: [0, 0.8, 0.1], s: [0.2, 0.07, 0.11] }); }
+  for (const sd of [-1, 1]) { P.push({ g: SPH(), c: '#1e1612', p: [sd * 0.075, 0.64, 0.205], s: [0.03, 0.045, 0.02] }); P.push({ g: SPH(), c: '#ffffff', p: [sd * 0.075 - 0.01, 0.655, 0.22], s: [0.01, 0.012, 0.006] }); }
+  P.push({ g: SPH(), c: shadeHex(skin, -0.3), p: [0, 0.585, 0.21], s: [0.03, 0.01, 0.01] });
+  if (role === 'knight') { P.push({ g: BOX(), c: '#c8ccd8', p: [0.25, 0.26, 0.28], s: [0.025, 0.025, 0.38] }); P.push({ g: BOX(), c: '#8a6a3a', p: [0.25, 0.24, 0.08], s: [0.1, 0.025, 0.025] }); if (HUMAN_HELM[art]) P.push({ g: CYL(), c: shadeHex(top, 0.15), p: [-0.25, 0.3, 0.1], s: [0.13, 0.03, 0.13], r: [Math.PI / 2, 0, 0.3] }); }
+  else if (role === 'witch') { P.push({ g: CON(), c: shadeHex(top, -0.2), p: [0, 0.2, 0], s: [0.2, 0.3, 0.18] }); P.push({ g: SPH(), c: acc, p: [-0.24, 0.5, 0.16], s: [0.075, 0.075, 0.075] }); }
+  else if (role === 'captain') { P.push({ g: BOX(), c: shadeHex(acc, -0.45), p: [0, 0.3, -0.14], s: [0.34, 0.42, 0.025], r: [0.15, 0, 0] }); for (const sd of [-1, 1]) P.push({ g: SPH(), c: '#e0c050', p: [sd * 0.16, 0.47, 0], s: [0.06, 0.03, 0.06] }); P.push({ g: BOX(), c: '#d8dce8', p: [0.25, 0.26, 0.3], s: [0.03, 0.03, 0.44] }); }
+  else if (role === 'brute') { P.push({ g: SPH(), c: shadeHex(top, 0.1), p: [0, 0.38, 0.06], s: [0.2, 0.12, 0.12] }); }
+  return P;
+}
+// Menschliche Bosse als grosse Chibi-Figuren
+const BOSS_HUMAN = { mono: 'b_mono', ian: 'b_ian', stahlmann: 'b_duke', hagon: 'b_hilston', erin: 'emma', sendraco: 'draco' };
+Object.assign(CHIBI, {
+  b_mono: { skin: '#e8d0c0', hair: '#1a1a2a', hs: 'spiky', top: '#1a2440', bot: '#0a1020', shoe: '#101018', eye: '#6a8ad8', weapon: 'sword' },
+  b_ian: { skin: '#e0c0a0', hair: '#6a4a2a', hs: 'short', top: '#6a4a2a', bot: '#3a2a1a', shoe: '#2a1a10', eye: '#4a3020', hat: true, weapon: 'staff', cape: '#4a3a2a' },
+  b_duke: { skin: '#e8c8b0', hair: '#c8c8d0', hs: 'short', top: '#3a3a44', bot: '#1a1a20', shoe: '#101014', eye: '#4a4a5a', weapon: 'sword', cape: '#2a2a34' },
+  b_hilston: { skin: '#e8d0c0', hair: '#e8e0d0', hs: 'long', top: '#2a2a3a', bot: '#141420', shoe: '#101014', eye: '#8a3a2a', weapon: 'katana', cape: '#5a1a1a' }
+});
 
 /* ------------------------------------------------------------ Deko (instanziert je Art) */
 function propParts(type) {
@@ -431,7 +473,14 @@ function r3nHero(key, hero, tier) {
 }
 function r3nBoss(e, p, time, dt) {
   let B = R3N.bosses.get(e.id);
-  if (!B) { B = buildBoss(e); R3N.bosses.set(e.id, B); }
+  const hum = BOSS_HUMAN[e.def.bossDraw];
+  if (!B) { if (hum) { B = buildChibi(hum, 2); B.human = true; R3N.scene.add(B.root); } else B = buildBoss(e); R3N.bosses.set(e.id, B); }
+  if (B.human) {
+    const s = 1.25 * (e.def.scale || 1), mv = Math.min(1, Math.hypot(e.vx || 0, e.vy || 0) / 40 + (e.run || 0));
+    poseChibi(B, { x: e.x, y: e.y, face: 1, aimYaw: p ? Math.atan2(p.x - e.x, p.y - e.y) : 0, run: e.dead ? 0 : Math.max(0.35, mv), phase: e.animT * 9, t: time, cast: e.state === 'wind' ? 1 : 0, flash: e.flash > 0 ? 0.7 : 0, flashCol: '#ffffff', dead: e.dead, deadT: e.deathT }, dt);
+    B.root.scale.setScalar(s); B.aura.material.color.set('#ff3a4e');
+    addShadow(e.x, e.y, 30 * s); return;
+  }
   const s = (e.def.scale || 1) * 1.0;
   B.root.position.set(e.x, 0, zOf(e.y)); B.root.scale.setScalar(s);
   const want = p ? Math.atan2(p.x - e.x, p.y - e.y) : 0; B.yaw += angDiff(B.yaw, want) * (1 - Math.exp(-dt * 4)); B.root.rotation.y = B.yaw;

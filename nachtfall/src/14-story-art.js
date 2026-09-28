@@ -171,7 +171,7 @@ const DCOL = {
 };
 function quadArt(Q, box, rim) { return { draw: (g, ph, o) => drawQuad(g, ph, o, Q), frames: 8, box, anchor: 0.86, rim, h: Q.H + Q.bulk * 1.2 }; }
 function dalkiArt(D, box, rim) { return { draw: (g, ph, o) => drawDalki(g, ph, o, D), frames: 8, box: box || 80, anchor: 0.82, rim: rim || '#ff5a5a', h: 60 }; }
-function heroArt(heroId, pal, look, rim, box) { return { draw: (g, ph, o) => withPal(pal, () => heroAsEnemy(heroId, look)(g, ph, o)), frames: 8, box: box || 120, anchor: 0.78, rim, h: 64 }; }
+function heroArt(heroId, pal, look, rim, box) { return { draw: (g, ph, o) => withPal(pal, () => heroAsEnemy(heroId, look)(g, ph, o)), frames: 8, box: box || 120, anchor: 0.78, rim, h: 64, pal }; }
 function palArt(baseId, pal, rim) { const A = ENEMY_ART[baseId]; return Object.assign({}, A, { draw: (g, ph, o) => withPal(pal, () => A.draw(g, ph, o)), rim: rim || A.rim }); }
 
 Object.assign(ENEMY_ART, {

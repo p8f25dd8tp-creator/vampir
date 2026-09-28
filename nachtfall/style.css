@@ -1,5 +1,17 @@
 @font-face { font-family: 'Cinzel'; src: url(fonts/cinzel.woff2) format('woff2'); font-weight: 400 900; font-display: swap; }
 @font-face { font-family: 'Cormorant Garamond'; src: url(fonts/cormorant-700.woff2) format('woff2'); font-weight: 300 700; font-display: swap; }
+/* Formen freischalten (Heldenansicht) */
+.evlist { display: flex; flex-direction: column; gap: 5px; }
+.evrow { display: flex; align-items: center; gap: 8px; padding: 5px 8px; border-radius: 10px; background: rgba(10,4,20,.55); border: 1px solid rgba(140,110,220,.25); }
+.evrow.on { border-color: rgba(255,210,90,.45); }
+.evrow > i { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.evrow > div { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.2; }
+.evrow b { font-family: 'Cinzel', serif; font-size: 13px; color: #b8b0c8; }
+.evrow small { font-size: 11.5px; color: var(--dim); }
+.evok { color: #7aff9a; font-weight: 900; }
+.evlk { font-size: 12px; color: #c8b0b0; white-space: nowrap; }
+.evrow .btn { width: auto !important; flex: none; margin: 0 !important; padding: 5px 10px !important; font-size: 11.5px !important; line-height: 1.25; }
+.evrow .btn small { font-size: 11px; }
 
 :root {
   --bg: #07040a; --panel: #150b16; --panel2: #1f1020; --line: #5a2a36; --gold: #d8b36a; --gold2: #f3dfa6;
