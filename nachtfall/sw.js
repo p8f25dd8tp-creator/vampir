@@ -1,6 +1,6 @@
 /* Nachtfall Service Worker — macht das Spiel offline spielbar.
    Die CACHE-Version wird von build.js automatisch gesetzt. */
-const CACHE = 'nachtfall-a0b7cc1063';
+const CACHE = 'nachtfall-e8fffa206f';
 const ASSETS = [
   './', './index.html', './style.css', './manifest.webmanifest',
   './fonts/cinzel.woff2', './fonts/cormorant-700.woff2',
