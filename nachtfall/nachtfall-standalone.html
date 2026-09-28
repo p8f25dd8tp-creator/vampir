@@ -10531,7 +10531,7 @@ humanArt('leander', [
      boss     — Etappen-Finale: Wellen, dann der Boss
      berserk  — Finn als wahnsinniger Bloodsucker (doppelte Kraft, halbes Leben)
    Zusatz `berserk: true` macht jede andere Stufenart zum Bloodsucker-Kampf.
-   Etappen 11 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
+   Etappen 12 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
    ========================================================================== */
 
 /* ------------------------------------------------------------ Gegner der Etappe 1 */
@@ -11199,8 +11199,78 @@ const ETAPPE10 = {
   ]
 };
 
+/* ------------------------------------------------------------ Etappe 11: Die Königin der Dhampire (Kapitel 1759–1985) */
+defEnemy('e11_soldat', 'ghoul', 'h_sunshield', 'Marpo-Soldat', { hp: 72 });
+defEnemy('e11_dreizack', 'knight', 'h_wache', 'Dreizack-Krieger', { armor: 9 });
+defEnemy('e11_wasser', 'witch', 'h_seherin', 'Wassernutzer', { shot: 'soul', flier: false });
+defEnemy('e11_wels', 'brute', 'q_fort', 'Welsmann', { splits: 0, hp: 460 });
+defEnemy('e11_kom', 'captain', 'h_wache', 'Kommandant mit goldblauem Dreizack', { scale: 1.3, hp: 8000 });
+defEnemy('e11_fisch', 'ghoul', 'q_kanal', 'Predator-Fisch', { hp: 72, spd: 88 });
+defEnemy('e11_rochen', 'bat', 'bat_void', 'Rochen', { hp: 56 });
+defEnemy('e11_qualle', 'witch', 'q_spore', 'Qualle', { shot: 'acid', flier: false });
+defEnemy('e11_see', 'brute', 'q_alienM', 'Tiefseemonster', { splits: 0, hp: 460 });
+defEnemy('e11_cel', 'ghoul', 'q_void', 'Niederer Celestial', { hp: 74 });
+defEnemy('e11_celK', 'knight', 'q_panzer', 'Celestial-Wächter', { armor: 9 });
+defEnemy('e11_celS', 'witch', 'g_seherin', 'Celestial-Seherin', { shot: 'light', flier: false });
+defEnemy('e11_celC', 'captain', 'g_diener', 'Celestial-Diener', { scale: 1.3, hp: 8200 });
+defEnemy('e11_tent', 'ghoul', 'q_void', 'Tentakelauge', { hp: 74 });
+defEnemy('e11_daemon', 'knight', 'q_panzer', 'Dämon aus dem Portal', { armor: 9 });
+defEnemy('e11_pflanze', 'witch', 'q_spore', 'Pflanzenkopf', { shot: 'acid', flier: false });
+defEnemy('e11_fleisch', 'brute', 'q_alienM', 'Fleischklumpen', { splits: 0, hp: 480 });
+defEnemy('e11_dC', 'captain', 'q_daemon', 'Dämonenhauptmann', { scale: 1.3, hp: 8500 });
+defBoss('b11_athos', 'kronker', 'Athos, Celestial des Turms', 20000, { model: 'athos', bellShot: 'light', r: 40 });
+defBoss('b11_laxmus', 'original', 'Laxmus', 60000, Object.assign({ look: 'b_laxmus', bellShot: 'blood', spd: 70 }, B1));
+defBoss('b11_laser', 'graham', 'Dalki mit Augenlaser', 20000, { model: 'laserdalki', bellShot: 'light', r: 36 });
+defBoss('b11_yanny', 'mono', 'Yanny, der falsche König', 19000, Object.assign({ look: 'b_yanny', bellShot: 'soul' }, B1));
+defBoss('b11_zero', 'mono', 'Zero, Anführer von Pure', 60000, Object.assign({ look: 'b_zero', bellShot: 'light', spd: 76 }, B1));
+defBoss('b11_chris', 'kronker', 'Chris als roter Werwolf', 20000, { model: 'werwolfR', bellShot: 'spike', r: 40, spd: 82 });
+defBoss('b11_hinto', 'kronker', 'Hinto aus dem roten Celestial-Raum', 22000, { model: 'hinto', bellShot: 'bell', r: 40 });
+defBoss('b11_kipo', 'mono', 'Kipo (Celestial)', 22000, Object.assign({ look: 'b_kipo', bellShot: 'light', armor: 8 }, B1));
+defBoss('b11_gorgath', 'kronker', 'Gorgath (Celestial)', 24000, { model: 'gorgath', bellShot: 'bell', r: 46 });
+defBoss('b11_erin', 'erin', 'Emma, Königin der Dhampire', 26000, Object.assign({ look: 'b_erinD', bellShot: 'light', spd: 78 }, B1));
+defBoss('b11_escam', 'kronker', 'Escam, General Immortuis', 24000, { model: 'escam', bellShot: 'blood', r: 44 });
+const R_MARPO = { ghoul: 'e11_soldat', bat: 'e11_soldat', knight: 'e11_dreizack', witch: 'e11_wasser', brute: 'e11_wels', captain: 'e11_kom' };
+const R_MEER = { ghoul: 'e11_fisch', bat: 'e11_rochen', knight: 'e5_krabbe', witch: 'e11_qualle', brute: 'e11_see', captain: 'c3_koenigB' };
+const R_CELEST = { ghoul: 'e11_cel', bat: 'e6_irrlicht', knight: 'e11_celK', witch: 'e11_celS', brute: 'e6_riese', captain: 'e11_celC' };
+const R_PORTAL = { ghoul: 'e11_tent', bat: 'e9_auge', knight: 'e11_daemon', witch: 'e11_pflanze', brute: 'e11_fleisch', captain: 'e11_dC' };
+const ETAPPE11 = {
+  title: 'Die Königin der Dhampire', place: 'Turm der Amra · Rote Vampire · Marpo-Kreuzfahrt · Mercil · Mars · Portal des Todesgottes', src: 'Kapitel 1759–1985', theme: 'redspace', ch: 11,
+  levels: [
+    { name: 'Athos', type: 'duel', foe: 'b11_athos', crowd: 0.3, theme: 'roterhimmel', roles: R_TURM, comp: ['sil'],
+      text: 'Der Turm ist die Waffe eines Celestials. Athos hat seinen eigenen Vater getötet, um dessen Platz zu nehmen, und lässt die Schwerkraft tausendfach wirken. Sil ist zurück – mit Klonen und Voraussicht.' },
+    { name: 'Die Siedlung der Roten', type: 'survive', dur: 180, pace: 1.9, theme: 'himmel', roles: R_ROT, comp: ['lena'], elites: 3,
+      text: 'Auf einem Eisplaneten liegt die unterirdische Siedlung der Roten Vampire. Lena war all die Jahre ihre Doppelagentin. Ihr schwarzes Schwert spricht zu ihr – mit Schreien.' },
+    { name: 'Laxmus fällt', type: 'endure', foe: 'b11_laxmus', dur: 80, crowd: 0.2, theme: 'himmel', roles: R_ROT, comp: ['peter', 'lena'],
+      text: 'Laxmus zerschlägt Eisspuren mit bloßer Kraft. Am Ende erweckt Peter ihn mit Celestial-Kraft als kleinen Wight – der erste König als Marionette.' },
+    { name: 'Die Marpo-Kreuzfahrt', type: 'survive', dur: 180, pace: 1.9, theme: 'schlachtfeld', roles: R_MARPO, comp: ['sil'], elites: 3,
+      text: 'Eine Luxusreise für die Reichsten vieler Galaxien. Durch fünf Decks schlägt ein Loch: zweihundert Soldaten mit bläulichem Blut, angeführt von einem Kommandanten mit goldblauem Dreizack.' },
+    { name: 'Der Dalki-Kapitän', type: 'duel', foe: 'b11_laser', crowd: 0.3, theme: 'schlachtfeld', roles: R_MARPO,
+      text: 'Ein Dalki – achthundert Jahre nach dem Aussterben. Ab dem fünften Stachel haben Dalki angeborene Merkmale, doch dieser hat eine echte Fähigkeit: Laser aus den Augen.' },
+    { name: 'Die Stadt unter dem Meer', type: 'hunt', role: 'ghoul', n: 100, pace: 1.9, theme: 'goetter', roles: R_MEER, comp: ['sil'],
+      text: 'Die Schwestern werden zu Meerjungfrauen und kehren nach Mercil heim. Berggroße Tiefseemonster umkreisen die Stadt, Predator-Fische jagen alles, was schwimmt.' },
+    { name: 'Yanny', type: 'waveboss', at: 80, foe: 'b11_yanny', pace: 1.9, theme: 'goetter', roles: R_MEER, comp: ['sil'],
+      text: 'Mitten in Yannys Krönung. Er hat Winces Vater ermordet und führt die Predator-Fische und zehn Generäle. Sil hebt die ganze Stadt durch die Meeresoberfläche.' },
+    { name: 'Leos letzter Hieb', type: 'endure', foe: 'b11_zero', dur: 80, crowd: 0.2, theme: 'bestienplanet', roles: R_DHAMPIR, comp: ['leo'],
+      text: 'Vor tausend Jahren: Leo übt auf einer einsamen Insel einen einzigen Hieb, jeden Tag 0,02 Sekunden schneller. Dann kommt Zero mit einem weißen Schwert, das mit einem unsichtbaren Hieb das Meer teilt.' },
+    { name: 'Chris als roter Werwolf', type: 'duel', foe: 'b11_chris', crowd: 0.2, theme: 'ruinen', roles: R_DHAMPIR,
+      text: 'Auf Pures Schiff „Rein“ verwandelt sich Chris teilweise: graues Fell, Klauen, gelbe Augen. Er absorbiert einen Kanonenstrahl. Ein einziger Schlag von Finn schleudert ihn weg – aber er steht immer wieder auf.' },
+    { name: 'Die größte Welle', type: 'survive', dur: 200, pace: 2.0, theme: 'rotezone', roles: R_MARS, comp: ['minny'], elites: 4,
+      text: 'Urlaub auf dem Mars, sagt Finn zu Minny. Dann kommt die größte Welle aller Zeiten: fünfzehntausend Biester, Hunderte davon Demi-God, und eine Dämonen-Schnecke.' },
+    { name: 'Hinto', type: 'duel', foe: 'b11_hinto', crowd: 0.3, theme: 'schlachtfeld', roles: R_CELEST, comp: ['peter', 'chris'],
+      text: 'Ein Celestial aus dem roten Raum: lila Körper mit Hufen, Rasiermesserzähne, schwarze Flammen. Chris in Wolfsform, Peter als Reiter – und Arme aus gehärtetem Blut.' },
+    { name: 'Kipo', type: 'duel', foe: 'b11_kipo', crowd: 0.3, theme: 'himmel', roles: R_CELEST, comp: ['sil'],
+      text: 'Weiße Haut, schwarze Muster, nackt. Kipo geht durch Blitzbolzen, Feuerfäuste und Säureschlangen einfach hindurch. Zwölf Sil-Klone mit Dämonenwaffen verstärken einander.' },
+    { name: 'Gorgath', type: 'duel', foe: 'b11_gorgath', crowd: 0.3, theme: 'roterhimmel', roles: R_CELEST, comp: ['emma'],
+      text: 'Auf einem Lavaplaneten viermal so groß wie die Erde suchen Emma, Zero und Agent Four Dämonenkristalle. Ein Celestial-Gesandter namens Gorgath will sie aufhalten.' },
+    { name: 'Finn gegen Emma', type: 'duel', foe: 'b11_erin', crowd: 0.1, theme: 'bestienplanet', roles: R_DHAMPIR,
+      text: 'Emma hat Fex, Samantha, Owen und Leo getötet. Tausend Blutschwerter, Schattenkugeln, Nitro – und ihre Dhampir-Energie wirkt auf Finn wie Sonnenlicht. Dann versteht er: Sie wurde kontrolliert.' },
+    { name: 'Das Portal schließen', type: 'duel', foe: 'b11_escam', crowd: 0.5, theme: 'redspace', roles: R_PORTAL, comp: ['fex', 'minny'],
+      text: 'Aus dem Magiekreis wächst ein Tentakel mit hunderten Augen. Escam, der General des Todesgottes Immortui, tritt hindurch. Minny fängt das fallende rote Herz: „Das gehört meinem Papa!“' }
+  ]
+};
+
 /* ------------------------------------------------------------ Alle Etappen */
-// Etappen 11 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
+// Etappen 12 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
 function autoLevels(ch) {
   const out = [];
   for (let l = 1; l <= 8; l++) {
@@ -11209,7 +11279,7 @@ function autoLevels(ch) {
   }
   return out;
 }
-const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3, ETAPPE4, ETAPPE5, ETAPPE6, ETAPPE7, ETAPPE8, ETAPPE9, ETAPPE10].concat(CHAPTERS.slice(11).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
+const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3, ETAPPE4, ETAPPE5, ETAPPE6, ETAPPE7, ETAPPE8, ETAPPE9, ETAPPE10, ETAPPE11].concat(CHAPTERS.slice(11).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
 ETAPPEN.forEach((E, i) => { E.n = i + 1; E.levels.forEach((L, j) => { L.l = j + 1; }); });
 // Kapitel (Gegner-/Boss-Sammlungen) -> Etappe, fuer den Boss-Turm
 const ET_OF_CH = {}; ETAPPEN.forEach((E) => { const chs = new Set([E.ch]); E.levels.forEach((L) => L.ch && chs.add(L.ch)); if (E.n === 1) chs.add(3); chs.forEach((c) => { ET_OF_CH[c] = E.n; }); });
@@ -11279,7 +11349,7 @@ const LV_PACE = [1.3, 1.45, 1.6, 1.75, 1.8, 1.85, 1.9];
 function lvDiff(l) { const k = l - 1; return { hp: 1 + 0.14 * k, count: 1 + 0.05 * k, dmg: 1 + 0.05 * k }; }
 
 /* ============================================================ Helden ueber die Kampagne */
-const HERO_UNLOCK = { finn: 0, lena: '1-5', leo: '1-7', emma: '1-8', leander: '1-9', fabian: '1-10', sil: '1-14', peter: '1-15', fex: '2-2', agathon: '2-9', sam: '2-10', chris: 5, mia: 10, draco: 12 };
+const HERO_UNLOCK = { finn: 0, lena: '1-5', leo: '1-7', emma: '1-8', leander: '1-9', fabian: '1-10', sil: '1-14', peter: '1-15', fex: '2-2', agathon: '2-9', sam: '2-10', chris: 5, mia: 10, draco: 13 };
 function unlockDone(u) { if (!u) return true; if (typeof u === 'number') return etappeCleared(u); const [e, l] = u.split('-').map(Number); return lvStars(e, l) > 0; }
 function unlockText(u) { if (typeof u === 'number') return `Etappe ${u} „${ET(u).title}“ abschließen`; const [e, l] = u.split('-').map(Number); return `Etappe ${e}, Stufe ${l} „${lvDef(e, l).name}“ schaffen`; }
 const HERO_UNLOCK_ETAPPE = {}; for (const id in HERO_UNLOCK) { const u = HERO_UNLOCK[id]; HERO_UNLOCK_ETAPPE[id] = typeof u === 'number' ? u : +u.split('-')[0]; }
@@ -12107,16 +12177,38 @@ const BOSS_BUILD = {
     for (const sd of [-1, 1]) { for (const y of [100, 66]) add(CAP(), M('#3a3a42'), [sd * 52, y, 20], [13, 32, 13], [0.5, 0, sd * 0.5]); add(CAP(), M('#2a2a32'), [sd * 22, 18, 0], [14, 20, 14]); }
     for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ff5a2a' })); x.position.set(sd * 8, 122, 36); x.scale.set(3.5, 2.5, 2); body.add(x); }
   },
-  werwolf(add, M, body) { // graues Fell, lange Schnauze, Qi-Klauen
-    add(CAP(), M('#4a4a52'), [0, 56, 0], [24, 34, 20], [0.2, 0, 0]); add(SPH(), M('#5a5a62'), [0, 100, 10], [32, 26, 26]);
-    add(SPH(), M('#5a5a62'), [0, 136, 22], [18, 18, 18]); add(CAP(), M('#4a4a52'), [0, 132, 42], [8, 14, 8], [Math.PI / 2, 0, 0]);
-    for (const sd of [-1, 1]) { add(CON(), M('#3a3a42'), [sd * 10, 158, 18], [5, 14, 5]); add(CAP(), M('#4a4a52'), [sd * 40, 88, 22], [10, 30, 10], [0.6, 0, sd * 0.4]); for (let f = -1; f <= 1; f++) add(CON(), M('#ff5a3a', { emissive: new THREE.Color('#ff3a1a'), emissiveIntensity: 0.6 }), [sd * 46 + f * 4, 64, 50], [2, 16, 2], [1.3, 0, 0]); add(CAP(), M('#3a3a42'), [sd * 14, 16, 0], [11, 20, 11]); }
-    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffd23a' })); x.position.set(sd * 7, 140, 36); x.scale.set(3, 2, 2); body.add(x); }
-  },
+  werwolf: (add, M, body) => werwolfBody(add, M, body, '#4a4a52'),
+  werwolfR: (add, M, body) => werwolfBody(add, M, body, '#8a1a1a'),
   sedi(add, M, body) { // vierarmiger Riese der Amra
     add(CAP(), M('#6a4a8a'), [0, 60, 0], [30, 40, 26]); add(SPH(), M('#7a5a9a'), [0, 112, 8], [38, 30, 30]); add(SPH(), M('#8a6aaa'), [0, 156, 16], [20, 22, 20]);
     for (const sd of [-1, 1]) { for (const y of [124, 92]) add(CAP(), M('#6a4a8a'), [sd * 52, y, 16], [11, 32, 11], [0.4, 0, sd * 0.6]); add(CAP(), M('#4a3a6a'), [sd * 18, 18, 0], [13, 22, 13]); }
     for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#8affd8' })); x.position.set(sd * 8, 160, 34); x.scale.set(4, 3, 2); body.add(x); }
+  },
+  athos(add, M, body) { // goldener Celestial, vier Arme, Heiligenschein
+    add(CAP(), M('#c8a040'), [0, 60, 0], [24, 40, 20]); add(SPH(), M('#e8c860'), [0, 112, 6], [30, 26, 24]); add(SPH(), M('#f0d880'), [0, 152, 12], [18, 20, 18]);
+    for (const sd of [-1, 1]) { for (const y of [124, 94]) add(CAP(), M('#c8a040'), [sd * 46, y, 14], [9, 30, 9], [0.4, 0, sd * 0.6]); add(CAP(), M('#8a6a20'), [sd * 16, 16, 0], [11, 20, 11]); }
+    const halo = new THREE.Mesh(new THREE.TorusGeometry(26, 2.5, 8, 32), new THREE.MeshBasicMaterial({ color: '#fff0a0' })); halo.position.set(0, 180, 4); body.add(halo);
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffffff' })); x.position.set(sd * 7, 156, 28); x.scale.set(3.5, 2.5, 2); body.add(x); }
+  },
+  laserdalki(add, M, body) { dalkiBody(add, M, body, 5, '#3a5a6a', '#8affff'); const b = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ff2a2a' })); b.position.set(0, 134, 36); b.scale.set(14, 4, 3); body.add(b); },
+  hinto(add, M, body) { // lila Koerper mit Hufen, schwebendes Tuch, rotes Juwel, Ruessel
+    add(CAP(), M('#5a2a7a'), [0, 60, 0], [16, 40, 14]); add(SPH(), M('#6a3a8a'), [0, 116, 6], [22, 22, 20]);
+    add(BOX(), M('#0a0a10'), [0, 110, -14], [50, 60, 4], [0.2, 0, 0]);
+    add(OCT(), M('#ff1a2a', { emissive: new THREE.Color('#ff1a2a'), emissiveIntensity: 0.9 }), [0, 124, 26], [5, 8, 4]);
+    for (const sd of [-1, 1]) { add(CAP(), M('#4a1a6a'), [sd * 12, 18, 0], [7, 22, 7]); add(CYL(), M('#1a1414'), [sd * 12, 2, 0], [8, 4, 8]); add(CAP(), M('#6a3a8a'), [sd * 10, 104, 30], [4, 26, 4], [1.2, 0, sd * 0.3]); }
+    for (let k = -2; k <= 2; k++) add(CON(), M('#f0f0f0'), [k * 4, 108, 30], [1.5, 6, 1.5], [Math.PI, 0, 0]);
+  },
+  gorgath(add, M, body) { // riesiger Funken-Celestial
+    add(DOD(), M('#2a2a3a'), [0, 70, 0], [48, 54, 42]); add(SPH(), M('#3a3a4a'), [0, 136, 10], [26, 24, 24]);
+    for (let k = 0; k < 8; k++) add(OCT(), M('#ffe060', { emissive: new THREE.Color('#ffc020'), emissiveIntensity: 1 }), [Math.cos(k) * 40, 60 + k * 10, Math.sin(k) * 36], [4, 8, 4]);
+    for (const sd of [-1, 1]) { add(CAP(), M('#2a2a3a'), [sd * 58, 90, 16], [16, 36, 16], [0.4, 0, sd * 0.5]); add(CAP(), M('#1a1a24'), [sd * 22, 18, 0], [16, 22, 16]); }
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffe060' })); x.position.set(sd * 9, 140, 32); x.scale.set(4, 3, 2); body.add(x); }
+  },
+  escam(add, M, body) { // Fleischmann, General Immortuis
+    add(SPH(), M('#8a3a3a'), [0, 60, 0], [44, 50, 40]); add(SPH(), M('#a04a44'), [0, 120, 8], [30, 28, 26]);
+    for (let k = 0; k < 7; k++) add(SPH(), M('#6a2a2a'), [Math.cos(k * 1.3) * 34, 50 + k * 10, Math.sin(k * 1.3) * 30], [10, 8, 10]);
+    for (const sd of [-1, 1]) { add(CAP(), M('#8a3a3a'), [sd * 54, 84, 12], [14, 34, 14], [0.4, 0, sd * 0.5]); add(CAP(), M('#5a2020'), [sd * 18, 16, 0], [14, 20, 14]); }
+    add(OCT(), M('#8a5aff', { emissive: new THREE.Color('#6a3aff'), emissiveIntensity: 0.9 }), [0, 130, 34], [6, 10, 4]);
   },
   ranken(add, M, body) { // hausgross, langer Hals, Knospe mit sechs Ranken
     add(SPH(), M('#3a6a3a'), [0, 40, -10], [56, 34, 64]);
@@ -12192,6 +12284,13 @@ function dracheBody(add, M, body, col, eye) { // Drache mit zwei Fluegelpaaren
   for (const sd of [-1, 1]) { add(CON(), M('#2a2830'), [sd * 12, 188, 116], [5, 22, 5], [-0.6, 0, sd * 0.2]); for (const z of [20, -30]) add(SPH(), M(shadeHex(col, 0.05)), [sd * 90, 110, z], [70, 6, 34], [0, 0, sd * 0.35]); add(CAP(), M(col), [sd * 34, 20, 40], [12, 24, 12]); add(CAP(), M(col), [sd * 34, 20, -50], [12, 24, 12]); }
   for (let k = 0; k < 5; k++) add(SPH(), M(col), [0, 50 - k * 4, -90 - k * 22], [14 - k * 2, 14 - k * 2, 14 - k * 2]);
   for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: eye })); x.position.set(sd * 12, 176, 150); x.scale.set(4, 2.5, 2); body.add(x); }
+}
+function werwolfBody(add, M, body, fur) { // Fell, lange Schnauze, Qi-Klauen
+  const d = shadeHex(fur, -0.2), l = shadeHex(fur, 0.1);
+  add(CAP(), M(fur), [0, 56, 0], [24, 34, 20], [0.2, 0, 0]); add(SPH(), M(l), [0, 100, 10], [32, 26, 26]);
+  add(SPH(), M(l), [0, 136, 22], [18, 18, 18]); add(CAP(), M(fur), [0, 132, 42], [8, 14, 8], [Math.PI / 2, 0, 0]);
+  for (const sd of [-1, 1]) { add(CON(), M(d), [sd * 10, 158, 18], [5, 14, 5]); add(CAP(), M(fur), [sd * 40, 88, 22], [10, 30, 10], [0.6, 0, sd * 0.4]); for (let f = -1; f <= 1; f++) add(CON(), M('#ff5a3a', { emissive: new THREE.Color('#ff3a1a'), emissiveIntensity: 0.6 }), [sd * 46 + f * 4, 64, 50], [2, 16, 2], [1.3, 0, 0]); add(CAP(), M(d), [sd * 14, 16, 0], [11, 20, 11]); }
+  for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffd23a' })); x.position.set(sd * 7, 140, 36); x.scale.set(3, 2, 2); body.add(x); }
 }
 function dalkiBody(add, M, body, spikes, skin, acc) {
   add(CAP(), M(shadeHex(skin, -0.35)), [0, 46, 0], [30, 28, 26]);
@@ -12884,6 +12983,10 @@ const LOOK = {
   b_andy: { body: 'barbar', top: '#1a0a0e', acc: '#c81a2a', pants: '#0a0406', boots: '#060203', cape: '#3a0610', skin: '#d8ccc8', hair: 'mittel', hairCol: '#1a1418', eye: '#ff3a3a', fangs: true, weapon: 'none', scale: 1.2 },
   b_lock: { body: 'barbar', top: '#3a3a5a', acc: '#8a8ac8', pants: '#1a1a2a', boots: '#0e0e18', skin: '#e0c8b0', hair: 'kurz', hairCol: '#3a3a4a', eye: '#8a8aff', weapon: 'none' },
   b_russ: { body: 'schurke', top: '#e8e8f0', acc: '#c81a2a', pants: '#1a1a20', boots: '#0a0a0e', cape: '#8a0a1a', skin: '#ecdcd0', hair: 'mittel', hairCol: '#e8e8f0', eye: '#2a2a3a', weapon: 'sword', blade: '#1a1a24' },
+  b_yanny: { body: 'schurke', top: '#1a4a6a', acc: '#e8c860', pants: '#0a2a3a', boots: '#061420', cape: '#2a6a8a', skin: '#a8c8d0', hair: 'lang', hairCol: '#1a3a4a', eye: '#4affe8', weapon: 'staff' },
+  b_zero: { body: 'magier', top: '#e8e8f0', acc: '#a07aff', pants: '#d8d8e0', boots: '#8a8aa0', cape: '#f0f0f8', skin: '#e8d0c0', hair: 'kurz', hairCol: '#1a1a1a', eye: '#a07aff', weapon: 'katana', blade: '#f0e8ff' },
+  b_kipo: { body: 'barbar', top: '#f0f0f0', acc: '#1a1a1a', pants: '#e8e8e8', boots: '#f0f0f0', skin: '#f4f4f4', hair: 'glatze', eye: '#050505', weapon: 'none', scale: 1.15 },
+  b_erinD: { body: 'magier', top: '#1a1a24', acc: '#ffd84a', pants: '#0a0a10', boots: '#08080c', cape: '#2a2a3a', skin: '#f0e0d4', hair: 'lang', hairCol: '#0a0a0e', eye: '#ffd84a', weapon: 'katana', blade: '#bfe8ff' },
   bloodsucker: { body: 'schurke', top: '#6a3a38', pants: '#4a3030', boots: '#2a1a1a', skin: '#d0ccc4', hair: 'glatze', eye: '#0a0000', fangs: true, weapon: 'none', scale: 1.1 },
   b_mono: { body: 'schurke', top: '#1a2440', pants: '#0a1020', boots: '#101018', skin: '#e8d0c0', hair: 'stachel', hairCol: '#1a1a2a', eye: '#6a8ad8', weapon: 'sword', blade: '#d8e8ff' },
   b_ian: { body: 'schurke', top: '#6a4a2a', pants: '#3a2a1a', boots: '#2a1a10', cape: '#4a3a2a', skin: '#e0c0a0', hair: 'kurz', hairCol: '#6a4a2a', eye: '#4a3020', hat: '#6a4a2a', weapon: 'staff' },

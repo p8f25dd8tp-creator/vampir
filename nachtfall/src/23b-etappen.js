@@ -11,7 +11,7 @@
      boss     — Etappen-Finale: Wellen, dann der Boss
      berserk  — Finn als wahnsinniger Bloodsucker (doppelte Kraft, halbes Leben)
    Zusatz `berserk: true` macht jede andere Stufenart zum Bloodsucker-Kampf.
-   Etappen 11 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
+   Etappen 12 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
    ========================================================================== */
 
 /* ------------------------------------------------------------ Gegner der Etappe 1 */
@@ -679,8 +679,78 @@ const ETAPPE10 = {
   ]
 };
 
+/* ------------------------------------------------------------ Etappe 11: Die Königin der Dhampire (Kapitel 1759–1985) */
+defEnemy('e11_soldat', 'ghoul', 'h_sunshield', 'Marpo-Soldat', { hp: 72 });
+defEnemy('e11_dreizack', 'knight', 'h_wache', 'Dreizack-Krieger', { armor: 9 });
+defEnemy('e11_wasser', 'witch', 'h_seherin', 'Wassernutzer', { shot: 'soul', flier: false });
+defEnemy('e11_wels', 'brute', 'q_fort', 'Welsmann', { splits: 0, hp: 460 });
+defEnemy('e11_kom', 'captain', 'h_wache', 'Kommandant mit goldblauem Dreizack', { scale: 1.3, hp: 8000 });
+defEnemy('e11_fisch', 'ghoul', 'q_kanal', 'Predator-Fisch', { hp: 72, spd: 88 });
+defEnemy('e11_rochen', 'bat', 'bat_void', 'Rochen', { hp: 56 });
+defEnemy('e11_qualle', 'witch', 'q_spore', 'Qualle', { shot: 'acid', flier: false });
+defEnemy('e11_see', 'brute', 'q_alienM', 'Tiefseemonster', { splits: 0, hp: 460 });
+defEnemy('e11_cel', 'ghoul', 'q_void', 'Niederer Celestial', { hp: 74 });
+defEnemy('e11_celK', 'knight', 'q_panzer', 'Celestial-Wächter', { armor: 9 });
+defEnemy('e11_celS', 'witch', 'g_seherin', 'Celestial-Seherin', { shot: 'light', flier: false });
+defEnemy('e11_celC', 'captain', 'g_diener', 'Celestial-Diener', { scale: 1.3, hp: 8200 });
+defEnemy('e11_tent', 'ghoul', 'q_void', 'Tentakelauge', { hp: 74 });
+defEnemy('e11_daemon', 'knight', 'q_panzer', 'Dämon aus dem Portal', { armor: 9 });
+defEnemy('e11_pflanze', 'witch', 'q_spore', 'Pflanzenkopf', { shot: 'acid', flier: false });
+defEnemy('e11_fleisch', 'brute', 'q_alienM', 'Fleischklumpen', { splits: 0, hp: 480 });
+defEnemy('e11_dC', 'captain', 'q_daemon', 'Dämonenhauptmann', { scale: 1.3, hp: 8500 });
+defBoss('b11_athos', 'kronker', 'Athos, Celestial des Turms', 20000, { model: 'athos', bellShot: 'light', r: 40 });
+defBoss('b11_laxmus', 'original', 'Laxmus', 60000, Object.assign({ look: 'b_laxmus', bellShot: 'blood', spd: 70 }, B1));
+defBoss('b11_laser', 'graham', 'Dalki mit Augenlaser', 20000, { model: 'laserdalki', bellShot: 'light', r: 36 });
+defBoss('b11_yanny', 'mono', 'Yanny, der falsche König', 19000, Object.assign({ look: 'b_yanny', bellShot: 'soul' }, B1));
+defBoss('b11_zero', 'mono', 'Zero, Anführer von Pure', 60000, Object.assign({ look: 'b_zero', bellShot: 'light', spd: 76 }, B1));
+defBoss('b11_chris', 'kronker', 'Chris als roter Werwolf', 20000, { model: 'werwolfR', bellShot: 'spike', r: 40, spd: 82 });
+defBoss('b11_hinto', 'kronker', 'Hinto aus dem roten Celestial-Raum', 22000, { model: 'hinto', bellShot: 'bell', r: 40 });
+defBoss('b11_kipo', 'mono', 'Kipo (Celestial)', 22000, Object.assign({ look: 'b_kipo', bellShot: 'light', armor: 8 }, B1));
+defBoss('b11_gorgath', 'kronker', 'Gorgath (Celestial)', 24000, { model: 'gorgath', bellShot: 'bell', r: 46 });
+defBoss('b11_erin', 'erin', 'Emma, Königin der Dhampire', 26000, Object.assign({ look: 'b_erinD', bellShot: 'light', spd: 78 }, B1));
+defBoss('b11_escam', 'kronker', 'Escam, General Immortuis', 24000, { model: 'escam', bellShot: 'blood', r: 44 });
+const R_MARPO = { ghoul: 'e11_soldat', bat: 'e11_soldat', knight: 'e11_dreizack', witch: 'e11_wasser', brute: 'e11_wels', captain: 'e11_kom' };
+const R_MEER = { ghoul: 'e11_fisch', bat: 'e11_rochen', knight: 'e5_krabbe', witch: 'e11_qualle', brute: 'e11_see', captain: 'c3_koenigB' };
+const R_CELEST = { ghoul: 'e11_cel', bat: 'e6_irrlicht', knight: 'e11_celK', witch: 'e11_celS', brute: 'e6_riese', captain: 'e11_celC' };
+const R_PORTAL = { ghoul: 'e11_tent', bat: 'e9_auge', knight: 'e11_daemon', witch: 'e11_pflanze', brute: 'e11_fleisch', captain: 'e11_dC' };
+const ETAPPE11 = {
+  title: 'Die Königin der Dhampire', place: 'Turm der Amra · Rote Vampire · Marpo-Kreuzfahrt · Mercil · Mars · Portal des Todesgottes', src: 'Kapitel 1759–1985', theme: 'redspace', ch: 11,
+  levels: [
+    { name: 'Athos', type: 'duel', foe: 'b11_athos', crowd: 0.3, theme: 'roterhimmel', roles: R_TURM, comp: ['sil'],
+      text: 'Der Turm ist die Waffe eines Celestials. Athos hat seinen eigenen Vater getötet, um dessen Platz zu nehmen, und lässt die Schwerkraft tausendfach wirken. Sil ist zurück – mit Klonen und Voraussicht.' },
+    { name: 'Die Siedlung der Roten', type: 'survive', dur: 180, pace: 1.9, theme: 'himmel', roles: R_ROT, comp: ['lena'], elites: 3,
+      text: 'Auf einem Eisplaneten liegt die unterirdische Siedlung der Roten Vampire. Lena war all die Jahre ihre Doppelagentin. Ihr schwarzes Schwert spricht zu ihr – mit Schreien.' },
+    { name: 'Laxmus fällt', type: 'endure', foe: 'b11_laxmus', dur: 80, crowd: 0.2, theme: 'himmel', roles: R_ROT, comp: ['peter', 'lena'],
+      text: 'Laxmus zerschlägt Eisspuren mit bloßer Kraft. Am Ende erweckt Peter ihn mit Celestial-Kraft als kleinen Wight – der erste König als Marionette.' },
+    { name: 'Die Marpo-Kreuzfahrt', type: 'survive', dur: 180, pace: 1.9, theme: 'schlachtfeld', roles: R_MARPO, comp: ['sil'], elites: 3,
+      text: 'Eine Luxusreise für die Reichsten vieler Galaxien. Durch fünf Decks schlägt ein Loch: zweihundert Soldaten mit bläulichem Blut, angeführt von einem Kommandanten mit goldblauem Dreizack.' },
+    { name: 'Der Dalki-Kapitän', type: 'duel', foe: 'b11_laser', crowd: 0.3, theme: 'schlachtfeld', roles: R_MARPO,
+      text: 'Ein Dalki – achthundert Jahre nach dem Aussterben. Ab dem fünften Stachel haben Dalki angeborene Merkmale, doch dieser hat eine echte Fähigkeit: Laser aus den Augen.' },
+    { name: 'Die Stadt unter dem Meer', type: 'hunt', role: 'ghoul', n: 100, pace: 1.9, theme: 'goetter', roles: R_MEER, comp: ['sil'],
+      text: 'Die Schwestern werden zu Meerjungfrauen und kehren nach Mercil heim. Berggroße Tiefseemonster umkreisen die Stadt, Predator-Fische jagen alles, was schwimmt.' },
+    { name: 'Yanny', type: 'waveboss', at: 80, foe: 'b11_yanny', pace: 1.9, theme: 'goetter', roles: R_MEER, comp: ['sil'],
+      text: 'Mitten in Yannys Krönung. Er hat Winces Vater ermordet und führt die Predator-Fische und zehn Generäle. Sil hebt die ganze Stadt durch die Meeresoberfläche.' },
+    { name: 'Leos letzter Hieb', type: 'endure', foe: 'b11_zero', dur: 80, crowd: 0.2, theme: 'bestienplanet', roles: R_DHAMPIR, comp: ['leo'],
+      text: 'Vor tausend Jahren: Leo übt auf einer einsamen Insel einen einzigen Hieb, jeden Tag 0,02 Sekunden schneller. Dann kommt Zero mit einem weißen Schwert, das mit einem unsichtbaren Hieb das Meer teilt.' },
+    { name: 'Chris als roter Werwolf', type: 'duel', foe: 'b11_chris', crowd: 0.2, theme: 'ruinen', roles: R_DHAMPIR,
+      text: 'Auf Pures Schiff „Rein“ verwandelt sich Chris teilweise: graues Fell, Klauen, gelbe Augen. Er absorbiert einen Kanonenstrahl. Ein einziger Schlag von Finn schleudert ihn weg – aber er steht immer wieder auf.' },
+    { name: 'Die größte Welle', type: 'survive', dur: 200, pace: 2.0, theme: 'rotezone', roles: R_MARS, comp: ['minny'], elites: 4,
+      text: 'Urlaub auf dem Mars, sagt Finn zu Minny. Dann kommt die größte Welle aller Zeiten: fünfzehntausend Biester, Hunderte davon Demi-God, und eine Dämonen-Schnecke.' },
+    { name: 'Hinto', type: 'duel', foe: 'b11_hinto', crowd: 0.3, theme: 'schlachtfeld', roles: R_CELEST, comp: ['peter', 'chris'],
+      text: 'Ein Celestial aus dem roten Raum: lila Körper mit Hufen, Rasiermesserzähne, schwarze Flammen. Chris in Wolfsform, Peter als Reiter – und Arme aus gehärtetem Blut.' },
+    { name: 'Kipo', type: 'duel', foe: 'b11_kipo', crowd: 0.3, theme: 'himmel', roles: R_CELEST, comp: ['sil'],
+      text: 'Weiße Haut, schwarze Muster, nackt. Kipo geht durch Blitzbolzen, Feuerfäuste und Säureschlangen einfach hindurch. Zwölf Sil-Klone mit Dämonenwaffen verstärken einander.' },
+    { name: 'Gorgath', type: 'duel', foe: 'b11_gorgath', crowd: 0.3, theme: 'roterhimmel', roles: R_CELEST, comp: ['emma'],
+      text: 'Auf einem Lavaplaneten viermal so groß wie die Erde suchen Emma, Zero und Agent Four Dämonenkristalle. Ein Celestial-Gesandter namens Gorgath will sie aufhalten.' },
+    { name: 'Finn gegen Emma', type: 'duel', foe: 'b11_erin', crowd: 0.1, theme: 'bestienplanet', roles: R_DHAMPIR,
+      text: 'Emma hat Fex, Samantha, Owen und Leo getötet. Tausend Blutschwerter, Schattenkugeln, Nitro – und ihre Dhampir-Energie wirkt auf Finn wie Sonnenlicht. Dann versteht er: Sie wurde kontrolliert.' },
+    { name: 'Das Portal schließen', type: 'duel', foe: 'b11_escam', crowd: 0.5, theme: 'redspace', roles: R_PORTAL, comp: ['fex', 'minny'],
+      text: 'Aus dem Magiekreis wächst ein Tentakel mit hunderten Augen. Escam, der General des Todesgottes Immortui, tritt hindurch. Minny fängt das fallende rote Herz: „Das gehört meinem Papa!“' }
+  ]
+};
+
 /* ------------------------------------------------------------ Alle Etappen */
-// Etappen 11 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
+// Etappen 12 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
 function autoLevels(ch) {
   const out = [];
   for (let l = 1; l <= 8; l++) {
@@ -689,7 +759,7 @@ function autoLevels(ch) {
   }
   return out;
 }
-const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3, ETAPPE4, ETAPPE5, ETAPPE6, ETAPPE7, ETAPPE8, ETAPPE9, ETAPPE10].concat(CHAPTERS.slice(11).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
+const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3, ETAPPE4, ETAPPE5, ETAPPE6, ETAPPE7, ETAPPE8, ETAPPE9, ETAPPE10, ETAPPE11].concat(CHAPTERS.slice(11).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
 ETAPPEN.forEach((E, i) => { E.n = i + 1; E.levels.forEach((L, j) => { L.l = j + 1; }); });
 // Kapitel (Gegner-/Boss-Sammlungen) -> Etappe, fuer den Boss-Turm
 const ET_OF_CH = {}; ETAPPEN.forEach((E) => { const chs = new Set([E.ch]); E.levels.forEach((L) => L.ch && chs.add(L.ch)); if (E.n === 1) chs.add(3); chs.forEach((c) => { ET_OF_CH[c] = E.n; }); });

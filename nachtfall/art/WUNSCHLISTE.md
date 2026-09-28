@@ -38,7 +38,8 @@ Wichtig: Treffer (Faust, Klinge), Blutspritzer, Explosion, Blitz, Feuer, Eis, Bo
   schwarzer Drache, Longblade, Agent 2, Demi-God aus Erde, Graham, Slicer, Eno, Sechs-Stachel-Dalki,
   galaktischer Wurm, Dullahan, Laxmus, Samantha, Agent 3, Genbu, Vorti Ape, Doppelgänger, One Horn,
   Doppelellenbogen-Dalki, Dalki-Helen, Blob, zweite Drachenhälfte, Green Horn, Graham mit acht Stacheln,
-  Tikker, Hybrid-Werwolf, Derik, Andy, Lock, Russ, Chris mit Werwolf-DNA, Sedi-Riese).
+  Tikker, Hybrid-Werwolf, Derik, Andy, Lock, Russ, Chris mit Werwolf-DNA, Sedi-Riese, Athos, Laser-Dalki,
+  Yanny, Zero, roter Werwolf, Hinto, Kipo, Gorgath, Emma als Königin der Dhampire, Escam).
 - **Bodentexturen**: Liste wächst in `SZENEN-LISTE.md`.
 
 ---

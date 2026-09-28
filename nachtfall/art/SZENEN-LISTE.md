@@ -61,3 +61,9 @@ Am Ende gibt es daraus einen gemeinsamen GPT-Prompt-Block.
 | 10 | Chained-Anwesen | Rosenbeete, Marmor |
 | 10 | Green City, Challenge-Arena | Hightech-Boden, Hologramme |
 | 10 | Turm der Amra, Vulkan-Etage | glühender Fels, fremde Steine |
+| 11 | Eisplanet der Roten Vampire | Eisnadeln, Eisbäume |
+| 11 | Marpo-Kreuzfahrtschiff | Luxusdeck, Kasino-Teppich |
+| 11 | Mercil, Stadt unter dem Meer | Perlmutt, Korallen |
+| 11 | Venus / Mond (Celestial-Kämpfe) | heller Staub, Krater |
+| 11 | Lavaplanet der Dämonenkristalle | schwarzer Fels, Lava |
+| 11 | Portal des Todesgottes | violette Magiekreise, Tentakel |

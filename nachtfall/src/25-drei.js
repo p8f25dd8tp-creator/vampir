@@ -459,16 +459,38 @@ const BOSS_BUILD = {
     for (const sd of [-1, 1]) { for (const y of [100, 66]) add(CAP(), M('#3a3a42'), [sd * 52, y, 20], [13, 32, 13], [0.5, 0, sd * 0.5]); add(CAP(), M('#2a2a32'), [sd * 22, 18, 0], [14, 20, 14]); }
     for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ff5a2a' })); x.position.set(sd * 8, 122, 36); x.scale.set(3.5, 2.5, 2); body.add(x); }
   },
-  werwolf(add, M, body) { // graues Fell, lange Schnauze, Qi-Klauen
-    add(CAP(), M('#4a4a52'), [0, 56, 0], [24, 34, 20], [0.2, 0, 0]); add(SPH(), M('#5a5a62'), [0, 100, 10], [32, 26, 26]);
-    add(SPH(), M('#5a5a62'), [0, 136, 22], [18, 18, 18]); add(CAP(), M('#4a4a52'), [0, 132, 42], [8, 14, 8], [Math.PI / 2, 0, 0]);
-    for (const sd of [-1, 1]) { add(CON(), M('#3a3a42'), [sd * 10, 158, 18], [5, 14, 5]); add(CAP(), M('#4a4a52'), [sd * 40, 88, 22], [10, 30, 10], [0.6, 0, sd * 0.4]); for (let f = -1; f <= 1; f++) add(CON(), M('#ff5a3a', { emissive: new THREE.Color('#ff3a1a'), emissiveIntensity: 0.6 }), [sd * 46 + f * 4, 64, 50], [2, 16, 2], [1.3, 0, 0]); add(CAP(), M('#3a3a42'), [sd * 14, 16, 0], [11, 20, 11]); }
-    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffd23a' })); x.position.set(sd * 7, 140, 36); x.scale.set(3, 2, 2); body.add(x); }
-  },
+  werwolf: (add, M, body) => werwolfBody(add, M, body, '#4a4a52'),
+  werwolfR: (add, M, body) => werwolfBody(add, M, body, '#8a1a1a'),
   sedi(add, M, body) { // vierarmiger Riese der Amra
     add(CAP(), M('#6a4a8a'), [0, 60, 0], [30, 40, 26]); add(SPH(), M('#7a5a9a'), [0, 112, 8], [38, 30, 30]); add(SPH(), M('#8a6aaa'), [0, 156, 16], [20, 22, 20]);
     for (const sd of [-1, 1]) { for (const y of [124, 92]) add(CAP(), M('#6a4a8a'), [sd * 52, y, 16], [11, 32, 11], [0.4, 0, sd * 0.6]); add(CAP(), M('#4a3a6a'), [sd * 18, 18, 0], [13, 22, 13]); }
     for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#8affd8' })); x.position.set(sd * 8, 160, 34); x.scale.set(4, 3, 2); body.add(x); }
+  },
+  athos(add, M, body) { // goldener Celestial, vier Arme, Heiligenschein
+    add(CAP(), M('#c8a040'), [0, 60, 0], [24, 40, 20]); add(SPH(), M('#e8c860'), [0, 112, 6], [30, 26, 24]); add(SPH(), M('#f0d880'), [0, 152, 12], [18, 20, 18]);
+    for (const sd of [-1, 1]) { for (const y of [124, 94]) add(CAP(), M('#c8a040'), [sd * 46, y, 14], [9, 30, 9], [0.4, 0, sd * 0.6]); add(CAP(), M('#8a6a20'), [sd * 16, 16, 0], [11, 20, 11]); }
+    const halo = new THREE.Mesh(new THREE.TorusGeometry(26, 2.5, 8, 32), new THREE.MeshBasicMaterial({ color: '#fff0a0' })); halo.position.set(0, 180, 4); body.add(halo);
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffffff' })); x.position.set(sd * 7, 156, 28); x.scale.set(3.5, 2.5, 2); body.add(x); }
+  },
+  laserdalki(add, M, body) { dalkiBody(add, M, body, 5, '#3a5a6a', '#8affff'); const b = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ff2a2a' })); b.position.set(0, 134, 36); b.scale.set(14, 4, 3); body.add(b); },
+  hinto(add, M, body) { // lila Koerper mit Hufen, schwebendes Tuch, rotes Juwel, Ruessel
+    add(CAP(), M('#5a2a7a'), [0, 60, 0], [16, 40, 14]); add(SPH(), M('#6a3a8a'), [0, 116, 6], [22, 22, 20]);
+    add(BOX(), M('#0a0a10'), [0, 110, -14], [50, 60, 4], [0.2, 0, 0]);
+    add(OCT(), M('#ff1a2a', { emissive: new THREE.Color('#ff1a2a'), emissiveIntensity: 0.9 }), [0, 124, 26], [5, 8, 4]);
+    for (const sd of [-1, 1]) { add(CAP(), M('#4a1a6a'), [sd * 12, 18, 0], [7, 22, 7]); add(CYL(), M('#1a1414'), [sd * 12, 2, 0], [8, 4, 8]); add(CAP(), M('#6a3a8a'), [sd * 10, 104, 30], [4, 26, 4], [1.2, 0, sd * 0.3]); }
+    for (let k = -2; k <= 2; k++) add(CON(), M('#f0f0f0'), [k * 4, 108, 30], [1.5, 6, 1.5], [Math.PI, 0, 0]);
+  },
+  gorgath(add, M, body) { // riesiger Funken-Celestial
+    add(DOD(), M('#2a2a3a'), [0, 70, 0], [48, 54, 42]); add(SPH(), M('#3a3a4a'), [0, 136, 10], [26, 24, 24]);
+    for (let k = 0; k < 8; k++) add(OCT(), M('#ffe060', { emissive: new THREE.Color('#ffc020'), emissiveIntensity: 1 }), [Math.cos(k) * 40, 60 + k * 10, Math.sin(k) * 36], [4, 8, 4]);
+    for (const sd of [-1, 1]) { add(CAP(), M('#2a2a3a'), [sd * 58, 90, 16], [16, 36, 16], [0.4, 0, sd * 0.5]); add(CAP(), M('#1a1a24'), [sd * 22, 18, 0], [16, 22, 16]); }
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffe060' })); x.position.set(sd * 9, 140, 32); x.scale.set(4, 3, 2); body.add(x); }
+  },
+  escam(add, M, body) { // Fleischmann, General Immortuis
+    add(SPH(), M('#8a3a3a'), [0, 60, 0], [44, 50, 40]); add(SPH(), M('#a04a44'), [0, 120, 8], [30, 28, 26]);
+    for (let k = 0; k < 7; k++) add(SPH(), M('#6a2a2a'), [Math.cos(k * 1.3) * 34, 50 + k * 10, Math.sin(k * 1.3) * 30], [10, 8, 10]);
+    for (const sd of [-1, 1]) { add(CAP(), M('#8a3a3a'), [sd * 54, 84, 12], [14, 34, 14], [0.4, 0, sd * 0.5]); add(CAP(), M('#5a2020'), [sd * 18, 16, 0], [14, 20, 14]); }
+    add(OCT(), M('#8a5aff', { emissive: new THREE.Color('#6a3aff'), emissiveIntensity: 0.9 }), [0, 130, 34], [6, 10, 4]);
   },
   ranken(add, M, body) { // hausgross, langer Hals, Knospe mit sechs Ranken
     add(SPH(), M('#3a6a3a'), [0, 40, -10], [56, 34, 64]);
@@ -544,6 +566,13 @@ function dracheBody(add, M, body, col, eye) { // Drache mit zwei Fluegelpaaren
   for (const sd of [-1, 1]) { add(CON(), M('#2a2830'), [sd * 12, 188, 116], [5, 22, 5], [-0.6, 0, sd * 0.2]); for (const z of [20, -30]) add(SPH(), M(shadeHex(col, 0.05)), [sd * 90, 110, z], [70, 6, 34], [0, 0, sd * 0.35]); add(CAP(), M(col), [sd * 34, 20, 40], [12, 24, 12]); add(CAP(), M(col), [sd * 34, 20, -50], [12, 24, 12]); }
   for (let k = 0; k < 5; k++) add(SPH(), M(col), [0, 50 - k * 4, -90 - k * 22], [14 - k * 2, 14 - k * 2, 14 - k * 2]);
   for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: eye })); x.position.set(sd * 12, 176, 150); x.scale.set(4, 2.5, 2); body.add(x); }
+}
+function werwolfBody(add, M, body, fur) { // Fell, lange Schnauze, Qi-Klauen
+  const d = shadeHex(fur, -0.2), l = shadeHex(fur, 0.1);
+  add(CAP(), M(fur), [0, 56, 0], [24, 34, 20], [0.2, 0, 0]); add(SPH(), M(l), [0, 100, 10], [32, 26, 26]);
+  add(SPH(), M(l), [0, 136, 22], [18, 18, 18]); add(CAP(), M(fur), [0, 132, 42], [8, 14, 8], [Math.PI / 2, 0, 0]);
+  for (const sd of [-1, 1]) { add(CON(), M(d), [sd * 10, 158, 18], [5, 14, 5]); add(CAP(), M(fur), [sd * 40, 88, 22], [10, 30, 10], [0.6, 0, sd * 0.4]); for (let f = -1; f <= 1; f++) add(CON(), M('#ff5a3a', { emissive: new THREE.Color('#ff3a1a'), emissiveIntensity: 0.6 }), [sd * 46 + f * 4, 64, 50], [2, 16, 2], [1.3, 0, 0]); add(CAP(), M(d), [sd * 14, 16, 0], [11, 20, 11]); }
+  for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffd23a' })); x.position.set(sd * 7, 140, 36); x.scale.set(3, 2, 2); body.add(x); }
 }
 function dalkiBody(add, M, body, spikes, skin, acc) {
   add(CAP(), M(shadeHex(skin, -0.35)), [0, 46, 0], [30, 28, 26]);
