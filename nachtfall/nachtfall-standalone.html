@@ -10939,11 +10939,11 @@ defEnemy('e7_cruncher', 'brute', 'q_fort', 'Cruncher', { splits: 0, hp: 280 });
 defEnemy('e7_koeder', 'ghoul', 'q_spore', 'Köder-Bestie', { hp: 36 });
 defEnemy('e7_soeldner', 'knight', 'h_pure', 'Pure-Söldner', { armor: 5 });
 defEnemy('e7_king', 'brute', 'q_koenig', 'King-Humanoider', { splits: 0, hp: 300 });
-defBoss('b7_sach', 'stahlmann', 'Sach (Knochenstiefel)', 7800, Object.assign({ look: 'b_sach', bellShot: 'spike', armor: 5 }, B1));
+defBoss('b7_sach', 'stahlmann', 'Sach (Knochenstiefel)', 7000, Object.assign({ look: 'b_sach', bellShot: 'spike', armor: 5 }, B1));
 defBoss('b7_boneclaw', 'blutsauger', 'Der Boneclaw (Training)', 8500, { model: 'boneclaw', bellShot: 'spike', r: 30, spd: 72 });
 defBoss('b7_mag', 'mono', 'Martial Art God (Rang 50)', 8400, Object.assign({ look: 'b_mag', bellShot: 'soul', spd: 76 }, B1));
 defBoss('b7_motte', 'krabbe', 'Weiße Motte (Demi-God)', 10500, { model: 'motte', bellShot: 'soul', r: 46 });
-defBoss('b7_baum', 'krabbe', 'Der rosa Baum', 12500, { model: 'baum', bellShot: 'acid', r: 52, spd: 30 });
+defBoss('b7_baum', 'krabbe', 'Der rosa Baum', 11000, { model: 'baum', bellShot: 'spike', r: 52, spd: 30 });
 defBoss('b7_dred', 'dalki1', 'Dred, Dalki-Kommandant', 11500, { model: 'dred', bellShot: 'spike', r: 34 });
 defBoss('b7_drache', 'kronker', 'Der schwarze Drache', 60000, { model: 'drache', bellShot: 'bell', r: 80, scale: 1.6 });
 defBoss('b7_longblade', 'stahlmann', 'Colonel Longblade', 9500, Object.assign({ look: 'b_longblade', bellShot: 'spike', armor: 5 }, B1));
@@ -10969,7 +10969,7 @@ const ETAPPE7 = {
       text: 'In Power Fighters versteckt Finn seine Kraft hinter einem Limiter. Auf Rang 50 wartet der Torwächter: barfuß, grüne Shorts, ein Oberschenkeltritt wie eine Peitsche.' },
     { name: 'Sandwurm-Jagd', type: 'hunt', role: 'ghoul', n: 60, pace: 1.9, theme: 'caladi', roles: R_WUESTE7, comp: ['peter'],
       text: 'Erste Portalexkursion der Schule. Finn lehrt seine Klasse heimlich Qi. Dann meldet sich ein Fremder, der aussieht wie Richard Eno: „Die Dalki kommen.“' },
-    { name: 'Die Dalki kommen', type: 'survive', dur: 190, pace: 2.0, theme: 'ruinen', roles: R_DALKI7, comp: ['fex'], elites: 4,
+    { name: 'Die Dalki kommen', type: 'survive', dur: 190, pace: 1.85, theme: 'ruinen', roles: R_DALKI7, comp: ['fex'], elites: 3,
       text: 'Teleporter und Masken sind blockiert, dreißigtausend Schüler stehen allein. Finn zeigt den Lehrern Schatten und Platinausweis: „Die Dalki kommen!“' },
     { name: 'Fünfundvierzig Dalki', type: 'hunt', role: 'ghoul', n: 45, pace: 2.0, theme: 'ruinen', roles: R_DALKI7, comp: ['fex'],
       text: 'Zehn Zwei-Stachel, fünfunddreißig Ein-Stachel. Die Knochenketten trinken Dalki-Blut und machen Finn stärker. Die Schüler erkennen ihn: Das ist der Blood Evolver.' },
@@ -10977,7 +10977,7 @@ const ETAPPE7 = {
       text: 'Auf einem Graylash-Planeten greifen Hunderte Bestien den Shelter an. Über ihnen: eine riesige weiße Motte, deren Flaum Energie absaugt. Ihr Bauch ist die Schwachstelle.' },
     { name: 'Die Markierten', type: 'survive', dur: 200, pace: 2.1, theme: 'bestienplanet', roles: R_MARK, comp: ['lena', 'peter'], elites: 3,
       text: 'Verschwundene kehren zurück – ohne Erinnerung, mit einem roten Wurzelmal auf dem Rücken. Wer gebissen wird, kippt in Sekunden. Tausende strömen durch die offenen Tore.' },
-    { name: 'Der rosa Baum', type: 'waveboss', at: 90, foe: 'b7_baum', pace: 2.0, theme: 'bestienplanet', roles: R_MARK, comp: ['lena'],
+    { name: 'Der rosa Baum', type: 'waveboss', at: 80, foe: 'b7_baum', pace: 1.8, theme: 'bestienplanet', roles: R_MARK, comp: ['lena'],
       text: 'Der Shelter wurde wegen der Schönheit eines Baumes gebaut. Unter seiner Rinde: rosa Kristall und schwarzes Blut. Der Baum ist der Dämon, der alle markiert.' },
     { name: 'Dred im Kolosseum von ZOO', type: 'duel', foe: 'b7_dred', crowd: 0.4, theme: 'schlachtfeld', roles: R_ZOO, comp: ['leo', 'emma'],
       text: 'In der Bestienstadt ZOO kämpfen Zähmer im Kolosseum. Dann steigt ein Dalki-Kommandant in die Arena, dessen Brüllen doppelt so laut ist wie jedes Bellen.' },
