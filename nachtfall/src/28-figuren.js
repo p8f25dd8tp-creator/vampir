@@ -60,7 +60,9 @@ function figLoad() {
   if (FIG.loading || FIG.ready || FIG.failed || !window.GLTFLoader || !window.THREE) return;
   FIG.loading = true;
   const L = new GLTFLoader(), names = ['schurke', 'magier', 'barbar', 'anim'];
-  Promise.all(names.map((n) => L.loadAsync('models/' + n + '.glb'))).then((res) => {
+  const B = window.FIG_B64; // Einzeldatei: Modelle eingebettet
+  const one = (n) => (B && B[n] ? L.parseAsync(Uint8Array.from(atob(B[n]), (c) => c.charCodeAt(0)).buffer, '') : L.loadAsync('models/' + n + '.glb'));
+  Promise.all(names.map(one)).then((res) => {
     names.forEach((n, i) => { FIG.gltf[n] = res[i]; });
     for (const c of res[3].animations) FIG.clips[c.name] = c;
     FIG.ready = true; FIG.loading = false;

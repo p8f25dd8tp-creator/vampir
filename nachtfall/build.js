@@ -27,6 +27,9 @@ let out = html
   .replace(/<link rel="stylesheet"[^>]*>/, () => '<style>\n' + css + '\n</style>')
   .replace(/<!--SCRIPTS-->[\s\S]*<!--\/SCRIPTS-->/, () => '<script>\n' + js + '\n</script>')
   .replace(/<script>\s*if \('serviceWorker'[\s\S]*?<\/script>/, '');
+// 3D-Figuren (KayKit, CC0) eingebettet, damit die Einzeldatei ohne Zusatzdateien laeuft
+const figs = {}; for (const n of ['schurke', 'magier', 'barbar', 'anim']) { const f = path.join(root, 'models', n + '.glb'); if (fs.existsSync(f)) figs[n] = fs.readFileSync(f).toString('base64'); }
+out = out.replace('</body>', () => '<script>window.FIG_B64 = ' + JSON.stringify(figs) + ';</script>\n</body>');
 fs.writeFileSync(path.join(root, 'nachtfall-standalone.html'), out);
 console.log('nachtfall-standalone.html —', (out.length / 1024).toFixed(0), 'KB');
 
