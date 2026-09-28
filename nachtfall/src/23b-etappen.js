@@ -10,7 +10,7 @@
      hunt     — erlege `n` Gegner der Rolle `role`
      boss     — Etappen-Finale: Wellen, dann der Boss
      berserk  — Finn als wahnsinniger Bloodsucker (doppelte Kraft, halbes Leben)
-   Etappen 2 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
+   Etappen 4 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
    ========================================================================== */
 
 /* ------------------------------------------------------------ Gegner der Etappe 1 */
@@ -123,8 +123,71 @@ const ETAPPE2 = {
   ]
 };
 
+/* ------------------------------------------------------------ Etappe 3: Die Vampirsiedlung (Kapitel 384–534) */
+defEnemy('e3_wendigo', 'ghoul', 'v_thrall', 'Wendigo', { hp: 22, spd: 72 });
+defEnemy('e3_hase', 'ghoul', 'q_hase', 'Horn-Häschen', { hp: 9, spd: 86 });
+defEnemy('e3_kroko', 'brute', 'q_fort', 'Krokodilschlange', { splits: 0, hp: 140 });
+defEnemy('e3_deathbat', 'bat', 'bat_void', 'Deathbat', { hp: 30 });
+defEnemy('e3_nachkomme', 'knight', 'v_ritter', 'Nachkomme der ersten Familie', { armor: 2 });
+defEnemy('e3_schueler', 'ghoul', 'v_wache', 'Vampirschüler', { hp: 16 });
+defEnemy('e3_fortuna', 'knight', 'v_ritter', 'Fortuna-Wächter (9. Familie)', { armor: 3 });
+defEnemy('e3_blutmagier', 'witch', 'v_magier', 'Blutmagier', { shot: 'blood', flier: false });
+defEnemy('e3_bande', 'ghoul', 'v_wache', 'Bande aus dem Armenviertel', { hp: 18 });
+defEnemy('e3_schleim', 'witch', 'v_magier', 'Schleim-Vampir', { shot: 'acid', flier: false });
+defEnemy('e3_wache', 'ghoul', 'v_wache', 'Wache der ersten Familie', { hp: 20 });
+defEnemy('e3_ritter', 'knight', 'v_ritter', 'Ritter eines Anführers', { armor: 3 });
+defEnemy('e3_hauptmann', 'captain', 'v_ritter', 'Vampirritter', { scale: 1.25, hp: 2200 });
+defEnemy('e3_soldat', 'knight', 'h_wache', 'Soldat von Basis 2', { armor: 2 });
+defEnemy('e3_erd', 'witch', 'h_truedream', 'Erd-Fähigkeitsnutzer', { shot: 'spike', flier: false });
+defBoss('b3_boneclaw', 'blutsauger', 'Der Boneclaw', 60000, { model: 'boneclaw', bellShot: 'spike', r: 30, spd: 64 });
+defBoss('b3_hase', 'blutsauger', 'Schwarzes Horn-Kaninchen (Familiar)', 2200, { model: 'hornhase', bellShot: 'soul', r: 26, spd: 80, scale: 1.3 });
+defBoss('b3_clark', 'silva', 'Clark Talon (Vampirritter)', 3000, Object.assign({ look: 'b_clark', bellShot: 'blood' }, B1));
+defBoss('b3_jin', 'silva', 'Jin Talon, vierter Anführer', 60000, Object.assign({ look: 'b_jin', bellShot: 'blood', spd: 56 }, B1));
+defBoss('b3_edward', 'silva', 'Edward Eno (Nebel)', 3300, Object.assign({ look: 'b_edward', bellShot: 'soul' }, B1));
+defBoss('b3_borden', 'dalki1', 'Borden, der Dalki-Klon', 3800, { model: 'borden', bellShot: 'spike', r: 30, scale: 0.85 });
+defBoss('b3_vadeen', 'silva', 'Vadeen Muscat, sechster Anführer', 4600, Object.assign({ look: 'b_vadeen', bellShot: 'blood', armor: 4 }, B1));
+defBoss('b3_paul', 'stahlmann', 'Hauptgeneral Paul Snealleart', 5200, Object.assign({ look: 'b_paul', bellShot: 'spike', armor: 5 }, B1));
+const R_LABOR = { ghoul: 'e3_wendigo', bat: 'e3_wendigo', knight: 'e3_wendigo', witch: 'e3_wendigo', brute: 'c5_thrall', captain: 'c5_boneclaw' };
+const R_WALD = { ghoul: 'e3_hase', bat: 'c5_fleder', knight: 'e3_hase', witch: 'e3_hase', brute: 'e3_kroko', captain: 'e3_kroko' };
+const R_OEDLAND = { ghoul: 'c2_ratta', bat: 'e3_deathbat', knight: 'e3_nachkomme', witch: 'c2_spore', brute: 'c2_mutter', captain: 'c2_alpha' };
+const R_TUNNEL = { ghoul: 'e3_fortuna', bat: 'c5_fleder', knight: 'e3_fortuna', witch: 'e3_blutmagier', brute: 'c5_thrall', captain: 'e3_hauptmann' };
+const R_ZEHN = { ghoul: 'e3_bande', bat: 'c5_fleder', knight: 'e3_bande', witch: 'e3_schleim', brute: 'c5_thrall', captain: 'e3_hauptmann' };
+const R_PLAZA = { ghoul: 'e3_wache', bat: 'c5_fleder', knight: 'e3_ritter', witch: 'e3_blutmagier', brute: 'c5_thrall', captain: 'e3_hauptmann' };
+const R_INVASION = { ghoul: 'e3_wendigo', bat: 'c5_fleder', knight: 'e3_soldat', witch: 'e3_erd', brute: 'c5_thrall', captain: 'e3_hauptmann' };
+const ETAPPE3 = {
+  title: 'Die Vampirsiedlung', place: 'Enos Labor · Vampirschule · zehnte Burg · Plaza des Königs', src: 'Kapitel 384–534', theme: 'siedlung', ch: 5,
+  levels: [
+    { name: 'Das Labor im Berg', type: 'hunt', role: 'ghoul', n: 40, pace: 1.4, theme: 'burg', roles: R_LABOR, comp: ['fabian'],
+      text: 'Das Würfelportal führt in ein dunkles Labor aus Glathrium. Ein Prüfungsroboter wirft Wendigos in die Zellen – gierige Untote, die nur sterben, wenn der Kopf fällt.' },
+    { name: 'Die Brücke über dem Abgrund', type: 'endure', foe: 'b3_boneclaw', dur: 80, crowd: 0.7, theme: 'burg', roles: R_LABOR,
+      text: 'Hunderte Wendigos an Wänden und Decke. Auf einer Brücke hält Finn die Horde auf, damit die anderen fliehen können. Dann kommt etwas, vor dem selbst die Wendigos zittern.' },
+    { name: 'Das schwarze Horn-Kaninchen', type: 'duel', foe: 'b3_hase', crowd: 0.6, theme: 'friedhof', roles: R_WALD,
+      text: 'Im Wald mit grauem Laub jagt eine Armee aus Häschen unter einem schwarzen Kaninchen mit Blitzhorn. Das System sagt: ein Familiar – und ein Sieg bringt ein ganzes Level.' },
+    { name: 'Deathbats auf dem Ödland', type: 'hunt', role: 'bat', n: 30, pace: 1.5, theme: 'rotezone', roles: R_OEDLAND,
+      text: 'Die Vampirprüfung der Nachkommen: zehn Deathbats pro Kopf, drei Tage Zeit. Ihre Schüsse hört man nicht. Und Siryus stiehlt jeden Kill, den er kriegen kann.' },
+    { name: 'Clark Talon, Vampirritter', type: 'duel', foe: 'b3_clark', crowd: 0.25, theme: 'rotezone', roles: R_OEDLAND, evo: 'Vampiradliger',
+      text: 'Der Boneclaw hat Finns dunkelsten Gedanken wahr gemacht. Clarks Rabe hat alles gesehen – und der Ausbilder erkennt den Schatten der Punisher. Sein Blut explodiert auf Fingerschnipp.' },
+    { name: 'Flucht durch die Tunnel', type: 'survive', dur: 170, pace: 1.55, theme: 'burg', roles: R_TUNNEL, comp: ['peter'],
+      text: 'Unter den Burgen spürt Peter Finns neue Kraft. Er zerreißt seine Ketten und erweckt die toten Wächter als kleine Wights. Jetzt muss er einen Weg durch die Tunnel der neunten Familie finden.' },
+    { name: 'Jin Talon, vierter Anführer', type: 'endure', foe: 'b3_jin', dur: 75, crowd: 0.2, theme: 'burg', roles: R_TUNNEL, comp: ['peter'],
+      text: 'Ein Anführer mit Narbe und Rundschild stellt die beiden. Sein Schild regnet explodierendes Blut. Das System rät nur eins: Halte durch und flieh – gegen einen Anführer hast du keine Chance.' },
+    { name: 'Der Nebel der zehnten Burg', type: 'duel', foe: 'b3_edward', crowd: 0.1, theme: 'siedlung', roles: R_ZEHN, comp: ['peter'],
+      text: 'Die zehnte Burg leuchtet kurz auf und erlischt. In der Halle schlägt ein unsichtbarer Riesenkopf aus Nebel zu – der letzte Ritter der Familie bewacht das Erbe.' },
+    { name: 'Blut für die Zehnten', type: 'survive', dur: 180, pace: 1.6, theme: 'siedlung', roles: R_ZEHN, elites: 3,
+      text: 'Mit einer Kühlkiste voller Blutbeutel zieht Finn durch das verfallene Viertel der zehnten Familie. Eine Bande will die Kiste – ein Schleim-Vampir klebt ihn am Boden fest.' },
+    { name: 'Borden, der Klon', type: 'duel', foe: 'b3_borden', crowd: 0.1, theme: 'siedlung', roles: R_ZEHN,
+      text: 'Etwas schlägt im Burggarten ein wie ein Meteor: ein Dalki mit Schuppen und Stachel, der Fabian verblüffend ähnlich sieht. Finn wirft ihm die Blutkiste entgegen.' },
+    { name: 'Die Hinrichtung', type: 'hunt', role: 'ghoul', n: 120, pace: 1.7, theme: 'siedlung', roles: R_PLAZA, comp: ['fabian', 'lena'],
+      text: 'Auf der Plaza vor dem Königsschloss soll Fex ausbluten. Eine Blutkuppel schließt alle ein, zweihundert Wachen halten sie aufrecht. Sie fällt erst, wenn die Wachen fallen.' },
+    { name: 'Vadeen Muscat', type: 'waveboss', at: 90, foe: 'b3_vadeen', pace: 1.6, theme: 'siedlung', roles: R_PLAZA, comp: ['agathon'],
+      text: 'Agathon tritt aus dem Schatten und die Anführer erstarren. Vadeen, der sechste Anführer, legt unsichtbare Fallen-Marken und will Finn zu Boden prügeln.' },
+    { name: 'Die Invasion der Menschen', type: 'boss', at: 100, foe: 'b3_paul', pace: 1.6, theme: 'friedhof', roles: R_INVASION, comp: ['leo', 'emma'],
+      text: 'Zweihundert Soldaten von Basis 2 stranden in der Vampirwelt. Als Beweis seiner Treue soll Finn sie unterwerfen. Ihr Hauptgeneral presst Felsen zu schwarzen Kugeln, die sogar Dalki-Haut durchschlagen.' }
+  ]
+};
+
 /* ------------------------------------------------------------ Alle Etappen */
-// Etappen 2 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
+// Etappen 4 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
 function autoLevels(ch) {
   const out = [];
   for (let l = 1; l <= 8; l++) {
@@ -133,7 +196,7 @@ function autoLevels(ch) {
   }
   return out;
 }
-const ETAPPEN = [ETAPPE1, ETAPPE2].concat(CHAPTERS.slice(4).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
+const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3].concat(CHAPTERS.slice(5).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
 ETAPPEN.forEach((E, i) => { E.n = i + 1; E.levels.forEach((L, j) => { L.l = j + 1; }); });
 // Kapitel (Gegner-/Boss-Sammlungen) -> Etappe, fuer den Boss-Turm
 const ET_OF_CH = {}; ETAPPEN.forEach((E) => { const chs = new Set([E.ch]); E.levels.forEach((L) => L.ch && chs.add(L.ch)); if (E.n === 1) chs.add(3); chs.forEach((c) => { ET_OF_CH[c] = E.n; }); });

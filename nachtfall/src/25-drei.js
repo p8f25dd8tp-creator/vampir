@@ -330,6 +330,26 @@ Object.assign(CHIBI, {
 const BOSS_BUILD = {
   dalki1: (add, M, body) => dalkiBody(add, M, body, 1, '#6a7a8a', '#c8d0d8'),
   graham: (add, M, body) => dalkiBody(add, M, body, 10, '#5a5a6a', '#ffd060'),
+  borden: (add, M, body) => dalkiBody(add, M, body, 2, '#8a9a7a', '#e8d890'),
+  boneclaw(add, M, body) { // hager, gebeugt, halbmeterlange Drei-Finger-Klauen
+    const bone = '#d8d0bc', dark = '#2a2430';
+    add(CAP(), M(dark), [0, 50, 0], [14, 34, 12]); add(SPH(), M(bone), [0, 104, 6], [22, 20, 16]);
+    for (let k = 0; k < 4; k++) add(CYL(), M(shadeHex(bone, -0.2)), [0, 92 + k * 6, 18], [18 - k * 2, 1.5, 1.5], [0, 0, Math.PI / 2]);
+    add(SPH(), M(bone), [0, 140, 18], [15, 17, 15]);
+    for (const sd of [-1, 1]) {
+      add(CAP(), M(bone), [sd * 30, 100, 16], [5, 26, 5], [0.9, 0, sd * 0.5]); add(CAP(), M(bone), [sd * 40, 72, 44], [4, 20, 4], [1.3, 0, sd * 0.2]);
+      for (let f = -1; f <= 1; f++) add(CON(), M('#f0ead8'), [sd * 42 + f * 5, 66, 80], [2.4, 36, 2.4], [Math.PI / 2 + 0.2, 0, f * 0.15]);
+      add(CAP(), M(dark), [sd * 11, 18, 0], [6, 20, 6]);
+    }
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffffff' })); x.position.set(sd * 6, 144, 31); x.scale.set(3.5, 2.5, 2); body.add(x); }
+  },
+  hornhase(add, M, body) { // schwarzes Kaninchen mit Blitzhorn, rote Augen
+    add(SPH(), M('#1a1820'), [0, 30, -6], [30, 26, 36]); add(SPH(), M('#24222c'), [0, 58, 24], [22, 20, 22]);
+    for (const sd of [-1, 1]) { add(CAP(), M('#1a1820'), [sd * 9, 88, 20], [5, 20, 4], [-0.2, 0, sd * 0.25]); add(SPH(), M('#1a1820'), [sd * 18, 10, 20], [8, 6, 12]); }
+    add(CON(), M('#8ad8ff', { emissive: new THREE.Color('#4ab8ff'), emissiveIntensity: 0.9 }), [0, 80, 36], [4, 26, 4], [0.6, 0, 0]);
+    add(SPH(), M('#3a3444'), [0, 34, -40], [10, 10, 10]);
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ff2a2a' })); x.position.set(sd * 9, 62, 42); x.scale.setScalar(3.5); body.add(x); }
+  },
   ranken(add, M, body) { // hausgross, langer Hals, Knospe mit sechs Ranken
     add(SPH(), M('#3a6a3a'), [0, 40, -10], [56, 34, 64]);
     for (let k = 0; k < 4; k++) add(SPH(), M('#4a7a3a'), [0, 70 + k * 22, 30 + k * 10], [16 - k, 16 - k, 16 - k]);
