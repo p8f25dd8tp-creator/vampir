@@ -778,6 +778,7 @@ function renderHero(id, st, H, px, target, opts) {
 
 // Waffen der Begleiter (Bogen, Schwert) statt Lioras Sichel
 function drawCompanionWeapon(g, A, kind, P) {
+  if (kind === 'none') return;
   const a = Math.atan2(A.hy - A.ey, A.hx - A.ex);
   g.save(); g.translate(A.hx, A.hy);
   if (kind === 'bow') {

@@ -61,7 +61,7 @@ function shot(x, y, ang, sp, dmg, school, src, o) {
     let done = false;
     forEnemiesInRadius(e.x, e.y, size + 6, (en) => {
       if (done || hit.has(en.id)) return; hit.add(en.id);
-      dealDamage(en, dmg, school, src, { kb: o.kb || 60, kx: e.vx, ky: e.vy, norm: true, stun: o.stun });
+      if (dmg > 0) dealDamage(en, dmg, school, src, { kb: o.kb || 60, kx: e.vx, ky: e.vy, norm: true, stun: o.stun });
       if (o.freeze) freezeEnemy(en, o.freeze);
       if (o.slow) { en.slowT = Math.max(en.slowT, 1.5); en.slowF = Math.min(en.slowF || 1, 0.5); }
       if (o.onHit) o.onHit(en, e);
