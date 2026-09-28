@@ -37,3 +37,8 @@ Am Ende gibt es daraus einen gemeinsamen GPT-Prompt-Block.
 | 6 | Höhle hinter dem Wasserfall | nasser Fels, Pfützen |
 | 6 | Welt der Vertrauten | grünblaues Moos, Riesenpilze, Leuchtkugeln |
 | 6 | Zehnte Burg mit Türmen | Burghof, Mauern, Blutregen |
+| 7 | Neue Militärschule, Kolosseum | Arena-Sand, Steinränge |
+| 7 | Shelter im Dalki-Angriff | aufgerissener Beton, grünes Dalki-Blut |
+| 7 | Graylash-Planet mit rosa Riesenbaum | rosa Blütenblätter, Wurzeln |
+| 7 | Bestienstadt ZOO | römisches Pflaster |
+| 7 | Bergbau-Shelter mit Rohrbahnen | Metallgitter, Kristallgeröll |

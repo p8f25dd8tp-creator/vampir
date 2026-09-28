@@ -391,6 +391,34 @@ const BOSS_BUILD = {
     add(BOX(), M('#ff2a3a', { emissive: new THREE.Color('#ff1a2a'), emissiveIntensity: 1 }), [0, 106, 50], [3, 12, 2]);
     for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffd23a' })); x.position.set(sd * 11, 94, 50); x.scale.set(5, 3.5, 2); body.add(x); }
   },
+  dred: (add, M, body) => dalkiBody(add, M, body, 4, '#5a6a5a', '#e84a2a'),
+  motte(add, M, body) { // weisse Riesenmotte mit Flaum, Bauch als Schwachstelle
+    add(CAP(), M('#e8e4dc'), [0, 80, 0], [18, 34, 18], [0.3, 0, 0]); add(SPH(), M('#f4f0e8'), [0, 116, 16], [18, 16, 16]);
+    add(SPH(), M('#ffb0c8', { emissive: new THREE.Color('#ff6a9a'), emissiveIntensity: 0.4 }), [0, 66, 14], [12, 16, 10]);
+    for (const sd of [-1, 1]) { add(SPH(), M('#f0ece4'), [sd * 60, 110, -6], [56, 10, 40], [0, 0, sd * 0.3]); add(SPH(), M('#d8d0c4'), [sd * 48, 70, -10], [36, 8, 26], [0, 0, -sd * 0.2]); add(CYL(), M('#c8c0b0'), [sd * 8, 138, 26], [1, 20, 1], [0.6, 0, sd * 0.5]); }
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#2a2a3a' })); x.position.set(sd * 8, 120, 30); x.scale.setScalar(5); body.add(x); }
+  },
+  baum(add, M, body) { // Riesenbaum, rosa Kristall unter der Rinde
+    add(CYL(), M('#4a3028'), [0, 60, 0], [22, 120, 22]);
+    for (let k = 0; k < 5; k++) { const a = k / 5 * TAU; add(CAP(), M('#3a2420'), [Math.cos(a) * 24, 10, Math.sin(a) * 24], [8, 22, 8], [Math.sin(a) * 1.2, 0, -Math.cos(a) * 1.2]); }
+    add(SPH(), M('#e888b8'), [0, 150, 0], [64, 40, 56]); add(SPH(), M('#f0a0c8'), [30, 170, 10], [34, 26, 30]); add(SPH(), M('#d870a8'), [-34, 160, -6], [30, 24, 28]);
+    add(OCT(), M('#ff8ac8', { emissive: new THREE.Color('#ff4a9a'), emissiveIntensity: 0.8 }), [0, 70, 20], [10, 22, 8]);
+  },
+  drache(add, M, body) { // schwarzer Drache, zwei Fluegelpaare
+    add(SPH(), M('#141218'), [0, 60, -10], [48, 40, 76]);
+    for (let k = 0; k < 4; k++) add(SPH(), M('#1a1820'), [0, 90 + k * 20, 60 + k * 14], [20 - k * 2, 20 - k * 2, 20 - k * 2]);
+    add(SPH(), M('#1e1c26'), [0, 170, 124], [22, 18, 30]);
+    for (const sd of [-1, 1]) { add(CON(), M('#2a2830'), [sd * 12, 188, 116], [5, 22, 5], [-0.6, 0, sd * 0.2]); for (const z of [20, -30]) add(SPH(), M('#201c28'), [sd * 90, 110, z], [70, 6, 34], [0, 0, sd * 0.35]); add(CAP(), M('#141218'), [sd * 34, 20, 40], [12, 24, 12]); add(CAP(), M('#141218'), [sd * 34, 20, -50], [12, 24, 12]); }
+    for (let k = 0; k < 5; k++) add(SPH(), M('#141218'), [0, 50 - k * 4, -90 - k * 22], [14 - k * 2, 14 - k * 2, 14 - k * 2]);
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#8a5aff' })); x.position.set(sd * 12, 176, 150); x.scale.set(4, 2.5, 2); body.add(x); }
+  },
+  erdgott(add, M, body) { // brauner Erdriese, asymmetrisch, eckige gruene Augen
+    add(DOD(), M('#5a3e28'), [0, 60, 0], [44, 50, 38]); add(DOD(), M('#6a4a30'), [0, 120, 8], [30, 28, 28]);
+    add(DOD(), M('#5a3e28'), [-56, 96, 10], [30, 30, 30]); add(CAP(), M('#4a3220'), [-66, 50, 24], [16, 36, 16]);
+    add(DOD(), M('#5a3e28'), [48, 90, 10], [20, 20, 20]); add(CAP(), M('#4a3220'), [54, 56, 20], [11, 28, 11]);
+    for (const sd of [-1, 1]) add(CAP(), M('#3a2818'), [sd * 22, 16, 0], [14, 20, 14]);
+    for (const sd of [-1, 1]) add(BOX(), M('#6aff6a', { emissive: new THREE.Color('#3aff3a'), emissiveIntensity: 1 }), [sd * 10, 126, 34], [7, 4, 2]);
+  },
   ranken(add, M, body) { // hausgross, langer Hals, Knospe mit sechs Ranken
     add(SPH(), M('#3a6a3a'), [0, 40, -10], [56, 34, 64]);
     for (let k = 0; k < 4; k++) add(SPH(), M('#4a7a3a'), [0, 70 + k * 22, 30 + k * 10], [16 - k, 16 - k, 16 - k]);

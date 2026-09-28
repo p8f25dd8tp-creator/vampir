@@ -11,7 +11,7 @@
      boss     — Etappen-Finale: Wellen, dann der Boss
      berserk  — Finn als wahnsinniger Bloodsucker (doppelte Kraft, halbes Leben)
    Zusatz `berserk: true` macht jede andere Stufenart zum Bloodsucker-Kampf.
-   Etappen 7 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
+   Etappen 8 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
    ========================================================================== */
 
 /* ------------------------------------------------------------ Gegner der Etappe 1 */
@@ -398,8 +398,83 @@ const ETAPPE6 = {
   ]
 };
 
+/* ------------------------------------------------------------ Etappe 7: Die Rückkehr der Dalki (Kapitel 946–1197) */
+defEnemy('e7_schueler', 'ghoul', 'h_schueler', 'Earthborn-Schüler', { hp: 30 });
+defEnemy('e7_rowdy', 'knight', 'h_wache', 'Schläger aus der 3B', { armor: 4 });
+defEnemy('e7_erd', 'witch', 'h_truedream', 'Erdnutzer', { shot: 'spike', flier: false });
+defEnemy('e7_capt', 'captain', 'h_wache', 'Innus Vertrauter', { scale: 1.25, hp: 3400 });
+defEnemy('e7_sandwurm', 'ghoul', 'q_caladi', 'Sandwurm', { hp: 38 });
+defEnemy('e7_d1', 'ghoul', 'dalki1', 'Ein-Stachel-Dalki', { hp: 44 });
+defEnemy('e7_d2', 'knight', 'dalki2', 'Zwei-Stachel-Dalki', { armor: 6 });
+defEnemy('e7_dS', 'witch', 'dalki5', 'Dalki-Schütze', { shot: 'spike', flier: false });
+defEnemy('e7_dB', 'brute', 'dalki6', 'Dalki-Brecher', { splits: 0, hp: 280 });
+defEnemy('e7_dK', 'captain', 'dalkiW', 'Dalki-Kommandant', { scale: 1.3, hp: 4400 });
+defEnemy('e7_frosch', 'ghoul', 'q_kroete', 'Froschbestie', { hp: 36 });
+defEnemy('e7_motte', 'bat', 'bat_licht', 'Mottenschwarm', { hp: 30 });
+defEnemy('e7_mark', 'ghoul', 'h_schueler', 'Markierter', { hp: 36, spd: 82 });
+defEnemy('e7_heu', 'bat', 'bat_aas', 'Stabheuschrecke', { hp: 32 });
+defEnemy('e7_markG', 'knight', 'h_wache', 'Markierter Graylash', { armor: 5 });
+defEnemy('e7_markR', 'brute', 'h_koloss', 'Rasender Markierter', { splits: 0, hp: 280 });
+defEnemy('e7_zahm', 'ghoul', 'q_rot', 'Gezähmte Bestie', { hp: 36 });
+defEnemy('e7_cruncher', 'brute', 'q_fort', 'Cruncher', { splits: 0, hp: 280 });
+defEnemy('e7_koeder', 'ghoul', 'q_spore', 'Köder-Bestie', { hp: 36 });
+defEnemy('e7_soeldner', 'knight', 'h_pure', 'Pure-Söldner', { armor: 5 });
+defEnemy('e7_king', 'brute', 'q_koenig', 'King-Humanoider', { splits: 0, hp: 300 });
+defBoss('b7_sach', 'stahlmann', 'Sach (Knochenstiefel)', 7800, Object.assign({ look: 'b_sach', bellShot: 'spike', armor: 5 }, B1));
+defBoss('b7_boneclaw', 'blutsauger', 'Der Boneclaw (Training)', 8500, { model: 'boneclaw', bellShot: 'spike', r: 30, spd: 72 });
+defBoss('b7_mag', 'mono', 'Martial Art God (Rang 50)', 8400, Object.assign({ look: 'b_mag', bellShot: 'soul', spd: 76 }, B1));
+defBoss('b7_motte', 'krabbe', 'Weiße Motte (Demi-God)', 10500, { model: 'motte', bellShot: 'soul', r: 46 });
+defBoss('b7_baum', 'krabbe', 'Der rosa Baum', 12500, { model: 'baum', bellShot: 'acid', r: 52, spd: 30 });
+defBoss('b7_dred', 'dalki1', 'Dred, Dalki-Kommandant', 11500, { model: 'dred', bellShot: 'spike', r: 34 });
+defBoss('b7_drache', 'kronker', 'Der schwarze Drache', 60000, { model: 'drache', bellShot: 'bell', r: 80, scale: 1.6 });
+defBoss('b7_longblade', 'stahlmann', 'Colonel Longblade', 9500, Object.assign({ look: 'b_longblade', bellShot: 'spike', armor: 5 }, B1));
+defBoss('b7_agent2', 'mono', 'Agent 2 (Pure)', 10500, Object.assign({ look: 'b_agent2', bellShot: 'light', spd: 74 }, B1));
+defBoss('b7_erde', 'krabbe', 'Demi-God aus Erde', 15000, { model: 'erdgott', bellShot: 'spike', r: 50 });
+const R_SCHULE7 = { ghoul: 'e7_schueler', bat: 'e7_schueler', knight: 'e7_rowdy', witch: 'e7_erd', brute: 'e7_rowdy', captain: 'e7_capt' };
+const R_WUESTE7 = { ghoul: 'e7_sandwurm', bat: 'c3_aas', knight: 'e5_panzer', witch: 'e5_neunauge', brute: 'c3_koenig', captain: 'c3_koenigB' };
+const R_DALKI7 = { ghoul: 'e7_d1', bat: 'e7_d1', knight: 'e7_d2', witch: 'e7_dS', brute: 'e7_dB', captain: 'e7_dK' };
+const R_WALD7 = { ghoul: 'e7_frosch', bat: 'e7_motte', knight: 'e5_panzer', witch: 'c3_spucker', brute: 'c3_koenig', captain: 'c3_koenigB' };
+const R_MARK = { ghoul: 'e7_mark', bat: 'e7_heu', knight: 'e7_markG', witch: 'e4_blitz', brute: 'e7_markR', captain: 'e4_altum' };
+const R_ZOO = { ghoul: 'e7_zahm', bat: 'c2_flatter', knight: 'e7_d2', witch: 'e7_dS', brute: 'e7_cruncher', captain: 'e7_dK' };
+const R_ROHR = { ghoul: 'e7_koeder', bat: 'c3_aas', knight: 'e7_soeldner', witch: 'e5_qi', brute: 'e7_king', captain: 'e5_narbe' };
+const ETAPPE7 = {
+  title: 'Die Rückkehr der Dalki', place: 'Die neue Schule · Graylash-Planet · ZOO · Blade-Insel · Rohrbahnen', src: 'Kapitel 946–1197', theme: 'ruinen', ch: 9,
+  levels: [
+    { name: 'Lehrer Hardy', type: 'survive', dur: 160, pace: 1.9, theme: 'akademie', roles: R_SCHULE7, comp: ['peter'],
+      text: 'Unter dem Namen „Hardy“ unterrichtet Finn an der neuen Militärschule – die schwächste Klasse, fast nur Stufe 1 bis 3. Die 3B hält das für eine Einladung.' },
+    { name: 'Das Kolosseum', type: 'duel', foe: 'b7_sach', crowd: 0.3, theme: 'akademie', roles: R_SCHULE7,
+      text: 'Über Nacht entsteht ein Kolosseum. Die Schüler ohne Fähigkeit schlagen sich besser als gedacht. Dann will Sach selbst gegen Hardy antreten – in Knochenstiefeln der Emperor-Stufe.' },
+    { name: 'Training mit dem Boneclaw', type: 'duel', foe: 'b7_boneclaw', crowd: 0, theme: 'burg', roles: R_KERKER,
+      text: 'Im Schloss der Punisher lernt Finn, den Boneclaw zu bändigen. Er greift durch zwei Portale zugleich an. Kuppel auf Kuppel, Schattenportale wie Minen – bis er stillhält.' },
+    { name: 'Martial Art God', type: 'duel', foe: 'b7_mag', crowd: 0, theme: 'goetter', roles: R_SCHULE7,
+      text: 'In Power Fighters versteckt Finn seine Kraft hinter einem Limiter. Auf Rang 50 wartet der Torwächter: barfuß, grüne Shorts, ein Oberschenkeltritt wie eine Peitsche.' },
+    { name: 'Sandwurm-Jagd', type: 'hunt', role: 'ghoul', n: 60, pace: 1.9, theme: 'caladi', roles: R_WUESTE7, comp: ['peter'],
+      text: 'Erste Portalexkursion der Schule. Finn lehrt seine Klasse heimlich Qi. Dann meldet sich ein Fremder, der aussieht wie Richard Eno: „Die Dalki kommen.“' },
+    { name: 'Die Dalki kommen', type: 'survive', dur: 190, pace: 2.0, theme: 'ruinen', roles: R_DALKI7, comp: ['fex'], elites: 4,
+      text: 'Teleporter und Masken sind blockiert, dreißigtausend Schüler stehen allein. Finn zeigt den Lehrern Schatten und Platinausweis: „Die Dalki kommen!“' },
+    { name: 'Fünfundvierzig Dalki', type: 'hunt', role: 'ghoul', n: 45, pace: 2.0, theme: 'ruinen', roles: R_DALKI7, comp: ['fex'],
+      text: 'Zehn Zwei-Stachel, fünfunddreißig Ein-Stachel. Die Knochenketten trinken Dalki-Blut und machen Finn stärker. Die Schüler erkennen ihn: Das ist der Blood Evolver.' },
+    { name: 'Die weiße Motte', type: 'waveboss', at: 100, foe: 'b7_motte', pace: 1.9, theme: 'bestienplanet', roles: R_WALD7, comp: ['sil'],
+      text: 'Auf einem Graylash-Planeten greifen Hunderte Bestien den Shelter an. Über ihnen: eine riesige weiße Motte, deren Flaum Energie absaugt. Ihr Bauch ist die Schwachstelle.' },
+    { name: 'Die Markierten', type: 'survive', dur: 200, pace: 2.1, theme: 'bestienplanet', roles: R_MARK, comp: ['lena', 'peter'], elites: 3,
+      text: 'Verschwundene kehren zurück – ohne Erinnerung, mit einem roten Wurzelmal auf dem Rücken. Wer gebissen wird, kippt in Sekunden. Tausende strömen durch die offenen Tore.' },
+    { name: 'Der rosa Baum', type: 'waveboss', at: 90, foe: 'b7_baum', pace: 2.0, theme: 'bestienplanet', roles: R_MARK, comp: ['lena'],
+      text: 'Der Shelter wurde wegen der Schönheit eines Baumes gebaut. Unter seiner Rinde: rosa Kristall und schwarzes Blut. Der Baum ist der Dämon, der alle markiert.' },
+    { name: 'Dred im Kolosseum von ZOO', type: 'duel', foe: 'b7_dred', crowd: 0.4, theme: 'schlachtfeld', roles: R_ZOO, comp: ['leo', 'emma'],
+      text: 'In der Bestienstadt ZOO kämpfen Zähmer im Kolosseum. Dann steigt ein Dalki-Kommandant in die Arena, dessen Brüllen doppelt so laut ist wie jedes Bellen.' },
+    { name: 'Der schwarze Drache', type: 'endure', foe: 'b7_drache', dur: 80, crowd: 0.2, theme: 'bestienplanet', roles: R_INSEL,
+      text: 'Vor der Steintafel der Blade-Insel schläft ein schwarzer Drache, größer als die Burg. Man kann ihn nicht töten – nur beide Hälften zugleich. Sein Brüllen wirft alle zu Boden.' },
+    { name: 'Colonel Longblade', type: 'duel', foe: 'b7_longblade', crowd: 0.2, theme: 'schlachtfeld', roles: R_ROHR,
+      text: 'In einem Shelter mit Rohrbahnen und Bergbau-Mechs tritt „Bucky“ gegen den Mech-Fan Longblade an. Sein Katana sieht einen Augenblick in die Zukunft.' },
+    { name: 'Agent 2', type: 'duel', foe: 'b7_agent2', crowd: 0.2, theme: 'ruinen', roles: R_ROHR, comp: ['lena'],
+      text: 'Pures zweiter Agent hat seinen Männern das Qi geraubt. Sein stumpfer Stab schlägt Blutschnitte einfach weg, und Qi ist neben der Sonne der Albtraum der Vampire.' },
+    { name: 'Der Demi-God aus Erde', type: 'boss', at: 90, foe: 'b7_erde', pace: 2.0, theme: 'ruinen', roles: R_ROHR, comp: ['fex', 'sil'],
+      text: 'Ein dunkelbrauner Riese mit eckigen grünen Augen zerstört die Bergbau-Mechs. Er spricht: Die Kristalle sind die Lebenskraft des Planeten. Und in ihm soll Raten eine neue Heimat finden.' }
+  ]
+};
+
 /* ------------------------------------------------------------ Alle Etappen */
-// Etappen 7 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
+// Etappen 8 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
 function autoLevels(ch) {
   const out = [];
   for (let l = 1; l <= 8; l++) {
@@ -408,7 +483,7 @@ function autoLevels(ch) {
   }
   return out;
 }
-const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3, ETAPPE4, ETAPPE5, ETAPPE6].concat(CHAPTERS.slice(8).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
+const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3, ETAPPE4, ETAPPE5, ETAPPE6, ETAPPE7].concat(CHAPTERS.slice(9).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
 ETAPPEN.forEach((E, i) => { E.n = i + 1; E.levels.forEach((L, j) => { L.l = j + 1; }); });
 // Kapitel (Gegner-/Boss-Sammlungen) -> Etappe, fuer den Boss-Turm
 const ET_OF_CH = {}; ETAPPEN.forEach((E) => { const chs = new Set([E.ch]); E.levels.forEach((L) => L.ch && chs.add(L.ch)); if (E.n === 1) chs.add(3); chs.forEach((c) => { ET_OF_CH[c] = E.n; }); });
