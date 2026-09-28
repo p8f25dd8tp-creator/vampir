@@ -404,14 +404,8 @@ const BOSS_BUILD = {
     add(SPH(), M('#e888b8'), [0, 150, 0], [64, 40, 56]); add(SPH(), M('#f0a0c8'), [30, 170, 10], [34, 26, 30]); add(SPH(), M('#d870a8'), [-34, 160, -6], [30, 24, 28]);
     add(OCT(), M('#ff8ac8', { emissive: new THREE.Color('#ff4a9a'), emissiveIntensity: 0.8 }), [0, 70, 20], [10, 22, 8]);
   },
-  drache(add, M, body) { // schwarzer Drache, zwei Fluegelpaare
-    add(SPH(), M('#141218'), [0, 60, -10], [48, 40, 76]);
-    for (let k = 0; k < 4; k++) add(SPH(), M('#1a1820'), [0, 90 + k * 20, 60 + k * 14], [20 - k * 2, 20 - k * 2, 20 - k * 2]);
-    add(SPH(), M('#1e1c26'), [0, 170, 124], [22, 18, 30]);
-    for (const sd of [-1, 1]) { add(CON(), M('#2a2830'), [sd * 12, 188, 116], [5, 22, 5], [-0.6, 0, sd * 0.2]); for (const z of [20, -30]) add(SPH(), M('#201c28'), [sd * 90, 110, z], [70, 6, 34], [0, 0, sd * 0.35]); add(CAP(), M('#141218'), [sd * 34, 20, 40], [12, 24, 12]); add(CAP(), M('#141218'), [sd * 34, 20, -50], [12, 24, 12]); }
-    for (let k = 0; k < 5; k++) add(SPH(), M('#141218'), [0, 50 - k * 4, -90 - k * 22], [14 - k * 2, 14 - k * 2, 14 - k * 2]);
-    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#8a5aff' })); x.position.set(sd * 12, 176, 150); x.scale.set(4, 2.5, 2); body.add(x); }
-  },
+  drache: (add, M, body) => dracheBody(add, M, body, '#141218', '#8a5aff'),
+  drache2: (add, M, body) => dracheBody(add, M, body, '#4a1410', '#ffb02a'),
   erdgott(add, M, body) { // brauner Erdriese, asymmetrisch, eckige gruene Augen
     add(DOD(), M('#5a3e28'), [0, 60, 0], [44, 50, 38]); add(DOD(), M('#6a4a30'), [0, 120, 8], [30, 28, 28]);
     add(DOD(), M('#5a3e28'), [-56, 96, 10], [30, 30, 30]); add(CAP(), M('#4a3220'), [-66, 50, 24], [16, 36, 16]);
@@ -441,6 +435,29 @@ const BOSS_BUILD = {
     add(CAP(), M('#1a1420'), [0, 96, -4], [14, 24, 12]); add(SPH(), M('#2a2030'), [0, 118, -4], [18, 8, 14]);
     add(SPH(), M('#d8ccc8'), [18, 90, 10], [9, 10, 9]);
     for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ff1a1a' })); x.position.set(sd * 6, 100, 90); x.scale.set(3, 2, 2); body.add(x); }
+  },
+  onehorn(add, M, body) { dalkiBody(add, M, body, 1, '#4a4038', '#c8b8a0'); for (const sd of [-1, 1]) add(SPH(), M('#2a2420'), [sd * 70, 110, -20], [50, 6, 26], [0, 0, sd * 0.4]); },
+  newgen(add, M, body) { dalkiBody(add, M, body, 3, '#5a5a6a', '#8ae8ff'); for (const sd of [-1, 1]) add(SPH(), M('#6a6a7a'), [sd * 58, 70, 30], [12, 12, 12]); },
+  dhelen(add, M, body) { dalkiBody(add, M, body, 5, '#6a8a5a', '#f0a0c8'); for (let k = 0; k < 6; k++) { const a = k / 6 * TAU; add(CAP(), M('#3a6a2a'), [Math.cos(a) * 50, 60, Math.sin(a) * 40], [4, 34, 4], [Math.sin(a) * 1.1, 0, -Math.cos(a) * 1.1]); } },
+  blob(add, M, body) { add(SPH(), M('#3a4a3a'), [0, 60, 0], [66, 56, 60]); dalkiBody(add, M, body, 5, '#4a5a4a', '#e8d060'); },
+  greenhorn: (add, M, body) => dalkiBody(add, M, body, 4, '#3a6a3a', '#8aff5a'),
+  graham8(add, M, body) { dalkiBody(add, M, body, 8, '#4a4050', '#ffd060'); for (const sd of [-1, 1]) add(SPH(), M('#3a3036'), [sd * 80, 120, -20], [64, 8, 30], [0, 0, sd * 0.45]); },
+  agent3(add, M, body) { // hautlose Muskelmasse, Knochenhaende am Ruecken
+    add(CAP(), M('#8a2a2a'), [0, 56, 0], [26, 36, 22]); add(SPH(), M('#a03a30'), [0, 104, 4], [30, 26, 24]); add(SPH(), M('#b04a40'), [0, 144, 10], [18, 18, 18]);
+    for (const sd of [-1, 1]) { add(CAP(), M('#8a2a2a'), [sd * 38, 90, 10], [10, 30, 10], [0.3, 0, sd * 0.4]); for (let k = 0; k < 3; k++) add(CAP(), M('#e8e0cc'), [sd * (14 + k * 8), 110 - k * 14, -26], [3, 24, 3], [-0.4, 0, sd * 0.3]); add(CAP(), M('#5a1a1a'), [sd * 14, 16, 0], [11, 18, 11]); }
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffffff' })); x.position.set(sd * 6, 148, 26); x.scale.set(3, 2, 2); body.add(x); }
+  },
+  genbu(add, M, body) { // Riesenschildkroete, Panzer wie ein Berg
+    add(SPH(), M('#3a4a3a'), [0, 60, 0], [80, 52, 90]);
+    for (let k = 0; k < 7; k++) add(DOD(), M('#4a5a4a'), [Math.cos(k) * 40, 96 + (k % 3) * 8, Math.sin(k) * 50], [22, 18, 22]);
+    add(SPH(), M('#5a6a4a'), [0, 44, 100], [26, 22, 30]);
+    for (const sd of [-1, 1]) for (const z of [-50, 50]) add(CAP(), M('#4a5a3a'), [sd * 64, 16, z], [18, 20, 18]);
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffd23a' })); x.position.set(sd * 12, 52, 126); x.scale.set(4, 3, 2); body.add(x); }
+  },
+  ape(add, M, body) { // vierarmiger Gorilla
+    add(SPH(), M('#4a4a52'), [0, 70, 0], [44, 44, 38]); add(SPH(), M('#3a3a42'), [0, 118, 16], [24, 22, 22]);
+    for (const sd of [-1, 1]) { for (const y of [100, 66]) add(CAP(), M('#3a3a42'), [sd * 52, y, 20], [13, 32, 13], [0.5, 0, sd * 0.5]); add(CAP(), M('#2a2a32'), [sd * 22, 18, 0], [14, 20, 14]); }
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ff5a2a' })); x.position.set(sd * 8, 122, 36); x.scale.set(3.5, 2.5, 2); body.add(x); }
   },
   ranken(add, M, body) { // hausgross, langer Hals, Knospe mit sechs Ranken
     add(SPH(), M('#3a6a3a'), [0, 40, -10], [56, 34, 64]);
@@ -507,6 +524,15 @@ function kingHund(add, M, body, skin, acc) { // hundeartig, grosse Schnauze, Keu
   for (let k = 0; k < 3; k++) add(SPH(), M(skin), [0, 50 + k * 6, -70 - k * 14], [8, 8, 8]);
   add(SPH(), M(shadeHex(skin, -0.35)), [0, 70, -120], [18, 18, 18]);
   for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffd23a' })); x.position.set(sd * 12, 88, 78); x.scale.set(4, 3, 2); body.add(x); }
+}
+function dracheBody(add, M, body, col, eye) { // Drache mit zwei Fluegelpaaren
+  const c2 = shadeHex(col, 0.1);
+  add(SPH(), M(col), [0, 60, -10], [48, 40, 76]);
+  for (let k = 0; k < 4; k++) add(SPH(), M(c2), [0, 90 + k * 20, 60 + k * 14], [20 - k * 2, 20 - k * 2, 20 - k * 2]);
+  add(SPH(), M(shadeHex(col, 0.15)), [0, 170, 124], [22, 18, 30]);
+  for (const sd of [-1, 1]) { add(CON(), M('#2a2830'), [sd * 12, 188, 116], [5, 22, 5], [-0.6, 0, sd * 0.2]); for (const z of [20, -30]) add(SPH(), M(shadeHex(col, 0.05)), [sd * 90, 110, z], [70, 6, 34], [0, 0, sd * 0.35]); add(CAP(), M(col), [sd * 34, 20, 40], [12, 24, 12]); add(CAP(), M(col), [sd * 34, 20, -50], [12, 24, 12]); }
+  for (let k = 0; k < 5; k++) add(SPH(), M(col), [0, 50 - k * 4, -90 - k * 22], [14 - k * 2, 14 - k * 2, 14 - k * 2]);
+  for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: eye })); x.position.set(sd * 12, 176, 150); x.scale.set(4, 2.5, 2); body.add(x); }
 }
 function dalkiBody(add, M, body, spikes, skin, acc) {
   add(CAP(), M(shadeHex(skin, -0.35)), [0, 46, 0], [30, 28, 26]);

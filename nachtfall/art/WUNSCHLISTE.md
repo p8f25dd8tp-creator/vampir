@@ -36,7 +36,8 @@ Wichtig: Treffer (Faust, Klinge), Blutspritzer, Explosion, Blitz, Feuer, Eis, Bo
   Feuer-Stein-Bestie, Mantis, Rowa, Helen, Tulk, Lucy, Diamant-Krabbe, Hilston, Bryce, Amber,
   Ovinnik, Remus, Cindy in der Königsrüstung, Sach, Martial Art God, Weiße Motte, rosa Baum, Dred,
   schwarzer Drache, Longblade, Agent 2, Demi-God aus Erde, Graham, Slicer, Eno, Sechs-Stachel-Dalki,
-  galaktischer Wurm, Dullahan, Laxmus).
+  galaktischer Wurm, Dullahan, Laxmus, Samantha, Agent 3, Genbu, Vorti Ape, Doppelgänger, One Horn,
+  Doppelellenbogen-Dalki, Dalki-Helen, Blob, zweite Drachenhälfte, Green Horn, Graham mit acht Stacheln).
 - **Bodentexturen**: Liste wächst in `SZENEN-LISTE.md`.
 
 ---

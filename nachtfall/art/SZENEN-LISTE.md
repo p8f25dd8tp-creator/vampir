@@ -49,3 +49,10 @@ Am Ende gibt es daraus einen gemeinsamen GPT-Prompt-Block.
 | 8 | Richards Labor | weiße Laborfliesen, Tanks |
 | 8 | Tunnel mit Mouth Splittern | nasser Stein, Knochen |
 | 8 | Königsburg im Kampf | schwarzer Marmor, Schattenrisse |
+| 9 | Simulation: Wüstendorf mit Holzbrücke | Sand, Holzplanken |
+| 9 | Stadion des Boards | Arena-Boden, Glaslogen |
+| 9 | Welt der Vertrauten, Genbus Berg | lebender Fels, Moos |
+| 9 | Sumpfplanet | grüner Schlamm, Smog |
+| 9 | Lavaplanet | heißer schwarzer Boden mit Glut |
+| 9 | Violetter Eisplanet | violettes Eis |
+| 9 | Dalki-Planetenschiff | zusammengeflickte Landmassen, schwarzes Metall |

@@ -141,7 +141,7 @@ newRun = function (heroId, opts) {
   if (cp.mode === 'endless') { G.campGoal = Infinity; return; }
   const ch = cp.ch; G.lv = cp.lv; setTheme(cp.lv && cp.lv.theme || ch.theme); storySetup(G, ch);
   if (cp.lv && cp.lv.roles) G.roles = Object.assign({}, ch.roles, cp.lv.roles);
-  const ek = cp.mode === 'endless' ? 0 : cp.e - 1; const ek1 = Math.min(ek, 6), ek2 = Math.max(0, ek - 6); G.diffHp *= CAMP_DIFF.hp * (1 + 0.25 * ek1 + 0.12 * ek2); G.diffDmg *= CAMP_DIFF.dmg * (1 + 0.12 * ek1 + 0.05 * ek2); G.diffCount *= CAMP_DIFF.count * (1 + 0.02 * ek); // Kampagne haerter als die alte Story (Ausruestung, Burg, Talente)
+  const ek = cp.mode === 'endless' ? 0 : cp.e - 1; const ek1 = Math.min(ek, 6), ek2 = Math.max(0, ek - 6); G.diffHp *= CAMP_DIFF.hp * (1 + 0.25 * ek1 + 0 * ek2); G.diffDmg *= CAMP_DIFF.dmg * (1 + 0.12 * ek1 + 0 * ek2); // ab Etappe 7 waechst nur noch die Kapitelstaerke G.diffCount *= CAMP_DIFF.count * (1 + 0.02 * ek); // Kampagne haerter als die alte Story (Ausruestung, Burg, Talente)
   const C = campSave(), M = SAVE.meta, fam = C.castle;
   G.statMod = (st) => { for (const id in GEAR2) GEAR2[id].apply(st, gearPower(id)); st.might *= 1 + 0.02 * fam; st.maxHp *= 1 + 0.03 * fam; };
   G.crystalMul = 1 + 0.15 * (M.kristall || 0);
@@ -167,7 +167,7 @@ function campLevelSetup(G, cp) {
       G.diffDmg *= 0.5 + 0.35 * frac; G.diffBoss = 0.85 + 0.3 * frac;
       G.events = withBoss(2.5); G.pendingLevels = (G.pendingLevels || 0) + Math.round(3 + frac * 9); break; // Duell: Startstufen, weil kaum Erfahrung faellt
     case 'waveboss':
-      G.pace = pace; G.campGoal = Infinity; G.events = scaled(L.at).concat(withBoss(L.at)); break;
+      G.pace = pace; G.campGoal = Infinity; G.diffDmg *= 0.8; G.events = scaled(L.at).concat(withBoss(L.at)); break; // Boss trifft auf Restwellen: etwas milder
     case 'boss':
       G.campGoal = Infinity; G.diffBoss = (G.diffBoss || 1) * (1 + 0.06 * cp.e);
       if (L.full) G.roles = Object.assign({}, G.roles, { boss: foe });

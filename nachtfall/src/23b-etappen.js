@@ -11,7 +11,7 @@
      boss     — Etappen-Finale: Wellen, dann der Boss
      berserk  — Finn als wahnsinniger Bloodsucker (doppelte Kraft, halbes Leben)
    Zusatz `berserk: true` macht jede andere Stufenart zum Bloodsucker-Kampf.
-   Etappen 9 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
+   Etappen 10 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
    ========================================================================== */
 
 /* ------------------------------------------------------------ Gegner der Etappe 1 */
@@ -537,8 +537,74 @@ const ETAPPE8 = {
   ]
 };
 
+/* ------------------------------------------------------------ Etappe 9: Graham (Kapitel 1409–1572) */
+defEnemy('e9_pureb', 'ghoul', 'q_spore', 'Pure-Bestie', { hp: 52 });
+defEnemy('e9_halb', 'knight', 'h_pure', 'Halb verwandelter Mensch', { armor: 7 });
+defEnemy('e9_qi', 'witch', 'h_pure', 'Qi-Agent', { shot: 'light', flier: false });
+defEnemy('e9_pureB', 'brute', 'q_mutter', 'Große Pure-Bestie', { splits: 0, hp: 380 });
+defEnemy('e9_agent', 'captain', 'h_pure', 'Pure-Agent', { scale: 1.3, hp: 6500 });
+defEnemy('e9_sumpf', 'ghoul', 'q_kroete', 'Sumpfbestie', { hp: 52 });
+defEnemy('e9_prog', 'knight', 'q_panzer', 'Progressive Bestie', { armor: 7 });
+defEnemy('e9_affe', 'brute', 'q_koenig', 'Grauer Gorilla', { splits: 0, hp: 380 });
+defEnemy('e9_d2', 'ghoul', 'dalki2', 'Zwei-Stachel-Krieger', { hp: 62 });
+defEnemy('e9_newgen', 'knight', 'dalki4', 'Dalki der neuen Generation', { armor: 8 });
+defEnemy('e9_lava', 'ghoul', 'q_orange', 'Lavabestie', { hp: 52 });
+defEnemy('e9_auge', 'bat', 'bat_blut', 'Doppelkugel-Auge', { hp: 46 });
+defBoss('b9_samantha', 'erin', 'Samantha (neun Erdschwänze)', 13000, Object.assign({ look: 'b_samantha', bellShot: 'spike' }, B1));
+defBoss('b9_agent3', 'kronker', 'Agent 3 (Pure)', 16000, { model: 'agent3', bellShot: 'light', r: 38 });
+defBoss('b9_genbu', 'krabbe', 'Genbu, König der Vertrauten', 60000, { model: 'genbu', bellShot: 'spike', r: 80, scale: 1.5, spd: 30 });
+defBoss('b9_ape', 'kronker', 'Vorti Ape (Emperor)', 15000, { model: 'ape', bellShot: 'spike', r: 44 });
+defBoss('b9_doppel', 'mono', 'Der Doppelgänger', 15000, Object.assign({ look: 'b_doppel', bellShot: 'blood', spd: 76 }, B1));
+defBoss('b9_onehorn', 'dalki1', 'One Horn', 60000, { model: 'onehorn', bellShot: 'spike', r: 40, scale: 1.2 });
+defBoss('b9_newgen', 'dalki1', 'Dalki mit Doppelellenbogen', 17000, { model: 'newgen', bellShot: 'spike', r: 36 });
+defBoss('b9_dhelen', 'graham', 'Dalki-Helen (fünf Stacheln)', 18000, { model: 'dhelen', bellShot: 'acid', r: 36 });
+defBoss('b9_blob', 'graham', 'Blob (fünf Stacheln)', 19000, { model: 'blob', bellShot: 'spike', r: 44, armor: 8, spd: 40 });
+defBoss('b9_drache2', 'kronker', 'Die zweite Drachenhälfte', 22000, { model: 'drache2', bellShot: 'bell', r: 80, scale: 1.6 });
+defBoss('b9_greenhorn', 'graham', 'Green Horn (vier Stacheln)', 18000, { model: 'greenhorn', bellShot: 'spike', r: 36 });
+defBoss('b9_graham', 'graham', 'Graham (acht Stacheln)', 21000, { model: 'graham8', bellShot: 'spike', r: 40, scale: 1.15, spd: 74 });
+const R_PUREB = { ghoul: 'e9_pureb', bat: 'e7_heu', knight: 'e9_halb', witch: 'e9_qi', brute: 'e9_pureB', captain: 'e9_agent' };
+const R_SUMPF = { ghoul: 'e9_sumpf', bat: 'e7_heu', knight: 'e9_prog', witch: 'c3_spucker', brute: 'e9_affe', captain: 'c3_koenigB' };
+const R_DALKI9 = { ghoul: 'e9_d2', bat: 'e7_d1', knight: 'e8_d3', witch: 'e7_dS', brute: 'e7_dB', captain: 'e8_dK' };
+const R_NEWGEN = { ghoul: 'e9_d2', bat: 'e7_d1', knight: 'e9_newgen', witch: 'e7_dS', brute: 'e7_dB', captain: 'e8_dK' };
+const R_LAVA = { ghoul: 'e9_lava', bat: 'e9_auge', knight: 'e5_panzer', witch: 'e5_feuerkroete', brute: 'c3_koenig', captain: 'c3_koenigB' };
+const ETAPPE9 = {
+  title: 'Graham', place: 'Das Board · Vertrautenwelt · Dalki-Planeten · Daisy-Siedlung', src: 'Kapitel 1409–1572', theme: 'roterhimmel', ch: 10,
+  levels: [
+    { name: 'Das Spiel des Boards', type: 'duel', foe: 'b9_samantha', crowd: 0.3, theme: 'caladi', roles: R_PUREB, comp: ['fex'],
+      text: 'Die Mächtigen der Menschen laden die Vampire zu einem Spiel in der Simulation: ein Wüstendorf mit Holzbrücke. Samantha greift mit neun Erdschwänzen an – und Fex hat sich in sie verliebt.' },
+    { name: 'Die Falle im Stadion', type: 'survive', dur: 180, pace: 1.67, theme: 'schlachtfeld', roles: R_PUREB, elites: 3,
+      text: 'Grünes Schlafgas flutet die Logen, und aus der Südbox strömen Pure-Bestien – zehntausend halb verwandelte Menschen. Das Board wollte die Vampire nie gewinnen lassen.' },
+    { name: 'Agent 3', type: 'duel', foe: 'b9_agent3', crowd: 0.3, theme: 'burg', roles: R_PUREB,
+      text: 'Hautlose Muskeln, Knochen wie herabhängende Hände auf dem Rücken. Sein Qi-Faustschlag bricht Sach das Knie, und die Wunde heilt nicht.' },
+    { name: 'Genbu', type: 'endure', foe: 'b9_genbu', dur: 75, crowd: 0.2, theme: 'himmel', roles: R_VERTRAUT, comp: ['leo'],
+      text: 'In der Welt der Vertrauten schläft ein König im Berg: eine Schildkröte, größer als jede Burg. Stärkste Verteidigung aller Könige – eine einzige Schuppe zu brechen ist schon ein Sieg.' },
+    { name: 'Vorti Ape', type: 'duel', foe: 'b9_ape', crowd: 0.4, theme: 'bestienplanet', roles: R_SUMPF,
+      text: 'Auf der Jagd nach einem Nest-Kristall: ein vierarmiger Gorilla der Emperor-Stufe. Finns Drainimo-Handschuh wird dabei zur Dämonenwaffe und saugt Energie für immer ab.' },
+    { name: 'Der Doppelgänger', type: 'duel', foe: 'b9_doppel', crowd: 0.2, theme: 'bestienplanet', roles: R_SUMPF,
+      text: 'Im grünen Smog des Sumpfplaneten kopiert eine Bestie jeden, der sie ansieht – mit Ausrüstung, Muay Thai und Blitzschritt. Finn kämpft gegen sich selbst.' },
+    { name: 'One Horn', type: 'endure', foe: 'b9_onehorn', dur: 90, crowd: 0.3, theme: 'ruinen', roles: R_DALKI9, comp: ['fex'],
+      text: 'Der Anführer des ersten Krieges hat inzwischen mehr Stacheln, als er zeigt. „Je mehr Blut ich verliere, desto stärker werde ich.“ Sach und Oscar fallen hier.' },
+    { name: 'Der Lavaplanet', type: 'hunt', role: 'bat', n: 45, pace: 1.80, theme: 'roterhimmel', roles: R_LAVA, comp: ['emma'],
+      text: 'Emma jagt im Exil mit einem Menschenteam: schwebende Doppelkugeln mit je einem Auge, die aus Tentakeln Feuerbälle schleudern.' },
+    { name: 'Doppelellenbogen', type: 'duel', foe: 'b9_newgen', crowd: 0.4, theme: 'schlachtfeld', roles: R_NEWGEN, comp: ['emma'],
+      text: 'Grahams neue Dalki sind aus der DNA starker Menschen gezüchtet. Einer mit doppelten Ellenbogen hat Hermes getötet. Emma rettet Owens Gruppe – und ihre Augen glühen gelb.' },
+    { name: 'Peters Wights', type: 'survive', dur: 190, pace: 1.89, theme: 'himmel', roles: R_DALKI9, comp: ['peter'], elites: 4,
+      text: 'Auf einem violetten Eisplaneten ist Peter die perfekte Nemesis: Jeder besiegte Gegner kämpft danach für ihn – ein kopfloser Hilston, Slicers Beine.' },
+    { name: 'Dalki-Helen', type: 'duel', foe: 'b9_dhelen', crowd: 0.3, theme: 'bestienplanet', roles: R_DALKI9, comp: ['lena'],
+      text: 'Graham hat aus Helens DNA einen Dalki mit fünf Stacheln gemacht. Ihre Ranken packen Lenas Schwert. In Lenas Kopf schreien die Verdammten.' },
+    { name: 'Der Blob', type: 'duel', foe: 'b9_blob', crowd: 0.2, theme: 'ruinen', roles: R_NEWGEN, comp: ['sil', 'peter'],
+      text: 'Die Dalki-Heimat ist ein Planetenschiff aus geraubten Landmassen. Aus einem Turm bricht ein Fünfzack mit doppelt dicken Schuppen – ein Panzer auf zwei Beinen.' },
+    { name: 'Die zweite Drachenhälfte', type: 'waveboss', at: 60, foe: 'b9_drache2', pace: 1.80, theme: 'roterhimmel', roles: R_NEWGEN, comp: ['sil', 'fabian'],
+      text: 'Der Drache der Dalki fliegt durchs geöffnete Dach. Sils Seelenwaffe erwacht: ein Regenbogenbuch, jede Seite eine kopierte Fähigkeit – beliebig tauschbar.' },
+    { name: 'Green Horn', type: 'duel', foe: 'b9_greenhorn', crowd: 0.4, theme: 'siedlung', roles: R_DALKI9,
+      text: 'Das letzte Mutterschiff greift die Siedlung auf dem Daisy-Planeten an. Finn hat den Nest-Kristall aufgenommen, Ray ist zurück. „Wo ist Graham?!“' },
+    { name: 'Acht Stacheln', type: 'boss', at: 50, foe: 'b9_graham', pace: 1.80, theme: 'siedlung', roles: R_NEWGEN, comp: ['sil'],
+      text: 'Graham hält Sunny und ein kleines Mädchen in den Händen. Finn wählt das Kind. Graham frisst Dalki und wächst zu acht Stacheln mit Fellflügeln – seine Wunden heilen in Sekunden.' }
+  ]
+};
+
 /* ------------------------------------------------------------ Alle Etappen */
-// Etappen 9 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
+// Etappen 10 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
 function autoLevels(ch) {
   const out = [];
   for (let l = 1; l <= 8; l++) {
@@ -547,7 +613,7 @@ function autoLevels(ch) {
   }
   return out;
 }
-const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3, ETAPPE4, ETAPPE5, ETAPPE6, ETAPPE7, ETAPPE8].concat(CHAPTERS.slice(9).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
+const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3, ETAPPE4, ETAPPE5, ETAPPE6, ETAPPE7, ETAPPE8, ETAPPE9].concat(CHAPTERS.slice(10).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
 ETAPPEN.forEach((E, i) => { E.n = i + 1; E.levels.forEach((L, j) => { L.l = j + 1; }); });
 // Kapitel (Gegner-/Boss-Sammlungen) -> Etappe, fuer den Boss-Turm
 const ET_OF_CH = {}; ETAPPEN.forEach((E) => { const chs = new Set([E.ch]); E.levels.forEach((L) => L.ch && chs.add(L.ch)); if (E.n === 1) chs.add(3); chs.forEach((c) => { ET_OF_CH[c] = E.n; }); });

@@ -10530,7 +10530,7 @@ humanArt('leander', [
      boss     — Etappen-Finale: Wellen, dann der Boss
      berserk  — Finn als wahnsinniger Bloodsucker (doppelte Kraft, halbes Leben)
    Zusatz `berserk: true` macht jede andere Stufenart zum Bloodsucker-Kampf.
-   Etappen 9 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
+   Etappen 10 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
    ========================================================================== */
 
 /* ------------------------------------------------------------ Gegner der Etappe 1 */
@@ -11056,8 +11056,74 @@ const ETAPPE8 = {
   ]
 };
 
+/* ------------------------------------------------------------ Etappe 9: Graham (Kapitel 1409–1572) */
+defEnemy('e9_pureb', 'ghoul', 'q_spore', 'Pure-Bestie', { hp: 52 });
+defEnemy('e9_halb', 'knight', 'h_pure', 'Halb verwandelter Mensch', { armor: 7 });
+defEnemy('e9_qi', 'witch', 'h_pure', 'Qi-Agent', { shot: 'light', flier: false });
+defEnemy('e9_pureB', 'brute', 'q_mutter', 'Große Pure-Bestie', { splits: 0, hp: 380 });
+defEnemy('e9_agent', 'captain', 'h_pure', 'Pure-Agent', { scale: 1.3, hp: 6500 });
+defEnemy('e9_sumpf', 'ghoul', 'q_kroete', 'Sumpfbestie', { hp: 52 });
+defEnemy('e9_prog', 'knight', 'q_panzer', 'Progressive Bestie', { armor: 7 });
+defEnemy('e9_affe', 'brute', 'q_koenig', 'Grauer Gorilla', { splits: 0, hp: 380 });
+defEnemy('e9_d2', 'ghoul', 'dalki2', 'Zwei-Stachel-Krieger', { hp: 62 });
+defEnemy('e9_newgen', 'knight', 'dalki4', 'Dalki der neuen Generation', { armor: 8 });
+defEnemy('e9_lava', 'ghoul', 'q_orange', 'Lavabestie', { hp: 52 });
+defEnemy('e9_auge', 'bat', 'bat_blut', 'Doppelkugel-Auge', { hp: 46 });
+defBoss('b9_samantha', 'erin', 'Samantha (neun Erdschwänze)', 13000, Object.assign({ look: 'b_samantha', bellShot: 'spike' }, B1));
+defBoss('b9_agent3', 'kronker', 'Agent 3 (Pure)', 16000, { model: 'agent3', bellShot: 'light', r: 38 });
+defBoss('b9_genbu', 'krabbe', 'Genbu, König der Vertrauten', 60000, { model: 'genbu', bellShot: 'spike', r: 80, scale: 1.5, spd: 30 });
+defBoss('b9_ape', 'kronker', 'Vorti Ape (Emperor)', 15000, { model: 'ape', bellShot: 'spike', r: 44 });
+defBoss('b9_doppel', 'mono', 'Der Doppelgänger', 15000, Object.assign({ look: 'b_doppel', bellShot: 'blood', spd: 76 }, B1));
+defBoss('b9_onehorn', 'dalki1', 'One Horn', 60000, { model: 'onehorn', bellShot: 'spike', r: 40, scale: 1.2 });
+defBoss('b9_newgen', 'dalki1', 'Dalki mit Doppelellenbogen', 17000, { model: 'newgen', bellShot: 'spike', r: 36 });
+defBoss('b9_dhelen', 'graham', 'Dalki-Helen (fünf Stacheln)', 18000, { model: 'dhelen', bellShot: 'acid', r: 36 });
+defBoss('b9_blob', 'graham', 'Blob (fünf Stacheln)', 19000, { model: 'blob', bellShot: 'spike', r: 44, armor: 8, spd: 40 });
+defBoss('b9_drache2', 'kronker', 'Die zweite Drachenhälfte', 22000, { model: 'drache2', bellShot: 'bell', r: 80, scale: 1.6 });
+defBoss('b9_greenhorn', 'graham', 'Green Horn (vier Stacheln)', 18000, { model: 'greenhorn', bellShot: 'spike', r: 36 });
+defBoss('b9_graham', 'graham', 'Graham (acht Stacheln)', 21000, { model: 'graham8', bellShot: 'spike', r: 40, scale: 1.15, spd: 74 });
+const R_PUREB = { ghoul: 'e9_pureb', bat: 'e7_heu', knight: 'e9_halb', witch: 'e9_qi', brute: 'e9_pureB', captain: 'e9_agent' };
+const R_SUMPF = { ghoul: 'e9_sumpf', bat: 'e7_heu', knight: 'e9_prog', witch: 'c3_spucker', brute: 'e9_affe', captain: 'c3_koenigB' };
+const R_DALKI9 = { ghoul: 'e9_d2', bat: 'e7_d1', knight: 'e8_d3', witch: 'e7_dS', brute: 'e7_dB', captain: 'e8_dK' };
+const R_NEWGEN = { ghoul: 'e9_d2', bat: 'e7_d1', knight: 'e9_newgen', witch: 'e7_dS', brute: 'e7_dB', captain: 'e8_dK' };
+const R_LAVA = { ghoul: 'e9_lava', bat: 'e9_auge', knight: 'e5_panzer', witch: 'e5_feuerkroete', brute: 'c3_koenig', captain: 'c3_koenigB' };
+const ETAPPE9 = {
+  title: 'Graham', place: 'Das Board · Vertrautenwelt · Dalki-Planeten · Daisy-Siedlung', src: 'Kapitel 1409–1572', theme: 'roterhimmel', ch: 10,
+  levels: [
+    { name: 'Das Spiel des Boards', type: 'duel', foe: 'b9_samantha', crowd: 0.3, theme: 'caladi', roles: R_PUREB, comp: ['fex'],
+      text: 'Die Mächtigen der Menschen laden die Vampire zu einem Spiel in der Simulation: ein Wüstendorf mit Holzbrücke. Samantha greift mit neun Erdschwänzen an – und Fex hat sich in sie verliebt.' },
+    { name: 'Die Falle im Stadion', type: 'survive', dur: 180, pace: 1.67, theme: 'schlachtfeld', roles: R_PUREB, elites: 3,
+      text: 'Grünes Schlafgas flutet die Logen, und aus der Südbox strömen Pure-Bestien – zehntausend halb verwandelte Menschen. Das Board wollte die Vampire nie gewinnen lassen.' },
+    { name: 'Agent 3', type: 'duel', foe: 'b9_agent3', crowd: 0.3, theme: 'burg', roles: R_PUREB,
+      text: 'Hautlose Muskeln, Knochen wie herabhängende Hände auf dem Rücken. Sein Qi-Faustschlag bricht Sach das Knie, und die Wunde heilt nicht.' },
+    { name: 'Genbu', type: 'endure', foe: 'b9_genbu', dur: 75, crowd: 0.2, theme: 'himmel', roles: R_VERTRAUT, comp: ['leo'],
+      text: 'In der Welt der Vertrauten schläft ein König im Berg: eine Schildkröte, größer als jede Burg. Stärkste Verteidigung aller Könige – eine einzige Schuppe zu brechen ist schon ein Sieg.' },
+    { name: 'Vorti Ape', type: 'duel', foe: 'b9_ape', crowd: 0.4, theme: 'bestienplanet', roles: R_SUMPF,
+      text: 'Auf der Jagd nach einem Nest-Kristall: ein vierarmiger Gorilla der Emperor-Stufe. Finns Drainimo-Handschuh wird dabei zur Dämonenwaffe und saugt Energie für immer ab.' },
+    { name: 'Der Doppelgänger', type: 'duel', foe: 'b9_doppel', crowd: 0.2, theme: 'bestienplanet', roles: R_SUMPF,
+      text: 'Im grünen Smog des Sumpfplaneten kopiert eine Bestie jeden, der sie ansieht – mit Ausrüstung, Muay Thai und Blitzschritt. Finn kämpft gegen sich selbst.' },
+    { name: 'One Horn', type: 'endure', foe: 'b9_onehorn', dur: 90, crowd: 0.3, theme: 'ruinen', roles: R_DALKI9, comp: ['fex'],
+      text: 'Der Anführer des ersten Krieges hat inzwischen mehr Stacheln, als er zeigt. „Je mehr Blut ich verliere, desto stärker werde ich.“ Sach und Oscar fallen hier.' },
+    { name: 'Der Lavaplanet', type: 'hunt', role: 'bat', n: 45, pace: 1.80, theme: 'roterhimmel', roles: R_LAVA, comp: ['emma'],
+      text: 'Emma jagt im Exil mit einem Menschenteam: schwebende Doppelkugeln mit je einem Auge, die aus Tentakeln Feuerbälle schleudern.' },
+    { name: 'Doppelellenbogen', type: 'duel', foe: 'b9_newgen', crowd: 0.4, theme: 'schlachtfeld', roles: R_NEWGEN, comp: ['emma'],
+      text: 'Grahams neue Dalki sind aus der DNA starker Menschen gezüchtet. Einer mit doppelten Ellenbogen hat Hermes getötet. Emma rettet Owens Gruppe – und ihre Augen glühen gelb.' },
+    { name: 'Peters Wights', type: 'survive', dur: 190, pace: 1.89, theme: 'himmel', roles: R_DALKI9, comp: ['peter'], elites: 4,
+      text: 'Auf einem violetten Eisplaneten ist Peter die perfekte Nemesis: Jeder besiegte Gegner kämpft danach für ihn – ein kopfloser Hilston, Slicers Beine.' },
+    { name: 'Dalki-Helen', type: 'duel', foe: 'b9_dhelen', crowd: 0.3, theme: 'bestienplanet', roles: R_DALKI9, comp: ['lena'],
+      text: 'Graham hat aus Helens DNA einen Dalki mit fünf Stacheln gemacht. Ihre Ranken packen Lenas Schwert. In Lenas Kopf schreien die Verdammten.' },
+    { name: 'Der Blob', type: 'duel', foe: 'b9_blob', crowd: 0.2, theme: 'ruinen', roles: R_NEWGEN, comp: ['sil', 'peter'],
+      text: 'Die Dalki-Heimat ist ein Planetenschiff aus geraubten Landmassen. Aus einem Turm bricht ein Fünfzack mit doppelt dicken Schuppen – ein Panzer auf zwei Beinen.' },
+    { name: 'Die zweite Drachenhälfte', type: 'waveboss', at: 60, foe: 'b9_drache2', pace: 1.80, theme: 'roterhimmel', roles: R_NEWGEN, comp: ['sil', 'fabian'],
+      text: 'Der Drache der Dalki fliegt durchs geöffnete Dach. Sils Seelenwaffe erwacht: ein Regenbogenbuch, jede Seite eine kopierte Fähigkeit – beliebig tauschbar.' },
+    { name: 'Green Horn', type: 'duel', foe: 'b9_greenhorn', crowd: 0.4, theme: 'siedlung', roles: R_DALKI9,
+      text: 'Das letzte Mutterschiff greift die Siedlung auf dem Daisy-Planeten an. Finn hat den Nest-Kristall aufgenommen, Ray ist zurück. „Wo ist Graham?!“' },
+    { name: 'Acht Stacheln', type: 'boss', at: 50, foe: 'b9_graham', pace: 1.80, theme: 'siedlung', roles: R_NEWGEN, comp: ['sil'],
+      text: 'Graham hält Sunny und ein kleines Mädchen in den Händen. Finn wählt das Kind. Graham frisst Dalki und wächst zu acht Stacheln mit Fellflügeln – seine Wunden heilen in Sekunden.' }
+  ]
+};
+
 /* ------------------------------------------------------------ Alle Etappen */
-// Etappen 9 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
+// Etappen 10 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
 function autoLevels(ch) {
   const out = [];
   for (let l = 1; l <= 8; l++) {
@@ -11066,7 +11132,7 @@ function autoLevels(ch) {
   }
   return out;
 }
-const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3, ETAPPE4, ETAPPE5, ETAPPE6, ETAPPE7, ETAPPE8].concat(CHAPTERS.slice(9).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
+const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3, ETAPPE4, ETAPPE5, ETAPPE6, ETAPPE7, ETAPPE8, ETAPPE9].concat(CHAPTERS.slice(10).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
 ETAPPEN.forEach((E, i) => { E.n = i + 1; E.levels.forEach((L, j) => { L.l = j + 1; }); });
 // Kapitel (Gegner-/Boss-Sammlungen) -> Etappe, fuer den Boss-Turm
 const ET_OF_CH = {}; ETAPPEN.forEach((E) => { const chs = new Set([E.ch]); E.levels.forEach((L) => L.ch && chs.add(L.ch)); if (E.n === 1) chs.add(3); chs.forEach((c) => { ET_OF_CH[c] = E.n; }); });
@@ -11237,7 +11303,7 @@ newRun = function (heroId, opts) {
   if (cp.mode === 'endless') { G.campGoal = Infinity; return; }
   const ch = cp.ch; G.lv = cp.lv; setTheme(cp.lv && cp.lv.theme || ch.theme); storySetup(G, ch);
   if (cp.lv && cp.lv.roles) G.roles = Object.assign({}, ch.roles, cp.lv.roles);
-  const ek = cp.mode === 'endless' ? 0 : cp.e - 1; const ek1 = Math.min(ek, 6), ek2 = Math.max(0, ek - 6); G.diffHp *= CAMP_DIFF.hp * (1 + 0.25 * ek1 + 0.12 * ek2); G.diffDmg *= CAMP_DIFF.dmg * (1 + 0.12 * ek1 + 0.05 * ek2); G.diffCount *= CAMP_DIFF.count * (1 + 0.02 * ek); // Kampagne haerter als die alte Story (Ausruestung, Burg, Talente)
+  const ek = cp.mode === 'endless' ? 0 : cp.e - 1; const ek1 = Math.min(ek, 6), ek2 = Math.max(0, ek - 6); G.diffHp *= CAMP_DIFF.hp * (1 + 0.25 * ek1 + 0 * ek2); G.diffDmg *= CAMP_DIFF.dmg * (1 + 0.12 * ek1 + 0 * ek2); // ab Etappe 7 waechst nur noch die Kapitelstaerke G.diffCount *= CAMP_DIFF.count * (1 + 0.02 * ek); // Kampagne haerter als die alte Story (Ausruestung, Burg, Talente)
   const C = campSave(), M = SAVE.meta, fam = C.castle;
   G.statMod = (st) => { for (const id in GEAR2) GEAR2[id].apply(st, gearPower(id)); st.might *= 1 + 0.02 * fam; st.maxHp *= 1 + 0.03 * fam; };
   G.crystalMul = 1 + 0.15 * (M.kristall || 0);
@@ -11263,7 +11329,7 @@ function campLevelSetup(G, cp) {
       G.diffDmg *= 0.5 + 0.35 * frac; G.diffBoss = 0.85 + 0.3 * frac;
       G.events = withBoss(2.5); G.pendingLevels = (G.pendingLevels || 0) + Math.round(3 + frac * 9); break; // Duell: Startstufen, weil kaum Erfahrung faellt
     case 'waveboss':
-      G.pace = pace; G.campGoal = Infinity; G.events = scaled(L.at).concat(withBoss(L.at)); break;
+      G.pace = pace; G.campGoal = Infinity; G.diffDmg *= 0.8; G.events = scaled(L.at).concat(withBoss(L.at)); break; // Boss trifft auf Restwellen: etwas milder
     case 'boss':
       G.campGoal = Infinity; G.diffBoss = (G.diffBoss || 1) * (1 + 0.06 * cp.e);
       if (L.full) G.roles = Object.assign({}, G.roles, { boss: foe });
@@ -11909,14 +11975,8 @@ const BOSS_BUILD = {
     add(SPH(), M('#e888b8'), [0, 150, 0], [64, 40, 56]); add(SPH(), M('#f0a0c8'), [30, 170, 10], [34, 26, 30]); add(SPH(), M('#d870a8'), [-34, 160, -6], [30, 24, 28]);
     add(OCT(), M('#ff8ac8', { emissive: new THREE.Color('#ff4a9a'), emissiveIntensity: 0.8 }), [0, 70, 20], [10, 22, 8]);
   },
-  drache(add, M, body) { // schwarzer Drache, zwei Fluegelpaare
-    add(SPH(), M('#141218'), [0, 60, -10], [48, 40, 76]);
-    for (let k = 0; k < 4; k++) add(SPH(), M('#1a1820'), [0, 90 + k * 20, 60 + k * 14], [20 - k * 2, 20 - k * 2, 20 - k * 2]);
-    add(SPH(), M('#1e1c26'), [0, 170, 124], [22, 18, 30]);
-    for (const sd of [-1, 1]) { add(CON(), M('#2a2830'), [sd * 12, 188, 116], [5, 22, 5], [-0.6, 0, sd * 0.2]); for (const z of [20, -30]) add(SPH(), M('#201c28'), [sd * 90, 110, z], [70, 6, 34], [0, 0, sd * 0.35]); add(CAP(), M('#141218'), [sd * 34, 20, 40], [12, 24, 12]); add(CAP(), M('#141218'), [sd * 34, 20, -50], [12, 24, 12]); }
-    for (let k = 0; k < 5; k++) add(SPH(), M('#141218'), [0, 50 - k * 4, -90 - k * 22], [14 - k * 2, 14 - k * 2, 14 - k * 2]);
-    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#8a5aff' })); x.position.set(sd * 12, 176, 150); x.scale.set(4, 2.5, 2); body.add(x); }
-  },
+  drache: (add, M, body) => dracheBody(add, M, body, '#141218', '#8a5aff'),
+  drache2: (add, M, body) => dracheBody(add, M, body, '#4a1410', '#ffb02a'),
   erdgott(add, M, body) { // brauner Erdriese, asymmetrisch, eckige gruene Augen
     add(DOD(), M('#5a3e28'), [0, 60, 0], [44, 50, 38]); add(DOD(), M('#6a4a30'), [0, 120, 8], [30, 28, 28]);
     add(DOD(), M('#5a3e28'), [-56, 96, 10], [30, 30, 30]); add(CAP(), M('#4a3220'), [-66, 50, 24], [16, 36, 16]);
@@ -11946,6 +12006,29 @@ const BOSS_BUILD = {
     add(CAP(), M('#1a1420'), [0, 96, -4], [14, 24, 12]); add(SPH(), M('#2a2030'), [0, 118, -4], [18, 8, 14]);
     add(SPH(), M('#d8ccc8'), [18, 90, 10], [9, 10, 9]);
     for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ff1a1a' })); x.position.set(sd * 6, 100, 90); x.scale.set(3, 2, 2); body.add(x); }
+  },
+  onehorn(add, M, body) { dalkiBody(add, M, body, 1, '#4a4038', '#c8b8a0'); for (const sd of [-1, 1]) add(SPH(), M('#2a2420'), [sd * 70, 110, -20], [50, 6, 26], [0, 0, sd * 0.4]); },
+  newgen(add, M, body) { dalkiBody(add, M, body, 3, '#5a5a6a', '#8ae8ff'); for (const sd of [-1, 1]) add(SPH(), M('#6a6a7a'), [sd * 58, 70, 30], [12, 12, 12]); },
+  dhelen(add, M, body) { dalkiBody(add, M, body, 5, '#6a8a5a', '#f0a0c8'); for (let k = 0; k < 6; k++) { const a = k / 6 * TAU; add(CAP(), M('#3a6a2a'), [Math.cos(a) * 50, 60, Math.sin(a) * 40], [4, 34, 4], [Math.sin(a) * 1.1, 0, -Math.cos(a) * 1.1]); } },
+  blob(add, M, body) { add(SPH(), M('#3a4a3a'), [0, 60, 0], [66, 56, 60]); dalkiBody(add, M, body, 5, '#4a5a4a', '#e8d060'); },
+  greenhorn: (add, M, body) => dalkiBody(add, M, body, 4, '#3a6a3a', '#8aff5a'),
+  graham8(add, M, body) { dalkiBody(add, M, body, 8, '#4a4050', '#ffd060'); for (const sd of [-1, 1]) add(SPH(), M('#3a3036'), [sd * 80, 120, -20], [64, 8, 30], [0, 0, sd * 0.45]); },
+  agent3(add, M, body) { // hautlose Muskelmasse, Knochenhaende am Ruecken
+    add(CAP(), M('#8a2a2a'), [0, 56, 0], [26, 36, 22]); add(SPH(), M('#a03a30'), [0, 104, 4], [30, 26, 24]); add(SPH(), M('#b04a40'), [0, 144, 10], [18, 18, 18]);
+    for (const sd of [-1, 1]) { add(CAP(), M('#8a2a2a'), [sd * 38, 90, 10], [10, 30, 10], [0.3, 0, sd * 0.4]); for (let k = 0; k < 3; k++) add(CAP(), M('#e8e0cc'), [sd * (14 + k * 8), 110 - k * 14, -26], [3, 24, 3], [-0.4, 0, sd * 0.3]); add(CAP(), M('#5a1a1a'), [sd * 14, 16, 0], [11, 18, 11]); }
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffffff' })); x.position.set(sd * 6, 148, 26); x.scale.set(3, 2, 2); body.add(x); }
+  },
+  genbu(add, M, body) { // Riesenschildkroete, Panzer wie ein Berg
+    add(SPH(), M('#3a4a3a'), [0, 60, 0], [80, 52, 90]);
+    for (let k = 0; k < 7; k++) add(DOD(), M('#4a5a4a'), [Math.cos(k) * 40, 96 + (k % 3) * 8, Math.sin(k) * 50], [22, 18, 22]);
+    add(SPH(), M('#5a6a4a'), [0, 44, 100], [26, 22, 30]);
+    for (const sd of [-1, 1]) for (const z of [-50, 50]) add(CAP(), M('#4a5a3a'), [sd * 64, 16, z], [18, 20, 18]);
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffd23a' })); x.position.set(sd * 12, 52, 126); x.scale.set(4, 3, 2); body.add(x); }
+  },
+  ape(add, M, body) { // vierarmiger Gorilla
+    add(SPH(), M('#4a4a52'), [0, 70, 0], [44, 44, 38]); add(SPH(), M('#3a3a42'), [0, 118, 16], [24, 22, 22]);
+    for (const sd of [-1, 1]) { for (const y of [100, 66]) add(CAP(), M('#3a3a42'), [sd * 52, y, 20], [13, 32, 13], [0.5, 0, sd * 0.5]); add(CAP(), M('#2a2a32'), [sd * 22, 18, 0], [14, 20, 14]); }
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ff5a2a' })); x.position.set(sd * 8, 122, 36); x.scale.set(3.5, 2.5, 2); body.add(x); }
   },
   ranken(add, M, body) { // hausgross, langer Hals, Knospe mit sechs Ranken
     add(SPH(), M('#3a6a3a'), [0, 40, -10], [56, 34, 64]);
@@ -12012,6 +12095,15 @@ function kingHund(add, M, body, skin, acc) { // hundeartig, grosse Schnauze, Keu
   for (let k = 0; k < 3; k++) add(SPH(), M(skin), [0, 50 + k * 6, -70 - k * 14], [8, 8, 8]);
   add(SPH(), M(shadeHex(skin, -0.35)), [0, 70, -120], [18, 18, 18]);
   for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffd23a' })); x.position.set(sd * 12, 88, 78); x.scale.set(4, 3, 2); body.add(x); }
+}
+function dracheBody(add, M, body, col, eye) { // Drache mit zwei Fluegelpaaren
+  const c2 = shadeHex(col, 0.1);
+  add(SPH(), M(col), [0, 60, -10], [48, 40, 76]);
+  for (let k = 0; k < 4; k++) add(SPH(), M(c2), [0, 90 + k * 20, 60 + k * 14], [20 - k * 2, 20 - k * 2, 20 - k * 2]);
+  add(SPH(), M(shadeHex(col, 0.15)), [0, 170, 124], [22, 18, 30]);
+  for (const sd of [-1, 1]) { add(CON(), M('#2a2830'), [sd * 12, 188, 116], [5, 22, 5], [-0.6, 0, sd * 0.2]); for (const z of [20, -30]) add(SPH(), M(shadeHex(col, 0.05)), [sd * 90, 110, z], [70, 6, 34], [0, 0, sd * 0.35]); add(CAP(), M(col), [sd * 34, 20, 40], [12, 24, 12]); add(CAP(), M(col), [sd * 34, 20, -50], [12, 24, 12]); }
+  for (let k = 0; k < 5; k++) add(SPH(), M(col), [0, 50 - k * 4, -90 - k * 22], [14 - k * 2, 14 - k * 2, 14 - k * 2]);
+  for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: eye })); x.position.set(sd * 12, 176, 150); x.scale.set(4, 2.5, 2); body.add(x); }
 }
 function dalkiBody(add, M, body, spikes, skin, acc) {
   add(CAP(), M(shadeHex(skin, -0.35)), [0, 46, 0], [30, 28, 26]);
@@ -12697,6 +12789,8 @@ const LOOK = {
   b_longblade: { body: 'barbar', top: '#3a4a5a', acc: '#c8c8d8', pants: '#1a2430', boots: '#101418', cape: '#2a3a4a', skin: '#e0c0a0', hair: 'kurz', hairCol: '#5a5a5a', eye: '#4a6a8a', weapon: 'katana' },
   b_agent2: { body: 'schurke', top: '#e8e8f0', acc: '#8a8aa0', pants: '#2a2a34', boots: '#1a1a20', cape: '#c8c8d8', skin: '#e0c8b0', hair: 'kurz', hairCol: '#1a1a1a', eye: '#a8b8ff', weapon: 'staff' },
   b_eno: { body: 'barbar', top: '#5a0a14', acc: '#ff3a3a', pants: '#2a0408', boots: '#1a0204', cape: '#3a0208', skin: '#e0d0c8', hair: 'kurz', hairCol: '#4a4a52', eye: '#ff2a2a', fangs: true, weapon: 'sword', blade: '#ff4a4a' },
+  b_samantha: { body: 'magier', top: '#5a4028', acc: '#c8a060', pants: '#2a2014', boots: '#1a140c', cape: '#3a2a1a', skin: '#ecd4c0', hair: 'lang', hairCol: '#6a3a1a', eye: '#8a6a3a', girl: true, weapon: 'none' },
+  b_doppel: { body: 'schurke', top: '#1a1418', pants: '#0a080a', boots: '#6a6a70', skin: '#b8b0a8', hair: 'mittel', hairCol: '#0a0808', eye: '#ff2a2a', glasses: true, weapon: 'none' },
   bloodsucker: { body: 'schurke', top: '#6a3a38', pants: '#4a3030', boots: '#2a1a1a', skin: '#d0ccc4', hair: 'glatze', eye: '#0a0000', fangs: true, weapon: 'none', scale: 1.1 },
   b_mono: { body: 'schurke', top: '#1a2440', pants: '#0a1020', boots: '#101018', skin: '#e8d0c0', hair: 'stachel', hairCol: '#1a1a2a', eye: '#6a8ad8', weapon: 'sword', blade: '#d8e8ff' },
   b_ian: { body: 'schurke', top: '#6a4a2a', pants: '#3a2a1a', boots: '#2a1a10', cape: '#4a3a2a', skin: '#e0c0a0', hair: 'kurz', hairCol: '#6a4a2a', eye: '#4a3020', hat: '#6a4a2a', weapon: 'staff' },
