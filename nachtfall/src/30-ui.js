@@ -57,8 +57,10 @@ function uiSkinCss() {
 .mrate.r-schwach, .mrate.r-nie { border-color: #ff4a5a; } .mrate.r-schwach b, .mrate.r-nie b { color: #ff5a6a; }
 .mwhy { display: block; color: #ffb0b0; margin-top: 3px; }
 /* Kopfzeile */
-.hprof > div { min-width: 0; overflow: hidden; }
-.hprof small { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 11px; letter-spacing: -.01em; }
+.hprof > div { min-width: 70px; overflow: hidden; }
+.hbtns .ibtn { width: 36px; height: 36px; }
+.hprof canvas, .hprof img.hport { width: 42px !important; height: 48px !important; }
+.hprof small { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 10.5px; line-height: 1.25; letter-spacing: -.01em; }
 .hcur, .hbtns { flex: none; }
 .hcur { gap: 3px; } .hcur span { padding: 4px 9px 4px 6px !important; font-size: 12.5px; }
 .hbtns { gap: 2px; }

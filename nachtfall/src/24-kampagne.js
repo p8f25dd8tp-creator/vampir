@@ -109,7 +109,7 @@ function talentDraw() {
 const _rcCamp = recomputeStats;
 recomputeStats = function () {
   _rcCamp();
-  const p = GAME.p, st = p.st, M = SAVE.meta;
+  const p = GAME.p, st = p.st, M = p.hero === 'finn' ? SAVE.meta : {};
   st.regen += 0.3 * (M.regen || 0); st.armor += (M.panzer || 0); st.cd *= Math.pow(0.96, M.fokus || 0);
 };
 
@@ -295,11 +295,11 @@ UI.showHome = function (tab) {
   const C = campSave(); dailySave();
   if (!isUnlocked(C.hero)) C.hero = 'finn';
   MENU = null; setTheme(this.tab === 'kampagne' ? ET(this.selEtappe || C.etappe || 1).theme : 'friedhof'); menuScene();
-  const head = `<div class="hometop"><div class="hprof"><canvas id="homehero"></canvas><div><b>${C.hero === 'draco' ? HEROES[C.hero].name : HEROES[C.hero].name.split(' ')[0]}</b><small>Lv ${heroSave(C.hero).lv} · Macht ${Math.floor(heroMacht(C.hero))}</small></div></div>
+  const head = `<div class="hometop"><div class="hprof"><canvas id="homehero"></canvas><div><b>${C.hero === 'draco' ? HEROES[C.hero].name : HEROES[C.hero].name.split(' ')[0]}</b><small title="Heldenstufe · Macht">Lv ${heroSave(C.hero).lv} · M ${Math.floor(heroMacht(C.hero))}</small></div></div>
     <div class="hcur"><span style="color:#d8c0ff">✦ ${SAVE.souls}</span><span style="color:#8ad8ff">◆ ${C.crystals}</span></div>
     <div class="hbtns"><button class="ibtn" data-act="codex">📖</button><button class="ibtn" data-act="settings">⚙</button></div></div>`;
   const body = ({ kampagne: () => this.homeKampagne(), helden: () => this.homeHelden(), ausruestung: () => this.homeGear(), familie: () => this.homeFamilie(), system: () => this.homeSystem(), events: () => this.homeEvents() })[this.tab]();
-  const bar = `<div class="tabbar">${TABS.map(([id, nm, sym, col]) => `<button class="tabb ${id === this.tab ? 'on' : ''}" data-act="home" data-tab="${id}"><img src="${tabIcon(sym, col)}"><span>${nm}</span>${id === 'events' && dailyReadyAny() ? '<i class="dot">!</i>' : ''}</button>`).join('')}</div>`;
+  const bar = `<div class="tabbar">${TABS.map(([id, nm, sym, col]) => `<button class="tabb ${id === this.tab ? 'on' : ''}" data-act="home" data-tab="${id}"><img src="${tabIcon(sym, col)}"><span>${nm}</span>${id === 'system' && (typeof sysClaimable === 'function' ? sysClaimable() : dailyReadyAny()) ? '<i class="dot">!</i>' : ''}</button>`).join('')}</div>`;
   const d = this.show(`<div class="home">${head}<div class="hbody">${body}</div>${bar}</div>`, 'home');
   const hc = $('#homehero'); if (hc) { const r = hc.getBoundingClientRect(); hc.width = Math.round(r.width * VIEW.dpr); hc.height = Math.round(r.height * VIEW.dpr); this.previews.push({ c: hc, id: C.hero, t: 0 }); }
   d.querySelectorAll('canvas[data-prev]').forEach((c) => { const r = c.getBoundingClientRect(); c.width = Math.round(r.width * VIEW.dpr); c.height = Math.round(r.height * VIEW.dpr); this.previews.push({ c, id: c.dataset.prev, t: Math.random() * 5 }); });
@@ -390,7 +390,7 @@ UI.homeEvents = function () {
     return `<div class="famrow"><div class="gtxt"><b>${q.text}</b><small>${pr} / ${q.goal} · Belohnung: <span style="color:#d8c0ff">${q.reward.souls} Seelen ✦</span> · <span style="color:#8ad8ff">${q.reward.crystals} Kristalle ◆</span></small></div><button class="btn small ${done && !got ? 'primary' : ''}" data-act="dailyget" data-id="${q.id}" ${done && !got ? '' : 'disabled'}>${got ? '✔' : 'Abholen'}</button></div>`; }).join('');
   return `<div class="evcard" style="--ec:#6a2a4a"><div><b>Die endlose Nacht</b><small>Horden ohne Ende – wie lange hältst du durch?<br>Beste Nacht: ${fmtTime(C.endless || 0)}</small></div><button class="btn primary" data-act="endless">Starten</button></div>
     <div class="evcard" style="--ec:#4a2a6a"><div><b>Boss-Turm · Stock ${towerNext}</b><small>${towerOpen ? `Die Bosse der Kampagne, stärker als zuvor. Nächster: ${ENEMIES[CHAPTERS[towerNext - 1].roles.boss].name}` : `Stock ${towerNext} öffnet nach Etappe ${ET_OF_CH[towerNext] || '?'}.`} · Höchster Stock: ${C.tower || 0}</small></div><button class="btn primary" data-act="tower" ${towerOpen ? '' : 'disabled'}>Starten</button></div>
-    <div class="syshead" style="margin:10px 4px 6px">TÄGLICHE AUFGABEN</div><div class="gearlist">${daily}</div>`;
+    <div class="evcard" style="--ec:#1a3a6a"><div><b>Aufgaben</b><small>Tägliche, wöchentliche und System-Quests findest du jetzt im System.</small></div><button class="btn" data-act="systabgo">Zum System</button></div>`;
 };
 const _actCamp = UI.act;
 UI.act = function (a, ds, e) {

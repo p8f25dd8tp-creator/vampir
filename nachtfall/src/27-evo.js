@@ -51,8 +51,7 @@ finnEvolve = function (tier) { if (GAME && GAME.p && tier > evoCap('finn')) retu
 function evoRunText(id, i) {
   const src = id === 'finn' && typeof FINN_ARC !== 'undefined' ? FINN_ARC[i] : evoTiersOf(id)[i];
   if (!src) return '';
-  if (src.txt) return 'im Lauf: ' + src.txt;
-  return src.lv ? 'im Lauf ab Stufe ' + src.lv : '';
+  const T = evoTiersOf(id)[i]; return T && T.desc ? T.desc : '';
 }
 UI.evoUnlockHtml = function (id) {
   const T = evoTiersOf(id); if (!T) return '';
@@ -67,7 +66,7 @@ UI.evoUnlockHtml = function (id) {
     } else st = `<span class="evlk">🔒</span>`;
     return `<div class="evrow ${i <= cap ? 'on' : ''}"><i style="background:${t.col}"></i><div><b style="color:${i <= cap ? t.col : ''}">${t.name}</b>${i ? `<small>${evoRunText(id, i)}</small>` : '<small>Startform</small>'}</div>${st}</div>`;
   }).join('');
-  return `<div class="blk"><b class="lbl">FORMEN · ${cap + 1} VON ${T.length} FREI</b><p class="small" style="margin:2px 0 6px">Im Lauf entwickelt sich der Held bis zur höchsten freigeschalteten Form.</p><div class="evlist">${rows}</div></div>`;
+  return `<div class="blk"><b class="lbl">FORMEN · ${cap + 1} VON ${T.length} FREI</b><p class="small" style="margin:2px 0 6px">Jeder Lauf startet in der höchsten freigeschalteten Form.</p><div class="evlist">${rows}</div></div>`;
 };
 const _homeHeldenEvo = UI.homeHelden;
 UI.homeHelden = function () {
