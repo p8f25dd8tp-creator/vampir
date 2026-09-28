@@ -766,3 +766,32 @@ Object.assign(ULTI, {
   const keep = ['finn', 'peter', 'emma', 'lena', 'fabian', 'fex', 'leo', 'sil', 'chris', 'leander', 'agathon', 'sam', 'mia', 'draco'];
   HERO_ORDER.length = 0; for (const h of keep) if (HEROES[h]) HERO_ORDER.push(h);
 })();
+
+/* ============================================================ Menschliche Figuren (Finns Koerperbau)
+   Fabian und Sil sind derselbe blonde Junge (ein Koerper, verschiedene
+   Persoenlichkeiten), nur Augen und Akzente wechseln. Leander ist klein
+   und dunkelhaarig. */
+function humanArt(id, pals, scale) {
+  HERO_ART[id].spec = SPEC_FINN; HERO_ART[id].h = Math.round(64 * (scale || 1));
+  HERO_ART[id].draw = (g, P, L) => { if (scale) g.scale(scale, scale); return withPal([[FINN_LOOK[0], pals[Math.min(L.tier || 0, pals.length - 1)]]], () => drawFinn(g, P, Object.assign({}, L, { tier: 0 }))); };
+}
+const BLADE_BASE = { top: '#2a3a5a', topL: '#4a5a8a', topD: '#141c2e', leg: '#1e2434', legD: '#0e1018', shoe: '#1a1a20', skin: '#ecd8c8', skinD: '#a88878', hair: '#e8cf7a', glasses: false, shirt: '#e8e4dc' };
+const bladeLook = (eye, trim, extra) => Object.assign({}, BLADE_BASE, { eye, trim }, extra || {});
+humanArt('fabian', [
+  bladeLook('#5a8ac8', '#ffd27a'), bladeLook('#ff5a5a', '#ff5a5a'), bladeLook('#c8d0ff', '#c8d0ff'),
+  bladeLook('#ff8a3a', '#ff8a3a', { coat: true, lining: '#8a3a1a' }),
+  bladeLook('#ffd27a', '#ffd27a', { top: '#16161c', topL: '#3a3a4a', topD: '#060608', coat: true, lining: '#8a6a2a' })
+]);
+humanArt('sil', [
+  bladeLook('#c8a0ff', '#c8a0ff'), bladeLook('#c8a0ff', '#ffb040'), bladeLook('#c8a0ff', '#e8e8ff'),
+  bladeLook('#c8a0ff', '#d8e0f0', { coat: true, lining: '#4a3a6a' }),
+  bladeLook('#ffffff', '#c8a0ff', { top: '#e8e8f0', topL: '#ffffff', topD: '#8a8a98', coat: true, lining: '#c8a0ff' })
+]);
+const LEANDER_BASE = { top: '#4a5260', topL: '#7a8498', topD: '#1e222a', leg: '#2a2e38', legD: '#12141a', shoe: '#3a3e48', skin: '#e8c6ac', skinD: '#a8866c', hair: '#3a2a1e', glasses: false, shirt: '#2a2e38' };
+humanArt('leander', [
+  Object.assign({}, LEANDER_BASE, { eye: '#8ad8ff', trim: '#8ad8ff' }),
+  Object.assign({}, LEANDER_BASE, { eye: '#c8d0d8', trim: '#c8d0d8' }),
+  Object.assign({}, LEANDER_BASE, { top: '#6a7a78', topL: '#b8c8c4', topD: '#2a3432', eye: '#6affd8', trim: '#6affd8' }),
+  Object.assign({}, LEANDER_BASE, { top: '#6a7a78', topL: '#b8c8c4', topD: '#2a3432', eye: '#fff4c0', trim: '#fff4c0' }),
+  Object.assign({}, LEANDER_BASE, { top: '#2a3a5a', topL: '#5a7aaa', topD: '#0a1428', eye: '#6ab8ff', trim: '#6ab8ff', coat: true, lining: '#3a6aaa' })
+], 0.8);

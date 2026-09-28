@@ -131,7 +131,7 @@ const UI = {
     menuScene();
     if (!isUnlocked(this.selHero) || !HERO_ORDER.includes(this.selHero)) this.selHero = 'finn';
     const cards = HERO_ORDER.map((id) => `<div class="hcard ${id === this.selHero ? 'sel' : ''} ${isUnlocked(id) ? '' : 'locked'}" data-act="hero" data-id="${id}">
-      <canvas data-prev="${id}"></canvas>${isUnlocked(id) ? '' : '<div class="lock">🔒</div>'}<div class="nm"${HEROES[id].name.length > 16 ? ' style="font-size:0.8em"' : ''}>${HEROES[id].name}</div></div>`).join('');
+      <canvas data-prev="${id}"></canvas>${isUnlocked(id) ? '' : '<div class="lock">🔒</div>'}<div class="nm"${HEROES[id].name.length > 16 ? ' style="font-size:0.66em"' : ''}>${HEROES[id].name}</div></div>`).join('');
     const d = this.show(`<h2>Wähle deinen Helden</h2><div class="heroes">${cards}</div><div class="hdetail panel" id="hdet"></div>
       <div class="selbar"><button class="btn ghost" data-act="title">Zurück</button><button class="btn primary" id="startbtn" data-act="start">Nacht beginnen</button></div>`, 'select', 'dim');
     d.querySelectorAll('canvas[data-prev]').forEach((c) => {
