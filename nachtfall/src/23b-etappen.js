@@ -287,7 +287,7 @@ defBoss('b5_mantis', 'mono', 'Mantis (Gifthand)', 5400, Object.assign({ look: 'b
 defBoss('b5_rowa', 'silva', 'Rowa, gefallener Königsritter', 60000, Object.assign({ look: 'b_rowa', bellShot: 'blood', spd: 70 }, B1));
 defBoss('b5_helen', 'cindy', 'Helen (Daisy)', 6000, Object.assign({ look: 'b_helen', bellShot: 'spike' }, B1));
 defBoss('b5_tulk', 'stahlmann', 'Tulk, Fareen und Kubo', 6400, Object.assign({ look: 'b_tulk', bellShot: 'spike', armor: 5 }, B1));
-defBoss('b5_lucy', 'erin', 'Lucy, Agent Fünf', 7600, Object.assign({ look: 'b_lucy', bellShot: 'light', spd: 72 }, B1));
+defBoss('b5_lucy', 'erin', 'Lucy, Agent Fünf', 6800, Object.assign({ look: 'b_lucy', bellShot: 'light', spd: 72 }, B1));
 defBoss('b5_krabbe', 'krabbe', 'Diamant-Krabbe (Demon-Tier)', 60000, { model: 'krabbe', bellShot: 'spike', r: 60, scale: 1.4 });
 defBoss('b5_chris', 'mono', 'Chris, Meister des Qi', 7200, Object.assign({ look: 'chris', bellShot: 'light', spd: 74 }, B1));
 defBoss('b5_hilston', 'hagon', 'Hilston Blade', 60000, Object.assign({ look: 'b_hilston', bellShot: 'bell', spd: 70 }, B1));
@@ -310,7 +310,7 @@ const ETAPPE5 = {
       text: 'Graylash und Daisy schauen zu. Mantis verliert das Duell um den Planeten – aber seine Gifthand hat jeden berührt, der gegen ihn angetreten ist.' },
     { name: 'Mantis’ Gift', type: 'survive', dur: 180, pace: 1.8, theme: 'ruinen', roles: R_PARA, comp: ['sil'], elites: 3,
       text: 'Dennis spuckt Blut, Fex und Sil krümmen sich. Finn sprengt mit dem Bluthammer das Tor der Parasites. Hinter ihm: Kapuzenmänner ohne Schmerz, mit Riesenkraft – Mantis’ Gift hat sie so gemacht.' },
-    { name: 'Nacht der Bloodsucker', type: 'hunt', role: 'ghoul', n: 90, pace: 1.7, theme: 'siedlung', roles: R_ROWA, comp: ['leo', 'emma'],
+    { name: 'Nacht der Bloodsucker', type: 'hunt', role: 'ghoul', n: 140, pace: 1.7, theme: 'siedlung', roles: R_ROWA, comp: ['leo', 'emma'],
       text: 'In der Vampirwelt fallen süchtige Bloodsucker mit Verstand über die zehnte Burg her. Die Hälfte der Familie stirbt in einer Nacht. Leo und Emma stellen sich vor die Schüler.' },
     { name: 'Rowa', type: 'endure', foe: 'b5_rowa', dur: 80, crowd: 0.4, theme: 'siedlung', roles: R_ROWA, comp: ['leo', 'emma'],
       text: 'Ihr Anführer war einst Königsritter und ein Wunderkind. „Gebt mir das Mädchen.“ Edward stellt sich ihm allein. Haltet durch, bis der König in seiner schwarzen Rüstung erscheint.' },
