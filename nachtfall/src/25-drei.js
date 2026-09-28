@@ -99,7 +99,7 @@ const CHIBI = {
   nyx: { skin: '#ddd4c2', hair: '#221c3a', hs: 'short', top: '#221c3a', bot: '#0c0916', shoe: '#0c0916', eye: '#c9a8ff', mask: true },
   shen: { skin: '#c89d7a', hair: '#eeeae2', hs: 'bald', top: '#1f5a50', bot: '#0b2723', shoe: '#3a2a14', eye: '#5ff0d0', hat: true }
 };
-const COMP_CHIBI = { peter: 'peter', lena: 'lena', fabian: 'fabian', leo: 'leo', emma: 'emma', fex: 'fex', sendraco: 'draco', minny: 'mia', agathon: 'agathon', sam: 'sam', sil: 'sil', leander: 'leander' };
+const COMP_CHIBI = { peter: 'peter', lena: 'lena', fabian: 'fabian', leo: 'leo', emma: 'emma', fex: 'fex', sendraco: 'draco', minny: 'mia', agathon: 'agathon', sam: 'sam', sil: 'sil', leander: 'leander', chris: 'chris' };
 function heroTierCol(hero, tier) {
   const H = HEROES[hero];
   if (hero === 'finn') return FINN_TIERS[tier || 0].col;
@@ -367,6 +367,21 @@ const BOSS_BUILD = {
     for (let k = 0; k < 3; k++) { const a = (k - 1) * 0.6; for (let j = 0; j < 4; j++) add(SPH(), M('#2a2a1a'), [Math.sin(a) * (20 + j * 14), 80 + j * 16, -70 - j * 12], [8 - j, 8 - j, 8 - j]); add(SPH(), M('#ff6a1a', { emissive: new THREE.Color('#ff4a0a'), emissiveIntensity: 0.9 }), [Math.sin(a) * 76, 150, -118], [9, 9, 9]); }
     const eyeM = new THREE.MeshBasicMaterial({ color: '#ffe040' });
     for (let k = 0; k < 10; k++) { const x = new THREE.Mesh(SPH(), eyeM); x.position.set((k % 5 - 2) * 9, 104 + Math.floor(k / 5) * 12 + (k % 2) * 3, 78); x.scale.setScalar(3); body.add(x); }
+  },
+  sandruler(add, M, body) { // nur Oberkoerper aus Sand und Knochen, Wurmhals mit Saugmaul
+    add(CON(), M('#c8a060'), [0, 30, 0], [70, 60, 60]); add(SPH(), M('#d8b070'), [0, 80, 0], [50, 40, 40]);
+    for (let k = 0; k < 5; k++) add(CYL(), M('#f0e8d0'), [0, 70 + k * 10, 30], [40 - k * 4, 2.5, 2.5], [0, 0, Math.PI / 2]);
+    add(SPH(), M('#ffb040', { emissive: new THREE.Color('#ff8a20'), emissiveIntensity: 0.8 }), [0, 90, 20], [12, 12, 12]);
+    for (let k = 0; k < 5; k++) add(SPH(), M('#b89050'), [0, 120 + k * 16, 20 + k * 10], [16 - k, 16 - k, 16 - k]);
+    add(CYL(), M('#8a3a2a'), [0, 200, 74], [14, 10, 14], [Math.PI / 2, 0, 0]);
+    for (const sd of [-1, 1]) { add(CAP(), M('#d8b070'), [sd * 60, 80, 20], [14, 34, 14], [0.6, 0, sd * 0.6]); add(CON(), M('#f0e8d0'), [sd * 76, 50, 56], [6, 26, 6], [1.2, 0, 0]); }
+  },
+  feuerstein(add, M, body) { // Fels mit glühenden Adern
+    const lava = M('#ff6a1a', { emissive: new THREE.Color('#ff4a0a'), emissiveIntensity: 0.9 });
+    add(DOD(), M('#3a2a24'), [0, 50, 0], [50, 44, 44]); add(DOD(), M('#4a342a'), [0, 100, 20], [36, 30, 32]);
+    for (let k = 0; k < 6; k++) add(BOX(), lava, [Math.cos(k) * 30, 50 + k * 8, Math.sin(k) * 30 + 10], [4, 30, 4], [k, 0, k * 0.5]);
+    for (const sd of [-1, 1]) { add(DOD(), M('#3a2a24'), [sd * 52, 70, 26], [20, 26, 20]); add(DOD(), M('#2a1e1a'), [sd * 30, 16, 0], [18, 18, 18]); }
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffd040' })); x.position.set(sd * 12, 108, 50); x.scale.set(5, 3, 2); body.add(x); }
   },
   ranken(add, M, body) { // hausgross, langer Hals, Knospe mit sechs Ranken
     add(SPH(), M('#3a6a3a'), [0, 40, -10], [56, 34, 64]);

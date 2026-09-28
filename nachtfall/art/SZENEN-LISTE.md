@@ -26,3 +26,9 @@ Am Ende gibt es daraus einen gemeinsamen GPT-Prompt-Block.
 | 4 | Shelter-Plaza im Krieg | Pflaster mit Brandspuren, Trümmer |
 | 4 | Blade-Insel, Dschungel und Strand | Dschungelboden, Sand |
 | 4 | Vulkan, Lavabrücke | erkaltete Lava mit glühenden Rissen |
+| 5 | Neuland-Wüste mit Knochen | Sand, gebleichte Knochen |
+| 5 | Dampfspalten | dunkler Fels mit Dampf und Glut |
+| 5 | Parasites-Shelter | Blechhütten, rostiger Boden |
+| 5 | Zehnte Burg bei Nacht | Burghof, Blutspuren |
+| 5 | Dämonen-Planet | blauer, diamantharter Kristallboden |
+| 5 | Welt im Planeten | Wiese am Wasserfall, blaues Kristalllicht |

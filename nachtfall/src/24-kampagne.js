@@ -73,7 +73,7 @@ function gearUp(id) { const C = campSave(); if (!gearCan(id)) return; const g = 
 const CASTLE_MAX = 10;
 function castleCost() { return Math.round(150 * Math.pow(campSave().castle + 1, 1.6)); }
 function partySlots() { const c = campSave().castle; return c >= 7 ? 3 : c >= 3 ? 2 : 1; }
-const COMP_HERO = { peter: 'peter', lena: 'lena', fabian: 'fabian', leo: 'leo', emma: 'emma', fex: 'fex', sendraco: 'draco', minny: 'mia', agathon: 'agathon', sam: 'sam', sil: 'sil', leander: 'leander' };
+const COMP_HERO = { peter: 'peter', lena: 'lena', fabian: 'fabian', leo: 'leo', emma: 'emma', fex: 'fex', sendraco: 'draco', minny: 'mia', agathon: 'agathon', sam: 'sam', sil: 'sil', leander: 'leander', chris: 'chris' };
 companionOpen = function (id) { return isUnlocked(COMP_HERO[id] || id); };
 companionFits = function () { return true; };
 compName = function (id) { return COMPANIONS[id].name; };

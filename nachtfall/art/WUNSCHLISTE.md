@@ -32,7 +32,8 @@ Wichtig: Treffer (Faust, Klinge), Blutspritzer, Explosion, Blitz, Feuer, Eis, Bo
 - **UI-Elemente** aus `UI-PROMPTS.md` (29 Stück), steht schon bereit.
 - **Boss-Karten** für die neuen Bosse aus Etappe 3 und 4. Die Prompts schreibe ich dir gesammelt,
   sobald alle Etappen stehen (Boneclaw, Horn-Kaninchen, Clark, Jin, Edward, Borden, Vadeen, Paul,
-  Linda, Hypolord, King-Hunde, Lemon, Gox, Kiln und Tupple, Chrimeta, Vicky und Pai).
+  Linda, Hypolord, King-Hunde, Lemon, Gox, Kiln und Tupple, Chrimeta, Vicky und Pai, Sand Ruler,
+  Feuer-Stein-Bestie, Mantis, Rowa, Helen, Tulk, Lucy, Diamant-Krabbe, Hilston).
 - **Bodentexturen**: Liste wächst in `SZENEN-LISTE.md`.
 
 ---

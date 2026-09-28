@@ -79,7 +79,13 @@ COMPANIONS.leander = {
   hero: 'liora', pal: [[HERO_PAL.liora, { coat: '#4a5260', coatL: '#7a8698', coatD: '#1a1e26', hair: '#3a2a1e', hairL: '#6a4a30', eye: '#6ab8e8', rim: '#6ab8e8' }]],
   look: {}, speed: 160, range: 260, cd: 1.2
 };
-const COMP_ORDER = ['peter', 'lena', 'fabian', 'leo', 'emma', 'fex', 'leander', 'sam', 'sil', 'agathon', 'sendraco', 'minny'];
+COMPANIONS.chris = {
+  name: 'Chris', role: 'Qi-Meister · Kettenklingen', unlock: 99, col: '#ff5a3a',
+  desc: 'Kein Fähigkeitsnutzer, nur Qi und zwei Gliederklingen, die wie Peitschen auf das Vierfache ausfahren.',
+  hero: 'shen', pal: [[HERO_PAL.shen, { robe: '#1a2a28', robeL: '#3a5a54', robeD: '#0a1210', sash: '#8a1a14', sashL: '#ff5a3a', hat: '#8a1a14', hatL: '#c83a2a', hatD: '#3a0a08', beard: '#8a1a14', rim: '#ff5a3a' }]],
+  look: { qi: 1 }, speed: 180, range: 180, cd: 1.2
+};
+const COMP_ORDER = ['peter', 'lena', 'fabian', 'leo', 'emma', 'fex', 'leander', 'sam', 'sil', 'chris', 'agathon', 'sendraco', 'minny'];
 function partyMax() { return typeof finnSkills === 'function' && finnSkills().has('fraktion') ? 3 : 2; }
 function companionOpen(id) { const S = storySave(); return SAVE.settings.testUnlock || !!S.cleared[COMPANIONS[id].unlock]; }
 // Figuren, die in spaeteren Kapiteln nicht mehr an Finns Seite stehen (Leo stirbt, Emma wird zur Gegnerin)
@@ -183,6 +189,9 @@ function compAttack(c, tgt, pw) {
   } else if (id === 'leander') { // Drohnenlaser
     sfx('whip', 0, 0.06);
     nearestEnemies(x, y, 300, 2).forEach((en) => { dealDamage(en, 15 * pw, 'none', 'leander', { kb: 40, kx: en.x - x, ky: en.y - y, norm: true, noMark: true }); tetherFx(en, 0.15, '#6ab8e8', 3); });
+  } else if (id === 'chris') { // Kettenklingen peitschen drei Gegner
+    nearestEnemies(x, y, 220, 3).forEach((en) => { tetherFx(en, 0.25, '#ff5a3a', 10); dealDamage(en, 20 * pw, 'qi', 'chris', { kb: -160, kx: en.x - x, ky: en.y - y, norm: true, noMark: true, bleed: 4 }); });
+    sfx('chain', 0, 0.1);
   } else if (id === 'sendraco') { // Meteoritenfaust: Drachenenergie schlaegt von oben ein
     const tx = tgt.x, ty = tgt.y, r = 92;
     addEffect({ x: tx, y: ty, dur: 0.28, layer: 2, draw(g, e, k) {

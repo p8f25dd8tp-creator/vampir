@@ -11,7 +11,7 @@
      boss     — Etappen-Finale: Wellen, dann der Boss
      berserk  — Finn als wahnsinniger Bloodsucker (doppelte Kraft, halbes Leben)
    Zusatz `berserk: true` macht jede andere Stufenart zum Bloodsucker-Kampf.
-   Etappen 5 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
+   Etappen 6 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
    ========================================================================== */
 
 /* ------------------------------------------------------------ Gegner der Etappe 1 */
@@ -259,8 +259,84 @@ const ETAPPE4 = {
   ]
 };
 
+/* ------------------------------------------------------------ Etappe 5: Bürgerkrieg (Kapitel 669–808) */
+defEnemy('e5_sand', 'ghoul', 'q_caladi', 'Sandkriecher', { hp: 28 });
+defEnemy('e5_panzer', 'knight', 'q_panzer', 'Wüstenpanzer', { armor: 4 });
+defEnemy('e5_neunauge', 'witch', 'q_kroete', 'Neunaugen-Mantis', { shot: 'acid', flier: false });
+defEnemy('e5_glut', 'ghoul', 'q_orange', 'Glutbestie', { hp: 28 });
+defEnemy('e5_feuerkroete', 'witch', 'q_kroete', 'Feuerspucker', { shot: 'bell', flier: false });
+defEnemy('e5_kapuze', 'ghoul', 'h_truedream', 'Vergifteter Kapuzenmann', { hp: 34, spd: 62 });
+defEnemy('e5_parasit', 'knight', 'h_wache', 'Parasites-Kämpfer', { armor: 3 });
+defEnemy('e5_gift', 'witch', 'h_pure', 'Giftnutzer', { shot: 'acid', flier: false });
+defEnemy('e5_mune', 'brute', 'h_koloss', 'Mune (Riesenkraft)', { splits: 0, hp: 220 });
+defEnemy('e5_hana', 'captain', 'h_wache', 'Hana (Wind)', { scale: 1.2, hp: 2800 });
+defEnemy('e5_bs', 'ghoul', 'v_thrall', 'Süchtiger Bloodsucker', { hp: 30, spd: 78 });
+defEnemy('e5_bsR', 'knight', 'v_ritter', 'Bloodsucker mit Verstand', { armor: 4 });
+defEnemy('e5_bsRiese', 'captain', 'v_thrall', 'Riesen-Bloodsucker', { scale: 1.4, hp: 3200 });
+defEnemy('e5_pure', 'ghoul', 'h_pure', 'Pure-Kämpfer', { hp: 28 });
+defEnemy('e5_pureN', 'knight', 'h_pure', 'Nummern-Agent', { armor: 4 });
+defEnemy('e5_qi', 'witch', 'h_pure', 'Qi-Nutzer', { shot: 'light', flier: false });
+defEnemy('e5_narbe', 'captain', 'h_pure', 'Narbengesicht', { scale: 1.25, hp: 3000 });
+defEnemy('e5_krabbe', 'knight', 'q_panzer', 'Diamantkrabbe (Emperor)', { armor: 5, hp: 60 });
+defEnemy('e5_krabbeK', 'ghoul', 'q_panzer', 'Kleine Diamantkrabbe', { hp: 30, armor: 2 });
+defEnemy('e5_lanze', 'bat', 'bat_licht', 'Lanzenschnabel', { hp: 30 });
+defEnemy('e5_innen', 'ghoul', 'q_caladi', 'Bestie der Innenwelt', { hp: 32 });
+defBoss('b5_sand', 'krabbe', 'Sand Ruler (Emperor)', 6500, { model: 'sandruler', bellShot: 'spike', r: 44 });
+defBoss('b5_feuerstein', 'kronker', 'Feuer-Stein-Bestie (Emperor)', 7000, { model: 'feuerstein', bellShot: 'bell', r: 44 });
+defBoss('b5_mantis', 'mono', 'Mantis (Gifthand)', 5400, Object.assign({ look: 'b_mantis', bellShot: 'acid' }, B1));
+defBoss('b5_rowa', 'silva', 'Rowa, gefallener Königsritter', 60000, Object.assign({ look: 'b_rowa', bellShot: 'blood', spd: 70 }, B1));
+defBoss('b5_helen', 'cindy', 'Helen (Daisy)', 6000, Object.assign({ look: 'b_helen', bellShot: 'spike' }, B1));
+defBoss('b5_tulk', 'stahlmann', 'Tulk, Fareen und Kubo', 6400, Object.assign({ look: 'b_tulk', bellShot: 'spike', armor: 5 }, B1));
+defBoss('b5_lucy', 'erin', 'Lucy, Agent Fünf', 7600, Object.assign({ look: 'b_lucy', bellShot: 'light', spd: 72 }, B1));
+defBoss('b5_krabbe', 'krabbe', 'Diamant-Krabbe (Demon-Tier)', 60000, { model: 'krabbe', bellShot: 'spike', r: 60, scale: 1.4 });
+defBoss('b5_chris', 'mono', 'Chris, Meister des Qi', 7200, Object.assign({ look: 'chris', bellShot: 'light', spd: 74 }, B1));
+defBoss('b5_hilston', 'hagon', 'Hilston Blade', 60000, Object.assign({ look: 'b_hilston', bellShot: 'bell', spd: 70 }, B1));
+defBoss('b5_krabbeF', 'krabbe', 'Diamant-Krabbe (schwer verwundet)', 13000, { model: 'krabbe', bellShot: 'spike', r: 60, scale: 1.4 });
+const R_NEU = { ghoul: 'e5_sand', bat: 'c3_aas', knight: 'e5_panzer', witch: 'e5_neunauge', brute: 'c3_koenig', captain: 'c3_koenigB' };
+const R_GLUT = { ghoul: 'e5_glut', bat: 'c2_flatter', knight: 'e5_panzer', witch: 'e5_feuerkroete', brute: 'c3_koenig', captain: 'c3_koenigB' };
+const R_PARA = { ghoul: 'e5_kapuze', bat: 'e5_kapuze', knight: 'e5_parasit', witch: 'e5_gift', brute: 'e5_mune', captain: 'e5_hana' };
+const R_ROWA = { ghoul: 'e5_bs', bat: 'c5_fleder', knight: 'e5_bsR', witch: 'e3_blutmagier', brute: 'c5_thrall', captain: 'e5_bsRiese' };
+const R_PURE = { ghoul: 'e5_pure', bat: 'e5_pure', knight: 'e5_pureN', witch: 'e5_qi', brute: 'e5_pureN', captain: 'e5_narbe' };
+const R_DEMON = { ghoul: 'e5_krabbeK', bat: 'e5_lanze', knight: 'e5_krabbe', witch: 'c3_spucker', brute: 'c3_koenig', captain: 'c3_koenigB' };
+const R_INNEN = { ghoul: 'e5_innen', bat: 'e5_lanze', knight: 'e4_insel', witch: 'c3_spucker', brute: 'e4_katze', captain: 'c3_koenigB' };
+const ETAPPE5 = {
+  title: 'Bürgerkrieg', place: 'Neuland · Parasites · zehnte Burg · Dämonen-Planet', src: 'Kapitel 669–808', theme: 'schlachtfeld', ch: 7,
+  levels: [
+    { name: 'Der Sand Ruler', type: 'waveboss', at: 100, foe: 'b5_sand', pace: 1.6, theme: 'caladi', roles: R_NEU, comp: ['fex', 'sil'],
+      text: 'Im Neuland jagt die Gruppe Emperor-Tiere für eine eigene Rüstung. Aus dem Sand wächst ein Riese aus Knochen, dreistöckig, mit einem Wurmhals und Saugmaul. Und dann taucht ein zweiter auf.' },
+    { name: 'Die Feuer-Stein-Bestie', type: 'duel', foe: 'b5_feuerstein', crowd: 0.3, theme: 'roterhimmel', roles: R_GLUT,
+      text: 'Allein, ohne Rücksicht auf fremde Blicke: Finn jagt an den Dampfspalten nach Feuerkristallen für seine Handschuhe. Karte und Uhr versagen – nur die Bestie weiß, wo er ist.' },
+    { name: 'Das Duell mit den Parasites', type: 'duel', foe: 'b5_mantis', crowd: 0.4, theme: 'ruinen', roles: R_PARA, comp: ['fex', 'sil'],
+      text: 'Graylash und Daisy schauen zu. Mantis verliert das Duell um den Planeten – aber seine Gifthand hat jeden berührt, der gegen ihn angetreten ist.' },
+    { name: 'Mantis’ Gift', type: 'survive', dur: 180, pace: 1.8, theme: 'ruinen', roles: R_PARA, comp: ['sil'], elites: 3,
+      text: 'Dennis spuckt Blut, Fex und Sil krümmen sich. Finn sprengt mit dem Bluthammer das Tor der Parasites. Hinter ihm: Kapuzenmänner ohne Schmerz, mit Riesenkraft – Mantis’ Gift hat sie so gemacht.' },
+    { name: 'Nacht der Bloodsucker', type: 'hunt', role: 'ghoul', n: 90, pace: 1.7, theme: 'siedlung', roles: R_ROWA, comp: ['leo', 'emma'],
+      text: 'In der Vampirwelt fallen süchtige Bloodsucker mit Verstand über die zehnte Burg her. Die Hälfte der Familie stirbt in einer Nacht. Leo und Emma stellen sich vor die Schüler.' },
+    { name: 'Rowa', type: 'endure', foe: 'b5_rowa', dur: 80, crowd: 0.4, theme: 'siedlung', roles: R_ROWA, comp: ['leo', 'emma'],
+      text: 'Ihr Anführer war einst Königsritter und ein Wunderkind. „Gebt mir das Mädchen.“ Edward stellt sich ihm allein. Haltet durch, bis der König in seiner schwarzen Rüstung erscheint.' },
+    { name: 'Hundert Mann von Pure', type: 'survive', dur: 180, pace: 1.8, theme: 'schlachtfeld', roles: R_PURE, elites: 3,
+      text: 'Live vor der Kamera von Bonny wählt Finn einen Pure-Planeten als Bühne. Hundert Mann kommen, angeführt von einem Narbengesicht, das alle Zeugen töten will. Finn nimmt nur die Fäuste.' },
+    { name: 'Die Daisy-Schwestern', type: 'duel', foe: 'b5_helen', crowd: 0.35, theme: 'goetter', roles: R_PURE, comp: ['fex', 'peter'],
+      text: 'Das Turnier der drei neuen Mächte auf dem Dämonen-Planeten. Die Daisy-Schwestern säen Pflanzen, die Dornen wie Kugeln schießen. Helens Dornenpeitsche reißt jeden zu sich heran.' },
+    { name: 'Tulk, Fareen und Kubo', type: 'duel', foe: 'b5_tulk', crowd: 0.3, theme: 'goetter', roles: R_PURE,
+      text: 'Pures Team B trägt Legendary-Rüstungen. „Gibt es Regeln für versehentliche Tode?“ Schattenschloss, Qi-Hammer, Schattenpfad – die Welt draußen hält die Gegner danach für schwach.' },
+    { name: 'Lucy, Agent Fünf', type: 'duel', foe: 'b5_lucy', crowd: 0.1, theme: 'goetter', roles: R_PURE,
+      text: 'Lenas Mutter hat Peter mit einem Qi-Stoß den Arm genommen. Ihre Klinge schneidet, ohne zu berühren, und ihre Wunden heilt kein Blut. Sie teilt sogar den Schatten wie Wolken.' },
+    { name: 'Die Diamant-Krabbe', type: 'endure', foe: 'b5_krabbe', dur: 100, crowd: 0.8, theme: 'goetter', roles: R_DEMON, comp: ['sil', 'fex'],
+      text: 'Die gemeinsame Jagd auf den Dämonen: eine Krabbe mit einem hotelgroßen Diamantrücken und sechzehn Stechbeinen. Sie wirft Hunderte kleiner Krabben ab – jede davon ein Emperor-Tier.' },
+    { name: 'Die Welt im Planeten', type: 'hunt', role: 'ghoul', n: 70, pace: 1.7, theme: 'bestienplanet', roles: R_INNEN, comp: ['chris'],
+      text: 'Finn stürzt durch eine Spalte in eine zweite Welt mitten im Planeten: Hügel, Seen und ein Himmel aus blauem Kristall. Am Wasserfall wartet ein Mann mit roter Mähne und Kettenklingen.' },
+    { name: 'Meister gegen Schüler', type: 'duel', foe: 'b5_chris', crowd: 0, theme: 'bestienplanet', roles: R_INNEN,
+      text: 'Chris lehrt Finn die zweite Qi-Stufe: Qi blitzschnell im Körper umverteilen. Zum Abschluss die letzte Prüfung – ein Duell ohne Schatten und ohne Blut.' },
+    { name: 'Hilston Blade', type: 'endure', foe: 'b5_hilston', dur: 90, crowd: 0.4, theme: 'goetter', roles: R_DORF, comp: ['agathon'],
+      text: 'Oben liegen alle Jäger tot. Hilston steigt herab, bricht Duke das Genick und will den Dämonenkristall. Kein Quest, keine Chance – bis Finns Schatten Agathon ruft.' },
+    { name: 'Der Dämonenkristall', type: 'boss', at: 80, foe: 'b5_krabbeF', pace: 1.7, theme: 'goetter', roles: R_DEMON, comp: ['agathon'], evo: 'Vampirlord',
+      text: 'Ohne Schatten, ohne Ausdauer, mit fünf Leben: Finn rennt den Scherenarm der Krabbe hinauf. Aus ihrem Kristall wächst die Evolution – zum Vampirlord.' }
+  ]
+};
+
 /* ------------------------------------------------------------ Alle Etappen */
-// Etappen 5 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
+// Etappen 6 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
 function autoLevels(ch) {
   const out = [];
   for (let l = 1; l <= 8; l++) {
@@ -269,7 +345,7 @@ function autoLevels(ch) {
   }
   return out;
 }
-const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3, ETAPPE4].concat(CHAPTERS.slice(6).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
+const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3, ETAPPE4, ETAPPE5].concat(CHAPTERS.slice(7).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
 ETAPPEN.forEach((E, i) => { E.n = i + 1; E.levels.forEach((L, j) => { L.l = j + 1; }); });
 // Kapitel (Gegner-/Boss-Sammlungen) -> Etappe, fuer den Boss-Turm
 const ET_OF_CH = {}; ETAPPEN.forEach((E) => { const chs = new Set([E.ch]); E.levels.forEach((L) => L.ch && chs.add(L.ch)); if (E.n === 1) chs.add(3); chs.forEach((c) => { ET_OF_CH[c] = E.n; }); });
