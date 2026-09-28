@@ -56,3 +56,8 @@ Am Ende gibt es daraus einen gemeinsamen GPT-Prompt-Block.
 | 9 | Lavaplanet | heißer schwarzer Boden mit Glut |
 | 9 | Violetter Eisplanet | violettes Eis |
 | 9 | Dalki-Planetenschiff | zusammengeflickte Landmassen, schwarzes Metall |
+| 10 | Stadt im Jahr 1016 (ohne Mauern) | modernes Pflaster, Leuchtschilder |
+| 10 | Mars-Basis mit Mauern | rote Marserde, Beton |
+| 10 | Chained-Anwesen | Rosenbeete, Marmor |
+| 10 | Green City, Challenge-Arena | Hightech-Boden, Hologramme |
+| 10 | Turm der Amra, Vulkan-Etage | glühender Fels, fremde Steine |

@@ -459,6 +459,17 @@ const BOSS_BUILD = {
     for (const sd of [-1, 1]) { for (const y of [100, 66]) add(CAP(), M('#3a3a42'), [sd * 52, y, 20], [13, 32, 13], [0.5, 0, sd * 0.5]); add(CAP(), M('#2a2a32'), [sd * 22, 18, 0], [14, 20, 14]); }
     for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ff5a2a' })); x.position.set(sd * 8, 122, 36); x.scale.set(3.5, 2.5, 2); body.add(x); }
   },
+  werwolf(add, M, body) { // graues Fell, lange Schnauze, Qi-Klauen
+    add(CAP(), M('#4a4a52'), [0, 56, 0], [24, 34, 20], [0.2, 0, 0]); add(SPH(), M('#5a5a62'), [0, 100, 10], [32, 26, 26]);
+    add(SPH(), M('#5a5a62'), [0, 136, 22], [18, 18, 18]); add(CAP(), M('#4a4a52'), [0, 132, 42], [8, 14, 8], [Math.PI / 2, 0, 0]);
+    for (const sd of [-1, 1]) { add(CON(), M('#3a3a42'), [sd * 10, 158, 18], [5, 14, 5]); add(CAP(), M('#4a4a52'), [sd * 40, 88, 22], [10, 30, 10], [0.6, 0, sd * 0.4]); for (let f = -1; f <= 1; f++) add(CON(), M('#ff5a3a', { emissive: new THREE.Color('#ff3a1a'), emissiveIntensity: 0.6 }), [sd * 46 + f * 4, 64, 50], [2, 16, 2], [1.3, 0, 0]); add(CAP(), M('#3a3a42'), [sd * 14, 16, 0], [11, 20, 11]); }
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffd23a' })); x.position.set(sd * 7, 140, 36); x.scale.set(3, 2, 2); body.add(x); }
+  },
+  sedi(add, M, body) { // vierarmiger Riese der Amra
+    add(CAP(), M('#6a4a8a'), [0, 60, 0], [30, 40, 26]); add(SPH(), M('#7a5a9a'), [0, 112, 8], [38, 30, 30]); add(SPH(), M('#8a6aaa'), [0, 156, 16], [20, 22, 20]);
+    for (const sd of [-1, 1]) { for (const y of [124, 92]) add(CAP(), M('#6a4a8a'), [sd * 52, y, 16], [11, 32, 11], [0.4, 0, sd * 0.6]); add(CAP(), M('#4a3a6a'), [sd * 18, 18, 0], [13, 22, 13]); }
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#8affd8' })); x.position.set(sd * 8, 160, 34); x.scale.set(4, 3, 2); body.add(x); }
+  },
   ranken(add, M, body) { // hausgross, langer Hals, Knospe mit sechs Ranken
     add(SPH(), M('#3a6a3a'), [0, 40, -10], [56, 34, 64]);
     for (let k = 0; k < 4; k++) add(SPH(), M('#4a7a3a'), [0, 70 + k * 22, 30 + k * 10], [16 - k, 16 - k, 16 - k]);

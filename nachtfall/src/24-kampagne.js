@@ -40,7 +40,7 @@ const LV_PACE = [1.3, 1.45, 1.6, 1.75, 1.8, 1.85, 1.9];
 function lvDiff(l) { const k = l - 1; return { hp: 1 + 0.14 * k, count: 1 + 0.05 * k, dmg: 1 + 0.05 * k }; }
 
 /* ============================================================ Helden ueber die Kampagne */
-const HERO_UNLOCK = { finn: 0, lena: '1-5', leo: '1-7', emma: '1-8', leander: '1-9', fabian: '1-10', sil: '1-14', peter: '1-15', fex: '2-2', agathon: '2-9', sam: '2-10', chris: 5, mia: 11, draco: 12 };
+const HERO_UNLOCK = { finn: 0, lena: '1-5', leo: '1-7', emma: '1-8', leander: '1-9', fabian: '1-10', sil: '1-14', peter: '1-15', fex: '2-2', agathon: '2-9', sam: '2-10', chris: 5, mia: 10, draco: 12 };
 function unlockDone(u) { if (!u) return true; if (typeof u === 'number') return etappeCleared(u); const [e, l] = u.split('-').map(Number); return lvStars(e, l) > 0; }
 function unlockText(u) { if (typeof u === 'number') return `Etappe ${u} „${ET(u).title}“ abschließen`; const [e, l] = u.split('-').map(Number); return `Etappe ${e}, Stufe ${l} „${lvDef(e, l).name}“ schaffen`; }
 const HERO_UNLOCK_ETAPPE = {}; for (const id in HERO_UNLOCK) { const u = HERO_UNLOCK[id]; HERO_UNLOCK_ETAPPE[id] = typeof u === 'number' ? u : +u.split('-')[0]; }
@@ -171,7 +171,7 @@ function campLevelSetup(G, cp) {
     case 'boss':
       G.campGoal = Infinity; G.diffBoss = (G.diffBoss || 1) * (1 + 0.06 * cp.e);
       if (L.full) G.roles = Object.assign({}, G.roles, { boss: foe });
-      else { G.pace = pace; G.events = scaled(L.at).concat(withBoss(L.at)); }
+      else { G.pace = pace; G.diffDmg *= 0.8; G.events = scaled(L.at).concat(withBoss(L.at)); }
       break;
     case 'hunt': {
       G.pace = pace; G.campGoal = Infinity; G.events = scaled(9999).filter((ev) => ev.kind !== 'miniboss');

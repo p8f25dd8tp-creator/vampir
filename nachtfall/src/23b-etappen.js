@@ -11,7 +11,7 @@
      boss     — Etappen-Finale: Wellen, dann der Boss
      berserk  — Finn als wahnsinniger Bloodsucker (doppelte Kraft, halbes Leben)
    Zusatz `berserk: true` macht jede andere Stufenart zum Bloodsucker-Kampf.
-   Etappen 10 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
+   Etappen 11 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
    ========================================================================== */
 
 /* ------------------------------------------------------------ Gegner der Etappe 1 */
@@ -603,8 +603,84 @@ const ETAPPE9 = {
   ]
 };
 
+/* ------------------------------------------------------------ Etappe 10: Die Rückkehr einer Legende (Kapitel 1573–1758) */
+defEnemy('e10_dh', 'ghoul', 'h_dhampir', 'Dhampir', { hp: 62 });
+defEnemy('e10_dhK', 'knight', 'h_dhampir', 'Dhampir-Krieger', { armor: 8 });
+defEnemy('e10_dhS', 'witch', 'h_seherin', 'Dhampir-Schützin', { shot: 'light', flier: false });
+defEnemy('e10_dhB', 'brute', 'h_koloss', 'Dhampir-Koloss', { splits: 0, hp: 400 });
+defEnemy('e10_dhC', 'captain', 'h_dhampir', 'Dhampir-Hauptmann', { scale: 1.3, hp: 7000 });
+defEnemy('e10_trav', 'ghoul', 'h_wache', 'Gilden-Traveller', { hp: 62 });
+defEnemy('e10_axt', 'knight', 'h_blade', 'Axtträger', { armor: 8 });
+defEnemy('e10_eis', 'witch', 'h_truedream', 'Eisnutzer', { shot: 'soul', flier: false });
+defEnemy('e10_hammer', 'brute', 'h_koloss', 'Hammermann', { splits: 0, hp: 400 });
+defEnemy('e10_gilde', 'captain', 'h_wache', 'Gildenmeister', { scale: 1.3, hp: 7000 });
+defEnemy('e10_insekt', 'ghoul', 'q_kanal', 'Mars-Insekt', { hp: 62 });
+defEnemy('e10_flug', 'bat', 'bat_aas', 'Säureflieger', { hp: 50 });
+defEnemy('e10_panzer', 'knight', 'q_panzer', 'Panzerinsekt', { armor: 8 });
+defEnemy('e10_saeure', 'witch', 'q_kroete', 'Säurespucker', { shot: 'acid', flier: false });
+defEnemy('e10_brut', 'brute', 'q_mutter', 'Brutmutter', { splits: 0, hp: 420 });
+defEnemy('e10_rot', 'ghoul', 'h_rotvamp', 'Roter Vampir', { hp: 62 });
+defEnemy('e10_rotR', 'knight', 'v_ritter', 'Roter Krieger', { armor: 8 });
+defEnemy('e10_rotB', 'witch', 'v_magier', 'Roter Blutschütze', { shot: 'blood', flier: false });
+defEnemy('e10_guard', 'captain', 'v_ritter', 'Guardian der Roten', { scale: 1.3, hp: 7500 });
+defEnemy('e10_bot', 'ghoul', 'h_sunshield', 'Schwarzer Roboter', { hp: 70 });
+defEnemy('e10_botK', 'knight', 'h_sunshield', 'KI-Roboter', { armor: 9 });
+defEnemy('e10_botL', 'witch', 'h_sunshield', 'Laserroboter', { shot: 'light', flier: false });
+defEnemy('e10_sedi', 'ghoul', 'q_orange', 'Sedi', { hp: 66 });
+defEnemy('e10_sediK', 'knight', 'q_panzer', 'Turmwächter', { armor: 8 });
+defBoss('b10_tikker', 'silva', 'Tikker (Roter Vampir)', 14000, Object.assign({ look: 'b_tikker', bellShot: 'blood' }, B1));
+defBoss('b10_werwolf', 'kronker', 'Hybrid-Werwolf', 17000, { model: 'werwolf', bellShot: 'spike', r: 38, spd: 80 });
+defBoss('b10_derik', 'silva', 'Derik, Vize der Roten', 15000, Object.assign({ look: 'b_derik', bellShot: 'blood', spd: 74 }, B1));
+defBoss('b10_andy', 'stahlmann', 'Andy Sanguinis (Colossal Draugr)', 17000, Object.assign({ look: 'b_andy', bellShot: 'blood', armor: 8 }, B1));
+defBoss('b10_lock', 'mono', 'Lock (Schwerkraft)', 16000, Object.assign({ look: 'b_lock', bellShot: 'soul' }, B1));
+defBoss('b10_russ', 'silva', 'Russ, der God Slayer', 60000, Object.assign({ look: 'b_russ', bellShot: 'blood', spd: 72 }, B1));
+defBoss('b10_chris', 'mono', 'Chris mit Werwolf-DNA', 16000, Object.assign({ look: 'chris', bellShot: 'light', spd: 72 }, B1));
+defBoss('b10_laxmus', 'original', 'Laxmus mit dem roten Herzen', 60000, Object.assign({ look: 'b_laxmus', bellShot: 'blood', spd: 70 }, B1));
+defBoss('b10_sedi', 'kronker', 'Sedi-Riese im Vulkan', 17000, { model: 'sedi', bellShot: 'bell', r: 48, scale: 1.2 });
+const R_DHAMPIR = { ghoul: 'e10_dh', bat: 'e10_dh', knight: 'e10_dhK', witch: 'e10_dhS', brute: 'e10_dhB', captain: 'e10_dhC' };
+const R_GILDE = { ghoul: 'e10_trav', bat: 'e10_trav', knight: 'e10_axt', witch: 'e10_eis', brute: 'e10_hammer', captain: 'e10_gilde' };
+const R_MARS = { ghoul: 'e10_insekt', bat: 'e10_flug', knight: 'e10_panzer', witch: 'e10_saeure', brute: 'e10_brut', captain: 'c3_koenigB' };
+const R_ROT = { ghoul: 'e10_rot', bat: 'c5_fleder', knight: 'e10_rotR', witch: 'e10_rotB', brute: 'e5_bsRiese', captain: 'e10_guard' };
+const R_ROBOT = { ghoul: 'e10_bot', bat: 'e7_heu', knight: 'e10_botK', witch: 'e10_botL', brute: 'e7_king', captain: 'e8_dK' };
+const R_TURM = { ghoul: 'e10_sedi', bat: 'e9_auge', knight: 'e10_sediK', witch: 'e5_feuerkroete', brute: 'e9_affe', captain: 'c3_koenigB' };
+const ETAPPE10 = {
+  title: 'Die Rückkehr einer Legende', place: 'Das Jahr 1016 · Mars-Basis · Chained-Anwesen · Green City · Turm der Amra', src: 'Kapitel 1573–1758', theme: 'himmel', ch: 11,
+  levels: [
+    { name: 'Das Jahr 1016', type: 'survive', dur: 160, pace: 1.7, theme: 'basisnacht', roles: R_DHAMPIR, comp: ['peter', 'minny'],
+      text: 'Finn erwacht in einem fremden Apartment, Peter und die kleine Minny bei ihm. Der Kalender zählt „nach Quinn“. Überall Ringe, die Vampire erkennen – und Dhampire, die sie jagen.' },
+    { name: 'Die Gilden', type: 'hunt', role: 'knight', n: 40, pace: 1.8, theme: 'schlachtfeld', roles: R_GILDE, comp: ['peter'],
+      text: 'Auf Finns Kopf ist ein Kopfgeld ausgesetzt. Gilden-Traveller mit Riesenäxten und Eisstrahlen stürmen ein friedliches Viertel. Peter fängt eine Axt mit festem Qi an den Fingern.' },
+    { name: 'Tikker', type: 'duel', foe: 'b10_tikker', crowd: 0.3, theme: 'bestienplanet', roles: R_ROT, comp: ['peter'],
+      text: 'Die Roten Vampire tragen Laxmus’ Zeichen. Tikker – schwarze Haut, lippenloser Mund voller Zähne – will ein Dorf überfallen und die Schuld den Travellern zuschieben.' },
+    { name: 'Die Horden vom Mars', type: 'survive', dur: 190, pace: 1.8, theme: 'rotezone', roles: R_MARS, comp: ['peter'], elites: 3,
+      text: 'Riesige Mauern teilen den Mars in Wohn- und Bestienzonen. Die Horden kommen in Wellen, gesteuert von einem Schwarmverstand. Ihre Säure brennt sogar durch Peters festes Qi.' },
+    { name: 'Der Hybrid-Werwolf', type: 'duel', foe: 'b10_werwolf', crowd: 0.3, theme: 'rotezone', roles: R_MARS,
+      text: 'Die Werwölfe wurden einst von den Vampiren ausgerottet. Dieser ist eine Züchtung, und das Qi in seinen Klauen lässt keine Wunde heilen. Finns Schattenflügel blocken ohne jeden Verbrauch.' },
+    { name: 'Derik', type: 'duel', foe: 'b10_derik', crowd: 0.2, theme: 'basisnacht', roles: R_ROT,
+      text: 'Während Finn fort ist, entführen die Roten Vampire Lucia als „Versicherung“. Ihr Vize Derik erfährt, was ein Schattenfresser ist – ein Schlangendrache, der den Schatten raubt.' },
+    { name: 'Andy Sanguinis', type: 'duel', foe: 'b10_andy', crowd: 0.1, theme: 'burg', roles: R_ROT,
+      text: 'Der Kommandant des Vampire Corps trägt einen Dämonen-Brustpanzer und Fäden wie seine Familie. Er ist ein kolossaler Draugr – und er will wissen, wer dieser „Nate“ wirklich ist.' },
+    { name: 'Das Chained-Anwesen', type: 'survive', dur: 180, pace: 1.9, theme: 'siedlung', roles: R_CHAINED, comp: ['peter', 'minny'], elites: 3,
+      text: 'Ein Luxusresort voller roter Rosen, „ein Meer aus Blut für meine Braut“. Die neuen Chained haben Fähigkeiten, die die Welt nie gesehen hat. Jessica ist ihre Gefangene.' },
+    { name: 'Lock und Clicker', type: 'duel', foe: 'b10_lock', crowd: 0.3, theme: 'siedlung', roles: R_CHAINED, comp: ['peter'],
+      text: 'Clicker teleportiert mit jedem Schnipsen, Lock drückt alles mit Schwerkraft nieder. Peter in seiner Celestial-Form ignoriert die Schwerkraft einfach.' },
+    { name: 'Russ, der God Slayer', type: 'endure', foe: 'b10_russ', dur: 80, crowd: 0.2, theme: 'siedlung', roles: R_CHAINED,
+      text: 'Der Anführer der Chained hat Schatten, die Finns Bohrer stoppen, und einen Kristall mit der Kraft eines God Slayers. Finns Blut spürt seines nicht. Bis Finn begreift, wie Celestial-Energie im Blut wirkt.' },
+    { name: 'Chris mit Werwolf-DNA', type: 'duel', foe: 'b10_chris', crowd: 0.1, theme: 'ruinen', roles: R_GILDE,
+      text: 'Graues Werwolffell bis zu den Ellbogen, rote Haut von Qi-Stufe 4. „Du warst mein bester Schüler.“ Der alte Lehrer arbeitet jetzt für Zero.' },
+    { name: 'Die schwarzen Roboter', type: 'hunt', role: 'ghoul', n: 80, pace: 1.9, theme: 'goetter', roles: R_ROBOT, comp: ['peter'],
+      text: 'Logans große Challenge: über tausend Teilnehmer gegen hundert Roboter aus Darkrock mit Demi-God-Kernen. Das Publikum fragt: Wer würde gewinnen – der Crazy Bloodlord oder Peter?' },
+    { name: 'Die Guardians', type: 'survive', dur: 170, pace: 1.9, theme: 'goetter', roles: R_ROT, comp: ['peter', 'minny'], elites: 4,
+      text: 'Die stärksten Roten Vampire reisen durch Schatten. Ihr Anführer ist Ashley, einst Pauls rechte Hand. Minny weint rote Tränen, Lavaschuppen wachsen an ihren Armen.' },
+    { name: 'Laxmus’ Schatten', type: 'endure', foe: 'b10_laxmus', dur: 80, crowd: 0.2, theme: 'goetter', roles: R_ROT, comp: ['peter'],
+      text: 'Laxmus’ Druck lässt Zuschauer ohnmächtig werden. Seine Schattenhände packen alle, nichts verletzt sie. Er reißt Vincent das rote Herz aus der Brust.' },
+    { name: 'Der Turm der Amra', type: 'duel', foe: 'b10_sedi', crowd: 0.4, theme: 'roterhimmel', roles: R_TURM, evo: 'Celestial-Vampir',
+      text: 'Auf einem fremden Planeten mit drei Monden und zwanzigfacher Schwerkraft steht ein Turm mit hundert Etagen voller Prüfungen. Im Vulkan wartet ein Riese, den noch niemand so besiegt hat.' }
+  ]
+};
+
 /* ------------------------------------------------------------ Alle Etappen */
-// Etappen 10 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
+// Etappen 11 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
 function autoLevels(ch) {
   const out = [];
   for (let l = 1; l <= 8; l++) {
@@ -613,7 +689,7 @@ function autoLevels(ch) {
   }
   return out;
 }
-const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3, ETAPPE4, ETAPPE5, ETAPPE6, ETAPPE7, ETAPPE8, ETAPPE9].concat(CHAPTERS.slice(10).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
+const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3, ETAPPE4, ETAPPE5, ETAPPE6, ETAPPE7, ETAPPE8, ETAPPE9, ETAPPE10].concat(CHAPTERS.slice(11).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
 ETAPPEN.forEach((E, i) => { E.n = i + 1; E.levels.forEach((L, j) => { L.l = j + 1; }); });
 // Kapitel (Gegner-/Boss-Sammlungen) -> Etappe, fuer den Boss-Turm
 const ET_OF_CH = {}; ETAPPEN.forEach((E) => { const chs = new Set([E.ch]); E.levels.forEach((L) => L.ch && chs.add(L.ch)); if (E.n === 1) chs.add(3); chs.forEach((c) => { ET_OF_CH[c] = E.n; }); });

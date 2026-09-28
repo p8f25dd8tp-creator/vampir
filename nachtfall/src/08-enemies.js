@@ -122,7 +122,7 @@ function updateSpawns(dt) {
   let alive = 0;
   for (const e of G.enemies) if (!e.dead && !e.boss && !e.mini) alive++;
   G.alive = alive;
-  const target = W.target * (G.diffCount || 1) * (G.bossAlive ? 0.6 : 1);
+  const target = W.target * (G.diffCount || 1) * (G.bossAlive ? (G.camp ? 0.25 : 0.6) : 1); // Kampagne: Bosskampf bleibt lesbar
   if (alive < target) {
     G.spawnAcc += W.rate * (alive < target * 0.5 ? 2.2 : 1) * dt;
     const bias = Math.hypot(p.vx, p.vy) > 20 ? Math.atan2(p.vy, p.vx) : undefined;
@@ -169,7 +169,8 @@ function runEvent(ev) {
     G.boss = e; G.bossAlive = true;
     sfx('bell'); sfx('roar'); shake(6);
     // Schwaechere Gegner weichen dem Boss (lesbarer Kampf)
-    for (const o of G.enemies) if (!o.boss && !o.mini && !o.elite && Math.random() < 0.5 && dist2(o.x, o.y, p.x, p.y) > 200 * 200) { o.dead = true; o.deathT = 0.3; o.silent = true; }
+    const flee = G.camp ? 0.9 : 0.5, fr = G.camp ? 120 : 200; // in der Kampagne weicht fast die ganze Horde
+    for (const o of G.enemies) if (!o.boss && !o.mini && !o.elite && Math.random() < flee && dist2(o.x, o.y, p.x, p.y) > fr * fr) { o.dead = true; o.deathT = 0.3; o.silent = true; }
   }
 }
 
