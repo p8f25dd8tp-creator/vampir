@@ -65,7 +65,8 @@ Object.assign(CARDS, {
 Object.assign(ABILITY_SCHOOL, { blutsicheltritt: 'blood', blutkugeln: 'blood', schattenfesseln: 'shadow', blutwald: 'blood', jadelotus: 'qi', hammerschlag: 'none', blitzschritt: 'none' });
 Object.assign(SRC_NAMES, { blutsicheltritt: 'Blutsicheltritt', blutkugeln: 'Blutkugeln', schattenfesseln: 'Schattenfesseln', blutwald: 'Blutwald', jadelotus: 'Jadelotus' });
 // in die Karten-Pools der Helden
-for (const [h, add] of [['vorian', ['blutwald', 'blutsicheltritt']], ['liora', ['blutkugeln', 'blutsicheltritt', 'blutwald']], ['nyx', ['schattenfesseln', 'blutkugeln']], ['shen', ['jadelotus', 'schattenfesseln', 'blutwald']], ['draco', ['jadelotus', 'blutsicheltritt']]])
+// Blutsicheltritt, Blutkugeln, Schattenfesseln und Blutwald gehoeren nur Finn (21-finn-arcade.js)
+for (const [h, add] of [['shen', ['jadelotus']], ['draco', ['jadelotus']]])
   if (HEROES[h]) for (const c of add) if (!HEROES[h].pool.includes(c)) HEROES[h].pool.splice(Math.min(4, HEROES[h].pool.length), 0, c);
 
 /* ------------------------------------------------------------- Umsetzung */

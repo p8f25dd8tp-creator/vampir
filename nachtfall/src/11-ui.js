@@ -157,7 +157,7 @@ const UI = {
         <div class="stat"><div class="k">AUSWEICHEN</div><div class="v">${H.dodgeCd}s</div></div>
       </div>
       ${H.start ? `<div class="blk"><b class="lbl">START: ${CARDS[H.start].name.toUpperCase()}</b><p>${CARDS[H.start].lv[0]}</p></div>` : (H.evo || finnSave().tier === 0 ? `<div class="blk"><b class="lbl">START: NICHTS</b><p>Kein Angriff, keine Kraft. Lauf zum leuchtenden Buch.</p></div>` : `<div class="blk"><b class="lbl">START</b><p>Mit allen Kräften seiner aktuellen Form.</p></div>`)}
-      ${H.evo ? finnSelectHtml() : ''}
+      ${H.evo ? finnSelectHtml() : H.evoPath ? H.evoPath() : ''}
       <div class="blk"><b class="lbl" style="color:${sc.col}">MECHANIK: ${H.mech.name.toUpperCase()}</b><p>${H.mech.desc}</p></div>
       <div class="blk"><b class="lbl">ULTIMATIV: ${H.ult.name.toUpperCase()}</b><p>${H.ult.desc}</p></div>
       <div class="blk two"><div><b class="lbl">STÄRKEN</b><ul class="plus">${H.strengths.map((s) => `<li>${s}</li>`).join('')}</ul></div>
@@ -260,6 +260,7 @@ const UI = {
     if (p.hero === 'liora') { mv = clamp((1 - p.hp / p.st.maxHp) / 0.72, 0, 1); mt = 'Blutrausch +' + Math.round(clamp((1 - p.hp / p.st.maxHp) * 1.25, 0, 0.9) * 100) + '%' + (p.buffAder > 0 ? ' · ADERLASS' : ''); }
     if (p.hero === 'nyx') { mv = p.flow; mc = '#a77bff'; mt = 'Schattenfluss +' + Math.round(p.flow * 45) + '%' + (p.ultT > 0 ? ' · MITTERNACHT' : ''); }
     if (p.hero === 'finn') { const T = FINN_TIERS[p.tier || 0], F = finnSave(), N = FINN_TIERS[F.tier + 1]; mc = T.col; const run = finnRunEssence(G, false); if (!p.tier) { mv = 0; mt = 'Mensch · finde das Buch!'; } else if (G.finnArcade) { const A = FINN_ARC[(p.tier || 0) + 1]; mv = A ? clamp(G.level / A.lv, 0, 1) : 1; mt = T.name + (A ? ' · nächste Form: ' + A.txt : ' · höchste Form'); } else if (G.finnTest) { mv = 1; mt = T.name + ' (Testform)'; } else if (N && N.req.essence) { mv = clamp((F.essence + run) / N.req.essence, 0, 1); mt = T.name + ' · Essenz +' + run; } else { mv = 1; mt = T.name + ' · Essenz +' + run; } }
+    if (H.evoHero) { const T = H.tiers[p.tier || 0], N = H.tiers[(p.tier || 0) + 1]; mc = T.col; mv = N ? clamp(G.level / N.lv, 0, 1) : 1; mt = T.name + (N ? ' · nächste Form: ' + N.txt : ' · höchste Form'); }
     if (p.hero === 'shen') { mv = p.qi / 5; mc = '#4ff0cc'; mt = 'Qi ' + Math.floor(p.qi) + '/5' + (p.rooted > 0.5 ? ' · Wurzelstand' : ''); }
     this.set('mfill', (mv * 100).toFixed(0) + '%', 'width');
     this.set('mfill', mc, 'background');

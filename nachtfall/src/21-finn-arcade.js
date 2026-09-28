@@ -20,21 +20,37 @@ const FINN_ARC = [
   { lv: 33, txt: 'Stufe 33 oder wenn Vaelgor erwacht', ev: (G) => !!G.boss },
   { lv: 40, txt: 'Stufe 40 oder Vaelgor unter halber Kraft', ev: (G) => G.boss && G.boss.hp < G.boss.maxHp * 0.5 }
 ];
-// Karten, die mit jeder Form neu ins Angebot kommen (angelehnt an Finns Faehigkeiten im Roman)
+// Nur Finns eigene Faehigkeiten (angelehnt an seine Systemfaehigkeiten im Roman) und allgemeine Passive
 const FINN_ARC_POOL = [
   [],
-  ['blutwisch', 'blutspray', 'lebensraub', 'vampirblut', 'nebelgang', 'grabesmacht', 'seelenmagnet'],
-  ['hammerschlag', 'blitzschritt', 'kettenreaktion', 'bluternte', 'blutsicheltritt'],
-  ['schattenflammen', 'nachbilder', 'nachtschlund', 'schattenfesseln'],
-  ['qihand', 'qikette', 'blutnova', 'blutkugeln', 'eisenmeridiane', 'jadelotus'],
+  ['blutspray', 'lebensraub', 'vampirblut', 'nebelgang', 'grabesmacht', 'seelenmagnet'],
+  ['hammerschlag', 'blitzschritt', 'kettenreaktion', 'schattenfesseln'],
+  ['blutsicheltritt'],
+  ['blutkugeln'],
   ['blutwald'],
   [],
   []
 ];
+// was Finn mit jeder Form sofort bekommt
+const FINN_ARC_GRANTS = [[], ['blutspray'], ['hammerschlag', 'blitzschritt'], ['schattenfesseln'], ['blutkugeln'], ['himmelsstrahl'], ['goetterfall'], []];
+const _finnGrantArc = finnGrant;
+finnGrant = function (p, tier) {
+  if (!GAME || !GAME.finnArcade) return _finnGrantArc(p, tier);
+  for (const c of FINN_ARC_GRANTS[tier]) { if (p.ab[c]) continue; p.ab[c] = { lvl: 1, t: 0.4 }; p.order.push(c); }
+  // Der letzte Vampir: jede Faehigkeit erreicht sofort ihre Ulti
+  if (tier === 7) for (const k in p.ab) if (CARDS[k] && typeof ULTI !== 'undefined' && ULTI[k]) { p.ab[k].lvl = CARDS[k].max; p.ab[k].ulti = true; p.ab[k].ut = 1; }
+};
+// keine geteilten Fusionen fuer den Arcade-Finn
+const _offersFinnArc = makeOffers;
+makeOffers = function () {
+  const out = _offersFinnArc();
+  if (GAME.finnArcade || (HEROES[GAME.p.hero] && HEROES[GAME.p.hero].evoHero)) for (let i = 0; i < out.length; i++) if (out[i].fusion) out[i] = { id: i % 2 ? 'soulgift' : 'bloodcup', filler: true };
+  return out;
+};
 
 // Finn in die Arcade-Heldenwahl (vor Sen Draco)
 (function () { if (!HERO_ORDER.includes('finn')) { const i = HERO_ORDER.indexOf('draco'); HERO_ORDER.splice(i >= 0 ? i : HERO_ORDER.length, 0, 'finn'); } })();
-HEROES.finn.mech = { name: 'Evolution im Lauf', desc: 'Jeder Lauf beginnt als Mensch ohne Kraft: Finde das Buch und werde zum Halbling. Danach entwickelt sich Finn im Lauf weiter wie im Roman — Vampir (Stufe 6), Vampiradliger (Stufe 12), Vampirlord (Stufe 19 oder Sieg über Kharn), Himmlischer Vampirlord (Stufe 26), Gottbezwinger (Stufe 33 oder wenn Vaelgor erwacht) und schließlich Der letzte Vampir. Jede Form bringt mehr Leben, Tempo, Kraft, neue Fähigkeiten und mehr Plätze.' };
+HEROES.finn.mech = { name: 'Evolution im Lauf', desc: 'Jeder Lauf beginnt als Mensch ohne Kraft: Finde das Buch und werde zum Halbling. Danach entwickelt sich Finn im Lauf weiter wie im Roman — Vampir (Stufe 6), Vampiradliger (Stufe 12), Vampirlord (Stufe 19 oder Sieg über Kharn), Himmlischer Vampirlord (Stufe 26), Gottbezwinger (Stufe 33 oder wenn Vaelgor erwacht) und schließlich Der letzte Vampir. Jede Form bringt mehr Leben, Tempo, Kraft, neue eigene Fähigkeiten (Blutspray, Hammerschlag, Blitzschritt, Schattenfesseln, Blutsicheltritt, Blutkugeln, Blutwald, Himmelsstrahl, Götterfall) und mehr Plätze. Als letzter Vampir erreicht jede Fähigkeit sofort ihre Ulti.' };
 
 const _poolOfArc = HEROES.finn.poolOf;
 HEROES.finn.poolOf = function (p) {
