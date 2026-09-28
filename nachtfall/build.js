@@ -20,12 +20,13 @@ let css = rd('style.css')
   .replace('url(fonts/cormorant-700.woff2)', 'url(data:font/woff2;base64,' + b64('fonts/cormorant-700.woff2') + ')');
 const icon = 'data:image/png;base64,' + b64('icons/apple-touch-icon.png');
 
+const imgs = {}; const idir = path.join(root, 'img'); if (fs.existsSync(idir)) for (const f of fs.readdirSync(idir)) if (f.endsWith('.webp')) imgs[f.slice(0, -5)] = 'data:image/webp;base64,' + fs.readFileSync(path.join(idir, f)).toString('base64');
 let out = html
   .replace('<link rel="manifest" href="manifest.webmanifest">\n', '')
   .replace('href="icons/apple-touch-icon.png"', 'href="' + icon + '"')
   .replace('href="icons/icon-192.png"', 'href="' + icon + '"')
   .replace(/<link rel="stylesheet"[^>]*>/, () => '<style>\n' + css + '\n</style>')
-  .replace(/<!--SCRIPTS-->[\s\S]*<!--\/SCRIPTS-->/, () => '<script>\n' + js + '\n</script>')
+  .replace(/<!--SCRIPTS-->[\s\S]*<!--\/SCRIPTS-->/, () => '<script>window.IMG_B64 = ' + JSON.stringify(imgs) + ';</script>\n<script>\n' + js + '\n</script>')
   .replace(/<script>\s*if \('serviceWorker'[\s\S]*?<\/script>/, '');
 // 3D-Figuren (KayKit, CC0) eingebettet, damit die Einzeldatei ohne Zusatzdateien laeuft
 const figs = {}; for (const n of ['schurke', 'magier', 'barbar', 'anim']) { const f = path.join(root, 'models', n + '.glb'); if (fs.existsSync(f)) figs[n] = fs.readFileSync(f).toString('base64'); }
