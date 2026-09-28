@@ -19,7 +19,7 @@ const COMPANIONS = {
     look: { weapon: 'bow' }, speed: 165, range: 320, cd: 1.1
   },
   leo: {
-    name: 'Leo', role: 'Blinder Schwert- und Qi-Meister', unlock: 4, until: 10, col: '#5ff0d0',
+    name: 'Leo Suiyan', role: 'Blinder Schwert- und Qi-Meister', unlock: 4, until: 10, col: '#5ff0d0',
     desc: 'Er sieht nichts und merkt alles. Finns Lehrmeister im Qi — seine Qi-Wellen schleudern ganze Horden zurück.',
     hero: 'shen', pal: [[HERO_PAL.shen, { robe: '#e0dcd0', robeL: '#ffffff', robeD: '#8a867a', sash: '#2a6a5a', sashL: '#5ff0d0', hat: '#5a4a3a', hatL: '#8a7a5a', hatD: '#2a2014', beard: '#2a2420', rim: '#5ff0d0' }]],
     look: { qi: 0 }, speed: 150, range: 100, cd: 2.4

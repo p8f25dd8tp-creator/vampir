@@ -236,7 +236,7 @@ const CHAPTERS = [
     reward: { king: true, skills: ['qi2'], text: 'Vampirkönig (Kap. 1371) · zweite Qi-Stufe von Chris · Sen Draco erwacht in der Steintafel' }
   },
   {
-    n: 10, id: 'graham', title: 'Graham', src: 'Kapitel 1409–1572', missions: [55, 57], place: 'Grahams Front', theme: 'roterhimmel', tier: 4,
+    n: 10, id: 'graham', title: 'Arian', src: 'Kapitel 1409–1572', missions: [55, 57], place: 'Arians Front', theme: 'roterhimmel', tier: 4,
     intro: [
       'Vampire und Menschen kämpfen offen zusammen. Finn infiltriert Mutterschiffe, Emma geht ins Exil. Aus der Steintafel in seinem System spricht nun Sen Draco zu ihm — ein uraltes Wesen, das sich über ihn lustig macht und ihm doch seine Kraft leiht.',
       'An der entscheidenden Front stellt sich Finn dem Anführer der Dalki — mit einer Belastung, die sein eigenes Überleben gefährdet.'
@@ -248,14 +248,14 @@ const CHAPTERS = [
       knight: defEnemy('c10_elite', 'knight', 'dalki4', 'Dalki-Elite (4 Stacheln)', { armor: 5 }),
       witch: defEnemy('c10_speer', 'witch', 'dalki5', 'Dalki-Speerwerfer (5 Stacheln)', { shot: 'spike', flier: false }),
       brute: defEnemy('c10_d6', 'brute', 'dalki6', 'Dalki (6 Stacheln)', { splits: 0, hp: 210 }),
-      captain: defEnemy('c10_general', 'captain', 'dalkiW', 'Grahams General', { scale: 1.6, hp: 4800 }),
-      boss: defBoss('c10_boss', 'graham', 'Graham', 24000, { bellShot: 'spike', r: 48 })
+      captain: defEnemy('c10_general', 'captain', 'dalkiW', 'Arians General', { scale: 1.6, hp: 4800 }),
+      boss: defBoss('c10_boss', 'graham', 'Arian', 24000, { bellShot: 'spike', r: 48 })
     },
-    texts: { swarm: 'Aasflieger verdunkeln den Himmel!', ring: 'Grahams Armee umzingelt dich!', boss: 'Graham ist hier.' },
+    texts: { swarm: 'Aasflieger verdunkeln den Himmel!', ring: 'Arians Armee umzingelt dich!', boss: 'Arian ist hier.' },
     quests: [
       { type: 'kill', role: 'knight', n: 60, text: 'Besiege 60 Dalki der Elite', reward: { crystals: 80, bonus: 'level' } },
       { type: 'level', n: 32, text: 'Erreiche Stufe 32', reward: { crystals: 70, bonus: 'heal' } },
-      { type: 'mini', text: 'Besiege Grahams General', reward: { crystals: 90, bonus: 'level' } }
+      { type: 'mini', text: 'Besiege Arians General', reward: { crystals: 90, bonus: 'level' } }
     ],
     reward: { tier: 5, text: 'Herrscher des Blutes — Evolution: Himmlischer Vampirlord (Kap. 1565)' }
   },

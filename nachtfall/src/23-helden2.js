@@ -1,7 +1,7 @@
 'use strict';
 /* ==========================================================================
    WEITERE ARCADE-HELDEN aus dem Vampirsystem (eigene Umsetzung)
-   Lena Grimm · Fabian Schneider · Fex Sanguini · Leo · Leander Lothringen ·
+   Lena Grimm · Fabian Schneider · Fex Sanguini · Leo · Leander Lothring ·
    Agathon · Sam · Mia Müller
    Jede Figur: Evolution im Lauf, eigenes Faehigkeiten-Set, Ultis.
    Die vier Figuren ohne Bezug zum Vampirsystem (Vorian, Liora, Nyx, Shen)
@@ -372,7 +372,7 @@ Object.assign(TICKS, { katana: tickKatana, iaido: tickIaido, aurensicht: tickAur
 ULTS.tausendschnitte = function (p) { sfx('ult'); GAME.slowmo = Math.max(GAME.slowmo, 1.5); castAnim(p, 0, 0.6); const tg = nearestEnemies(p.x, p.y, 380, 24); tg.forEach((en, i) => GAME.later(i * 0.05, () => { if (en.dead) return; dealDamage(en, 60, 'qi', 'tausendschnitte', { kb: 100, kx: en.x - GAME.p.x, ky: en.y - GAME.p.y, norm: true }); beam(en.x - 40, en.y + 20, -0.5, 80, 3, 0, 'qi', 'tausendschnitte', '#ffffff'); })); };
 ICON_EXTRA.tausendschnitte = symIcon('blade', '#ffffff');
 defineEvoHero('leo', {
-  name: 'Leo', title: 'Der blinde Schwertmeister', school: 'qi', diff: 2,
+  name: 'Leo Suiyan', title: 'Der blinde Schwertmeister', school: 'qi', diff: 2,
   role: 'Schwert · Qi · Konter', dodgeCd: 2.0, dodge: 'slide',
   mech: { name: 'Aurensicht', desc: 'Leo sieht nichts und nimmt doch alles wahr. Er beginnt mit seinem Bestienkatana und dem Iai-Schnitt, lernt die Aurensicht (Treffer abwehren und kontern), legt Qi in die Klinge, wird zum Vampir-Ritter mit dem Qi-Blutschnitt und kämpft am Ende mit seiner Seelenwaffe.' },
   ult: { id: 'tausendschnitte', name: 'Tausend Schnitte', cd: 18, desc: 'Die Zeit verlangsamt sich — Leo schneidet durch bis zu 24 Gegner.' },
@@ -447,7 +447,7 @@ Object.assign(TICKS, { kampfdrohne: tickKampfdrohne, nanoschwarm: tickNanoschwar
 ULTS.ueberladung = function (p) { sfx('ult'); shake(8); castAnim(p, 0, 0.6); for (let i = 0; i < 12; i++) GAME.later(i * 0.05, () => beam(GAME.p.x, GAME.p.y, i / 12 * TAU, 360, 14, 45, 'none', 'ueberladung', '#6affd8')); for (let i = 0; i < 6; i++) GAME.later(0.4 + i * 0.1, () => { const en = randomEnemyNear(GAME.p.x, GAME.p.y, 360); if (en) lightPillar(en.x, en.y, 50, 70, 'ueberladung', '#6ab8ff'); }); };
 ICON_EXTRA.ueberladung = symIcon('beam', '#6affd8');
 defineEvoHero('leander', {
-  name: 'Leander Lothringen', title: 'Das Technik-Genie', school: 'none', diff: 2,
+  name: 'Leander Lothring', title: 'Das Technik-Genie', school: 'none', diff: 2,
   role: 'Technik · Drohnen · Strahlen', dodgeCd: 2.4, dodge: 'slide',
   mech: { name: 'Erfinder', desc: 'Leander steuert Metall bis hinunter zu Nanobots und baut sich alles selbst. Er beginnt mit einer Kampfdrohne, schickt dann Nanobot-Schwärme, trägt einen Angriffsanzug mit Energiekanone, setzt Lichtkugeln und ruft am Ende Laser aus dem Orbit. Seine Drohnen und Maschinen kämpfen für ihn.' },
   ult: { id: 'ueberladung', name: 'Überladung', cd: 18, desc: 'Zwölf Energiestrahlen in alle Richtungen, dann sechs Satellitenlaser.' },

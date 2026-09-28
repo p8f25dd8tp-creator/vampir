@@ -25,10 +25,10 @@ const B1 = { r: 26, scale: 0.8 };
 defBoss('b1_kyle', 'mono', 'Kyle Main (Tigerkrallen)', 650, Object.assign({ look: 'b_kyle', bellShot: 'soul', spd: 66 }, B1));
 defBoss('b1_rylee', 'mono', 'Rylee (Verhärtung)', 950, Object.assign({ look: 'b_rylee', bellShot: 'soul', armor: 6 }, B1));
 defBoss('b1_brandon', 'mono', 'Brandon Richardson (Speer)', 1250, Object.assign({ look: 'b_brandon', bellShot: 'spike' }, B1));
-defBoss('b1_leo', 'hagon', 'Leo, der blinde Schwertkämpfer', 60000, Object.assign({ look: 'leo', bellShot: 'spike', spd: 58 }, B1));
-defBoss('b1_nate', 'mono', 'Nate „Hardsteely“ Snell', 1900, Object.assign({ look: 'b_nate', bellShot: 'spike', armor: 6 }, B1));
+defBoss('b1_leo', 'hagon', 'Leo Suiyan, der blinde Schwertkämpfer', 60000, Object.assign({ look: 'leo', bellShot: 'spike', spd: 58 }, B1));
+defBoss('b1_nate', 'mono', 'Nick Messing', 1900, Object.assign({ look: 'b_nate', bellShot: 'spike', armor: 6 }, B1));
 defBoss('b1_scordana', 'krabbe', 'Scordana (Mittelstufen-Bestie)', 2200, { model: 'scordana', bellShot: 'acid', r: 40 });
-defBoss('b1_ben', 'mono', 'Ben (Keule)', 1900, Object.assign({ look: 'b_ben', bellShot: 'spike' }, B1));
+defBoss('b1_ben', 'mono', 'Ben Richter', 1900, Object.assign({ look: 'b_ben', bellShot: 'spike' }, B1));
 
 /* ------------------------------------------------------------ Etappe 1: Die Militaerakademie (Kapitel 1–138) */
 const R_SCHULE = { ghoul: 'e1_schueler', bat: 'e1_schueler', knight: 'e1_rowdy', witch: 'e1_eis', brute: 'e1_rowdy', captain: 'c1_vier' };
@@ -54,7 +54,7 @@ const ETAPPE1 = {
     { name: 'Aufstand in der Aula', type: 'waveboss', at: 150, foe: 'c1_boss', pace: 1.5, theme: 'akademie', roles: R_SCHULE, comp: ['emma'],
       text: 'Die Zweitjährigen treiben hundert Erstjährige in die Aula und hängen Fabian als Zielscheibe auf. Emma friert Angreifer ein – dann tritt Mono vor, der jedem Schlag schon vorher ausweicht.' },
     { name: 'Power Fighter: Hardsteely', type: 'duel', foe: 'b1_nate', crowd: 0.2, theme: 'goetter', roles: R_SCHULE,
-      text: 'Im Kampfspiel Power Fighter tritt „Blood Evolver“ gegen Nate an, der seinen Körper zu Metall härtet. Nur Schläge mit voller Wucht kommen durch.' },
+      text: 'Im Kampfspiel Power Fighter tritt „Blood Evolver“ gegen Nick an, der seinen Körper zu Metall härtet. Nur Schläge mit voller Wucht kommen durch.' },
     { name: 'Das rote Portal', type: 'survive', dur: 190, pace: 1.6, theme: 'rotezone', ch: 2,
       text: 'Ein Stoß, und Finn stürzt durch ein rotes Portal auf einen dunklen Planeten mit zwei Monden. Zehn Rattaclaws jagen ihn in eine Ruine – halte die Treppe!' },
     { name: 'Scordana im Hangar', type: 'waveboss', at: 90, foe: 'b1_scordana', pace: 1.6, theme: 'rotezone', ch: 2,
@@ -78,7 +78,7 @@ defEnemy('e2_koeder', 'ghoul', 'q_spore', 'Köder-Bestie', { hp: 20 });
 defEnemy('e2_ranke', 'witch', 'q_kroete', 'Rankenspucker', { shot: 'acid', flier: false });
 defEnemy('e2_hund', 'ghoul', 'q_rot', 'Blinder Furry Hound', { hp: 20, spd: 74 });
 defEnemy('e2_klon', 'ghoul', 'h_blade', 'Klon von Multiplier', { hp: 14, spd: 66 });
-defBoss('b2_fex', 'mono', 'Fex Sanguinis (Vampir)', 1500, Object.assign({ look: 'fex', bellShot: 'blood' }, B1));
+defBoss('b2_fex', 'mono', 'Fex Sanguini', 1500, Object.assign({ look: 'fex', bellShot: 'blood' }, B1));
 defBoss('b2_emma', 'erin', 'Emma, von Fex gelenkt', 1700, Object.assign({ look: 'emma', bellShot: 'light' }, B1));
 defBoss('b2_leander', 'mono', 'Leander im Nanobot-Anzug', 1900, Object.assign({ look: 'leander', bellShot: 'spike', armor: 4 }, B1));
 defBoss('b2_kenny', 'mono', 'Kenny (Giftnadeln)', 2200, Object.assign({ look: 'b_kenny', bellShot: 'acid' }, B1));
@@ -96,7 +96,7 @@ const ETAPPE2 = {
   title: 'Die zweite Basis', place: 'Militärbasis 2 · oranger Planet · Basis 1', src: 'Kapitel 139–383', theme: 'basisnacht', ch: 4,
   levels: [
     { name: 'Der hungrige Ghul', type: 'duel', foe: 'b2_fex', crowd: 0.2, theme: 'basisnacht', roles: R_BASIS,
-      text: 'Peter ist ausgehungert verschwunden. In einer dunklen Gasse fesselt ihn ein Fremder mit unsichtbaren Fäden – Fex Sanguinis, ein echter Vampir. Finn greift im Sonnenanzug an.' },
+      text: 'Peter ist ausgehungert verschwunden. In einer dunklen Gasse fesselt ihn ein Fremder mit unsichtbaren Fäden – Fex Sanguini, ein echter Vampir. Finn greift im Sonnenanzug an.' },
     { name: 'Emma als Fäden-Puppe', type: 'duel', foe: 'b2_emma', crowd: 0.15, theme: 'basisnacht', roles: R_BASIS,
       text: 'Treffen auf dem Dach: Fex steckt Emma zwölf Nadeln in den Rücken und lenkt sie wie eine Puppe. Ihre Eisklinge tanzt eine fremde, wunderschöne Schwertkunst.' },
     { name: 'Leander im Mech-Anzug', type: 'duel', foe: 'b2_leander', crowd: 0.2, theme: 'akademie', roles: R_BASIS,
@@ -488,7 +488,7 @@ defEnemy('e8_mouth', 'ghoul', 'q_void', 'Mouth Splitter', { hp: 50 });
 defEnemy('e8_mouthK', 'knight', 'q_panzer', 'Knochen-Mouth-Splitter', { armor: 5 });
 defEnemy('e8_mouthR', 'brute', 'q_alienM', 'Riesiger Mouth Splitter', { splits: 0, hp: 340 });
 defBoss('b8_zweizack', 'dalki1', 'Zwei-Stachel-Dalki (markiert)', 10500, { model: 'zweizackB', bellShot: 'spike', r: 36, scale: 1.2 });
-defBoss('b8_graham', 'graham', 'Graham (fünf Stacheln)', 60000, { model: 'graham5', bellShot: 'spike', r: 36, spd: 72 });
+defBoss('b8_graham', 'graham', 'Arian (fünf Stacheln)', 60000, { model: 'graham5', bellShot: 'spike', r: 36, spd: 72 });
 defBoss('b8_slicer', 'dalki1', 'Slicer (Klingenschweif)', 14000, { model: 'slicer', bellShot: 'spike', r: 36 });
 defBoss('b8_eno', 'silva', 'Eno, der erste König', 13000, Object.assign({ look: 'b_eno', bellShot: 'blood', armor: 6 }, B1));
 defBoss('b8_sechs', 'graham', 'Sechs-Stachel-Dalki', 15000, { model: 'sechs', bellShot: 'spike', r: 38, scale: 1.2 });
@@ -510,7 +510,7 @@ const ETAPPE8 = {
       text: 'Schwarze Mutterschiffe werfen Kapseln auf jeden Menschenplaneten. Über dem Daisy-Planeten stürmt Finn mit einer Schildkröten-Formation ins Innere eines Schiffs – gebaut aus Vampirmaterial.' },
     { name: 'Branching Link', type: 'duel', foe: 'b8_zweizack', crowd: 0.4, theme: 'ruinen', roles: R_DALKI8,
       text: 'Alex schmiedet aus dem Dämonenkristall ein Amulett, halb schwarz, halb weiß. Es trinkt die Energie jedes Getöteten – und kann einen Dalki markieren, der dann für Finn kämpft.' },
-    { name: 'Graham', type: 'endure', foe: 'b8_graham', dur: 80, crowd: 0.3, theme: 'caladi', roles: R_DALKI8,
+    { name: 'Arian', type: 'endure', foe: 'b8_graham', dur: 80, crowd: 0.3, theme: 'caladi', roles: R_DALKI8,
       text: 'Ein Dalki in Menschenkleidung, der Klügste von allen. Er imitiert Finns Oberschenkeltritt beiläufig und bricht ihm damit das Bein. Grünes Blut hält Finn am Leben.' },
     { name: 'Slicer', type: 'waveboss', at: 80, foe: 'b8_slicer', pace: 1.9, theme: 'caladi', roles: R_CHAINED, comp: ['sil'],
       text: 'Die Dalki-Kommandantin mit dem Klingenschweif hat Hilston getötet und will Sil. Ihr dritter Schnitt lässt den Schwanz auf dreifache Körperlänge wachsen. Vincent übernimmt Finns Körper.' },
@@ -537,7 +537,7 @@ const ETAPPE8 = {
   ]
 };
 
-/* ------------------------------------------------------------ Etappe 9: Graham (Kapitel 1409–1572) */
+/* ------------------------------------------------------------ Etappe 9: Arian (Kapitel 1409–1572) */
 defEnemy('e9_pureb', 'ghoul', 'q_spore', 'Pure-Bestie', { hp: 52 });
 defEnemy('e9_halb', 'knight', 'h_pure', 'Halb verwandelter Mensch', { armor: 7 });
 defEnemy('e9_qi', 'witch', 'h_pure', 'Qi-Agent', { shot: 'light', flier: false });
@@ -561,14 +561,14 @@ defBoss('b9_dhelen', 'graham', 'Dalki-Helen (fünf Stacheln)', 18000, { model: '
 defBoss('b9_blob', 'graham', 'Blob (fünf Stacheln)', 19000, { model: 'blob', bellShot: 'spike', r: 44, armor: 8, spd: 40 });
 defBoss('b9_drache2', 'kronker', 'Die zweite Drachenhälfte', 22000, { model: 'drache2', bellShot: 'bell', r: 80, scale: 1.6 });
 defBoss('b9_greenhorn', 'graham', 'Green Horn (vier Stacheln)', 18000, { model: 'greenhorn', bellShot: 'spike', r: 36 });
-defBoss('b9_graham', 'graham', 'Graham (acht Stacheln)', 21000, { model: 'graham8', bellShot: 'spike', r: 40, scale: 1.15, spd: 74 });
+defBoss('b9_graham', 'graham', 'Arian (acht Stacheln)', 21000, { model: 'graham8', bellShot: 'spike', r: 40, scale: 1.15, spd: 74 });
 const R_PUREB = { ghoul: 'e9_pureb', bat: 'e7_heu', knight: 'e9_halb', witch: 'e9_qi', brute: 'e9_pureB', captain: 'e9_agent' };
 const R_SUMPF = { ghoul: 'e9_sumpf', bat: 'e7_heu', knight: 'e9_prog', witch: 'c3_spucker', brute: 'e9_affe', captain: 'c3_koenigB' };
 const R_DALKI9 = { ghoul: 'e9_d2', bat: 'e7_d1', knight: 'e8_d3', witch: 'e7_dS', brute: 'e7_dB', captain: 'e8_dK' };
 const R_NEWGEN = { ghoul: 'e9_d2', bat: 'e7_d1', knight: 'e9_newgen', witch: 'e7_dS', brute: 'e7_dB', captain: 'e8_dK' };
 const R_LAVA = { ghoul: 'e9_lava', bat: 'e9_auge', knight: 'e5_panzer', witch: 'e5_feuerkroete', brute: 'c3_koenig', captain: 'c3_koenigB' };
 const ETAPPE9 = {
-  title: 'Graham', place: 'Das Board · Vertrautenwelt · Dalki-Planeten · Daisy-Siedlung', src: 'Kapitel 1409–1572', theme: 'roterhimmel', ch: 10,
+  title: 'Arian', place: 'Das Board · Vertrautenwelt · Dalki-Planeten · Daisy-Siedlung', src: 'Kapitel 1409–1572', theme: 'roterhimmel', ch: 10,
   levels: [
     { name: 'Das Spiel des Boards', type: 'duel', foe: 'b9_samantha', crowd: 0.3, theme: 'caladi', roles: R_PUREB, comp: ['fex'],
       text: 'Die Mächtigen der Menschen laden die Vampire zu einem Spiel in der Simulation: ein Wüstendorf mit Holzbrücke. Samantha greift mit neun Erdschwänzen an – und Fex hat sich in sie verliebt.' },
@@ -587,19 +587,19 @@ const ETAPPE9 = {
     { name: 'Der Lavaplanet', type: 'hunt', role: 'bat', n: 45, pace: 1.80, theme: 'roterhimmel', roles: R_LAVA, comp: ['emma'],
       text: 'Emma jagt im Exil mit einem Menschenteam: schwebende Doppelkugeln mit je einem Auge, die aus Tentakeln Feuerbälle schleudern.' },
     { name: 'Doppelellenbogen', type: 'duel', foe: 'b9_newgen', crowd: 0.4, theme: 'schlachtfeld', roles: R_NEWGEN, comp: ['emma'],
-      text: 'Grahams neue Dalki sind aus der DNA starker Menschen gezüchtet. Einer mit doppelten Ellenbogen hat Hermes getötet. Emma rettet Owens Gruppe – und ihre Augen glühen gelb.' },
+      text: 'Arians neue Dalki sind aus der DNA starker Menschen gezüchtet. Einer mit doppelten Ellenbogen hat Hermes getötet. Emma rettet Owens Gruppe – und ihre Augen glühen gelb.' },
     { name: 'Peters Wights', type: 'survive', dur: 190, pace: 1.89, theme: 'himmel', roles: R_DALKI9, comp: ['peter'], elites: 4,
       text: 'Auf einem violetten Eisplaneten ist Peter die perfekte Nemesis: Jeder besiegte Gegner kämpft danach für ihn – ein kopfloser Hilston, Slicers Beine.' },
     { name: 'Dalki-Helen', type: 'duel', foe: 'b9_dhelen', crowd: 0.3, theme: 'bestienplanet', roles: R_DALKI9, comp: ['lena'],
-      text: 'Graham hat aus Helens DNA einen Dalki mit fünf Stacheln gemacht. Ihre Ranken packen Lenas Schwert. In Lenas Kopf schreien die Verdammten.' },
+      text: 'Arian hat aus Helens DNA einen Dalki mit fünf Stacheln gemacht. Ihre Ranken packen Lenas Schwert. In Lenas Kopf schreien die Verdammten.' },
     { name: 'Der Blob', type: 'duel', foe: 'b9_blob', crowd: 0.2, theme: 'ruinen', roles: R_NEWGEN, comp: ['sil', 'peter'],
       text: 'Die Dalki-Heimat ist ein Planetenschiff aus geraubten Landmassen. Aus einem Turm bricht ein Fünfzack mit doppelt dicken Schuppen – ein Panzer auf zwei Beinen.' },
     { name: 'Die zweite Drachenhälfte', type: 'waveboss', at: 60, foe: 'b9_drache2', pace: 1.80, theme: 'roterhimmel', roles: R_NEWGEN, comp: ['sil', 'fabian'],
       text: 'Der Drache der Dalki fliegt durchs geöffnete Dach. Sils Seelenwaffe erwacht: ein Regenbogenbuch, jede Seite eine kopierte Fähigkeit – beliebig tauschbar.' },
     { name: 'Green Horn', type: 'duel', foe: 'b9_greenhorn', crowd: 0.4, theme: 'siedlung', roles: R_DALKI9,
-      text: 'Das letzte Mutterschiff greift die Siedlung auf dem Daisy-Planeten an. Finn hat den Nest-Kristall aufgenommen, Ray ist zurück. „Wo ist Graham?!“' },
+      text: 'Das letzte Mutterschiff greift die Siedlung auf dem Daisy-Planeten an. Finn hat den Nest-Kristall aufgenommen, Ray ist zurück. „Wo ist Arian?!“' },
     { name: 'Acht Stacheln', type: 'boss', at: 50, foe: 'b9_graham', pace: 1.80, theme: 'siedlung', roles: R_NEWGEN, comp: ['sil'],
-      text: 'Graham hält Sunny und ein kleines Mädchen in den Händen. Finn wählt das Kind. Graham frisst Dalki und wächst zu acht Stacheln mit Fellflügeln – seine Wunden heilen in Sekunden.' }
+      text: 'Arian hält Sunny und ein kleines Mädchen in den Händen. Finn wählt das Kind. Arian frisst Dalki und wächst zu acht Stacheln mit Fellflügeln – seine Wunden heilen in Sekunden.' }
   ]
 };
 
@@ -631,7 +631,7 @@ defEnemy('e10_sediK', 'knight', 'q_panzer', 'Turmwächter', { armor: 8 });
 defBoss('b10_tikker', 'silva', 'Tikker (Roter Vampir)', 14000, Object.assign({ look: 'b_tikker', bellShot: 'blood' }, B1));
 defBoss('b10_werwolf', 'kronker', 'Hybrid-Werwolf', 17000, { model: 'werwolf', bellShot: 'spike', r: 38, spd: 80 });
 defBoss('b10_derik', 'silva', 'Derik, Vize der Roten', 15000, Object.assign({ look: 'b_derik', bellShot: 'blood', spd: 74 }, B1));
-defBoss('b10_andy', 'stahlmann', 'Andy Sanguinis (Colossal Draugr)', 17000, Object.assign({ look: 'b_andy', bellShot: 'blood', armor: 8 }, B1));
+defBoss('b10_andy', 'stahlmann', 'Andy Sanguini (Colossal Draugr)', 17000, Object.assign({ look: 'b_andy', bellShot: 'blood', armor: 8 }, B1));
 defBoss('b10_lock', 'mono', 'Lock (Schwerkraft)', 16000, Object.assign({ look: 'b_lock', bellShot: 'soul' }, B1));
 defBoss('b10_russ', 'silva', 'Russ, der God Slayer', 60000, Object.assign({ look: 'b_russ', bellShot: 'blood', spd: 72 }, B1));
 defBoss('b10_chris', 'mono', 'Chris mit Werwolf-DNA', 16000, Object.assign({ look: 'chris', bellShot: 'light', spd: 72 }, B1));
@@ -658,7 +658,7 @@ const ETAPPE10 = {
       text: 'Die Werwölfe wurden einst von den Vampiren ausgerottet. Dieser ist eine Züchtung, und das Qi in seinen Klauen lässt keine Wunde heilen. Finns Schattenflügel blocken ohne jeden Verbrauch.' },
     { name: 'Derik', type: 'duel', foe: 'b10_derik', crowd: 0.2, theme: 'basisnacht', roles: R_ROT,
       text: 'Während Finn fort ist, entführen die Roten Vampire Lucia als „Versicherung“. Ihr Vize Derik erfährt, was ein Schattenfresser ist – ein Schlangendrache, der den Schatten raubt.' },
-    { name: 'Andy Sanguinis', type: 'duel', foe: 'b10_andy', crowd: 0.1, theme: 'burg', roles: R_ROT,
+    { name: 'Andy Sanguini', type: 'duel', foe: 'b10_andy', crowd: 0.1, theme: 'burg', roles: R_ROT,
       text: 'Der Kommandant des Vampire Corps trägt einen Dämonen-Brustpanzer und Fäden wie seine Familie. Er ist ein kolossaler Draugr – und er will wissen, wer dieser „Nate“ wirklich ist.' },
     { name: 'Das Chained-Anwesen', type: 'survive', dur: 180, pace: 1.9, theme: 'siedlung', roles: R_CHAINED, comp: ['peter', 'minny'], elites: 3,
       text: 'Ein Luxusresort voller roter Rosen, „ein Meer aus Blut für meine Braut“. Die neuen Chained haben Fähigkeiten, die die Welt nie gesehen hat. Jessica ist ihre Gefangene.' },
@@ -971,7 +971,7 @@ defEnemy('e15_geist', 'bat', 'bat_aas', 'Nebelgeist', { hp: 74, gore: 'void' });
 defEnemy('e15_dalkiT', 'knight', 'dalki4', 'Toter Dalki', { armor: 12 });
 defEnemy('e15_vampT', 'witch', 'v_magier', 'Toter Vampir', { shot: 'soul', flier: false });
 defEnemy('e15_riese', 'brute', 'q_fort', 'Toter Riese', { splits: 0, hp: 620 });
-defEnemy('e15_graham', 'captain', 'dalkiW', 'Grahams Schatten', { scale: 1.4, hp: 11500 });
+defEnemy('e15_graham', 'captain', 'dalkiW', 'Arians Schatten', { scale: 1.4, hp: 11500 });
 defEnemy('e15_divD', 'ghoul', 'h_ritter', 'Dunkler Divine', { hp: 106, gore: 'light' });
 defEnemy('e15_divG', 'bat', 'bat_licht', 'Goldener Divine', { hp: 74, gore: 'light' });
 defEnemy('e15_divK', 'knight', 'h_waechter', 'Divine-Speerträger', { armor: 12, gore: 'light' });

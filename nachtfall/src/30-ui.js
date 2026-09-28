@@ -56,6 +56,12 @@ function uiSkinCss() {
 .mrate.r-leicht b { color: #7dff9a; } .mrate.r-fair b { color: #c8ff7a; } .mrate.r-hart b { color: #ffd070; } .mrate.r-sehrhart b { color: #ff9a5a; }
 .mrate.r-schwach, .mrate.r-nie { border-color: #ff4a5a; } .mrate.r-schwach b, .mrate.r-nie b { color: #ff5a6a; }
 .mwhy { display: block; color: #ffb0b0; margin-top: 3px; }
+/* Kopfzeile */
+.hprof > div { min-width: 0; overflow: hidden; }
+.hprof small { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 11px; letter-spacing: -.01em; }
+.hcur, .hbtns { flex: none; }
+.hcur { gap: 3px; } .hcur span { padding: 4px 9px 4px 6px !important; font-size: 12.5px; }
+.hbtns { gap: 2px; }
 /* Pause */
 .pset { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .pset .btn { font-size: 11px; padding: 8px 0; white-space: nowrap; letter-spacing: 0; }

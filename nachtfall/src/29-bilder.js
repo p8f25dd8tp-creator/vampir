@@ -6,7 +6,7 @@
    bleibt das bisherige gezeichnete Symbol.
    ========================================================================== */
 
-const IMG_HAVE = new Set(['amulett_1', 'amulett_2', 'amulett_3', 'amulett_4', 'amulett_5', 'amulett_6', 'btn_aufgaben', 'btn_chronik', 'btn_endlos', 'btn_settings', 'btn_turm', 'handschuhe_1', 'handschuhe_2', 'handschuhe_3', 'handschuhe_4', 'handschuhe_5', 'handschuhe_6', 'held_agathon', 'held_chris', 'held_draco', 'held_emma', 'held_fabian', 'held_fex', 'held_finn', 'held_leander', 'held_lena', 'held_leo', 'held_mia', 'held_peter', 'held_sam', 'held_sil', 'kristall', 'logo', 'menue_hg', 'ruestung_1', 'ruestung_2', 'ruestung_3', 'ruestung_4', 'ruestung_5', 'ruestung_6', 'schmiede_hg', 'seelen', 'stiefel_1', 'stiefel_2', 'stiefel_3', 'stiefel_4', 'stiefel_5', 'stiefel_6', 'tab_events', 'tab_familie', 'tab_helden', 'tab_kampagne', 'tab_schmiede', 'tab_system', 'titel', 'waffe_1', 'waffe_2', 'waffe_3', 'waffe_4', 'waffe_5', 'waffe_6']);
+const IMG_HAVE = new Set(['bg_fraktion', 'bg_helden', 'bg_modi', 'bg_system', 'karte_endlos', 'karte_pruefung', 'karte_turm', 'node_bloodsucker', 'node_boss', 'node_duell', 'node_durchhalten', 'node_entdeckung', 'node_jagd', 'node_ueberleben', 'node_wellenboss', 'amulett_1', 'amulett_2', 'amulett_3', 'amulett_4', 'amulett_5', 'amulett_6', 'btn_aufgaben', 'btn_chronik', 'btn_endlos', 'btn_settings', 'btn_turm', 'handschuhe_1', 'handschuhe_2', 'handschuhe_3', 'handschuhe_4', 'handschuhe_5', 'handschuhe_6', 'held_agathon', 'held_chris', 'held_draco', 'held_emma', 'held_fabian', 'held_fex', 'held_finn', 'held_leander', 'held_lena', 'held_leo', 'held_mia', 'held_peter', 'held_sam', 'held_sil', 'kristall', 'logo', 'menue_hg', 'ruestung_1', 'ruestung_2', 'ruestung_3', 'ruestung_4', 'ruestung_5', 'ruestung_6', 'schmiede_hg', 'seelen', 'stiefel_1', 'stiefel_2', 'stiefel_3', 'stiefel_4', 'stiefel_5', 'stiefel_6', 'tab_events', 'tab_familie', 'tab_helden', 'tab_kampagne', 'tab_schmiede', 'tab_system', 'titel', 'waffe_1', 'waffe_2', 'waffe_3', 'waffe_4', 'waffe_5', 'waffe_6']);
 function imgUrl(n) { if (window.IMG_B64 && window.IMG_B64[n]) return window.IMG_B64[n]; return IMG_HAVE.has(n) && !window.IMG_B64 ? 'img/' + n + '.webp' : null; }
 function gearImg(id, r) { return imgUrl(id + '_' + ((r || 0) + 1)); }
 const TAB_IMG = { kampagne: 'tab_kampagne', helden: 'tab_helden', ausruestung: 'tab_schmiede', familie: 'tab_familie', system: 'tab_system', events: 'tab_events' };
@@ -34,7 +34,8 @@ UI.showHome = function (tab) {
   d.querySelectorAll('canvas[data-prev]').forEach((c) => { const u = imgUrl('held_' + c.dataset.prev); if (!u) return; const im = document.createElement('img'); im.className = 'hport'; im.src = u; c.replaceWith(im); });
   this.previews = this.previews.filter((pv) => pv.c.isConnected);
   // Hintergruende
-  const bg = this.tab === 'ausruestung' ? imgUrl('schmiede_hg') : this.tab !== 'kampagne' ? imgUrl('menue_hg') : null;
+  const BGT = { ausruestung: 'schmiede_hg', helden: 'bg_helden', familie: 'bg_fraktion', system: 'bg_system', events: 'bg_modi' };
+  const bg = this.tab === 'kampagne' ? null : imgUrl(BGT[this.tab]) || imgUrl('menue_hg');
   if (home) home.style.background = bg ? `linear-gradient(180deg, rgba(10,4,20,.35), rgba(10,4,20,.7)), url(${bg}) center / cover` : '';
   if (!UI.splashShown) figSplash();
   return d;

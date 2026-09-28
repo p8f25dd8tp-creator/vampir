@@ -325,7 +325,7 @@ const BOSS_ART = {
   dalkiK: (g, st) => { g.scale(3, 3); drawDalki(g, (st.t * 0.6) % 1, { atk: st.slam > 0.2 ? 1 : 0, idle: !st.run }, { spikes: 7, cols: DCOL.grau, armor: true, big: true }); },
   // Kapitel 4: Anfuehrer der Vampirfamilien
   vampF: (g, st) => { g.scale(2.4, 2.4); withPal([[HERO_PAL.vorian, { armor: '#1a1418', armorL: '#4a3a44', red: '#8a0a1a', redL: '#ff2a40', hair: '#d8d0d8' }]], () => { const P = makePose(SPEC_VORIAN, { t: st.t, run: st.run || 0, phase: st.phase || 0, cast: Math.min(1, st.slam || 0), aim: -1.1, hurt: st.hurt || 0, dead: st.dead || 0 }); drawVorian(g, P, { glow: 1, crown: 2 }); }); },
-  // Kapitel 5: Graham — Dalki-Werwolf mit acht Stacheln
+  // Kapitel 5: Arian — Dalki-Werwolf mit acht Stacheln
   graham: (g, st) => { g.scale(3.4, 3.4); drawDalki(g, (st.t * 0.55) % 1, { atk: st.slam > 0.2 ? 1 : 0, idle: !st.run }, { spikes: 8, cols: Object.assign({}, DCOL.wolf, { eye: st.enrage ? '#ff2a1a' : '#ffb02a' }), fur: true, armor: true, big: true }); },
   // Kapitel 6: der Himmlische Waechter (Lichtfluegel & Heiligenschein)
   himmlisch: (g, st) => {
