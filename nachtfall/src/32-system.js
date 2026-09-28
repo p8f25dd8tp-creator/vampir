@@ -215,8 +215,8 @@ UI.showEnd = function (won, souls, newly, extra) {
 .syshub { display: flex; flex-direction: column; gap: 10px; width: min(560px, 100%); margin: 0 auto; font-family: 'Cormorant Garamond', Georgia, serif; }
 .syshubhead { text-align: center; font: 700 12px/1 ui-monospace, Menlo, monospace; letter-spacing: .5em; color: #8ae8ff; text-shadow: 0 0 10px #2ab8ff; padding-top: 4px; }
 .systabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-.systab { position: relative; display: flex; align-items: center; gap: 6px; padding: 6px 8px; border: 1px solid rgba(110,200,255,.35); border-radius: 4px; background: rgba(6,14,34,.78); color: #b8d8ff; font: 700 12px 'Cinzel', serif; cursor: pointer; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
-.systab img { width: 26px; height: 26px; object-fit: contain; }
+.systab { position: relative; display: flex; align-items: center; gap: 4px; padding: 6px 6px; min-width: 0; overflow: hidden; white-space: nowrap; border: 1px solid rgba(110,200,255,.35); border-radius: 4px; background: rgba(6,14,34,.78); color: #b8d8ff; font: 700 10.5px 'Cinzel', serif; cursor: pointer; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
+.systab img { width: 24px; height: 24px; flex: none; object-fit: contain; }
 .systab.on { background: linear-gradient(180deg, rgba(20,70,130,.85), rgba(8,24,60,.9)); border-color: #8ae8ff; color: #fff; box-shadow: inset 0 0 14px rgba(90,200,255,.45); }
 .systab .dot { position: absolute; top: 2px; right: 4px; min-width: 15px; height: 15px; border-radius: 8px; background: #e0303a; color: #fff; font: 800 10px/15px sans-serif; font-style: normal; text-align: center; }
 .swin { position: relative; padding: 10px 12px; background: rgba(4,10,26,.86); border: 1px solid rgba(110,200,255,.45); box-shadow: 0 0 18px rgba(40,140,255,.18), inset 0 0 24px rgba(40,140,255,.08); color: #dfeeff; clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px); }
@@ -252,5 +252,13 @@ UI.showEnd = function (won, souls, newly, extra) {
 .sysend { margin: 8px 0; padding: 8px 10px; border: 1px solid rgba(110,200,255,.45); background: rgba(4,10,26,.7); }
 .sysend p { margin: 3px 0; font-size: 14px; color: #dfeeff; } .sysend b { color: #8ae8ff; }
 `;
+  const f = imgUrl('sys_fenster'), k = imgUrl('sys_knopf');
+  if (f) st.textContent += `.swin { clip-path: none; border-style: solid; border-width: 14px; border-image: url("${f}") 44 fill / 14px stretch; background: none; box-shadow: none; padding: 4px 6px; }
+.swin::before { display: none; }
+.systab { clip-path: none; border-style: solid; border-width: 8px; border-image: url("${f}") 44 fill / 8px stretch; background: none; padding: 2px 4px; }
+.systab.on { border-image-source: url("${f}"); filter: brightness(1.45) saturate(1.2); box-shadow: 0 0 14px rgba(90,200,255,.45); background: none; }`;
+  if (k) st.textContent += `.swin .btn { border-style: solid; border-width: 0 18px; border-image: url("${k}") 0 46 fill / 0 18px stretch !important; background: none; color: #dff4ff; text-shadow: 0 0 6px #2ab8ff; }
+.swin .btn.primary { filter: brightness(1.35) saturate(1.3); color: #fff; }
+.swin .btn:disabled { filter: grayscale(.7) brightness(.6); }`;
   document.head.appendChild(st);
 })();
