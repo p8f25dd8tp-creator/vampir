@@ -158,7 +158,7 @@ UI.showHud = function () {
   const q = document.createElement('div'); q.className = 'questbox'; q.id = 'questbox';
   this.hud.appendChild(q);
   this.cache.quests = null;
-  setTimeout(() => this.sysWindow('KAPITEL ' + GAME.story.n, GAME.story.title, GAME.story.place), 400);
+  if (!GAME.camp) setTimeout(() => this.sysWindow('KAPITEL ' + GAME.story.n, GAME.story.title, GAME.story.place), 400);
 };
 UI.updateHud = function () {
   _ui.updateHud.call(this);
@@ -168,7 +168,7 @@ UI.updateHud = function () {
   if (this.cache.quests === key) return;
   this.cache.quests = key;
   const box = $('#questbox'); if (!box) return;
-  box.innerHTML = `<div class="qh">QUESTS · <span style="color:#8ad8ff">${G.crystals || 0} ◆</span></div>` + G.quests.map((Q) => {
+  box.innerHTML = `<div class="qh">${G.quests.length ? 'QUESTS · ' : ''}<span style="color:#8ad8ff">${G.crystals || 0} ◆</span></div>` + G.quests.map((Q) => {
     const q = Q.q, goal = q.type === 'mini' ? 1 : q.n;
     const pr = q.type === 'survive' ? fmtTime(Math.min(Q.prog, goal)) + '/' + fmtTime(goal) : Math.min(Q.prog, goal) + '/' + goal;
     return `<div class="ql ${Q.done ? 'done' : ''}">${Q.done ? '✔' : '▸'} ${q.text}${q.type === 'mini' ? '' : ' <b>' + pr + '</b>'}</div>`;

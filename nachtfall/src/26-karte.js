@@ -233,7 +233,7 @@ UI.campSheet = function () {
   const goal = boss ? `Besiege ${ENEMIES[ch.roles.boss].name}` : `Überlebe ${fmtTime(LV_DUR[l - 1])} · Gegner +${Math.round((lvDiff(l).hp - 1) * 100)} % Leben`;
   return `<div class="campsheet"><div class="cshead"><span class="csnum">ETAPPE ${e}</span><b>${ch.title}</b><small>${ch.place}</small></div>
     <div class="lvrow">${nodes}</div>
-    <div class="csinfo">${open ? `<b>Level ${l}${boss ? ' · Boss' : ''}</b> — ${goal}` : `🔒 Schließe zuerst Etappe ${e - 1} ab`}</div>
+    <div class="csinfo">${open ? `<b>Level ${l}${boss ? ' · Boss' : ''}</b> — ${goal}<br><small style="color:#b8a8e8">★★ nie unter 30 % Leben · ★★★ nie unter 60 %</small>` : `🔒 Schließe zuerst Etappe ${e - 1} ab`}</div>
     <button class="bigplay" data-act="campgo" ${open && lvOpen(e, l) ? '' : 'disabled'}><b>STARTEN</b><small>mit ${HEROES[C.hero].name}</small></button></div>`;
 };
 function mapRefreshSheet() {

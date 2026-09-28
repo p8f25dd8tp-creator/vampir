@@ -252,7 +252,7 @@ function damagePlayer(amount, src, heavy) {
   if (!p.alive || p.iframes > 0 || G.state !== 'play') return false;
   let dmg = amount * p.st.dmgTaken;
   if (p.hero === 'shen' && p.rooted > 0.5) dmg *= 0.7;
-  dmg = Math.max(1, dmg - p.st.armor);
+  dmg = Math.max(1, dmg * 0.5, dmg - p.st.armor); // Ruestung mindert hoechstens um die Haelfte
   p.hp -= dmg;
   G.stats.taken += dmg;
   const sk = src ? (src.type || src.kind || '?') : '?'; G.stats.takenBy = G.stats.takenBy || {}; G.stats.takenBy[sk] = (G.stats.takenBy[sk] || 0) + dmg;

@@ -4548,13 +4548,13 @@ function makeEnemy(type, x, y, opts) {
   if (GAME.roles && GAME.roles[type]) type = GAME.roles[type];
   const D = ENEMIES[type];
   opts = opts || {};
-  const hs = hpScale(GAME.t) * (GAME.diffHp || 1);
+  const hs = hpScale(tEff()) * (GAME.diffHp || 1);
   const elite = !!opts.elite;
   const e = {
     id: _eid++, type, role: D.role || role, def: D, x, y, kvx: 0, kvy: 0,
     hp: 0, maxHp: 0,
     spd: D.spd * rand(0.9, 1.1) * (1 + Math.min(0.25, GAME.t / 2400)),
-    r: D.r * (elite ? 1.45 : 1), dmg: D.dmg * (1 + GAME.t / 540) * (elite ? 1.5 : 1) * (GAME.diffDmg || 1),
+    r: D.r * (elite ? 1.45 : 1), dmg: D.dmg * (1 + tEff() / 540) * (elite ? 1.5 : 1) * (GAME.diffDmg || 1),
     mass: D.mass * (elite ? 6 : 1), armor: (D.armor || 0) * (1 + GAME.t / 600),
     scale: D.scale * (elite ? 1.5 : 1), elite,
     face: 1, animT: Math.random() * 10, flash: 0, dead: false, deathT: 0,
@@ -4587,9 +4587,12 @@ function pickMix(mix) {
 }
 
 /* -------------------------------------------------------- Nachschub & Ereignisse */
+// Kampagnen-Tempo: kurze Level durchlaufen die Wellen schneller (nie bis in die Boss-Phase)
+function tEff() { const G = GAME; return G.pace ? Math.min(G.t * G.pace, G.paceCap || 520) : G.t; }
 function updateSpawns(dt) {
   const G = GAME, p = G.p;
-  while (G.waveIdx + 1 < WAVES.length && WAVES[G.waveIdx + 1].t <= G.t) G.waveIdx++;
+  const te = tEff();
+  while (G.waveIdx + 1 < WAVES.length && WAVES[G.waveIdx + 1].t <= te) G.waveIdx++;
   const W = WAVES[G.waveIdx];
   let alive = 0;
   for (const e of G.enemies) if (!e.dead && !e.boss && !e.mini) alive++;
@@ -5128,7 +5131,7 @@ function damagePlayer(amount, src, heavy) {
   if (!p.alive || p.iframes > 0 || G.state !== 'play') return false;
   let dmg = amount * p.st.dmgTaken;
   if (p.hero === 'shen' && p.rooted > 0.5) dmg *= 0.7;
-  dmg = Math.max(1, dmg - p.st.armor);
+  dmg = Math.max(1, dmg * 0.5, dmg - p.st.armor); // Ruestung mindert hoechstens um die Haelfte
   p.hp -= dmg;
   G.stats.taken += dmg;
   const sk = src ? (src.type || src.kind || '?') : '?'; G.stats.takenBy = G.stats.takenBy || {}; G.stats.takenBy[sk] = (G.stats.takenBy[sk] || 0) + dmg;
@@ -6320,8 +6323,8 @@ const UI = {
     if (p.hero === 'vorian') { let n = 0; for (const e of G.enemies) if (!e.dead && e.bstack > 0) n += e.bstack; mv = Math.min(1, n / 60); mt = 'Blutmale: ' + n; }
     if (p.hero === 'liora') { mv = clamp((1 - p.hp / p.st.maxHp) / 0.72, 0, 1); mt = 'Blutrausch +' + Math.round(clamp((1 - p.hp / p.st.maxHp) * 1.25, 0, 0.9) * 100) + '%' + (p.buffAder > 0 ? ' · ADERLASS' : ''); }
     if (p.hero === 'nyx') { mv = p.flow; mc = '#a77bff'; mt = 'Schattenfluss +' + Math.round(p.flow * 45) + '%' + (p.ultT > 0 ? ' · MITTERNACHT' : ''); }
-    if (p.hero === 'finn') { const T = FINN_TIERS[p.tier || 0], F = finnSave(), N = FINN_TIERS[F.tier + 1]; mc = T.col; const run = finnRunEssence(G, false); if (!p.tier) { mv = 0; mt = 'Mensch · finde das Buch!'; } else if (G.finnArcade) { const A = FINN_ARC[(p.tier || 0) + 1]; mv = A ? clamp(G.level / A.lv, 0, 1) : 1; mt = T.name + (A ? ' · nächste Form: ' + A.txt : ' · höchste Form'); } else if (G.finnTest) { mv = 1; mt = T.name + ' (Testform)'; } else if (N && N.req.essence) { mv = clamp((F.essence + run) / N.req.essence, 0, 1); mt = T.name + ' · Essenz +' + run; } else { mv = 1; mt = T.name + ' · Essenz +' + run; } }
-    if (H.evoHero) { const T = H.tiers[p.tier || 0], N = H.tiers[(p.tier || 0) + 1]; mc = T.col; mv = N ? clamp(G.level / N.lv, 0, 1) : 1; mt = T.name + (N ? ' · nächste Form: ' + N.txt : ' · höchste Form'); }
+    if (p.hero === 'finn') { const T = FINN_TIERS[p.tier || 0], F = finnSave(), N = FINN_TIERS[F.tier + 1]; mc = T.col; const run = finnRunEssence(G, false); if (!p.tier) { mv = 0; mt = 'Mensch · finde das Buch!'; } else if (G.finnArcade) { const A = FINN_ARC[(p.tier || 0) + 1]; mv = A ? clamp(G.level / A.lv, 0, 1) : 1; const lk = typeof evoCap === 'function' && (p.tier || 0) + 1 > evoCap('finn'); mt = T.name + (A ? (lk ? ' · nächste Form 🔒' : ' → Stufe ' + A.lv) : ' · höchste Form'); if (lk) mv = 1; } else if (G.finnTest) { mv = 1; mt = T.name + ' (Testform)'; } else if (N && N.req.essence) { mv = clamp((F.essence + run) / N.req.essence, 0, 1); mt = T.name + ' · Essenz +' + run; } else { mv = 1; mt = T.name + ' · Essenz +' + run; } }
+    if (H.evoHero) { const T = H.tiers[p.tier || 0], N = H.tiers[(p.tier || 0) + 1]; mc = T.col; mv = N ? clamp(G.level / N.lv, 0, 1) : 1; const lk = N && typeof evoCap === 'function' && (p.tier || 0) + 1 > evoCap(p.hero); mt = T.name + (N ? (lk ? ' · nächste Form 🔒' : ' → Stufe ' + N.lv) : ' · höchste Form'); if (lk) mv = 1; }
     if (p.hero === 'shen') { mv = p.qi / 5; mc = '#4ff0cc'; mt = 'Qi ' + Math.floor(p.qi) + '/5' + (p.rooted > 0.5 ? ' · Wurzelstand' : ''); }
     this.set('mfill', (mv * 100).toFixed(0) + '%', 'width');
     this.set('mfill', mc, 'background');
@@ -8158,7 +8161,7 @@ UI.showHud = function () {
   const q = document.createElement('div'); q.className = 'questbox'; q.id = 'questbox';
   this.hud.appendChild(q);
   this.cache.quests = null;
-  setTimeout(() => this.sysWindow('KAPITEL ' + GAME.story.n, GAME.story.title, GAME.story.place), 400);
+  if (!GAME.camp) setTimeout(() => this.sysWindow('KAPITEL ' + GAME.story.n, GAME.story.title, GAME.story.place), 400);
 };
 UI.updateHud = function () {
   _ui.updateHud.call(this);
@@ -8168,7 +8171,7 @@ UI.updateHud = function () {
   if (this.cache.quests === key) return;
   this.cache.quests = key;
   const box = $('#questbox'); if (!box) return;
-  box.innerHTML = `<div class="qh">QUESTS · <span style="color:#8ad8ff">${G.crystals || 0} ◆</span></div>` + G.quests.map((Q) => {
+  box.innerHTML = `<div class="qh">${G.quests.length ? 'QUESTS · ' : ''}<span style="color:#8ad8ff">${G.crystals || 0} ◆</span></div>` + G.quests.map((Q) => {
     const q = Q.q, goal = q.type === 'mini' ? 1 : q.n;
     const pr = q.type === 'survive' ? fmtTime(Math.min(Q.prog, goal)) + '/' + fmtTime(goal) : Math.min(Q.prog, goal) + '/' + goal;
     return `<div class="ql ${Q.done ? 'done' : ''}">${Q.done ? '✔' : '▸'} ${q.text}${q.type === 'mini' ? '' : ' <b>' + pr + '</b>'}</div>`;
@@ -10474,6 +10477,8 @@ function starsOf(e) { let s = 0; for (let l = 1; l <= LEVELS_PER; l++) s += lvSt
 // Levelaufbau: jedes Level beginnt bei null; mit jedem Level mehr und staerkere Gegner und laengere Dauer.
 // Level 8 ist die volle Nacht bis zum Boss der Etappe.
 const LV_DUR = [150, 180, 210, 240, 270, 300, 330, 0];
+const CAMP_DIFF = { hp: 1.6, dmg: 1.5, count: 1.15 };
+const LV_PACE = [1.3, 1.45, 1.6, 1.75, 1.8, 1.85, 1.9];
 function lvDiff(l) { const k = l - 1; return { hp: 1 + 0.14 * k, count: 1 + 0.05 * k, dmg: 1 + 0.05 * k }; }
 
 /* ============================================================ Helden ueber die Kampagne */
@@ -10573,13 +10578,18 @@ newRun = function (heroId, opts) {
   const G = GAME; G.camp = cp;
   if (cp.mode === 'endless') { G.campGoal = Infinity; return; }
   const ch = cp.ch; setTheme(ch.theme); storySetup(G, ch);
+  const ek = cp.mode === 'endless' ? 0 : cp.e - 1; G.diffHp *= CAMP_DIFF.hp * (1 + 0.25 * ek); G.diffDmg *= CAMP_DIFF.dmg * (1 + 0.12 * ek); G.diffCount *= CAMP_DIFF.count * (1 + 0.02 * ek); // Kampagne haerter als die alte Story (Ausruestung, Burg, Talente)
   const C = campSave(), M = SAVE.meta, fam = C.castle;
   G.statMod = (st) => { for (const id in GEAR2) GEAR2[id].apply(st, gearPower(id)); st.might *= 1 + 0.02 * fam; st.maxHp *= 1 + 0.03 * fam; };
   G.crystalMul = 1 + 0.15 * (M.kristall || 0);
   if (cp.mode === 'tower') { // Boss frueh, aber staerker
     G.campGoal = Infinity; G.diffBoss = 1 + cp.e * 0.15; G.diffDmg *= 1 + cp.e * 0.04;
     G.events = [{ t: 150, kind: 'boss', type: 'boss', text: ch.texts.boss }]; G.pendingLevels += 3; G.quests = [];
-  } else { const D = lvDiff(cp.l); G.diffHp *= D.hp; G.diffCount *= D.count; G.diffDmg *= D.dmg; G.campGoal = cp.l === LEVELS_PER ? Infinity : LV_DUR[cp.l - 1]; if (cp.l < LEVELS_PER) G.quests = []; }
+  } else { const D = lvDiff(cp.l); G.diffHp *= D.hp; G.diffCount *= D.count; G.diffDmg *= D.dmg; G.campGoal = cp.l === LEVELS_PER ? Infinity : LV_DUR[cp.l - 1]; if (cp.l === LEVELS_PER) G.diffBoss = (G.diffBoss || 1) * (1 + 0.06 * cp.e); if (cp.l < LEVELS_PER) G.quests = [];
+    if (cp.l < LEVELS_PER) { // Tempo: Wellen und Ereignisse laufen schneller ab, Boss-Ereignis entfaellt
+      const pace = LV_PACE[cp.l - 1]; G.pace = pace;
+      G.events = G.events.filter((ev) => ev.kind !== 'boss').map((ev) => Object.assign({}, ev, { t: ev.t / pace })).filter((ev) => ev.t < G.campGoal - 12);
+    } }
   recomputeStats(); G.p.hp = G.p.st.maxHp;
 };
 // Ziel erreicht: Level geschafft
@@ -10587,6 +10597,7 @@ const _updCamp = updateGame;
 updateGame = function (dt) {
   _updCamp(dt);
   const G = GAME;
+  if (G && G.camp && G.p && G.state === 'play') G.minHpF = Math.min(G.minHpF == null ? 1 : G.minHpF, G.p.hp / G.p.st.maxHp);
   if (G && G.camp && G.state === 'play' && !G.won && G.p.alive && G.t >= G.campGoal) {
     G.won = true; sfx('win'); UI.announce('LEVEL GESCHAFFT', 'fusion'); GAME.later(1.6, () => endRun(true));
   }
@@ -10604,7 +10615,7 @@ function campResult(won) {
   else if (cp.mode === 'tower') { if (won && cp.e > (C.tower || 0)) { C.tower = cp.e; res.first = true; res.bonus = { souls: 80 * cp.e, crystals: 15 * cp.e }; } }
   else if (won) {
     D.prog.levels++;
-    const hp = p.hp / p.st.maxHp; res.stars = 1 + (hp >= 0.4 ? 1 : 0) + (hp >= 0.75 ? 1 : 0);
+    const hp = G.minHpF == null ? p.hp / p.st.maxHp : G.minHpF; res.stars = 1 + (hp >= 0.3 ? 1 : 0) + (hp >= 0.6 ? 1 : 0); // Sterne nach dem tiefsten Lebensstand
     const key = lvKey(cp.e, cp.l), old = C.stars[key] || 0;
     if (!old) { res.first = true; res.bonus = { souls: 30 * cp.e + (cp.l === LEVELS_PER ? 150 * cp.e : 0), crystals: 6 * cp.e + (cp.l === LEVELS_PER ? 25 * cp.e : 0) }; }
     C.stars[key] = Math.max(old, res.stars);
@@ -10648,8 +10659,9 @@ UI.showHud = function () {
   _hudCamp.call(this);
   const G = GAME; if (!G || !G.camp || !this.hud) return;
   const cp = G.camp;
-  if (cp.mode === 'level') setTimeout(() => this.sysWindow(`ETAPPE ${cp.e} · LEVEL ${cp.l}`, cp.l === LEVELS_PER ? 'Besiege ' + ENEMIES[cp.ch.roles.boss].name : 'Überlebe bis ' + fmtTime(G.campGoal), cp.ch.title), 1200);
-  if (cp.mode === 'tower') setTimeout(() => this.sysWindow('BOSS-TURM · STOCK ' + cp.e, 'Besiege ' + ENEMIES[cp.ch.roles.boss].name, 'Stärker als in der Kampagne'), 1200);
+  const later = (f) => { const go = () => { if (document.getElementById('evo')) return setTimeout(go, 500); f(); }; setTimeout(go, 1200); };
+  if (cp.mode === 'level') later(() => this.sysWindow(`ETAPPE ${cp.e} · LEVEL ${cp.l}`, cp.l === LEVELS_PER ? 'Besiege ' + ENEMIES[cp.ch.roles.boss].name : 'Überlebe bis ' + fmtTime(G.campGoal), cp.ch.title));
+  if (cp.mode === 'tower') later(() => this.sysWindow('BOSS-TURM · STOCK ' + cp.e, 'Besiege ' + ENEMIES[cp.ch.roles.boss].name, 'Stärker als in der Kampagne'));
 };
 
 /* ============================================================ Hauptmenue mit Tab-Leiste */
@@ -11600,7 +11612,7 @@ UI.campSheet = function () {
   const goal = boss ? `Besiege ${ENEMIES[ch.roles.boss].name}` : `Überlebe ${fmtTime(LV_DUR[l - 1])} · Gegner +${Math.round((lvDiff(l).hp - 1) * 100)} % Leben`;
   return `<div class="campsheet"><div class="cshead"><span class="csnum">ETAPPE ${e}</span><b>${ch.title}</b><small>${ch.place}</small></div>
     <div class="lvrow">${nodes}</div>
-    <div class="csinfo">${open ? `<b>Level ${l}${boss ? ' · Boss' : ''}</b> — ${goal}` : `🔒 Schließe zuerst Etappe ${e - 1} ab`}</div>
+    <div class="csinfo">${open ? `<b>Level ${l}${boss ? ' · Boss' : ''}</b> — ${goal}<br><small style="color:#b8a8e8">★★ nie unter 30 % Leben · ★★★ nie unter 60 %</small>` : `🔒 Schließe zuerst Etappe ${e - 1} ab`}</div>
     <button class="bigplay" data-act="campgo" ${open && lvOpen(e, l) ? '' : 'disabled'}><b>STARTEN</b><small>mit ${HEROES[C.hero].name}</small></button></div>`;
 };
 function mapRefreshSheet() {

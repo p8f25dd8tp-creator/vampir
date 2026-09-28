@@ -73,13 +73,13 @@ function makeEnemy(type, x, y, opts) {
   if (GAME.roles && GAME.roles[type]) type = GAME.roles[type];
   const D = ENEMIES[type];
   opts = opts || {};
-  const hs = hpScale(GAME.t) * (GAME.diffHp || 1);
+  const hs = hpScale(tEff()) * (GAME.diffHp || 1);
   const elite = !!opts.elite;
   const e = {
     id: _eid++, type, role: D.role || role, def: D, x, y, kvx: 0, kvy: 0,
     hp: 0, maxHp: 0,
     spd: D.spd * rand(0.9, 1.1) * (1 + Math.min(0.25, GAME.t / 2400)),
-    r: D.r * (elite ? 1.45 : 1), dmg: D.dmg * (1 + GAME.t / 540) * (elite ? 1.5 : 1) * (GAME.diffDmg || 1),
+    r: D.r * (elite ? 1.45 : 1), dmg: D.dmg * (1 + tEff() / 540) * (elite ? 1.5 : 1) * (GAME.diffDmg || 1),
     mass: D.mass * (elite ? 6 : 1), armor: (D.armor || 0) * (1 + GAME.t / 600),
     scale: D.scale * (elite ? 1.5 : 1), elite,
     face: 1, animT: Math.random() * 10, flash: 0, dead: false, deathT: 0,
@@ -112,9 +112,12 @@ function pickMix(mix) {
 }
 
 /* -------------------------------------------------------- Nachschub & Ereignisse */
+// Kampagnen-Tempo: kurze Level durchlaufen die Wellen schneller (nie bis in die Boss-Phase)
+function tEff() { const G = GAME; return G.pace ? Math.min(G.t * G.pace, G.paceCap || 520) : G.t; }
 function updateSpawns(dt) {
   const G = GAME, p = G.p;
-  while (G.waveIdx + 1 < WAVES.length && WAVES[G.waveIdx + 1].t <= G.t) G.waveIdx++;
+  const te = tEff();
+  while (G.waveIdx + 1 < WAVES.length && WAVES[G.waveIdx + 1].t <= te) G.waveIdx++;
   const W = WAVES[G.waveIdx];
   let alive = 0;
   for (const e of G.enemies) if (!e.dead && !e.boss && !e.mini) alive++;
