@@ -47,10 +47,11 @@
 <script src="src/25-drei.js?v=4"></script>
 <script src="src/26-karte.js?v=4"></script>
 <script src="src/27-evo.js?v=4"></script>
+<script src="src/28-figuren.js?v=4"></script>
 <script src="src/12-main.js?v=4"></script>
 <!--/SCRIPTS-->
-<script type="importmap">{"imports":{"three":"./vendor/three.module.min.js"}}</script>
-<script type="module">import * as T3 from 'three'; window.THREE = T3; window.dispatchEvent(new Event('three-ready'));</script>
+<script type="importmap">{"imports":{"three":"./vendor/three.module.min.js","three/addons/":"./vendor/addons/"}}</script>
+<script type="module">import * as T3 from 'three'; import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'; import * as SkU from 'three/addons/utils/SkeletonUtils.js'; window.THREE = T3; window.GLTFLoader = GLTFLoader; window.SkeletonUtils = SkU; window.dispatchEvent(new Event('three-ready'));</script>
 <script>
   if ('serviceWorker' in navigator && location.protocol === 'https:') {
     window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function(){}); });

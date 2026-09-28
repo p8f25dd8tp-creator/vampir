@@ -504,8 +504,8 @@ function r3nRender(G, time, dt) {
       seenH.add(key);
       const R = r3nHero(key, p.hero, p.tier || 0);
       const aimYaw = p.castT > 0 ? Math.atan2(Math.cos(p.castAim), Math.sin(p.castAim)) : (Math.abs(p.lastMoveX) + Math.abs(p.lastMoveY) > 0.1 ? Math.atan2(p.lastMoveX, p.lastMoveY) : undefined);
-      poseChibi(R, { x: p.x, y: p.y, face: p.face, aimYaw, run: p.runAmt || 0, phase: p.phase || 0, t: time, cast: p.castT > 0 ? clamp(p.castT / (p.castMax || 0.3), 0, 1) : 0, flash: p.hurtT > 0 ? Math.min(0.5, p.hurtT * 2) : 0, dead: !p.alive, deadT: p.deadT, visible: !(p.dodgeT > 0 && p.dodgeKind === 'shadowstep') }, dt);
-      if (p.dodgeT > 0) R.body.rotation.y = (1 - p.dodgeT / (p.dodgeMax || 0.3)) * Math.PI * 2;
+      poseChibi(R, { x: p.x, y: p.y, face: p.face, aimYaw, run: p.runAmt || 0, phase: p.phase || 0, t: time, cast: p.castT > 0 ? clamp(p.castT / (p.castMax || 0.3), 0, 1) : 0, flash: p.hurtT > 0 ? Math.min(0.5, p.hurtT * 2) : 0, dead: !p.alive, deadT: p.deadT, dodge: p.dodgeT > 0, visible: !(p.dodgeT > 0 && p.dodgeKind === 'shadowstep') }, dt);
+      if (p.dodgeT > 0 && !R.kay) R.body.rotation.y = (1 - p.dodgeT / (p.dodgeMax || 0.3)) * Math.PI * 2;
       else R.body.rotation.y = 0;
       addShadow(p.x, p.y, 16);
       R3N.plight.position.set(p.x, 70, zOf(p.y) + 30);
