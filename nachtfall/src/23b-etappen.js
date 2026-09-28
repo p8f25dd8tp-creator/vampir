@@ -69,6 +69,60 @@ const ETAPPE1 = {
   ]
 };
 
+/* ------------------------------------------------------------ Etappe 2: Die zweite Basis (Kapitel 139–383) */
+defEnemy('e2_wache', 'knight', 'h_wache', 'Truedreams Wächter', { armor: 2 });
+defEnemy('e2_schnecke', 'ghoul', 'q_panzer', 'Felsschnecke', { hp: 22, spd: 44 });
+defEnemy('e2_schlange', 'bat', 'bat_aas', 'Mittelstufen-Schlange', { hp: 20 });
+defEnemy('e2_koeder', 'ghoul', 'q_spore', 'Köder-Bestie', { hp: 20 });
+defEnemy('e2_ranke', 'witch', 'q_kroete', 'Rankenspucker', { shot: 'acid', flier: false });
+defEnemy('e2_hund', 'ghoul', 'q_rot', 'Blinder Furry Hound', { hp: 20, spd: 74 });
+defEnemy('e2_klon', 'ghoul', 'h_blade', 'Klon von Multiplier', { hp: 14, spd: 66 });
+defBoss('b2_fex', 'mono', 'Fex Sanguinis (Vampir)', 1500, Object.assign({ look: 'fex', bellShot: 'blood' }, B1));
+defBoss('b2_emma', 'erin', 'Emma, von Fex gelenkt', 1700, Object.assign({ look: 'emma', bellShot: 'light' }, B1));
+defBoss('b2_leander', 'mono', 'Leander im Nanobot-Anzug', 1900, Object.assign({ look: 'leander', bellShot: 'spike', armor: 4 }, B1));
+defBoss('b2_kenny', 'mono', 'Kenny (Giftnadeln)', 2200, Object.assign({ look: 'b_kenny', bellShot: 'acid' }, B1));
+defBoss('b2_ranken', 'krabbe', 'Rankenbestie (Hochstufe)', 4600, { model: 'ranken', bellShot: 'acid', r: 44 });
+defBoss('b2_likmorn', 'dalki1', 'Likmorn, König der Unterstadt', 6000, { model: 'likmorn', bellShot: 'spike', r: 34 });
+defBoss('b2_multi', 'mono', 'Multiplier (Klone)', 2600, Object.assign({ look: 'b_multi', bellShot: 'spike' }, B1));
+defBoss('b2_sil', 'mono', 'Sil (Fabian)', 3200, Object.assign({ look: 'sil', bellShot: 'soul' }, B1));
+defBoss('b2_dillan', 'stahlmann', 'Sergeant Dillan Wyte (Erde)', 3300, Object.assign({ look: 'b_dillan', bellShot: 'spike', armor: 5 }, B1));
+const R_BASIS = { ghoul: 'e1_schueler', bat: 'e1_schueler', knight: 'e2_wache', witch: 'c4_agent', brute: 'e1_rowdy', captain: 'c4_wache' };
+const R_DSCHUNGEL = { ghoul: 'e2_schnecke', bat: 'e2_schlange', knight: 'c3_panzer', witch: 'e2_ranke', brute: 'c3_koenig', captain: 'c3_koenigB' };
+const R_KOEDER = { ghoul: 'e2_koeder', bat: 'e2_schlange', knight: 'e2_koeder', witch: 'e2_ranke', brute: 'c3_koenig', captain: 'c3_koenigB' };
+const R_UNTER = { ghoul: 'e2_hund', bat: 'c2_flatter', knight: 'e2_hund', witch: 'e2_ranke', brute: 'c3_koenig', captain: 'c3_koenigB' };
+const R_TURNIER = { ghoul: 'e2_klon', bat: 'e2_klon', knight: 'e2_klon', witch: 'e1_eis', brute: 'e2_klon', captain: 'c1_vier' };
+const ETAPPE2 = {
+  title: 'Die zweite Basis', place: 'Militärbasis 2 · oranger Planet · Basis 1', src: 'Kapitel 139–383', theme: 'basisnacht', ch: 4,
+  levels: [
+    { name: 'Der hungrige Ghul', type: 'duel', foe: 'b2_fex', crowd: 0.2, theme: 'basisnacht', roles: R_BASIS,
+      text: 'Peter ist ausgehungert verschwunden. In einer dunklen Gasse fesselt ihn ein Fremder mit unsichtbaren Fäden – Fex Sanguinis, ein echter Vampir. Finn greift im Sonnenanzug an.' },
+    { name: 'Emma als Fäden-Puppe', type: 'duel', foe: 'b2_emma', crowd: 0.15, theme: 'basisnacht', roles: R_BASIS,
+      text: 'Treffen auf dem Dach: Fex steckt Emma zwölf Nadeln in den Rücken und lenkt sie wie eine Puppe. Ihre Eisklinge tanzt eine fremde, wunderschöne Schwertkunst.' },
+    { name: 'Leander im Mech-Anzug', type: 'duel', foe: 'b2_leander', crowd: 0.2, theme: 'akademie', roles: R_BASIS,
+      text: 'Leander hat alles belauscht. Im selbstgebauten Nanobot-Anzug mit drei Kanonen stürmt er das Zimmer – er fühlt sich benutzt und will Antworten.' },
+    { name: 'Truedreams Besuch', type: 'waveboss', at: 120, foe: 'b2_kenny', pace: 1.5, theme: 'basisnacht', roles: R_BASIS,
+      text: 'Jack Truedream kommt, um armen Schülern die Fähigkeiten zu stehlen – Emma und Peter stehen auf seiner Liste. Maskiert stellt sich Finn seinem Wächter mit den Giftnadeln.' },
+    { name: 'Der orange Planet', type: 'hunt', role: 'ghoul', n: 60, pace: 1.5, theme: 'bestienplanet', roles: R_DSCHUNGEL,
+      text: 'Expedition auf einen schwülen Dschungelplaneten: Punkte für jede Bestie. Felsschnecken gelten als unknackbar – für einen Blood Hammer nicht.' },
+    { name: 'Die Rankenbestie', type: 'waveboss', at: 100, foe: 'b2_ranken', pace: 1.6, theme: 'bestienplanet', roles: R_DSCHUNGEL,
+      text: 'Eine Hochstufen-Bestie, groß wie ein Haus, packt Schüler mit sechs Ranken. Der Lehrer flieht. Finn, Peter und Fex holen die Verletzten raus.' },
+    { name: 'Köder-Bestien im Regen', type: 'survive', dur: 180, pace: 1.8, theme: 'bestienplanet', roles: R_KOEDER,
+      text: 'Es beginnt zu regnen, und das violette Gras erwacht: Köder-Bestien schießen aus dem Boden und verschlucken alles, was sich bewegt.' },
+    { name: 'Die Stadt unter dem Berg', type: 'hunt', role: 'ghoul', n: 100, pace: 1.6, theme: 'burg', roles: R_UNTER, comp: ['fex'],
+      text: 'Der Pflanzenmagen führt in Höhlen voller wachsender Kristalle – und zu einer uralten Stadt aus schwarzem Stein. Blinde Hunde mit Peitschenzungen bewachen den Turm.' },
+    { name: 'Likmorn, König der Unterstadt', type: 'waveboss', at: 60, foe: 'b2_likmorn', pace: 1.6, theme: 'burg', roles: R_UNTER, comp: ['fex'],
+      text: 'Eine Bestie aus Schlamm und Wurzeln, Skelette im Leib, Klingen aus grüner Jade: Likmorn, Königsstufe. Seine Arme wachsen nach – und im Rausch wird er noch gefährlicher.' },
+    { name: 'Das Kampfturnier', type: 'duel', foe: 'b2_multi', crowd: 0.8, theme: 'goetter', roles: R_TURNIER,
+      text: 'Turnier aller Basen unter der Glaskuppel. Als „Cursed Child“ tritt Finn gegen Multiplier an, der ein Dutzend Klone ruft und mit ihnen die Plätze tauscht.' },
+    { name: 'Sil im Kerker', type: 'duel', foe: 'b2_sil', crowd: 0.1, theme: 'basisnacht', roles: R_BASIS,
+      text: 'Die Freunde wollen Finn aus der Befreiung Peters heraushalten. Sil stellt sich ihm in den Weg – mit Feuerkuppel und Blitzen, die er sich eben erst geliehen hat.' },
+    { name: 'Der Nachtdämon', type: 'waveboss', at: 150, foe: 'b2_dillan', pace: 1.6, theme: 'basisnacht', roles: R_BASIS,
+      text: 'Maskiert als „Nachtdämon“ rächt Finn gemobbte Schüler. Dann schnappt die Falle zu: Sergeant Dillan Wyte, Erd-Fähigkeit und Rüstung der oberen Stufe.' },
+    { name: 'General Duke', type: 'boss', at: 90, foe: 'c4_boss', pace: 1.5, theme: 'akademie', roles: R_BASIS,
+      text: 'Vor der ganzen Schule fordert Duke den Nachtdämon heraus. Seine Seelenwaffe macht ihn zum Felsgolem. Finn darf nichts verraten – kein Schatten, kein Charme, nur Fäuste und Qi.' }
+  ]
+};
+
 /* ------------------------------------------------------------ Alle Etappen */
 // Etappen 2 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
 function autoLevels(ch) {
@@ -79,7 +133,7 @@ function autoLevels(ch) {
   }
   return out;
 }
-const ETAPPEN = [ETAPPE1].concat(CHAPTERS.slice(3).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
+const ETAPPEN = [ETAPPE1, ETAPPE2].concat(CHAPTERS.slice(4).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
 ETAPPEN.forEach((E, i) => { E.n = i + 1; E.levels.forEach((L, j) => { L.l = j + 1; }); });
 // Kapitel (Gegner-/Boss-Sammlungen) -> Etappe, fuer den Boss-Turm
 const ET_OF_CH = {}; ETAPPEN.forEach((E) => { const chs = new Set([E.ch]); E.levels.forEach((L) => L.ch && chs.add(L.ch)); if (E.n === 1) chs.add(3); chs.forEach((c) => { ET_OF_CH[c] = E.n; }); });

@@ -10538,6 +10538,60 @@ const ETAPPE1 = {
   ]
 };
 
+/* ------------------------------------------------------------ Etappe 2: Die zweite Basis (Kapitel 139–383) */
+defEnemy('e2_wache', 'knight', 'h_wache', 'Truedreams Wächter', { armor: 2 });
+defEnemy('e2_schnecke', 'ghoul', 'q_panzer', 'Felsschnecke', { hp: 22, spd: 44 });
+defEnemy('e2_schlange', 'bat', 'bat_aas', 'Mittelstufen-Schlange', { hp: 20 });
+defEnemy('e2_koeder', 'ghoul', 'q_spore', 'Köder-Bestie', { hp: 20 });
+defEnemy('e2_ranke', 'witch', 'q_kroete', 'Rankenspucker', { shot: 'acid', flier: false });
+defEnemy('e2_hund', 'ghoul', 'q_rot', 'Blinder Furry Hound', { hp: 20, spd: 74 });
+defEnemy('e2_klon', 'ghoul', 'h_blade', 'Klon von Multiplier', { hp: 14, spd: 66 });
+defBoss('b2_fex', 'mono', 'Fex Sanguinis (Vampir)', 1500, Object.assign({ look: 'fex', bellShot: 'blood' }, B1));
+defBoss('b2_emma', 'erin', 'Emma, von Fex gelenkt', 1700, Object.assign({ look: 'emma', bellShot: 'light' }, B1));
+defBoss('b2_leander', 'mono', 'Leander im Nanobot-Anzug', 1900, Object.assign({ look: 'leander', bellShot: 'spike', armor: 4 }, B1));
+defBoss('b2_kenny', 'mono', 'Kenny (Giftnadeln)', 2200, Object.assign({ look: 'b_kenny', bellShot: 'acid' }, B1));
+defBoss('b2_ranken', 'krabbe', 'Rankenbestie (Hochstufe)', 4600, { model: 'ranken', bellShot: 'acid', r: 44 });
+defBoss('b2_likmorn', 'dalki1', 'Likmorn, König der Unterstadt', 6000, { model: 'likmorn', bellShot: 'spike', r: 34 });
+defBoss('b2_multi', 'mono', 'Multiplier (Klone)', 2600, Object.assign({ look: 'b_multi', bellShot: 'spike' }, B1));
+defBoss('b2_sil', 'mono', 'Sil (Fabian)', 3200, Object.assign({ look: 'sil', bellShot: 'soul' }, B1));
+defBoss('b2_dillan', 'stahlmann', 'Sergeant Dillan Wyte (Erde)', 3300, Object.assign({ look: 'b_dillan', bellShot: 'spike', armor: 5 }, B1));
+const R_BASIS = { ghoul: 'e1_schueler', bat: 'e1_schueler', knight: 'e2_wache', witch: 'c4_agent', brute: 'e1_rowdy', captain: 'c4_wache' };
+const R_DSCHUNGEL = { ghoul: 'e2_schnecke', bat: 'e2_schlange', knight: 'c3_panzer', witch: 'e2_ranke', brute: 'c3_koenig', captain: 'c3_koenigB' };
+const R_KOEDER = { ghoul: 'e2_koeder', bat: 'e2_schlange', knight: 'e2_koeder', witch: 'e2_ranke', brute: 'c3_koenig', captain: 'c3_koenigB' };
+const R_UNTER = { ghoul: 'e2_hund', bat: 'c2_flatter', knight: 'e2_hund', witch: 'e2_ranke', brute: 'c3_koenig', captain: 'c3_koenigB' };
+const R_TURNIER = { ghoul: 'e2_klon', bat: 'e2_klon', knight: 'e2_klon', witch: 'e1_eis', brute: 'e2_klon', captain: 'c1_vier' };
+const ETAPPE2 = {
+  title: 'Die zweite Basis', place: 'Militärbasis 2 · oranger Planet · Basis 1', src: 'Kapitel 139–383', theme: 'basisnacht', ch: 4,
+  levels: [
+    { name: 'Der hungrige Ghul', type: 'duel', foe: 'b2_fex', crowd: 0.2, theme: 'basisnacht', roles: R_BASIS,
+      text: 'Peter ist ausgehungert verschwunden. In einer dunklen Gasse fesselt ihn ein Fremder mit unsichtbaren Fäden – Fex Sanguinis, ein echter Vampir. Finn greift im Sonnenanzug an.' },
+    { name: 'Emma als Fäden-Puppe', type: 'duel', foe: 'b2_emma', crowd: 0.15, theme: 'basisnacht', roles: R_BASIS,
+      text: 'Treffen auf dem Dach: Fex steckt Emma zwölf Nadeln in den Rücken und lenkt sie wie eine Puppe. Ihre Eisklinge tanzt eine fremde, wunderschöne Schwertkunst.' },
+    { name: 'Leander im Mech-Anzug', type: 'duel', foe: 'b2_leander', crowd: 0.2, theme: 'akademie', roles: R_BASIS,
+      text: 'Leander hat alles belauscht. Im selbstgebauten Nanobot-Anzug mit drei Kanonen stürmt er das Zimmer – er fühlt sich benutzt und will Antworten.' },
+    { name: 'Truedreams Besuch', type: 'waveboss', at: 120, foe: 'b2_kenny', pace: 1.5, theme: 'basisnacht', roles: R_BASIS,
+      text: 'Jack Truedream kommt, um armen Schülern die Fähigkeiten zu stehlen – Emma und Peter stehen auf seiner Liste. Maskiert stellt sich Finn seinem Wächter mit den Giftnadeln.' },
+    { name: 'Der orange Planet', type: 'hunt', role: 'ghoul', n: 60, pace: 1.5, theme: 'bestienplanet', roles: R_DSCHUNGEL,
+      text: 'Expedition auf einen schwülen Dschungelplaneten: Punkte für jede Bestie. Felsschnecken gelten als unknackbar – für einen Blood Hammer nicht.' },
+    { name: 'Die Rankenbestie', type: 'waveboss', at: 100, foe: 'b2_ranken', pace: 1.6, theme: 'bestienplanet', roles: R_DSCHUNGEL,
+      text: 'Eine Hochstufen-Bestie, groß wie ein Haus, packt Schüler mit sechs Ranken. Der Lehrer flieht. Finn, Peter und Fex holen die Verletzten raus.' },
+    { name: 'Köder-Bestien im Regen', type: 'survive', dur: 180, pace: 1.8, theme: 'bestienplanet', roles: R_KOEDER,
+      text: 'Es beginnt zu regnen, und das violette Gras erwacht: Köder-Bestien schießen aus dem Boden und verschlucken alles, was sich bewegt.' },
+    { name: 'Die Stadt unter dem Berg', type: 'hunt', role: 'ghoul', n: 100, pace: 1.6, theme: 'burg', roles: R_UNTER, comp: ['fex'],
+      text: 'Der Pflanzenmagen führt in Höhlen voller wachsender Kristalle – und zu einer uralten Stadt aus schwarzem Stein. Blinde Hunde mit Peitschenzungen bewachen den Turm.' },
+    { name: 'Likmorn, König der Unterstadt', type: 'waveboss', at: 60, foe: 'b2_likmorn', pace: 1.6, theme: 'burg', roles: R_UNTER, comp: ['fex'],
+      text: 'Eine Bestie aus Schlamm und Wurzeln, Skelette im Leib, Klingen aus grüner Jade: Likmorn, Königsstufe. Seine Arme wachsen nach – und im Rausch wird er noch gefährlicher.' },
+    { name: 'Das Kampfturnier', type: 'duel', foe: 'b2_multi', crowd: 0.8, theme: 'goetter', roles: R_TURNIER,
+      text: 'Turnier aller Basen unter der Glaskuppel. Als „Cursed Child“ tritt Finn gegen Multiplier an, der ein Dutzend Klone ruft und mit ihnen die Plätze tauscht.' },
+    { name: 'Sil im Kerker', type: 'duel', foe: 'b2_sil', crowd: 0.1, theme: 'basisnacht', roles: R_BASIS,
+      text: 'Die Freunde wollen Finn aus der Befreiung Peters heraushalten. Sil stellt sich ihm in den Weg – mit Feuerkuppel und Blitzen, die er sich eben erst geliehen hat.' },
+    { name: 'Der Nachtdämon', type: 'waveboss', at: 150, foe: 'b2_dillan', pace: 1.6, theme: 'basisnacht', roles: R_BASIS,
+      text: 'Maskiert als „Nachtdämon“ rächt Finn gemobbte Schüler. Dann schnappt die Falle zu: Sergeant Dillan Wyte, Erd-Fähigkeit und Rüstung der oberen Stufe.' },
+    { name: 'General Duke', type: 'boss', at: 90, foe: 'c4_boss', pace: 1.5, theme: 'akademie', roles: R_BASIS,
+      text: 'Vor der ganzen Schule fordert Duke den Nachtdämon heraus. Seine Seelenwaffe macht ihn zum Felsgolem. Finn darf nichts verraten – kein Schatten, kein Charme, nur Fäuste und Qi.' }
+  ]
+};
+
 /* ------------------------------------------------------------ Alle Etappen */
 // Etappen 2 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
 function autoLevels(ch) {
@@ -10548,7 +10602,7 @@ function autoLevels(ch) {
   }
   return out;
 }
-const ETAPPEN = [ETAPPE1].concat(CHAPTERS.slice(3).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
+const ETAPPEN = [ETAPPE1, ETAPPE2].concat(CHAPTERS.slice(4).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
 ETAPPEN.forEach((E, i) => { E.n = i + 1; E.levels.forEach((L, j) => { L.l = j + 1; }); });
 // Kapitel (Gegner-/Boss-Sammlungen) -> Etappe, fuer den Boss-Turm
 const ET_OF_CH = {}; ETAPPEN.forEach((E) => { const chs = new Set([E.ch]); E.levels.forEach((L) => L.ch && chs.add(L.ch)); if (E.n === 1) chs.add(3); chs.forEach((c) => { ET_OF_CH[c] = E.n; }); });
@@ -10614,7 +10668,7 @@ const LV_PACE = [1.3, 1.45, 1.6, 1.75, 1.8, 1.85, 1.9];
 function lvDiff(l) { const k = l - 1; return { hp: 1 + 0.14 * k, count: 1 + 0.05 * k, dmg: 1 + 0.05 * k }; }
 
 /* ============================================================ Helden ueber die Kampagne */
-const HERO_UNLOCK = { finn: 0, lena: '1-5', leo: '1-7', emma: '1-8', leander: '1-9', fabian: '1-10', sil: '1-14', peter: '1-15', fex: 2, sam: 3, agathon: 4, chris: 5, mia: 10, draco: 11 };
+const HERO_UNLOCK = { finn: 0, lena: '1-5', leo: '1-7', emma: '1-8', leander: '1-9', fabian: '1-10', sil: '1-14', peter: '1-15', fex: '2-2', agathon: '2-9', sam: '2-10', chris: 5, mia: 10, draco: 11 };
 function unlockDone(u) { if (!u) return true; if (typeof u === 'number') return etappeCleared(u); const [e, l] = u.split('-').map(Number); return lvStars(e, l) > 0; }
 function unlockText(u) { if (typeof u === 'number') return `Etappe ${u} „${ET(u).title}“ abschließen`; const [e, l] = u.split('-').map(Number); return `Etappe ${e}, Stufe ${l} „${lvDef(e, l).name}“ schaffen`; }
 const HERO_UNLOCK_ETAPPE = {}; for (const id in HERO_UNLOCK) { const u = HERO_UNLOCK[id]; HERO_UNLOCK_ETAPPE[id] = typeof u === 'number' ? u : +u.split('-')[0]; }
@@ -11313,6 +11367,22 @@ Object.assign(CHIBI, {
 const BOSS_BUILD = {
   dalki1: (add, M, body) => dalkiBody(add, M, body, 1, '#6a7a8a', '#c8d0d8'),
   graham: (add, M, body) => dalkiBody(add, M, body, 10, '#5a5a6a', '#ffd060'),
+  ranken(add, M, body) { // hausgross, langer Hals, Knospe mit sechs Ranken
+    add(SPH(), M('#3a6a3a'), [0, 40, -10], [56, 34, 64]);
+    for (let k = 0; k < 4; k++) add(SPH(), M('#4a7a3a'), [0, 70 + k * 22, 30 + k * 10], [16 - k, 16 - k, 16 - k]);
+    add(SPH(), M('#5a8a3a'), [0, 158, 70], [24, 20, 26]); add(CON(), M('#e86aa0'), [0, 150, 96], [10, 16, 10], [Math.PI / 2, 0, 0]);
+    add(SPH(), M('#c84a8a', { emissive: new THREE.Color('#c84a8a'), emissiveIntensity: 0.4 }), [0, 80, -30], [26, 22, 26]);
+    for (let k = 0; k < 6; k++) { const a = k / 6 * TAU; add(CAP(), M('#2a5a2a'), [Math.cos(a) * 34, 110, -30 + Math.sin(a) * 30], [5, 40, 5], [Math.sin(a) * 0.9, 0, -Math.cos(a) * 0.9]); }
+    for (const sd of [-1, 1]) for (const z of [-40, 20]) add(CAP(), M('#2a4a2a'), [sd * 40, 16, z], [10, 16, 10]);
+    for (const sd of [-1, 1]) { const eye = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffd23a' })); eye.position.set(sd * 9, 164, 90); eye.scale.setScalar(4); body.add(eye); }
+  },
+  likmorn(add, M, body) { // Schlamm und Wurzeln, Skelette im Leib, Jade-Klingen
+    add(CAP(), M('#4a3a2a'), [0, 44, 0], [24, 30, 20]); add(SPH(), M('#5a4630'), [0, 84, 0], [30, 28, 24]); add(SPH(), M('#4a3a28'), [0, 124, 6], [20, 20, 20]);
+    for (let k = 0; k < 5; k++) add(CYL(), M('#e8e0cc'), [-10 + k * 5, 84, 22], [2, 26, 2], [0, 0, 1.5]);
+    for (const sd of [-1, 1]) { add(CAP(), M('#3a2a1a'), [sd * 36, 86, 8], [8, 22, 8], [0.4, 0, sd * 0.4]); add(CON(), M('#4ad88a', { emissive: new THREE.Color('#2aa86a'), emissiveIntensity: 0.4 }), [sd * 50, 60, 40], [6, 50, 3], [1.2, 0, sd * 0.3]); add(CAP(), M('#3a2a1a'), [sd * 14, 16, 0], [9, 14, 9]); }
+    for (let k = 0; k < 6; k++) add(CYL(), M('#2a1a10'), [Math.cos(k) * 20, 30 + k * 12, Math.sin(k) * 14], [1.5, 30, 1.5], [k, 0, k * 0.7]);
+    for (const sd of [-1, 1]) { const eye = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#8aff9a' })); eye.position.set(sd * 7, 128, 24); eye.scale.set(4, 3, 2); body.add(eye); }
+  },
   scordana(add, M, body) { // Skorpion-Unterleib, vier Scheren, Stachelschwanz
     add(SPH(), M('#6a3a2a'), [0, 34, -10], [46, 22, 58]);
     add(SPH(), M('#8a4a30'), [0, 58, 30], [30, 30, 28]);
@@ -12010,6 +12080,9 @@ const LOOK = {
   b_brandon: { body: 'schurke', top: '#2a4a6a', pants: '#1a2230', boots: '#101418', skin: '#ecd0b8', hair: 'seite', hairCol: '#6a4a2a', eye: '#4a6a8a', weapon: 'staff' },
   b_nate: { body: 'barbar', top: '#6a6e78', acc: '#c8ccd8', pants: '#3a3e48', boots: '#1a1c20', skin: '#b8bcc8', hair: 'kurz', hairCol: '#2a2a2a', eye: '#3a3a4a', weapon: 'none' },
   b_ben: { body: 'barbar', top: '#5a3a1a', acc: '#8a6a3a', pants: '#2a1c10', boots: '#1a120a', skin: '#e0b898', hair: 'kurz', hairCol: '#3a2a18', eye: '#3a2a18', weapon: 'axe' },
+  b_kenny: { body: 'schurke', top: '#3a6a3a', pants: '#1a3a1a', boots: '#102010', skin: '#d8c0a8', hair: 'kurz', hairCol: '#2a2a1a', eye: '#6ab86a', weapon: 'knife' },
+  b_multi: { body: 'schurke', top: '#3a2a4a', pants: '#1a1424', boots: '#100c14', skin: '#e0c8b8', hair: 'mittel', hairCol: '#1a1420', eye: '#a07aff', mask: '#2a2030', weapon: 'knife2' },
+  b_dillan: { body: 'barbar', top: '#5a5a3a', acc: '#8a7a4a', pants: '#3a3a28', boots: '#2a2014', skin: '#d8b898', hair: 'kurz', hairCol: '#4a3a28', eye: '#4a3a28', weapon: 'axe' },
   bloodsucker: { body: 'schurke', top: '#6a3a38', pants: '#4a3030', boots: '#2a1a1a', skin: '#d0ccc4', hair: 'glatze', eye: '#0a0000', fangs: true, weapon: 'none', scale: 1.1 },
   b_mono: { body: 'schurke', top: '#1a2440', pants: '#0a1020', boots: '#101018', skin: '#e8d0c0', hair: 'stachel', hairCol: '#1a1a2a', eye: '#6a8ad8', weapon: 'sword', blade: '#d8e8ff' },
   b_ian: { body: 'schurke', top: '#6a4a2a', pants: '#3a2a1a', boots: '#2a1a10', cape: '#4a3a2a', skin: '#e0c0a0', hair: 'kurz', hairCol: '#6a4a2a', eye: '#4a3020', hat: '#6a4a2a', weapon: 'staff' },

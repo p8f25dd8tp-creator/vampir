@@ -330,6 +330,22 @@ Object.assign(CHIBI, {
 const BOSS_BUILD = {
   dalki1: (add, M, body) => dalkiBody(add, M, body, 1, '#6a7a8a', '#c8d0d8'),
   graham: (add, M, body) => dalkiBody(add, M, body, 10, '#5a5a6a', '#ffd060'),
+  ranken(add, M, body) { // hausgross, langer Hals, Knospe mit sechs Ranken
+    add(SPH(), M('#3a6a3a'), [0, 40, -10], [56, 34, 64]);
+    for (let k = 0; k < 4; k++) add(SPH(), M('#4a7a3a'), [0, 70 + k * 22, 30 + k * 10], [16 - k, 16 - k, 16 - k]);
+    add(SPH(), M('#5a8a3a'), [0, 158, 70], [24, 20, 26]); add(CON(), M('#e86aa0'), [0, 150, 96], [10, 16, 10], [Math.PI / 2, 0, 0]);
+    add(SPH(), M('#c84a8a', { emissive: new THREE.Color('#c84a8a'), emissiveIntensity: 0.4 }), [0, 80, -30], [26, 22, 26]);
+    for (let k = 0; k < 6; k++) { const a = k / 6 * TAU; add(CAP(), M('#2a5a2a'), [Math.cos(a) * 34, 110, -30 + Math.sin(a) * 30], [5, 40, 5], [Math.sin(a) * 0.9, 0, -Math.cos(a) * 0.9]); }
+    for (const sd of [-1, 1]) for (const z of [-40, 20]) add(CAP(), M('#2a4a2a'), [sd * 40, 16, z], [10, 16, 10]);
+    for (const sd of [-1, 1]) { const eye = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffd23a' })); eye.position.set(sd * 9, 164, 90); eye.scale.setScalar(4); body.add(eye); }
+  },
+  likmorn(add, M, body) { // Schlamm und Wurzeln, Skelette im Leib, Jade-Klingen
+    add(CAP(), M('#4a3a2a'), [0, 44, 0], [24, 30, 20]); add(SPH(), M('#5a4630'), [0, 84, 0], [30, 28, 24]); add(SPH(), M('#4a3a28'), [0, 124, 6], [20, 20, 20]);
+    for (let k = 0; k < 5; k++) add(CYL(), M('#e8e0cc'), [-10 + k * 5, 84, 22], [2, 26, 2], [0, 0, 1.5]);
+    for (const sd of [-1, 1]) { add(CAP(), M('#3a2a1a'), [sd * 36, 86, 8], [8, 22, 8], [0.4, 0, sd * 0.4]); add(CON(), M('#4ad88a', { emissive: new THREE.Color('#2aa86a'), emissiveIntensity: 0.4 }), [sd * 50, 60, 40], [6, 50, 3], [1.2, 0, sd * 0.3]); add(CAP(), M('#3a2a1a'), [sd * 14, 16, 0], [9, 14, 9]); }
+    for (let k = 0; k < 6; k++) add(CYL(), M('#2a1a10'), [Math.cos(k) * 20, 30 + k * 12, Math.sin(k) * 14], [1.5, 30, 1.5], [k, 0, k * 0.7]);
+    for (const sd of [-1, 1]) { const eye = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#8aff9a' })); eye.position.set(sd * 7, 128, 24); eye.scale.set(4, 3, 2); body.add(eye); }
+  },
   scordana(add, M, body) { // Skorpion-Unterleib, vier Scheren, Stachelschwanz
     add(SPH(), M('#6a3a2a'), [0, 34, -10], [46, 22, 58]);
     add(SPH(), M('#8a4a30'), [0, 58, 30], [30, 30, 28]);
