@@ -11,7 +11,7 @@
      boss     — Etappen-Finale: Wellen, dann der Boss
      berserk  — Finn als wahnsinniger Bloodsucker (doppelte Kraft, halbes Leben)
    Zusatz `berserk: true` macht jede andere Stufenart zum Bloodsucker-Kampf.
-   Etappen 12 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
+   Etappen 13 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
    ========================================================================== */
 
 /* ------------------------------------------------------------ Gegner der Etappe 1 */
@@ -749,8 +749,72 @@ const ETAPPE11 = {
   ]
 };
 
+/* ------------------------------------------------------------ Etappe 12: Die vergessene Legende (Kapitel 1986–2107) */
+defEnemy('e12_leucht', 'ghoul', 'q_spore', 'Leuchtpflanzen-Bestie', { hp: 78 });
+defEnemy('e12_eule', 'bat', 'bat_licht', 'Nachteule', { hp: 62 });
+defEnemy('e12_geweih', 'knight', 'q_panzer', 'Geweih-Bestie', { armor: 9 });
+defEnemy('e12_ranke', 'witch', 'q_kroete', 'Rankenspucker', { shot: 'acid', flier: false });
+defEnemy('e12_riese', 'brute', 'q_koenig', 'Dschungelriese', { splits: 0, hp: 500 });
+defEnemy('e12_alpha', 'captain', 'q_koenig', 'Alpha-Bestie', { scale: 1.3, hp: 8800 });
+defEnemy('e12_verm', 'ghoul', 'v_wache', 'Vermummter Attentäter', { hp: 78 });
+defEnemy('e12_vermK', 'knight', 'v_ritter', 'Viscount-Wache', { armor: 9 });
+defEnemy('e12_vermS', 'witch', 'v_magier', 'Blutschütze', { shot: 'blood', flier: false });
+defEnemy('e12_visc', 'captain', 'v_ritter', 'Viscount der dritten Familie', { scale: 1.3, hp: 8800 });
+defEnemy('e12_nam', 'ghoul', 'h_sunshield', 'Namrik-Soldat', { hp: 80 });
+defEnemy('e12_namF', 'bat', 'bat_void', 'Namrik-Drohne', { hp: 62 });
+defEnemy('e12_namK', 'knight', 'h_wache', 'Namrik-Wache', { armor: 9 });
+defEnemy('e12_namB', 'witch', 'h_truedream', 'Blaster-Schütze', { shot: 'light', flier: false });
+defEnemy('e12_namM', 'brute', 'h_koloss', 'Namrik-Mech', { splits: 0, hp: 500 });
+defEnemy('e12_gouv', 'captain', 'h_wache', 'Namrik-Gouverneur', { scale: 1.3, hp: 8800 });
+defBoss('b12_edvard', 'silva', 'Edvard Fortuna (Original)', 22000, Object.assign({ look: 'b_edvard', bellShot: 'soul', spd: 74 }, B1));
+defBoss('b12_nell', 'mono', 'Nell Holland (Wachenturnier)', 20000, Object.assign({ look: 'b_nell', bellShot: 'spike' }, B1));
+defBoss('b12_ranke', 'krabbe', 'Der Rankenmensch', 19500, { model: 'rankenmensch', bellShot: 'acid', r: 40 });
+defBoss('b12_eule', 'kronker', 'Die graue Eule', 19500, { model: 'eule', bellShot: 'soul', r: 42 });
+defBoss('b12_grenlet', 'silva', 'Grenlet Toppy (Original)', 21000, Object.assign({ look: 'b_grenlet', bellShot: 'blood' }, B1));
+defBoss('b12_spinne', 'krabbe', 'Der Spinnenfels (Demon-Tier)', 23000, { model: 'spinnenfels', bellShot: 'spike', r: 56 });
+defBoss('b12_prophet', 'kronker', 'Der Prophet der Namriks', 25000, { model: 'prophet', bellShot: 'light', r: 40 });
+defBoss('b12_magnus', 'stahlmann', 'Magnus Muscat (Original)', 26000, Object.assign({ look: 'b_magnus', bellShot: 'blood', armor: 9 }, B1));
+defBoss('b12_ray', 'kronker', 'Ray Talen, der rote Drache', 60000, { model: 'raydrache', bellShot: 'bell', r: 44, spd: 76 });
+defBoss('b12_jim', 'jim', 'Jim Eno mit dem X-Blut', 30000, Object.assign({ look: 'b_jim', bellShot: 'blood', spd: 72 }, B1));
+const R_DAISY = { ghoul: 'e12_leucht', bat: 'e12_eule', knight: 'e12_geweih', witch: 'e12_ranke', brute: 'e12_riese', captain: 'e12_alpha' };
+const R_ATTENTAT = { ghoul: 'e12_verm', bat: 'c5_fleder', knight: 'e12_vermK', witch: 'e12_vermS', brute: 'e5_bsRiese', captain: 'e12_visc' };
+const R_NAMRIK = { ghoul: 'e12_nam', bat: 'e12_namF', knight: 'e12_namK', witch: 'e12_namB', brute: 'e12_namM', captain: 'e12_gouv' };
+const ETAPPE12 = {
+  title: 'Die vergessene Legende', place: 'Vampirsiedlung auf dem Daisy-Planeten · leuchtender Dschungel · Namrik-Welt', src: 'Kapitel 1986–2107', theme: 'bestienplanet', ch: 12,
+  levels: [
+    { name: 'Niemand kennt Finn Müller', type: 'duel', foe: 'b12_edvard', crowd: 0.2, theme: 'siedlung', roles: R_ATTENTAT, comp: ['minny'],
+      text: 'Die Vampirgesellschaft ist neu aufgebaut. In der vollen Taverne kennt niemand den Namen des alten Königs – alle seine Taten gehören jetzt Jim Eno. Der Original Edvard lacht ihn aus und weicht jedem Schwert mit Glück aus.' },
+    { name: 'Das Wachenturnier', type: 'duel', foe: 'b12_nell', crowd: 0.05, theme: 'burg', roles: R_ATTENTAT,
+      text: 'Zwei Monate später ist Finn ein einfacher Wachmann der neunten Familie. Im Energiekäfig des Turniers wartet Nell mit ihren Gelenkhebeln – und Finn kämpft nur mit Technik.' },
+    { name: 'Der leuchtende Dschungel', type: 'hunt', role: 'ghoul', n: 100, pace: 1.8, theme: 'bestienplanet', roles: R_DAISY, comp: ['minny'],
+      text: 'Eine Expedition durch die Pflanzen der alten Daisy-Fraktion. Endlose Bestienwellen – doch die drei Wachen bleiben seltsam unbehelligt.' },
+    { name: 'Der Rankenmensch', type: 'duel', foe: 'b12_ranke', crowd: 0.3, theme: 'bestienplanet', roles: R_DAISY,
+      text: 'Wände aus nachwachsenden Ranken, ein Pfad einen Berg hinauf. „Keine Sorge, Ronkin, du wirst deine Familie sehen.“ Finn legt den Rucksack ab und tritt vor.' },
+    { name: 'Die Horde über der Schule', type: 'survive', dur: 200, pace: 1.9, theme: 'siedlung', roles: R_DAISY, comp: ['minny'], elites: 4,
+      text: 'Alarm: Eine Bestienhorde fällt über die Siedlung her, jede Welle stärker. Minny säubert die Schule Stockwerk für Stockwerk – und benutzt dabei viel mehr als „nur zehn Prozent“.' },
+    { name: 'Die graue Eule', type: 'duel', foe: 'b12_eule', crowd: 0.3, theme: 'bestienplanet', roles: R_DAISY,
+      text: 'Eine Eule, so groß wie ein Haus, speit einen grauen Tornado. Finn kontert mit einem Blutwirbel. Ein hellvioletter Schatten dringt aus seinen Poren in die Bestien.' },
+    { name: 'Die Vermummten', type: 'hunt', role: 'knight', n: 35, pace: 1.8, theme: 'siedlung', roles: R_ATTENTAT, comp: ['minny'],
+      text: 'Sechs Vermummte mit roten Bestiendolchen, eine Schweigekugel, die keine Hilfe durchlässt. Ihr Ziel: Abby und Minny. Finn bleibt ruhig – und rasend.' },
+    { name: 'Grenlet', type: 'duel', foe: 'b12_grenlet', crowd: 0.2, theme: 'burg', roles: R_ATTENTAT,
+      text: 'Der Auftrag kam aus der dritten Familie. Vor dem Schloss liegen alle Wachen tot. Der Original Grenlet trägt einen Flakon mit Jims Blut – und sieht Finns Schattendrachen.' },
+    { name: 'Der Spinnenfels', type: 'duel', foe: 'b12_spinne', crowd: 0.2, theme: 'bestienplanet', roles: R_DAISY,
+      text: 'Auf einem Grasplaneten erhebt sich ein berggroßer Felsbrocken auf Spinnenbeinen – eine Bestie der Dämonen-Stufe. Galen ist gerade geboren, und Finn will nach Hause.' },
+    { name: 'Krieg gegen die Namriks', type: 'survive', dur: 170, pace: 1.5, theme: 'goetter', roles: R_NAMRIK, elites: 2,
+      text: 'Dalki, Menschen und Vampire kämpfen gemeinsam gegen die Namriks, die die Marpo-Kreuzfahrt angegriffen haben. Einmannkapseln durchbrechen den Energieschild, Blasterstrahlen überall.' },
+    { name: 'Der Prophet', type: 'duel', foe: 'b12_prophet', crowd: 0.3, theme: 'goetter', roles: R_NAMRIK,
+      text: 'Die Namriks vertrauen ihrem Propheten blind. Er ist ein Celestial – und er wundert sich, warum er Finn, den God Slayer, nicht vorhergesehen hat.' },
+    { name: 'Magnus Muscat', type: 'duel', foe: 'b12_magnus', crowd: 0.2, theme: 'burg', roles: R_ATTENTAT,
+      text: '„Nell Holland starb für nichts – Jim ist ein Betrüger.“ Der Original der sechsten Familie, einst König im zweiten Bürgerkrieg, will Finn dafür töten.' },
+    { name: 'Ray Talen', type: 'endure', foe: 'b12_ray', dur: 80, crowd: 0.1, theme: 'goetter', roles: R_NAMRIK,
+      text: 'Jims gefürchteter Leibwächter ist Ray Talen – Finns Ahnherr, einst der rote Drache, dessen Macht den Menschen ihre Fähigkeiten gab. Keine Kugel wirkt gegen seine Drachenrüstung.' },
+    { name: 'Jim Eno', type: 'duel', foe: 'b12_jim', crowd: 0.3, theme: 'goetter', roles: R_NAMRIK, evo: 'Vampir-Dämonenform',
+      text: 'Jim hat X-Blut getrunken und ist stark wie aus Bestienkristallen. Er spielt vor den Originals den Helden: „Du Dämon, der die Originals verfluchte!“ Zeit, die Wahrheit zu zeigen.' }
+  ]
+};
+
 /* ------------------------------------------------------------ Alle Etappen */
-// Etappen 12 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
+// Etappen 13 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
 function autoLevels(ch) {
   const out = [];
   for (let l = 1; l <= 8; l++) {
@@ -759,7 +823,7 @@ function autoLevels(ch) {
   }
   return out;
 }
-const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3, ETAPPE4, ETAPPE5, ETAPPE6, ETAPPE7, ETAPPE8, ETAPPE9, ETAPPE10, ETAPPE11].concat(CHAPTERS.slice(11).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
+const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3, ETAPPE4, ETAPPE5, ETAPPE6, ETAPPE7, ETAPPE8, ETAPPE9, ETAPPE10, ETAPPE11, ETAPPE12].concat(CHAPTERS.slice(12).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
 ETAPPEN.forEach((E, i) => { E.n = i + 1; E.levels.forEach((L, j) => { L.l = j + 1; }); });
 // Kapitel (Gegner-/Boss-Sammlungen) -> Etappe, fuer den Boss-Turm
 const ET_OF_CH = {}; ETAPPEN.forEach((E) => { const chs = new Set([E.ch]); E.levels.forEach((L) => L.ch && chs.add(L.ch)); if (E.n === 1) chs.add(3); chs.forEach((c) => { ET_OF_CH[c] = E.n; }); });

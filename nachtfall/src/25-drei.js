@@ -492,6 +492,33 @@ const BOSS_BUILD = {
     for (const sd of [-1, 1]) { add(CAP(), M('#8a3a3a'), [sd * 54, 84, 12], [14, 34, 14], [0.4, 0, sd * 0.5]); add(CAP(), M('#5a2020'), [sd * 18, 16, 0], [14, 20, 14]); }
     add(OCT(), M('#8a5aff', { emissive: new THREE.Color('#6a3aff'), emissiveIntensity: 0.9 }), [0, 130, 34], [6, 10, 4]);
   },
+  rankenmensch(add, M, body) { // Mensch aus Ranken
+    for (let k = 0; k < 7; k++) add(CAP(), M(k % 2 ? '#3a6a2a' : '#4a7a3a'), [Math.sin(k) * 8, 60 + k * 4, Math.cos(k) * 6], [6, 40, 6], [Math.sin(k) * 0.2, k, Math.cos(k) * 0.2]);
+    add(SPH(), M('#5a8a3a'), [0, 130, 6], [20, 22, 20]);
+    for (const sd of [-1, 1]) { add(CAP(), M('#3a6a2a'), [sd * 40, 90, 14], [6, 36, 6], [0.4, 0, sd * 0.7]); add(CAP(), M('#2a5a1a'), [sd * 12, 18, 0], [8, 22, 8]); }
+    add(SPH(), M('#e86aa0', { emissive: new THREE.Color('#c84a8a'), emissiveIntensity: 0.6 }), [0, 150, 10], [10, 8, 10]);
+  },
+  eule(add, M, body) { // riesige graue Eule
+    add(SPH(), M('#6a6a70'), [0, 70, 0], [46, 56, 42]); add(SPH(), M('#7a7a80'), [0, 128, 8], [34, 28, 30]);
+    for (const sd of [-1, 1]) { add(SPH(), M('#5a5a60'), [sd * 52, 80, -4], [16, 44, 30], [0, 0, sd * 0.2]); add(CON(), M('#5a5a60'), [sd * 18, 158, 4], [7, 18, 7], [0, 0, sd * 0.4]); const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffb02a' })); x.position.set(sd * 13, 132, 36); x.scale.set(8, 8, 3); body.add(x); }
+    add(CON(), M('#3a3020'), [0, 118, 40], [5, 12, 5], [Math.PI / 2 + 0.4, 0, 0]);
+  },
+  spinnenfels(add, M, body) { // berggrosser Fels auf Spinnenbeinen
+    add(DOD(), M('#5a5460'), [0, 90, 0], [70, 50, 64]); add(DOD(), M('#6a6470'), [20, 128, 10], [34, 24, 30]);
+    for (let k = 0; k < 8; k++) { const a = (k + 0.5) / 8 * TAU; add(CAP(), M('#2a2430'), [Math.cos(a) * 70, 50, Math.sin(a) * 64], [6, 50, 6], [Math.sin(a) * 0.9, 0, -Math.cos(a) * 0.9]); }
+    for (let k = 0; k < 4; k++) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ff3a3a' })); x.position.set(-15 + k * 10, 96, 66); x.scale.setScalar(4); body.add(x); }
+  },
+  prophet(add, M, body) { // Namrik-Celestial in Robe
+    add(CON(), M('#2a4a6a'), [0, 60, 0], [36, 120, 36]); add(SPH(), M('#6a8aa8'), [0, 132, 6], [20, 22, 20]);
+    for (const sd of [-1, 1]) add(CON(), M('#8ab8e8'), [sd * 12, 158, 4], [4, 22, 4], [0, 0, sd * 0.5]);
+    const halo = new THREE.Mesh(new THREE.TorusGeometry(22, 2, 8, 28), new THREE.MeshBasicMaterial({ color: '#8affff' })); halo.position.set(0, 166, 0); halo.rotation.x = Math.PI / 2; body.add(halo);
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffffff' })); x.position.set(sd * 7, 136, 24); x.scale.set(3, 2, 2); body.add(x); }
+  },
+  raydrache(add, M, body) { // Ray im Koerper des roten Drachen, menschlich mit Stacheln, Schwanz, Fluegeln
+    dalkiBody(add, M, body, 6, '#8a1a14', '#ffb02a');
+    for (const sd of [-1, 1]) add(SPH(), M('#6a0a0a'), [sd * 80, 120, -20], [60, 8, 30], [0, 0, sd * 0.45]);
+    for (let k = 0; k < 6; k++) add(SPH(), M('#8a1a14'), [0, 40 - k * 3, -40 - k * 18], [9 - k, 9 - k, 9 - k]);
+  },
   ranken(add, M, body) { // hausgross, langer Hals, Knospe mit sechs Ranken
     add(SPH(), M('#3a6a3a'), [0, 40, -10], [56, 34, 64]);
     for (let k = 0; k < 4; k++) add(SPH(), M('#4a7a3a'), [0, 70 + k * 22, 30 + k * 10], [16 - k, 16 - k, 16 - k]);

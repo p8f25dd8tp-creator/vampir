@@ -67,3 +67,7 @@ Am Ende gibt es daraus einen gemeinsamen GPT-Prompt-Block.
 | 11 | Venus / Mond (Celestial-Kämpfe) | heller Staub, Krater |
 | 11 | Lavaplanet der Dämonenkristalle | schwarzer Fels, Lava |
 | 11 | Portal des Todesgottes | violette Magiekreise, Tentakel |
+| 12 | Neue Vampirsiedlung, Taverne, Schulhof | Kopfsteinpflaster, Holzdielen |
+| 12 | Leuchtender Dschungel des Daisy-Planeten | leuchtende Pflanzen, Moos |
+| 12 | Grasplanet mit Spinnenfels | hohes Gras |
+| 12 | Namrik-Stadt im Krieg | fremdes Metall, Energieschilde |
