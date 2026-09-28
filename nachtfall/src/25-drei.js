@@ -15,6 +15,13 @@ function r3nOn() { return !R3N.failed && SAVE.settings.gfx3d !== false && !!wind
 const zOf = (y) => y / SA;
 
 /* ------------------------------------------------------------ Grundlagen */
+// Gemeinsame Bausteine (auch fuer die 3D-Karte im Menue)
+function r3nShared() {
+  if (R3N.grad) return;
+  const T = THREE, g = new Uint8Array([70, 150, 215, 255]);
+  const gm = new T.DataTexture(g, 4, 1, T.RedFormat); gm.minFilter = gm.magFilter = T.NearestFilter; gm.needsUpdate = true; R3N.grad = gm;
+  R3N.outline = new T.MeshBasicMaterial({ color: '#0a0408', side: T.BackSide });
+}
 function r3nInit() {
   const T = THREE;
   const c = document.createElement('canvas'); c.id = 'game3d';
@@ -25,14 +32,12 @@ function r3nInit() {
   R3N.canvas = c; R3N.ren = ren;
   R3N.scene = new T.Scene();
   R3N.cam = new T.OrthographicCamera(-100, 100, 100, -100, 1, 6000);
-  const g = new Uint8Array([70, 150, 215, 255]);
-  const gm = new T.DataTexture(g, 4, 1, T.RedFormat); gm.minFilter = gm.magFilter = T.NearestFilter; gm.needsUpdate = true; R3N.grad = gm;
+  r3nShared();
   R3N.hemi = new T.HemisphereLight('#b0a8d8', '#302838', 1.9); R3N.scene.add(R3N.hemi);
   R3N.sun = new T.DirectionalLight('#e8e0ff', 2.2); R3N.sun.position.set(-0.6, 1.4, 0.8); R3N.scene.add(R3N.sun);
   R3N.plight = new T.PointLight('#ffd8b0', 3, 380, 1.1); R3N.scene.add(R3N.plight);
   R3N.rim = new T.DirectionalLight('#ff4a8a', 1.2); R3N.rim.position.set(0.8, 0.6, -1); R3N.scene.add(R3N.rim);
   R3N.lamps = []; for (let i = 0; i < 6; i++) { const l = new T.PointLight('#ffb050', 0, 260, 1.3); R3N.scene.add(l); R3N.lamps.push(l); }
-  R3N.outline = new T.MeshBasicMaterial({ color: '#0a0408', side: T.BackSide });
   // Boden
   R3N.ground = new T.Mesh(new T.PlaneGeometry(1, 1), new T.MeshLambertMaterial({ color: '#d8d0e8' }));
   R3N.ground.rotation.x = -Math.PI / 2; R3N.scene.add(R3N.ground);
