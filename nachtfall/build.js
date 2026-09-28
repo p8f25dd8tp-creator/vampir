@@ -12,7 +12,7 @@ const root = __dirname;
 const rd = (f) => fs.readFileSync(path.join(root, f), 'utf8');
 const b64 = (f) => fs.readFileSync(path.join(root, f)).toString('base64');
 
-let html = rd('index.html');
+let html = rd('index.html').replace('./vendor/three.module.min.js', 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js');
 const scripts = [...html.matchAll(/<script src="(src\/[^"?]+)[^"]*"><\/script>/g)].map((m) => m[1]);
 const js = scripts.map((s) => `/* ---- ${s} ---- */\n` + rd(s)).join('\n');
 let css = rd('style.css')

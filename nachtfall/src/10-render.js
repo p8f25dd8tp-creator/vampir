@@ -27,28 +27,31 @@ function renderWorld(G, time) {
   const S = VIEW.scale, cam = G.cam;
   _curCam = cam;
   const W = cv.width, H = cv.height;
+  const D3 = G !== MENU && typeof R3N !== 'undefined' && R3N.active; // 3D zeichnet Welt und Figuren
   let sx = 0, sy = 0;
-  if (G.shake > 0) { sx = (Math.random() - 0.5) * G.shake; sy = (Math.random() - 0.5) * G.shake; }
+  if (D3) { sx = R3N.sx; sy = R3N.sy; }
+  else if (G.shake > 0) { sx = (Math.random() - 0.5) * G.shake; sy = (Math.random() - 0.5) * G.shake; }
   const x0 = cam.x - VIEW.w / 2 + sx, y0 = cam.y - VIEW.h / 2 + sy;
   _camX0 = x0; _camY0 = y0;
   const camv = { x: cam.x, y: cam.y, w: VIEW.w, h: VIEW.h };
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
   ctx.imageSmoothingEnabled = true;
+  if (D3) { ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, W, H); }
   ctx.setTransform(S, 0, 0, S, -x0 * S, -y0 * S);
 
   /* 1) Boden */
   const T = WORLD.tileSize;
   const tx0 = Math.floor(x0 / T), ty0 = Math.floor(y0 / T);
   const tx1 = Math.floor((x0 + VIEW.w) / T), ty1 = Math.floor((y0 + VIEW.h) / T);
-  for (let ty = ty0; ty <= ty1; ty++) for (let tx = tx0; tx <= tx1; tx++) ctx.drawImage(WORLD.groundTile, tx * T, ty * T, T + 0.6, T + 0.6);
+  if (!D3) for (let ty = ty0; ty <= ty1; ty++) for (let tx = tx0; tx <= tx1; tx++) ctx.drawImage(WORLD.groundTile, tx * T, ty * T, T + 0.6, T + 0.6);
   // Chunks
   const cx0 = Math.floor((x0 - 160) / CHUNK), cx1 = Math.floor((x0 + VIEW.w + 160) / CHUNK);
   const cy0 = Math.floor((y0 - 200) / CHUNK), cy1 = Math.floor((y0 + VIEW.h + 200) / CHUNK);
   const props = [];
   for (let cy = cy0; cy <= cy1; cy++) for (let cx = cx0; cx <= cx1; cx++) {
     const list = chunkProps(cx, cy);
-    for (const pa of list.patches) {
+    if (!D3) for (const pa of list.patches) {
       ctx.save(); ctx.translate(pa.x, pa.y); ctx.rotate(pa.rot); ctx.globalAlpha = 0.9;
       ctx.drawImage(pa.c, -pa.c.width / 2, -pa.c.height / 2); ctx.restore();
     }
@@ -63,20 +66,21 @@ function renderWorld(G, time) {
   drawPlayerRing(ctx, G.p, time);
 
   /* 3) Schatten */
-  for (const e of G.enemies) {
+  if (!D3) for (const e of G.enemies) {
     if (!inView(e.x, e.y, 80)) continue;
     const s = e.boss ? 90 : e.r * 2.3 * (e.def.flier ? 0.8 : 1);
     ctx.globalAlpha = e.dead ? Math.max(0, 1 - e.deathT / 0.5) : (e.def.flier ? 0.55 : 0.85);
     ctx.drawImage(SHADOW_SPR, e.x - s / 2, e.y - s * 0.22, s, s * 0.44);
   }
   ctx.globalAlpha = 1;
-  if (G.p) { const s = 40; ctx.drawImage(SHADOW_SPR, G.p.x - s / 2, G.p.y - s * 0.22, s, s * 0.44); }
+  if (G.p && !D3) { const s = 40; ctx.drawImage(SHADOW_SPR, G.p.x - s / 2, G.p.y - s * 0.22, s, s * 0.44); }
 
   /* 4) Beute (am Boden, glitzert) */
   drawPickups(ctx, G, time);
 
   /* 5) Tiefensortierte Szene */
   _drawList.length = 0;
+  if (!D3) {
   for (const pr of props) if (pr.x > x0 - 120 && pr.x < x0 + VIEW.w + 120 && pr.y > y0 - 30 && pr.y < y0 + VIEW.h + 200) _drawList.push({ y: pr.y, k: 0, o: pr });
   for (const e of G.enemies) if (inView(e.x, e.y, 120)) _drawList.push({ y: e.y, k: 1, o: e });
   for (const im of G.images) _drawList.push({ y: im.y - 0.5, k: 3, o: im });
@@ -90,6 +94,7 @@ function renderWorld(G, time) {
     else drawImagesOne(ctx, d.o);
   }
   if (G.p) drawPlayer(ctx, G.p, time); // Held immer obenauf: nie in der Horde verloren
+  } else { for (const im of G.images) drawImagesOne(ctx, im); drawEnemyBars3(ctx, G); }
   /* 6) Effekte ueber den Figuren (Klingen, Sicheln) */
   if (G.p && G.p.ab.bluternte) drawBluternte(ctx, G.p, G.p.ab.bluternte, false);
   if (G.p && G.p.ab.blutmond) drawBluternte(ctx, G.p, G.p.ab.blutmond, true);
@@ -97,11 +102,13 @@ function renderWorld(G, time) {
   drawParts(ctx, 0, camv);
 
   /* 7) Lichtkarte (multiplizieren) */
-  renderLightmap(x0, y0, time, props);
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-  ctx.globalCompositeOperation = 'multiply';
-  ctx.drawImage(LM.c, 0, 0, LM.c.width / LM.scale * S, LM.c.height / LM.scale * S);
-  ctx.globalCompositeOperation = 'source-over';
+  if (!D3) {
+    renderLightmap(x0, y0, time, props);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalCompositeOperation = 'multiply';
+    ctx.drawImage(LM.c, 0, 0, LM.c.width / LM.scale * S, LM.c.height / LM.scale * S);
+    ctx.globalCompositeOperation = 'source-over';
+  }
 
   /* 8) Leuchtendes (additiv, nach dem Licht) */
   ctx.setTransform(S, 0, 0, S, -x0 * S, -y0 * S);

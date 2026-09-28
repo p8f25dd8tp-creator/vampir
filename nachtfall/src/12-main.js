@@ -84,6 +84,7 @@ function frame(now) {
   dt = Math.min(dt, 0.05);
   if (MENU) {
     updateMenuScene(dt);
+    if (typeof R3N !== 'undefined') { R3N.active = false; if (R3N.canvas) R3N.canvas.style.display = 'none'; }
     renderWorld(MENU, MENU.t);
     UI.tickPreviews(dt);
     return;
@@ -91,6 +92,7 @@ function frame(now) {
   if (!GAME) return;
   if (GAME.state === 'play') updateGame(dt);
   else if (GAME.state === 'over') { updateFX(dt * 0.3); }
+  if (typeof r3nRender === 'function') R3N.active = r3nRender(GAME, GAME.realT, Math.min(rawDt, 0.05));
   renderWorld(GAME, GAME.realT);
   UI.updateHud();
   autoQuality(rawDt);

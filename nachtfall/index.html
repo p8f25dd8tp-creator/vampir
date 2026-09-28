@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>Nachtfall — Blut · Schatten · Qi</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="description" content="Nachtfall – ein Dark-Fantasy-Survivors-Spiel mit vier Helden, Blut-, Schatten- und Qi-Kräften.">
+<meta name="description" content="Nachtfall – ein Dark-Fantasy-Survivors-Spiel mit vielen Helden, Blut-, Schatten- und Qi-Kräften.">
 <meta name="theme-color" content="#07040a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -44,8 +44,11 @@
 <script src="src/22-helden.js?v=4"></script>
 <script src="src/23-helden2.js?v=4"></script>
 <script src="src/24-kampagne.js?v=4"></script>
+<script src="src/25-drei.js?v=4"></script>
 <script src="src/12-main.js?v=4"></script>
 <!--/SCRIPTS-->
+<script type="importmap">{"imports":{"three":"./vendor/three.module.min.js"}}</script>
+<script type="module">import * as T3 from 'three'; window.THREE = T3;</script>
 <script>
   if ('serviceWorker' in navigator && location.protocol === 'https:') {
     window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function(){}); });
