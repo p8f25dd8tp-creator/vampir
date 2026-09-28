@@ -32,3 +32,8 @@ Am Ende gibt es daraus einen gemeinsamen GPT-Prompt-Block.
 | 5 | Zehnte Burg bei Nacht | Burghof, Blutspuren |
 | 5 | Dämonen-Planet | blauer, diamantharter Kristallboden |
 | 5 | Welt im Planeten | Wiese am Wasserfall, blaues Kristalllicht |
+| 6 | 14. Schloss als Gefängnis | Zellengang, Eisengitter im Boden |
+| 6 | Königsschloss, Thronsaal | schwarzer Marmor, roter Teppich |
+| 6 | Höhle hinter dem Wasserfall | nasser Fels, Pfützen |
+| 6 | Welt der Vertrauten | grünblaues Moos, Riesenpilze, Leuchtkugeln |
+| 6 | Zehnte Burg mit Türmen | Burghof, Mauern, Blutregen |

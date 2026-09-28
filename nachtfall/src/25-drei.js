@@ -383,6 +383,14 @@ const BOSS_BUILD = {
     for (const sd of [-1, 1]) { add(DOD(), M('#3a2a24'), [sd * 52, 70, 26], [20, 26, 20]); add(DOD(), M('#2a1e1a'), [sd * 30, 16, 0], [18, 18, 18]); }
     for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffd040' })); x.position.set(sd * 12, 108, 50); x.scale.set(5, 3, 2); body.add(x); }
   },
+  ovinnik(add, M, body) { // fette schwarze Katze mit roter Schlitzmarke
+    add(SPH(), M('#16141c'), [0, 44, -4], [48, 42, 52]);
+    add(SPH(), M('#1e1c26'), [0, 92, 26], [32, 28, 28]);
+    for (const sd of [-1, 1]) { add(CON(), M('#16141c'), [sd * 18, 124, 22], [9, 18, 7], [0, 0, sd * 0.3]); add(SPH(), M('#16141c'), [sd * 26, 10, 36], [12, 8, 14]); add(CYL(), M('#e8e0d0'), [sd * 16, 86, 52], [0.6, 0.6, 22], [0, sd * 0.3, Math.PI / 2]); }
+    for (let k = 0; k < 4; k++) add(SPH(), M('#16141c'), [0, 30 + k * 12, -52 - k * 8], [8 - k, 8 - k, 8 - k]);
+    add(BOX(), M('#ff2a3a', { emissive: new THREE.Color('#ff1a2a'), emissiveIntensity: 1 }), [0, 106, 50], [3, 12, 2]);
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffd23a' })); x.position.set(sd * 11, 94, 50); x.scale.set(5, 3.5, 2); body.add(x); }
+  },
   ranken(add, M, body) { // hausgross, langer Hals, Knospe mit sechs Ranken
     add(SPH(), M('#3a6a3a'), [0, 40, -10], [56, 34, 64]);
     for (let k = 0; k < 4; k++) add(SPH(), M('#4a7a3a'), [0, 70 + k * 22, 30 + k * 10], [16 - k, 16 - k, 16 - k]);

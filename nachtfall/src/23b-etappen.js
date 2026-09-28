@@ -11,7 +11,7 @@
      boss     — Etappen-Finale: Wellen, dann der Boss
      berserk  — Finn als wahnsinniger Bloodsucker (doppelte Kraft, halbes Leben)
    Zusatz `berserk: true` macht jede andere Stufenart zum Bloodsucker-Kampf.
-   Etappen 6 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
+   Etappen 7 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
    ========================================================================== */
 
 /* ------------------------------------------------------------ Gegner der Etappe 1 */
@@ -211,7 +211,7 @@ defBoss('b4_linda', 'mono', 'Linda (Rang B)', 60000, Object.assign({ look: 'b_li
 defBoss('b4_hypolord', 'krabbe', 'Hypolord (Advanced)', 4200, { model: 'hypolord', bellShot: 'acid', r: 42 });
 defBoss('b4_hundR', 'krabbe', 'Roter King-Hund', 5000, { model: 'hundR', bellShot: 'spike', r: 40 });
 defBoss('b4_hundS', 'krabbe', 'Schwarzer King-Hund', 6500, { model: 'hundS', bellShot: 'spike', r: 40 });
-defBoss('b4_lemon', 'mono', 'Lemon (Graylash-Schüler)', 3200, Object.assign({ look: 'b_lemon', bellShot: 'light', spd: 72 }, B1));
+defBoss('b4_lemon', 'mono', 'Lemon (Graylash-Schüler)', 2800, Object.assign({ look: 'b_lemon', bellShot: 'light', spd: 66 }, B1));
 defBoss('b4_gox', 'stahlmann', 'Gox, Kommandant der Sunshields', 6200, Object.assign({ look: 'b_gox', bellShot: 'bell', armor: 4 }, B1));
 defBoss('b4_kiln', 'silva', 'Kiln und Tupple (Adlige)', 4200, Object.assign({ look: 'b_kiln', bellShot: 'blood' }, B1));
 defBoss('b4_borden', 'dalki1', 'Borden (drei Stacheln)', 60000, { model: 'borden3', bellShot: 'spike', r: 30 });
@@ -335,8 +335,71 @@ const ETAPPE5 = {
   ]
 };
 
+/* ------------------------------------------------------------ Etappe 6: Kampf um den Thron (Kapitel 809–945) */
+defEnemy('e6_sub', 'knight', 'v_ritter', 'Gebrochene Subklasse', { armor: 4 });
+defEnemy('e6_banshee', 'witch', 'v_magier', 'Gefangene Banshee', { shot: 'soul', flier: false });
+defEnemy('e6_garde', 'ghoul', 'v_wache', 'Königsgarde', { hp: 32 });
+defEnemy('e6_ritterK', 'knight', 'v_ritter', 'Königsritter', { armor: 5 });
+defEnemy('e6_blut', 'witch', 'v_magier', 'Blutkontrolleur', { shot: 'blood', flier: false });
+defEnemy('e6_hauptK', 'captain', 'v_ritter', 'Ritter eines Leaders', { scale: 1.3, hp: 3800 });
+defEnemy('e6_leucht', 'ghoul', 'q_hase', 'Leuchtwesen', { hp: 28, spd: 84 });
+defEnemy('e6_irrlicht', 'bat', 'bat_licht', 'Irrlicht der Vertrautenwelt', { hp: 30 });
+defEnemy('e6_hirsch', 'knight', 'q_panzer', 'Riesengeweih-Hirsch', { armor: 4 });
+defEnemy('e6_pilz', 'witch', 'q_spore', 'Pilzspucker', { shot: 'soul', flier: false });
+defEnemy('e6_riese', 'brute', 'q_koenig', 'Einäugiger Riese', { splits: 0, hp: 240 });
+defEnemy('e6_acht', 'ghoul', 'v_wache', 'Krieger der 8. Familie', { hp: 32 });
+defEnemy('e6_wahn', 'ghoul', 'v_thrall', 'Wahnsinniger der 8. Familie', { hp: 30, spd: 82 });
+defEnemy('e6_noble', 'knight', 'v_ritter', 'Adliger der 8. Familie', { armor: 5 });
+defEnemy('e6_telepath', 'witch', 'v_magier', 'Telepath', { shot: 'soul', flier: false });
+defEnemy('e6_tifu', 'captain', 'v_ritter', 'Tifu, Ritter der 8. Familie', { scale: 1.3, hp: 3800 });
+defBoss('b6_bryce', 'silva', 'Bryce Cane, erster Leader', 8200, Object.assign({ look: 'b_bryce', bellShot: 'blood', armor: 4 }, B1));
+defBoss('b6_amber', 'silva', 'Amber, Ritterin der 8. Familie', 6800, Object.assign({ look: 'b_amber', bellShot: 'soul', spd: 72 }, B1));
+defBoss('b6_leader', 'silva', 'Suzan, Kyle, Jin und Prima', 60000, Object.assign({ look: 'b_suzan', bellShot: 'blood', spd: 70 }, B1));
+defBoss('b6_ovinnik', 'krabbe', 'Ovinnik, Herrin des Gebiets', 7800, { model: 'ovinnik', bellShot: 'soul', r: 40 });
+defBoss('b6_remus', 'silva', 'Remus Snacker, achter Original', 9800, Object.assign({ look: 'b_remus', bellShot: 'blood', spd: 70 }, B1));
+defBoss('b6_cindy', 'cindy', 'Cindy in der Königsrüstung', 60000, Object.assign({ look: 'b_cindyR', bellShot: 'blood' }, B1));
+defBoss('b6_cindyF', 'cindy', 'Cindy in der Königsrüstung', 11500, Object.assign({ look: 'b_cindyR', bellShot: 'blood' }, B1));
+const R_KERKER = { ghoul: 'e3_wendigo', bat: 'c5_fleder', knight: 'e6_sub', witch: 'e6_banshee', brute: 'c5_thrall', captain: 'c5_boneclaw' };
+const R_KOENIG = { ghoul: 'e6_garde', bat: 'c5_fleder', knight: 'e6_ritterK', witch: 'e6_blut', brute: 'c5_thrall', captain: 'e6_hauptK' };
+const R_VERTRAUT = { ghoul: 'e6_leucht', bat: 'e6_irrlicht', knight: 'e6_hirsch', witch: 'e6_pilz', brute: 'e6_riese', captain: 'c3_koenigB' };
+const R_JILL = { ghoul: 'e6_acht', bat: 'c5_fleder', knight: 'e6_noble', witch: 'e6_telepath', brute: 'c5_thrall', captain: 'e6_tifu' };
+const R_WAHN = { ghoul: 'e6_wahn', bat: 'c5_fleder', knight: 'e6_noble', witch: 'e6_telepath', brute: 'e5_bsRiese', captain: 'e6_tifu' };
+const ETAPPE6 = {
+  title: 'Kampf um den Thron', place: 'Vampirsiedlung · 14. Schloss · Vertrautenwelt', src: 'Kapitel 809–945', theme: 'burg', ch: 8,
+  levels: [
+    { name: 'Das Gefängnis im 14. Schloss', type: 'survive', dur: 170, pace: 1.8, theme: 'burg', roles: R_KERKER, comp: ['sil'],
+      text: 'Der König ist tot, die Wahl beginnt. Muka führt Finn durch die Tunnel ins verlassene Schloss der Punisher – heute ein Gefängnis für alles, was keiner bändigen kann: gebrochene Subklassen und eine Armee Wendigos.' },
+    { name: 'Bryce Cane', type: 'duel', foe: 'b6_bryce', crowd: 0.15, theme: 'burg', roles: R_KOENIG,
+      text: 'Maskiert schleicht Finn ins erste Schloss. Bryce greift sofort an. Sein Stockschwert schmilzt zu einem Raum aus Blut, in dem jede Klinge abprallt und dabei wächst.' },
+    { name: 'Die Höhle hinter dem Wasserfall', type: 'hunt', role: 'ghoul', n: 80, pace: 1.8, theme: 'friedhof', roles: R_ROWA, comp: ['leo'],
+      text: 'Ham, der geflügelte Stier, führt die Retter zu Fex. Leo teilt mit einem Hieb den Wasserfall. Dahinter: Hütten voller leerer Blutbeutel und die Bloodsucker, die sie trinken.' },
+    { name: 'Die Vermummte', type: 'duel', foe: 'b6_amber', crowd: 0.2, theme: 'friedhof', roles: R_ROWA, comp: ['leo'],
+      text: 'Eine vermummte Vampirin hat Fex wochenlang Blut abgezapft. „Wir haben schon, was wir brauchten.“ Unter der Kapuze: eine Ritterin der achten Familie.' },
+    { name: 'Flucht aus dem Königsschloss', type: 'survive', dur: 160, pace: 1.9, theme: 'burg', roles: R_KOENIG, elites: 4,
+      text: 'Dwight liegt gepfählt im Thronsaal, und alle halten Finn für den Mörder. Königsgarde, Ritter und Leader stellen sich ihm in den Weg. Quest: Flucht.' },
+    { name: 'Vier Leader', type: 'endure', foe: 'b6_leader', dur: 75, crowd: 0.3, theme: 'burg', roles: R_KOENIG,
+      text: 'Suzans rote Nadel versiegelt den Schatten, Kyles Umhang schluckt Qi, Jins Explosionen fressen Kraft, und Prima wird mit jedem Treffer schneller. Fünf Leben, leere Blutbank – halte durch.' },
+    { name: 'Die Welt der Vertrauten', type: 'hunt', role: 'bat', n: 40, pace: 1.8, theme: 'himmel', roles: R_VERTRAUT, comp: ['leo', 'fex'],
+      text: 'Ein Riss führt in die Parallelwelt der Vertrauten: grünblauer Himmel, Riesenpilze und Millionen Leuchtkugeln. Diese Welt frisst Lebensenergie – wer hier trödelt, wird schwach.' },
+    { name: 'Ovinnik', type: 'duel', foe: 'b6_ovinnik', crowd: 0.3, theme: 'himmel', roles: R_VERTRAUT, comp: ['leo'],
+      text: 'Eine fette schwarze Katze mit roter Schlitzmarke herrscht über dieses Gebiet. Sie ist klug, trickreich und spürt jedes Verlangen nach Stärke – und sie will es prüfen.' },
+    { name: 'Die Türme des Zehnten', type: 'survive', dur: 200, pace: 2.0, theme: 'siedlung', roles: R_JILL, comp: ['peter', 'emma'], elites: 4,
+      text: 'Jill marschiert mit fünfhundert Mann auf die zehnte Burg. Finn steuert aus der Zelle heraus Türme und Gargoyles. Paul, Peter und Emma halten das Tor. Jede Zahl auf der Karte ist ein echtes Leben.' },
+    { name: 'Remus Snacker', type: 'duel', foe: 'b6_remus', crowd: 0.3, theme: 'siedlung', roles: R_JILL, comp: ['sil'],
+      text: 'Ein Original ist erwacht, der erste Leader der achten Familie. „Ich rieche dich, Blut-Fee!“ Seine Blutkanone reißt Mauern ein, und jeder abgetrennte Arm wächst sofort nach.' },
+    { name: 'Die Zuchtstätte', type: 'hunt', role: 'ghoul', n: 130, pace: 1.9, theme: 'himmel', roles: R_ROWA, comp: ['leo', 'fex'],
+      text: 'Unter einer Kuppel in der Vertrautenwelt: Zellen voller gebrochener Subklassen, darunter vierhundert Bloodsucker – nur Männer. Im zweiten Schloss gibt es nur Frauen und Kinder.' },
+    { name: 'Blutregen', type: 'survive', dur: 180, pace: 2.0, theme: 'siedlung', roles: R_WAHN, comp: ['peter', 'leander'], elites: 3,
+      text: 'Zum ersten Mal regnet es auf dem Vampirplaneten – Blut. Remus macht die achte Familie mit einem Fingerschnipp wahnsinnig, Hunderte stürzen sich auf Leander. Peter steht allein vor der Wand.' },
+    { name: 'Überlebe die Begegnung', type: 'endure', foe: 'b6_cindy', dur: 70, crowd: 0.2, theme: 'siedlung', roles: R_WAHN,
+      text: 'Cindy trägt die Königsrüstung aus reinen Blutkristallen und zieht das Blut der ganzen Siedlung zu sich. Jin und Kyle liegen am Boden, Bryce steht noch. Das System sagt: überleben.' },
+    { name: 'Shadow Overload', type: 'boss', at: 60, foe: 'b6_cindyF', pace: 1.9, theme: 'siedlung', roles: R_WAHN, comp: ['agathon'],
+      text: '„System, du irrst – ich muss gewinnen.“ Der Schatten fließt in Finns Mund und durch jede Zelle, lila Schattenfell wächst über seinen Körper. Für kurze Zeit kostet kein Schatten mehr etwas.' }
+  ]
+};
+
 /* ------------------------------------------------------------ Alle Etappen */
-// Etappen 6 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
+// Etappen 7 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
 function autoLevels(ch) {
   const out = [];
   for (let l = 1; l <= 8; l++) {
@@ -345,7 +408,7 @@ function autoLevels(ch) {
   }
   return out;
 }
-const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3, ETAPPE4, ETAPPE5].concat(CHAPTERS.slice(7).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
+const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3, ETAPPE4, ETAPPE5, ETAPPE6].concat(CHAPTERS.slice(8).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
 ETAPPEN.forEach((E, i) => { E.n = i + 1; E.levels.forEach((L, j) => { L.l = j + 1; }); });
 // Kapitel (Gegner-/Boss-Sammlungen) -> Etappe, fuer den Boss-Turm
 const ET_OF_CH = {}; ETAPPEN.forEach((E) => { const chs = new Set([E.ch]); E.levels.forEach((L) => L.ch && chs.add(L.ch)); if (E.n === 1) chs.add(3); chs.forEach((c) => { ET_OF_CH[c] = E.n; }); });
