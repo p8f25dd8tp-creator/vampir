@@ -64,6 +64,7 @@ const LOOK = {
   b_mag: { body: 'barbar', top: '#d8b090', acc: '#c82a2a', pants: '#2a8a3a', boots: '#d8b090', skin: '#d8b090', hair: 'kurz', hairCol: '#1a1410', eye: '#3a2a1a', weapon: 'none' },
   b_longblade: { body: 'barbar', top: '#3a4a5a', acc: '#c8c8d8', pants: '#1a2430', boots: '#101418', cape: '#2a3a4a', skin: '#e0c0a0', hair: 'kurz', hairCol: '#5a5a5a', eye: '#4a6a8a', weapon: 'katana' },
   b_agent2: { body: 'schurke', top: '#e8e8f0', acc: '#8a8aa0', pants: '#2a2a34', boots: '#1a1a20', cape: '#c8c8d8', skin: '#e0c8b0', hair: 'kurz', hairCol: '#1a1a1a', eye: '#a8b8ff', weapon: 'staff' },
+  b_eno: { body: 'barbar', top: '#5a0a14', acc: '#ff3a3a', pants: '#2a0408', boots: '#1a0204', cape: '#3a0208', skin: '#e0d0c8', hair: 'kurz', hairCol: '#4a4a52', eye: '#ff2a2a', fangs: true, weapon: 'sword', blade: '#ff4a4a' },
   bloodsucker: { body: 'schurke', top: '#6a3a38', pants: '#4a3030', boots: '#2a1a1a', skin: '#d0ccc4', hair: 'glatze', eye: '#0a0000', fangs: true, weapon: 'none', scale: 1.1 },
   b_mono: { body: 'schurke', top: '#1a2440', pants: '#0a1020', boots: '#101018', skin: '#e8d0c0', hair: 'stachel', hairCol: '#1a1a2a', eye: '#6a8ad8', weapon: 'sword', blade: '#d8e8ff' },
   b_ian: { body: 'schurke', top: '#6a4a2a', pants: '#3a2a1a', boots: '#2a1a10', cape: '#4a3a2a', skin: '#e0c0a0', hair: 'kurz', hairCol: '#6a4a2a', eye: '#4a3020', hat: '#6a4a2a', weapon: 'staff' },

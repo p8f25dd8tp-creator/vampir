@@ -40,7 +40,7 @@ const LV_PACE = [1.3, 1.45, 1.6, 1.75, 1.8, 1.85, 1.9];
 function lvDiff(l) { const k = l - 1; return { hp: 1 + 0.14 * k, count: 1 + 0.05 * k, dmg: 1 + 0.05 * k }; }
 
 /* ============================================================ Helden ueber die Kampagne */
-const HERO_UNLOCK = { finn: 0, lena: '1-5', leo: '1-7', emma: '1-8', leander: '1-9', fabian: '1-10', sil: '1-14', peter: '1-15', fex: '2-2', agathon: '2-9', sam: '2-10', chris: 5, mia: 10, draco: 11 };
+const HERO_UNLOCK = { finn: 0, lena: '1-5', leo: '1-7', emma: '1-8', leander: '1-9', fabian: '1-10', sil: '1-14', peter: '1-15', fex: '2-2', agathon: '2-9', sam: '2-10', chris: 5, mia: 11, draco: 12 };
 function unlockDone(u) { if (!u) return true; if (typeof u === 'number') return etappeCleared(u); const [e, l] = u.split('-').map(Number); return lvStars(e, l) > 0; }
 function unlockText(u) { if (typeof u === 'number') return `Etappe ${u} „${ET(u).title}“ abschließen`; const [e, l] = u.split('-').map(Number); return `Etappe ${e}, Stufe ${l} „${lvDef(e, l).name}“ schaffen`; }
 const HERO_UNLOCK_ETAPPE = {}; for (const id in HERO_UNLOCK) { const u = HERO_UNLOCK[id]; HERO_UNLOCK_ETAPPE[id] = typeof u === 'number' ? u : +u.split('-')[0]; }
@@ -141,7 +141,7 @@ newRun = function (heroId, opts) {
   if (cp.mode === 'endless') { G.campGoal = Infinity; return; }
   const ch = cp.ch; G.lv = cp.lv; setTheme(cp.lv && cp.lv.theme || ch.theme); storySetup(G, ch);
   if (cp.lv && cp.lv.roles) G.roles = Object.assign({}, ch.roles, cp.lv.roles);
-  const ek = cp.mode === 'endless' ? 0 : cp.e - 1; G.diffHp *= CAMP_DIFF.hp * (1 + 0.25 * ek); G.diffDmg *= CAMP_DIFF.dmg * (1 + 0.12 * ek); G.diffCount *= CAMP_DIFF.count * (1 + 0.02 * ek); // Kampagne haerter als die alte Story (Ausruestung, Burg, Talente)
+  const ek = cp.mode === 'endless' ? 0 : cp.e - 1; const ek1 = Math.min(ek, 6), ek2 = Math.max(0, ek - 6); G.diffHp *= CAMP_DIFF.hp * (1 + 0.25 * ek1 + 0.12 * ek2); G.diffDmg *= CAMP_DIFF.dmg * (1 + 0.12 * ek1 + 0.05 * ek2); G.diffCount *= CAMP_DIFF.count * (1 + 0.02 * ek); // Kampagne haerter als die alte Story (Ausruestung, Burg, Talente)
   const C = campSave(), M = SAVE.meta, fam = C.castle;
   G.statMod = (st) => { for (const id in GEAR2) GEAR2[id].apply(st, gearPower(id)); st.might *= 1 + 0.02 * fam; st.maxHp *= 1 + 0.03 * fam; };
   G.crystalMul = 1 + 0.15 * (M.kristall || 0);

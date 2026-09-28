@@ -419,6 +419,29 @@ const BOSS_BUILD = {
     for (const sd of [-1, 1]) add(CAP(), M('#3a2818'), [sd * 22, 16, 0], [14, 20, 14]);
     for (const sd of [-1, 1]) add(BOX(), M('#6aff6a', { emissive: new THREE.Color('#3aff3a'), emissiveIntensity: 1 }), [sd * 10, 126, 34], [7, 4, 2]);
   },
+  zweizackB: (add, M, body) => dalkiBody(add, M, body, 2, '#5a6a7a', '#b8ff8a'),
+  graham5: (add, M, body) => dalkiBody(add, M, body, 5, '#4a4a5a', '#ffd060'),
+  sechs: (add, M, body) => dalkiBody(add, M, body, 6, '#6a3a3a', '#ff6a3a'),
+  slicer(add, M, body) { // Dalki-Kommandantin mit langem Klingenschweif
+    dalkiBody(add, M, body, 3, '#7a6a8a', '#e8b0ff');
+    for (let k = 0; k < 7; k++) add(SPH(), M('#6a5a7a'), [0, 40 + k * 3, -40 - k * 18], [9 - k * 0.8, 9 - k * 0.8, 9 - k * 0.8]);
+    add(CON(), M('#e8e0ff', { emissive: new THREE.Color('#c8a0ff'), emissiveIntensity: 0.6 }), [0, 66, -172], [6, 44, 2], [-1.2, 0, 0]);
+  },
+  wurm(add, M, body) { // Tentakel, Hammerkopf, viele Maeuler, gruener Schleim
+    for (let k = 0; k < 5; k++) add(SPH(), M('#5a4a6a'), [0, 30 + k * 18, -40 + k * 20], [30 - k * 2, 26 - k * 2, 30 - k * 2]);
+    add(BOX(), M('#6a5a7a'), [0, 132, 70], [90, 30, 34]);
+    for (let k = 0; k < 4; k++) add(BOX(), M('#1a0a14'), [-30 + k * 20, 126, 88], [10, 6, 2]);
+    for (let k = 0; k < 6; k++) { const a = k / 6 * TAU; add(CAP(), M('#7a6a8a'), [Math.cos(a) * 40, 20, Math.sin(a) * 40 - 20], [6, 30, 6], [Math.sin(a) * 1.3, 0, -Math.cos(a) * 1.3]); }
+    add(SPH(), M('#8aff4a', { emissive: new THREE.Color('#4aff2a'), emissiveIntensity: 0.6 }), [0, 110, 90], [20, 6, 6]);
+  },
+  dullahan(add, M, body) { // kopfloser Reiter auf schwarzem Pferd mit roten Augen
+    add(CAP(), M('#060508'), [0, 50, 0], [24, 26, 50], [Math.PI / 2, 0, 0]);
+    for (const sd of [-1, 1]) for (const z of [-34, 34]) add(CAP(), M('#060508'), [sd * 14, 16, z], [7, 20, 7]);
+    add(CAP(), M('#060508'), [0, 80, 52], [11, 22, 11], [0.8, 0, 0]); add(SPH(), M('#0a080c'), [0, 96, 72], [12, 12, 20]);
+    add(CAP(), M('#1a1420'), [0, 96, -4], [14, 24, 12]); add(SPH(), M('#2a2030'), [0, 118, -4], [18, 8, 14]);
+    add(SPH(), M('#d8ccc8'), [18, 90, 10], [9, 10, 9]);
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ff1a1a' })); x.position.set(sd * 6, 100, 90); x.scale.set(3, 2, 2); body.add(x); }
+  },
   ranken(add, M, body) { // hausgross, langer Hals, Knospe mit sechs Ranken
     add(SPH(), M('#3a6a3a'), [0, 40, -10], [56, 34, 64]);
     for (let k = 0; k < 4; k++) add(SPH(), M('#4a7a3a'), [0, 70 + k * 22, 30 + k * 10], [16 - k, 16 - k, 16 - k]);

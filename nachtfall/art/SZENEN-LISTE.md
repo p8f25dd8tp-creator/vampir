@@ -42,3 +42,10 @@ Am Ende gibt es daraus einen gemeinsamen GPT-Prompt-Block.
 | 7 | Graylash-Planet mit rosa Riesenbaum | rosa Blütenblätter, Wurzeln |
 | 7 | Bestienstadt ZOO | römisches Pflaster |
 | 7 | Bergbau-Shelter mit Rohrbahnen | Metallgitter, Kristallgeröll |
+| 8 | Cursed-Schiff im Gefecht | Schiffsdeck, Metallplatten |
+| 8 | Im Dalki-Mutterschiff | schwarzes Vampirmaterial, grüne Leuchtadern |
+| 8 | Wüste von Caladi (Slicer) | Sand, Wracks |
+| 8 | Blade-Insel mit rosa Baum | Wurzeln, Blütenblätter |
+| 8 | Richards Labor | weiße Laborfliesen, Tanks |
+| 8 | Tunnel mit Mouth Splittern | nasser Stein, Knochen |
+| 8 | Königsburg im Kampf | schwarzer Marmor, Schattenrisse |

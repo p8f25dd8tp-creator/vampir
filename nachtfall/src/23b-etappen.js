@@ -11,7 +11,7 @@
      boss     — Etappen-Finale: Wellen, dann der Boss
      berserk  — Finn als wahnsinniger Bloodsucker (doppelte Kraft, halbes Leben)
    Zusatz `berserk: true` macht jede andere Stufenart zum Bloodsucker-Kampf.
-   Etappen 8 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
+   Etappen 9 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
    ========================================================================== */
 
 /* ------------------------------------------------------------ Gegner der Etappe 1 */
@@ -473,8 +473,72 @@ const ETAPPE7 = {
   ]
 };
 
+/* ------------------------------------------------------------ Etappe 8: Der König mit Bedingungen (Kapitel 1198–1408) */
+defEnemy('e8_dorf', 'ghoul', 'h_blade', 'Blade-Diener', { hp: 42 });
+defEnemy('e8_chainedG', 'knight', 'h_blade', 'Chained-Krieger', { armor: 6 });
+defEnemy('e8_chained', 'witch', 'h_seherin', 'Chained (Schall)', { shot: 'soul', flier: false });
+defEnemy('e8_mutter', 'captain', 'h_blade', 'Blade-„Mutter“ in goldener Rüstung', { scale: 1.3, hp: 5200 });
+defEnemy('e8_d3', 'knight', 'dalki3', 'Drei-Stachel-Dalki', { armor: 7 });
+defEnemy('e8_dK', 'captain', 'dalki4', 'Vier-Stachel-Dalki', { scale: 1.35, hp: 6200 });
+defEnemy('e8_klon', 'ghoul', 'h_wache', 'Maskierter Klon', { hp: 42 });
+defEnemy('e8_klonR', 'knight', 'h_wache', 'Klon mit Blutkraft', { armor: 6 });
+defEnemy('e8_trued', 'witch', 'h_truedream', 'Maskierter der Truedream-Familie', { shot: 'soul', flier: false });
+defEnemy('e8_hund', 'ghoul', 'q_rot', 'Laborhund', { hp: 40, spd: 86 });
+defEnemy('e8_mouth', 'ghoul', 'q_void', 'Mouth Splitter', { hp: 50 });
+defEnemy('e8_mouthK', 'knight', 'q_panzer', 'Knochen-Mouth-Splitter', { armor: 5 });
+defEnemy('e8_mouthR', 'brute', 'q_alienM', 'Riesiger Mouth Splitter', { splits: 0, hp: 340 });
+defBoss('b8_zweizack', 'dalki1', 'Zwei-Stachel-Dalki (markiert)', 10500, { model: 'zweizackB', bellShot: 'spike', r: 36, scale: 1.2 });
+defBoss('b8_graham', 'graham', 'Graham (fünf Stacheln)', 60000, { model: 'graham5', bellShot: 'spike', r: 36, spd: 72 });
+defBoss('b8_slicer', 'dalki1', 'Slicer (Klingenschweif)', 14000, { model: 'slicer', bellShot: 'spike', r: 36 });
+defBoss('b8_eno', 'silva', 'Eno, der erste König', 13000, Object.assign({ look: 'b_eno', bellShot: 'blood', armor: 6 }, B1));
+defBoss('b8_sechs', 'graham', 'Sechs-Stachel-Dalki', 15000, { model: 'sechs', bellShot: 'spike', r: 38, scale: 1.2 });
+defBoss('b8_wurm', 'krabbe', 'Galaktischer Wurm (Demi-God)', 15500, { model: 'wurm', bellShot: 'acid', r: 50 });
+defBoss('b8_dullahan', 'kronker', 'Der Dullahan', 16000, { model: 'dullahan', bellShot: 'blood', r: 44, spd: 80 });
+defBoss('b8_laxmus', 'original', 'Laxmus, der wahre erste König', 60000, Object.assign({ look: 'b_laxmus', bellShot: 'blood', spd: 70 }, B1));
+defBoss('b8_laxmusF', 'original', 'Laxmus, der wahre erste König', 19000, Object.assign({ look: 'b_laxmus', bellShot: 'blood', spd: 66 }, B1));
+const R_CHAINED = { ghoul: 'e8_dorf', bat: 'e8_dorf', knight: 'e8_chainedG', witch: 'e8_chained', brute: 'e8_chainedG', captain: 'e8_mutter' };
+const R_DALKI8 = { ghoul: 'e7_d1', bat: 'e7_d1', knight: 'e8_d3', witch: 'e7_dS', brute: 'e7_dB', captain: 'e8_dK' };
+const R_KLON = { ghoul: 'e8_klon', bat: 'e7_heu', knight: 'e8_klonR', witch: 'e8_trued', brute: 'e7_markR', captain: 'e8_dK' };
+const R_LABOR8 = { ghoul: 'e8_hund', bat: 'c5_fleder', knight: 'e8_klonR', witch: 'e8_trued', brute: 'e7_king', captain: 'e8_dK' };
+const R_MOUTH = { ghoul: 'e8_mouth', bat: 'c5_fleder', knight: 'e8_mouthK', witch: 'c3_spucker', brute: 'e8_mouthR', captain: 'c3_koenigB' };
+const ETAPPE8 = {
+  title: 'Der König mit Bedingungen', place: 'Cursed-Schiff · Mutterschiffe · Blade-Insel · Enos Labor · Vampirsiedlung', src: 'Kapitel 1198–1408', theme: 'burg', ch: 9,
+  levels: [
+    { name: 'Die Chained-Schlacht', type: 'survive', dur: 190, pace: 1.9, theme: 'schlachtfeld', roles: R_CHAINED, comp: ['sil', 'peter'], elites: 3,
+      text: 'Hilstons Schiff greift an. Gefangene Chained lähmen mit Schall und Schwerkraft die Vampirohren. Die Blade-Kinder kämpfen in Dreierteams – kopieren, weitergeben, zuschlagen.' },
+    { name: 'Das Mutterschiff', type: 'hunt', role: 'ghoul', n: 60, pace: 1.8, theme: 'bestienplanet', roles: R_DALKI8,
+      text: 'Schwarze Mutterschiffe werfen Kapseln auf jeden Menschenplaneten. Über dem Daisy-Planeten stürmt Finn mit einer Schildkröten-Formation ins Innere eines Schiffs – gebaut aus Vampirmaterial.' },
+    { name: 'Branching Link', type: 'duel', foe: 'b8_zweizack', crowd: 0.4, theme: 'ruinen', roles: R_DALKI8,
+      text: 'Alex schmiedet aus dem Dämonenkristall ein Amulett, halb schwarz, halb weiß. Es trinkt die Energie jedes Getöteten – und kann einen Dalki markieren, der dann für Finn kämpft.' },
+    { name: 'Graham', type: 'endure', foe: 'b8_graham', dur: 80, crowd: 0.3, theme: 'caladi', roles: R_DALKI8,
+      text: 'Ein Dalki in Menschenkleidung, der Klügste von allen. Er imitiert Finns Oberschenkeltritt beiläufig und bricht ihm damit das Bein. Grünes Blut hält Finn am Leben.' },
+    { name: 'Slicer', type: 'waveboss', at: 80, foe: 'b8_slicer', pace: 1.9, theme: 'caladi', roles: R_CHAINED, comp: ['sil'],
+      text: 'Die Dalki-Kommandantin mit dem Klingenschweif hat Hilston getötet und will Sil. Ihr dritter Schnitt lässt den Schwanz auf dreifache Körperlänge wachsen. Vincent übernimmt Finns Körper.' },
+    { name: 'Eno, der erste König', type: 'duel', foe: 'b8_eno', crowd: 0.2, theme: 'bestienplanet', roles: R_KLON,
+      text: 'Neben der Tafel wächst ein Baum mit rosa Blüten. Eno trägt eine dunkelrote Blutrüstung mit dreizackiger Krone: „Ich war der erste König. Ich schuf die Punisher.“' },
+    { name: 'Zwanzig Portale', type: 'survive', dur: 200, pace: 2.1, theme: 'bestienplanet', roles: R_KLON, comp: ['lena', 'fabian'], elites: 4,
+      text: 'Aus dem Nichts öffnen sich zwanzig Portale. Maskierte stürmen die Insel – alle mit demselben Gesicht. Klone. Nur wenige Menschen unter ihnen haben Fähigkeiten.' },
+    { name: 'Der Sechs-Stachel-Dalki', type: 'waveboss', at: 70, foe: 'b8_sechs', pace: 2.0, theme: 'bestienplanet', roles: R_KLON, comp: ['peter'],
+      text: 'Jim zwingt einen Dalki zur Evolution: sechs Stacheln, jede Wunde macht ihn stärker. Doch sein Herz hält das nur Minuten aus – wer so lange überlebt, gewinnt.' },
+    { name: 'Die galaktischen Würmer', type: 'waveboss', at: 80, foe: 'b8_wurm', pace: 1.9, theme: 'goetter', roles: R_LABOR8, comp: ['leander'],
+      text: 'Vor einer Sonne steht ein riesiges Objekt und schluckt ihr Licht: die Vampirwelt. Aus Containern springen Würmer der Demi-God-Stufe – Tentakel, Hammerkopf, viele Mäuler.' },
+    { name: 'Richards Labor', type: 'hunt', role: 'ghoul', n: 110, pace: 2.0, theme: 'burg', roles: R_LABOR8, comp: ['leander'],
+      text: 'Endlose Laborhunde bewachen einen Nest-Kristall, der sie immer wieder erschafft. Hinter der Grenze liegt Oscars Kopf in einem Tank – und seine Augen folgen jedem.' },
+    { name: 'Der Dullahan', type: 'duel', foe: 'b8_dullahan', crowd: 0.2, theme: 'burg', roles: R_LABOR8,
+      text: 'Ein kopfloser Reiter auf einem Pferd, das kein Licht zurückwirft, mit roten Vampiraugen. Keine bekannte Subklasse – neu erschaffen oder aus alten Mythen geweckt.' },
+    { name: 'Mouth Splitter', type: 'hunt', role: 'ghoul', n: 80, pace: 2.0, theme: 'friedhof', roles: R_MOUTH, comp: ['fex'],
+      text: 'In Jims altem Labor unter der Vampirwelt: hautlose Riesen mit langen Haaren, aus deren Körpern Schädel wachsen. Die Tunnel sind voll davon.' },
+    { name: 'Dalki über der Siedlung', type: 'survive', dur: 180, pace: 2.1, theme: 'siedlung', roles: R_DALKI8, comp: ['leo', 'emma'], elites: 4,
+      text: 'Fünfzig Zwei- und Dreizack-Dalki fallen über die Vampirsiedlung her, die Burgen lassen niemanden hinein. Leo und Emma schützen die Flüchtlinge des Armenviertels.' },
+    { name: 'Laxmus', type: 'endure', foe: 'b8_laxmus', dur: 80, crowd: 0.3, theme: 'burg', roles: R_KOENIG, comp: ['leo', 'emma'],
+      text: 'Unter der Königsburg lag der wahre erste König, aus der Geschichte getilgt. Er erwacht mit denselben Kräften wie Agathon. Davids Faust zerbricht, Jins Schild wird zerquetscht.' },
+    { name: 'Der König mit Bedingungen', type: 'boss', at: 70, foe: 'b8_laxmusF', pace: 2.0, theme: 'burg', roles: R_KOENIG, comp: ['agathon'], evo: 'König der Vampire',
+      text: 'Paul stirbt in Kazz’ Armen. Agathon schenkt Finn sein Wissen über Aura und Blut und seine rote Blutrüstung. Twin Tails durch hundert Schattenportale – „Bleib am Boden!“' }
+  ]
+};
+
 /* ------------------------------------------------------------ Alle Etappen */
-// Etappen 8 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
+// Etappen 9 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
 function autoLevels(ch) {
   const out = [];
   for (let l = 1; l <= 8; l++) {
@@ -483,7 +547,7 @@ function autoLevels(ch) {
   }
   return out;
 }
-const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3, ETAPPE4, ETAPPE5, ETAPPE6, ETAPPE7].concat(CHAPTERS.slice(9).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
+const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3, ETAPPE4, ETAPPE5, ETAPPE6, ETAPPE7, ETAPPE8].concat(CHAPTERS.slice(9).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
 ETAPPEN.forEach((E, i) => { E.n = i + 1; E.levels.forEach((L, j) => { L.l = j + 1; }); });
 // Kapitel (Gegner-/Boss-Sammlungen) -> Etappe, fuer den Boss-Turm
 const ET_OF_CH = {}; ETAPPEN.forEach((E) => { const chs = new Set([E.ch]); E.levels.forEach((L) => L.ch && chs.add(L.ch)); if (E.n === 1) chs.add(3); chs.forEach((c) => { ET_OF_CH[c] = E.n; }); });
