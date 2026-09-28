@@ -42,6 +42,20 @@ function uiSkinCss() {
 .box { position: relative; }
 .box .backarrow + h2 { margin-top: 28px; }
 .backarrow { position: absolute; top: 6px; left: 8px; z-index: 3; border: 0; background: rgba(10,4,20,.6); color: #ffe6a0; font-family: 'Cinzel', serif; font-weight: 800; font-size: 13px; padding: 5px 10px; border-radius: 999px; border: 1px solid rgba(201,162,76,.6); cursor: pointer; }
+/* Macht */
+.machtblk { margin: 8px 0; padding: 8px 10px; border-radius: 10px; background: rgba(8,14,40,.6); border: 1px solid rgba(110,170,255,.35); font-size: 13px; }
+.machtblk .mrow { display: flex; justify-content: space-between; gap: 8px; margin: 2px 0; }
+.machtblk .mbar { height: 6px; border-radius: 3px; background: rgba(255,255,255,.12); overflow: hidden; margin: 3px 0 6px; }
+.machtblk .mbar i { display: block; height: 100%; background: linear-gradient(90deg, #4ad890, #9affb0); }
+.machtblk .mscale { position: relative; height: 8px; border-radius: 4px; background: linear-gradient(90deg, #3a3450, #6a2a8a 50%, #ff3a4e); margin: 5px 0 6px; }
+.machtblk .mscale i { position: absolute; top: -2px; height: 12px; border: 1.5px solid #ffe6a0; border-radius: 6px; }
+.machtblk .mscale u { position: absolute; top: -5px; width: 4px; height: 18px; margin-left: -2px; background: #fff; border-radius: 2px; box-shadow: 0 0 6px #fff; }
+.machtblk small { color: #b8c8e8; }
+.mrate { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 6px auto 0; max-width: 420px; padding: 4px 10px; border-radius: 999px; font-size: 12.5px; background: rgba(0,0,0,.35); border: 1px solid rgba(255,255,255,.15); }
+.mrate b { font-family: 'Cinzel', serif; }
+.mrate.r-leicht b { color: #7dff9a; } .mrate.r-fair b { color: #c8ff7a; } .mrate.r-hart b { color: #ffd070; } .mrate.r-sehrhart b { color: #ff9a5a; }
+.mrate.r-schwach, .mrate.r-nie { border-color: #ff4a5a; } .mrate.r-schwach b, .mrate.r-nie b { color: #ff5a6a; }
+.mwhy { display: block; color: #ffb0b0; margin-top: 3px; }
 /* Pause */
 .pset { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .pset .btn { font-size: 11px; padding: 8px 0; white-space: nowrap; letter-spacing: 0; }

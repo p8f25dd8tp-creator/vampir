@@ -62,7 +62,7 @@ HEROES.finn.poolOf = function (p) {
 // Lauf starten: immer als Mensch, zaehlt nicht fuer die Story-Evolution
 const _newRunArc = newRun;
 newRun = function (heroId, opts) {
-  const arcade = heroId === 'finn' && !(opts && opts.story);
+  const arcade = heroId === 'finn' && !(opts && (opts.story || opts.formFix));
   if (arcade) PENDING_FINN = 0;
   _newRunArc(heroId, opts);
   if (arcade && GAME) { GAME.finnArcade = true; GAME.finnTest = true; }

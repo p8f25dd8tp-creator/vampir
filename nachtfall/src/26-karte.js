@@ -220,6 +220,10 @@ UI.homeKampagne = function () {
       <button class="backcur" data-act="mapcur" hidden>Zur aktuellen Etappe <span>⌄</span></button></div>
     ${this.campSheet()}`;
 };
+function machtLine(hero, e, l) {
+  const R = machtRating(hero, e, l), lm = levelMacht(e, l);
+  return `<div class="mrate r-${R.key}"><span>Gegner: Macht ${lm} · ${machtName(lm)}</span><b>${R.txt}</b></div>${R.why ? `<small class="mwhy">${R.why}</small>` : ''}`;
+}
 UI.campSheet = function () {
   const C = campSave(), e = this.selEtappe || C.etappe || 1, ch = ET(e), open = etappeOpen(e), N = lvCount(e);
   if (!this.selLevel || !lvOpen(e, this.selLevel)) { this.selLevel = 1; for (let l = 1; l <= N; l++) if (lvOpen(e, l)) this.selLevel = l; }
@@ -229,8 +233,8 @@ UI.campSheet = function () {
   const goal = lvGoal(e, l);
   return `<div class="campsheet"><div class="cshead"><span class="csnum">ETAPPE ${e}</span><b>${ch.title}</b><small>${ch.place}</small></div>
     <div class="lvrow">${nodes}</div>
-    <div class="csinfo">${open ? `<b class="csname">Stufe ${l}: ${L.name}${boss ? ' · Finale' : ''}</b><p class="cstext">${L.text}</p><div class="csgoal">▸ ${goal}</div><small style="color:#b8a8e8">★★ nie unter 30 % Leben · ★★★ nie unter 60 %</small>` : `🔒 Schließe zuerst Etappe ${e - 1} ab`}</div>
-    <button class="bigplay" data-act="campgo" ${open && lvOpen(e, l) ? '' : 'disabled'}><b>STARTEN</b><small>mit ${HEROES[C.hero].name}</small></button></div>`;
+    <div class="csinfo">${open ? `<b class="csname">Stufe ${l}: ${L.name}${boss ? ' · Finale' : ''}</b><p class="cstext">${L.text}</p><div class="csgoal">▸ ${goal}</div>${machtLine(C.hero, e, l)}<small style="color:#b8a8e8">★★ nie unter 30 % Leben · ★★★ nie unter 60 %</small>` : `🔒 Schließe zuerst Etappe ${e - 1} ab`}</div>
+    <button class="bigplay" data-act="campgo" ${open && lvOpen(e, l) && !machtRating(C.hero, e, l).lock ? '' : 'disabled'}><b>STARTEN</b><small>mit ${HEROES[C.hero].name}</small></button></div>`;
 };
 function mapRefreshSheet() {
   const s = document.querySelector('.campsheet'); if (!s) return;

@@ -64,11 +64,13 @@ const GEAR2 = {
   stiefel: { name: 'Bestienstiefel', stat: '+1,5 % Tempo', icon: 'wind', apply: (st, P) => { st.speed *= 1 + 0.015 * P; st.dodgeCdMul *= Math.pow(0.992, P); } },
   amulett: { name: 'Kristallamulett', stat: '+3 % Erfahrung und Sammelradius', icon: 'orb', apply: (st, P) => { st.xpMul *= 1 + 0.03 * P; st.pickup *= 1 + 0.03 * P; } }
 };
-function gearOf(id) { const g = campSave().gear[id]; return g || { r: 0, l: 0 }; }
+function gearHero() { return GAME && GAME.camp && GAME.state !== 'menu' ? GAME.hero : campSave().hero; }
+function gearStore(h) { const C = campSave(); C.gearH = C.gearH || {}; if (!C.gearMig) { C.gearMig = 1; if (Object.keys(C.gear || {}).length) C.gearH.finn = Object.assign({}, C.gear); } return C.gearH[h] || (C.gearH[h] = {}); }
+function gearOf(id) { const g = gearStore(gearHero())[id]; return g || { r: 0, l: 0 }; }
 function gearPower(id) { const g = gearOf(id); return g.r * 10 + g.l; }
 function gearCost(id) { const g = gearOf(id); return g.l >= 10 ? Math.round(80 * Math.pow(g.r + 1, 2)) : Math.round((5 + g.l * 3) * Math.pow(g.r + 1, 1.5)); }
 function gearCan(id) { const g = gearOf(id), C = campSave(); if (g.r >= RARITY.length - 1 && g.l >= 10) return false; if (g.l >= 10 && !SAVE.settings.testUnlock && !etappeCleared(RARITY_NEEDS[g.r + 1])) return false; return C.crystals >= gearCost(id); }
-function gearUp(id) { const C = campSave(); if (!gearCan(id)) return; const g = Object.assign({}, gearOf(id)); C.crystals -= gearCost(id); if (g.l >= 10) { g.r++; g.l = 1; } else g.l++; C.gear[id] = g; writeSave(); sfx(g.l === 1 ? 'fusion' : 'level'); }
+function gearUp(id) { const C = campSave(); if (!gearCan(id)) return; const g = Object.assign({}, gearOf(id)); C.crystals -= gearCost(id); if (g.l >= 10) { g.r++; g.l = 1; } else g.l++; gearStore(gearHero())[id] = g; writeSave(); sfx(g.l === 1 ? 'fusion' : 'level'); }
 
 /* ============================================================ Familie (Die Verfluchten) */
 const CASTLE_MAX = 10;
@@ -130,8 +132,9 @@ function campStart(mode, e, l) {
   const ch = mode === 'endless' ? CHAPTERS[0] : mode === 'tower' ? CHAPTERS[e - 1] : lvChapter(e, l);
   const camp = { mode, e, l, ch, lv: mode === 'level' ? lvDef(e, l) : null };
   AudioSys.init(); MENU = null; UI.clear(); applyQuality();
-  PENDING_FINN = hero === 'finn' ? 0 : undefined;
-  newRun(hero, { camp });
+  const bookRun = mode === 'level' && e === 1 && l === 1 && !lvStars(1, 1);
+  PENDING_FINN = hero === 'finn' ? (bookRun ? 0 : evoCap('finn')) : undefined;
+  newRun(hero, { camp, formFix: !bookRun });
   UI.showHud();
 }
 const _newRunCamp = newRun;
@@ -144,7 +147,8 @@ newRun = function (heroId, opts) {
   if (cp.lv && cp.lv.roles) G.roles = Object.assign({}, ch.roles, cp.lv.roles);
   const ek = cp.mode === 'endless' ? 0 : cp.e - 1; const ek1 = Math.min(ek, 6), ek2 = Math.max(0, ek - 6); G.diffHp *= CAMP_DIFF.hp * (1 + 0.25 * ek1 + 0 * ek2); G.diffDmg *= CAMP_DIFF.dmg * (1 + 0.12 * ek1 + 0 * ek2); // ab Etappe 7 waechst nur noch die Kapitelstaerke G.diffCount *= CAMP_DIFF.count * (1 + 0.02 * ek); // Kampagne haerter als die alte Story (Ausruestung, Burg, Talente)
   const C = campSave(), M = SAVE.meta, fam = C.castle;
-  G.statMod = (st) => { for (const id in GEAR2) GEAR2[id].apply(st, gearPower(id)); st.might *= 1 + 0.02 * fam; st.maxHp *= 1 + 0.03 * fam; };
+  const mm = cp.mode === 'endless' ? 1 : machtMul(G.hero, Math.min(ETAPPEN.length, Math.max(1, cp.e))); G.machtMul = mm;
+  G.statMod = (st) => { for (const id in GEAR2) GEAR2[id].apply(st, gearPower(id)); st.might *= mm; st.maxHp *= mm; };
   G.crystalMul = 1 + 0.15 * (M.kristall || 0);
   if (cp.mode === 'tower') { // Boss frueh, aber staerker
     G.campGoal = Infinity; G.diffBoss = 1 + cp.e * 0.15; G.diffDmg *= 1 + cp.e * 0.04;
@@ -230,6 +234,8 @@ function campResult(won) {
     C.stars[key] = Math.max(old, res.stars);
     if (!old) { const k = cp.e + '-' + cp.l; for (const id in HERO_UNLOCK) { const u = HERO_UNLOCK[id]; if (u === k || (u === cp.e && cp.l === lvCount(cp.e))) res.unlocked.push(id); } if (cp.l === lvCount(cp.e) && cp.e < ETAPPEN.length) C.etappe = cp.e + 1; }
   }
+  res.xp = G.kills + Math.round(G.t / 3) + (won ? (cp.mode === 'level' ? 60 + 25 * cp.e : cp.mode === 'tower' ? 80 + 20 * cp.e : 0) : 0);
+  res.lvUp = heroAddXp(G.hero, res.xp); res.heroLv = heroSave(G.hero).lv;
   C.crystals += res.crystals;
   if (res.bonus) { C.crystals += res.bonus.crystals; SAVE.souls += res.bonus.souls; }
   writeSave();
@@ -241,7 +247,7 @@ UI.showEnd = function (won, souls, newly, extra) {
   if (!G || !G.camp) return _showEndCamp.call(this, won, souls, newly, extra);
   this.hideHud();
   const R = campResult(won), cp = G.camp, C = campSave();
-  const title = cp.mode === 'endless' ? 'ASCHEFRIEDHOF' : cp.mode === 'tower' ? `BOSS-TURM · STOCK ${cp.e}` : `ETAPPE ${cp.e} · STUFE ${cp.l}`;
+  const title = cp.mode === 'endless' ? 'DIE ENDLOSE NACHT' : cp.mode === 'tower' ? `BOSS-TURM · STOCK ${cp.e}` : `ETAPPE ${cp.e} · STUFE ${cp.l}`;
   const stars = cp.mode === 'level' ? `<div class="bigstars">${[1, 2, 3].map((i) => `<span class="${i <= R.stars ? 'on' : ''}">★</span>`).join('')}</div>` : '';
   const tot = Object.values(G.stats.dmg).reduce((a, b) => a + b, 0) || 1;
   const top = Object.entries(G.stats.dmg).sort((a, b) => b[1] - a[1]).slice(0, 5), max = top.length ? top[0][1] : 1;
@@ -257,7 +263,8 @@ UI.showEnd = function (won, souls, newly, extra) {
     ${won && cp.lv && cp.lv.outro ? `<div class="syshead" style="margin-top:10px">[ SYSTEM ] · EPILOG</div>${cp.lv.outro.map((l) => `<p class="sysp">${l}</p>`).join('')}` : ''}
     ${R.unlocked.length ? `<div style="text-align:center;margin:10px 0"><div class="syshead">[ SYSTEM ] · NEUE HELDEN</div>${R.unlocked.map((id) => `<div class="cinzel" style="font-size:20px;font-weight:800;color:#ffe6a0">${HEROES[id].name}</div>`).join('')}</div>` : ''}
     <div class="kv"><span>Bestienkristalle</span><span style="color:#8ad8ff">+${R.crystals}${R.bonus ? ' +' + R.bonus.crystals + ' (erstes Mal)' : ''} ◆</span>
-      <span>Seelen</span><span style="color:#d8c0ff">+${souls}${R.bonus ? ' +' + R.bonus.souls + ' (erstes Mal)' : ''}</span>${form}</div>
+      <span>Seelen</span><span style="color:#d8c0ff">+${souls}${R.bonus ? ' +' + R.bonus.souls + ' (erstes Mal)' : ''}</span>${form}
+      <span>Helden-EP</span><span style="color:#9affb0">+${R.xp}${R.lvUp ? ` · Heldenstufe ${R.heroLv}!` : ''}</span></div>
     <div class="syshead" style="margin-top:6px">SCHADEN</div>${dm}
     <div class="btns">${nextOk ? '<button class="btn primary" data-act="campnext">Nächstes Level</button>' : ''}
       <button class="btn ${nextOk ? '' : 'primary'}" data-act="campagain">${won ? 'Wiederholen' : 'Nochmal'}</button>
@@ -288,7 +295,7 @@ UI.showHome = function (tab) {
   const C = campSave(); dailySave();
   if (!isUnlocked(C.hero)) C.hero = 'finn';
   MENU = null; setTheme(this.tab === 'kampagne' ? ET(this.selEtappe || C.etappe || 1).theme : 'friedhof'); menuScene();
-  const head = `<div class="hometop"><div class="hprof"><canvas id="homehero"></canvas><div><b>${HEROES[C.hero].name}</b><small title="Gesammelte Sterne">${starsTotal()} ★</small></div></div>
+  const head = `<div class="hometop"><div class="hprof"><canvas id="homehero"></canvas><div><b>${HEROES[C.hero].name}</b><small>Stufe ${heroSave(C.hero).lv} · Macht ${Math.floor(heroMacht(C.hero))}</small></div></div>
     <div class="hcur"><span style="color:#d8c0ff">✦ ${SAVE.souls}</span><span style="color:#8ad8ff">◆ ${C.crystals}</span></div>
     <div class="hbtns"><button class="ibtn" data-act="codex">📖</button><button class="ibtn" data-act="settings">⚙</button></div></div>`;
   const body = ({ kampagne: () => this.homeKampagne(), helden: () => this.homeHelden(), ausruestung: () => this.homeGear(), familie: () => this.homeFamilie(), system: () => this.homeSystem(), events: () => this.homeEvents() })[this.tab]();
@@ -300,6 +307,14 @@ UI.showHome = function (tab) {
   return d;
 };
 function dailyReadyAny() { const D = dailySave(); return DAILY.some((q) => !D.got[q.id] && (D.prog[q.id] || 0) >= q.goal); }
+function machtBlock(id) {
+  const h = heroSave(id), m = heroMacht(id), [a, b] = heroRange(id), need = h.lv >= HERO_LV_MAX ? 0 : heroXpNeed(h.lv);
+  return `<div class="machtblk"><div class="mrow"><b>Heldenstufe ${h.lv}</b><span>${need ? h.xp + ' / ' + need + ' EP' : 'Maximum'}</span></div>
+    <div class="mbar"><i style="width:${need ? Math.round(h.xp / need * 100) : 100}%"></i></div>
+    <div class="mrow"><span>Macht <b>${m.toFixed(1)}</b> · ${machtName(m)}</span><span>Höchstens ${b} · ${machtName(b)}</span></div>
+    <div class="mscale"><i style="left:${(a - 1) / 29 * 100}%;width:${(b - a) / 29 * 100}%"></i><u style="left:${(m - 1) / 29 * 100}%"></u></div>
+    <small>${id === 'finn' ? 'Finn wächst mit der Geschichte. Training bringt bis zu +2 Macht.' : 'Jeder Lauf bringt EP. Mit der Heldenstufe steigt die Macht bis zur Höchststufe aus dem Buch.'}</small></div>`;
+}
 function starsTotal() { let s = 0; for (const k in campSave().stars) s += campSave().stars[k]; return s; }
 function drawBossThumb(c, n) {
   const C2 = CHAPTERS[ET(n).ch - 1], r = c.getBoundingClientRect(); c.width = Math.round(r.width * VIEW.dpr); c.height = Math.round(r.height * VIEW.dpr);
@@ -326,11 +341,11 @@ UI.homeKampagne = function () {
 UI.homeHelden = function () {
   const C = campSave();
   if (!this.selHero || !HERO_ORDER.includes(this.selHero)) this.selHero = C.hero;
-  const cards = HERO_ORDER.map((id) => `<div class="hcard ${id === this.selHero ? 'sel' : ''} ${isUnlocked(id) ? '' : 'locked'}" data-act="hsel" data-id="${id}"><canvas data-prev="${id}"></canvas>${isUnlocked(id) ? '' : '<div class="lock">🔒</div>'}${id === C.hero ? '<div class="hmark">✔</div>' : ''}<div class="nm"${HEROES[id].name.length > 16 ? ' style="font-size:0.66em"' : ''}>${HEROES[id].name}${isUnlocked(id) ? '' : `<small class="hunl">${unlockShort(HERO_UNLOCK[id])}</small>`}</div></div>`).join('');
+  const cards = HERO_ORDER.map((id) => `<div class="hcard ${id === this.selHero ? 'sel' : ''} ${isUnlocked(id) ? '' : 'locked'}" data-act="hsel" data-id="${id}"><canvas data-prev="${id}"></canvas>${isUnlocked(id) ? '' : '<div class="lock">🔒</div>'}${id === C.hero ? '<div class="hmark">✔</div>' : ''}<div class="nm"${HEROES[id].name.length > 16 ? ' style="font-size:0.66em"' : ''}>${HEROES[id].name}${isUnlocked(id) ? (HERO_MACHT[id] ? `<small class="hunl" style="color:#bfe8ff">Stufe ${heroSave(id).lv} · Macht ${heroMacht(id).toFixed(0)}</small>` : '') : `<small class="hunl">${unlockShort(HERO_UNLOCK[id])}</small>`}</div></div>`).join('');
   const H = HEROES[this.selHero], un = isUnlocked(this.selHero);
   return `<div class="heroes">${cards}</div>
     <div class="hmini panel"><div class="ht"><h3>${H.name}</h3><span class="title2">${H.title}</span></div>
-      <div class="role">${H.role}</div>
+      ${HERO_MACHT[this.selHero] && un ? machtBlock(this.selHero) : ''}<div class="role">${H.role}</div>
       ${H.evoPath ? H.evoPath() : H.evo ? finnSelectHtml() : ''}
       <div class="blk"><b class="lbl">MECHANIK: ${H.mech.name.toUpperCase()}</b><p>${H.mech.desc}</p></div>
       <div class="blk"><b class="lbl">SPEZIAL: ${H.ult.name.toUpperCase()}</b><p>${H.ult.desc}</p></div>
@@ -346,7 +361,7 @@ UI.homeGear = function () {
       <div class="gtxt"><b>${G0.name}</b><small style="color:${R.col}">${g.l ? R.name + '-Stufe' : 'noch nicht geschmiedet'}</small><small>${G0.stat} je Punkt · jetzt ${P} Punkte</small>${locked ? `<small style="color:#ffb0b0">Nächste Stufe (${RARITY[g.r + 1].name}) nach Etappe ${RARITY_NEEDS[g.r + 1]}</small>` : ''}</div>
       <button class="btn small" data-act="gearup" data-id="${id}" ${gearCan(id) ? '' : 'disabled'}>${btn}${maxed ? '' : `<br><small>${cost} ◆</small>`}</button></div>`;
   }).join('');
-  return `<div class="syswin"><div class="syshead">[ SYSTEM ] · SCHMIEDE</div><p class="sysp">Aus den Kristallen besiegter Bestien schmiedest du Ausrüstung. Die Stufen folgen den Bestien des Buchs: ${RARITY.map((r) => `<b style="color:${r.col}">${r.name}</b>`).join(' · ')}. Höhere Stufen brauchen Kristalle stärkerer Bestien, also spätere Etappen.</p></div><div class="gearlist">${rows}</div>`;
+  return `<div class="syswin"><div class="syshead">[ SYSTEM ] · SCHMIEDE</div><p class="sysp">Aus den Kristallen besiegter Bestien schmiedest du Ausrüstung – für jeden Helden eigene, hier für <b>${HEROES[C.hero].name}</b>. Die Stufen folgen den Bestien des Buchs: ${RARITY.map((r) => `<b style="color:${r.col}">${r.name}</b>`).join(' · ')}. Höhere Stufen brauchen Kristalle stärkerer Bestien, also spätere Etappen.</p></div><div class="gearlist">${rows}</div>`;
 };
 for (const id in GEAR2) ICON_EXTRA['gear_' + id] = symIcon(GEAR2[id].icon, '#8ad8ff');
 UI.homeFamilie = function () {
@@ -357,7 +372,7 @@ UI.homeFamilie = function () {
   const cost = castleCost(), maxC = C.castle >= CASTLE_MAX;
   return `<div class="syswin"><div class="syshead">[ SYSTEM ] · DIE VERFLUCHTEN</div>
       <p class="sysp">Deine Familie. Freigeschaltete Helden werden Mitglieder und können als Begleiter mitkämpfen (sie sind unverwundbar und unterstützen dich).</p>
-      <div class="kv"><span>Burgstufe</span><span>${C.castle} / ${CASTLE_MAX}</span><span>Bonus</span><span>+${2 * C.castle} % Schaden · +${3 * C.castle} % Leben</span><span>Begleiter-Plätze</span><span>${slots} (mehr ab Burgstufe 3 und 7)</span></div>
+      <div class="kv"><span>Burgstufe</span><span>${C.castle} / ${CASTLE_MAX}</span><span>Begleiter-Plätze</span><span>${slots} (mehr ab Burgstufe 3 und 7)</span></div>
       <button class="btn" data-act="castle" ${!maxC && SAVE.souls >= cost ? '' : 'disabled'}>${maxC ? 'Burg voll ausgebaut' : `Burg ausbauen · ${cost} ✦`}</button></div>
     <div class="syshead" style="margin:8px 4px">MITGLIEDER · ${C.party.length}/${slots} im Kampf</div><div class="gearlist">${list}</div>`;
 };
@@ -365,7 +380,7 @@ UI.homeSystem = function () {
   const cost = talentCost(), all = TALENT_ORDER.every((k) => (SAVE.meta[k] || 0) >= META[k].max);
   const cards = TALENT_ORDER.map((k) => { const lv = SAVE.meta[k] || 0, M = META[k];
     return `<div class="tcard ${lv ? '' : 'dim'}"><div class="tstars">${'★'.repeat(lv)}<i>${'★'.repeat(M.max - lv)}</i></div><img src="${iconImg(k)}"><b>${M.name}</b><small>${M.desc}${M.max > 1 ? ' je Stern' : ''}</small></div>`; }).join('');
-  return `<div class="syswin"><div class="syshead">[ SYSTEM ] · TALENTE</div><p class="sysp">Das System verleiht dir dauerhafte Talente. Jeder Zug gibt einem zufälligen Talent einen Stern.</p>
+  return `<div class="syswin"><div class="syshead">[ SYSTEM ] · TALENTE</div><p class="sysp">Das System verleiht Finn dauerhafte Talente. Sie gelten nur für Finn – jeder andere Held wächst über seine eigene Heldenstufe. Jeder Zug gibt einem zufälligen Talent einen Stern.</p>
       <button class="btn primary" data-act="tdraw" ${!all && SAVE.souls >= cost ? '' : 'disabled'}>${all ? 'Alle Talente voll' : `Talent ziehen · ${cost} ✦`}</button></div>
     <div class="tgrid">${cards}</div>`;
 };
@@ -386,7 +401,7 @@ UI.act = function (a, ds, e) {
     case 'story': case 'play': return this.showHome('kampagne');
     case 'etappe': { const cur = this.selEtappe || C.etappe || 1; this.selEtappe = clamp(cur + (+ds.d), 1, ETAPPEN.length); this.selLevel = 0; return this.showHome('kampagne'); }
     case 'lvsel': this.selLevel = +ds.l; return this.showHome('kampagne');
-    case 'campgo': return campStart('level', this.selEtappe || C.etappe || 1, this.selLevel || 1);
+    case 'campgo': { const e = this.selEtappe || C.etappe || 1, l = this.selLevel || 1, R = machtRating(C.hero, e, l); if (R.lock) { this.toast(R.txt); return; } return campStart('level', e, l); }
     case 'hsel': this.selHero = ds.id; return this.showHome('helden');
     case 'hpick': C.hero = this.selHero; writeSave(); sfx('level'); return this.showHome('helden');
     case 'gearup': gearUp(ds.id); return this.showHome('ausruestung');

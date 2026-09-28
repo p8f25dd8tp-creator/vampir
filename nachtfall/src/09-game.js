@@ -62,7 +62,7 @@ function makePlayer(heroId) {
 
 /* -------------------------------------------------------- Werte */
 function recomputeStats() {
-  const p = GAME.p, H0 = HEROES[p.hero], H = H0.baseStats ? Object.assign({}, H0, H0.baseStats(p)) : H0, ps = p.passives, M = SAVE.meta;
+  const p = GAME.p, H0 = HEROES[p.hero], H = H0.baseStats ? Object.assign({}, H0, H0.baseStats(p)) : H0, ps = p.passives, M = p.hero === 'finn' ? SAVE.meta : {};
   const st = {
     maxHp: H.hp * (1 + 0.08 * (M.vitae || 0)) + (ps.vampirblut || 0) * 20 + ((ps.vampirblut || 0) >= 5 ? 10 : 0),
     regen: (ps.vampirblut || 0) * 0.4 + ((ps.vampirblut || 0) >= 5 ? 0.2 : 0),

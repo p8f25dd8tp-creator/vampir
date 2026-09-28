@@ -160,7 +160,7 @@ function defineEvoHero(id, def) {
   H.slotsOf = (p) => T[p.tier || 0].slots;
   H.poolOf = (p) => { const s = new Set(EVO_PASSIVES.concat(def.passives || [])); for (let i = 0; i <= (p.tier || 0); i++) T[i].unlocks.forEach((c) => s.add(c)); return [...s].filter((c) => CARDS[c]); };
   H.evoPath = () => `<div class="blk"><b class="lbl">EVOLUTION IM LAUF</b><p>${T.map((t, i) => `<span style="color:${t.col}">${t.name}</span>${i ? ` <span style="opacity:.7">(${t.txt})</span>` : ''}`).join(' → ')}</p></div>`;
-  H.onStart = () => { const p = GAME.p; p.tier = 0; evoGrant(p, T[0]); recomputeStats(); p.hp = p.st.maxHp; GAME.later(0.8, () => UI.announce(T[0].name.toUpperCase(), '')); if (def.start2) def.start2(p); };
+  H.onStart = () => { const p = GAME.p, cap = Math.min(T.length - 1, typeof evoCap === 'function' ? evoCap(id) : 0); p.tier = cap; for (let i = 0; i <= cap; i++) evoGrant(p, T[i]); recomputeStats(); p.hp = p.st.maxHp; GAME.later(0.8, () => UI.announce(T[p.tier].name.toUpperCase(), '')); if (def.start2) def.start2(p); };
   H.onUpdate = (dt) => {
     const G = GAME, p = G.p; if (def.tick) def.tick(p, dt);
     if (G.state !== 'play' || !p.alive) return;

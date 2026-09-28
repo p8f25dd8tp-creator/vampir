@@ -4968,7 +4968,7 @@ function makePlayer(heroId) {
 
 /* -------------------------------------------------------- Werte */
 function recomputeStats() {
-  const p = GAME.p, H0 = HEROES[p.hero], H = H0.baseStats ? Object.assign({}, H0, H0.baseStats(p)) : H0, ps = p.passives, M = SAVE.meta;
+  const p = GAME.p, H0 = HEROES[p.hero], H = H0.baseStats ? Object.assign({}, H0, H0.baseStats(p)) : H0, ps = p.passives, M = p.hero === 'finn' ? SAVE.meta : {};
   const st = {
     maxHp: H.hp * (1 + 0.08 * (M.vitae || 0)) + (ps.vampirblut || 0) * 20 + ((ps.vampirblut || 0) >= 5 ? 10 : 0),
     regen: (ps.vampirblut || 0) * 0.4 + ((ps.vampirblut || 0) >= 5 ? 0.2 : 0),
@@ -9033,7 +9033,7 @@ HEROES.finn.poolOf = function (p) {
 // Lauf starten: immer als Mensch, zaehlt nicht fuer die Story-Evolution
 const _newRunArc = newRun;
 newRun = function (heroId, opts) {
-  const arcade = heroId === 'finn' && !(opts && opts.story);
+  const arcade = heroId === 'finn' && !(opts && (opts.story || opts.formFix));
   if (arcade) PENDING_FINN = 0;
   _newRunArc(heroId, opts);
   if (arcade && GAME) { GAME.finnArcade = true; GAME.finnTest = true; }
@@ -9237,7 +9237,7 @@ function defineEvoHero(id, def) {
   H.slotsOf = (p) => T[p.tier || 0].slots;
   H.poolOf = (p) => { const s = new Set(EVO_PASSIVES.concat(def.passives || [])); for (let i = 0; i <= (p.tier || 0); i++) T[i].unlocks.forEach((c) => s.add(c)); return [...s].filter((c) => CARDS[c]); };
   H.evoPath = () => `<div class="blk"><b class="lbl">EVOLUTION IM LAUF</b><p>${T.map((t, i) => `<span style="color:${t.col}">${t.name}</span>${i ? ` <span style="opacity:.7">(${t.txt})</span>` : ''}`).join(' → ')}</p></div>`;
-  H.onStart = () => { const p = GAME.p; p.tier = 0; evoGrant(p, T[0]); recomputeStats(); p.hp = p.st.maxHp; GAME.later(0.8, () => UI.announce(T[0].name.toUpperCase(), '')); if (def.start2) def.start2(p); };
+  H.onStart = () => { const p = GAME.p, cap = Math.min(T.length - 1, typeof evoCap === 'function' ? evoCap(id) : 0); p.tier = cap; for (let i = 0; i <= cap; i++) evoGrant(p, T[i]); recomputeStats(); p.hp = p.st.maxHp; GAME.later(0.8, () => UI.announce(T[p.tier].name.toUpperCase(), '')); if (def.start2) def.start2(p); };
   H.onUpdate = (dt) => {
     const G = GAME, p = G.p; if (def.tick) def.tick(p, dt);
     if (G.state !== 'play' || !p.alive) return;
@@ -11657,11 +11657,13 @@ const GEAR2 = {
   stiefel: { name: 'Bestienstiefel', stat: '+1,5 % Tempo', icon: 'wind', apply: (st, P) => { st.speed *= 1 + 0.015 * P; st.dodgeCdMul *= Math.pow(0.992, P); } },
   amulett: { name: 'Kristallamulett', stat: '+3 % Erfahrung und Sammelradius', icon: 'orb', apply: (st, P) => { st.xpMul *= 1 + 0.03 * P; st.pickup *= 1 + 0.03 * P; } }
 };
-function gearOf(id) { const g = campSave().gear[id]; return g || { r: 0, l: 0 }; }
+function gearHero() { return GAME && GAME.camp && GAME.state !== 'menu' ? GAME.hero : campSave().hero; }
+function gearStore(h) { const C = campSave(); C.gearH = C.gearH || {}; if (!C.gearMig) { C.gearMig = 1; if (Object.keys(C.gear || {}).length) C.gearH.finn = Object.assign({}, C.gear); } return C.gearH[h] || (C.gearH[h] = {}); }
+function gearOf(id) { const g = gearStore(gearHero())[id]; return g || { r: 0, l: 0 }; }
 function gearPower(id) { const g = gearOf(id); return g.r * 10 + g.l; }
 function gearCost(id) { const g = gearOf(id); return g.l >= 10 ? Math.round(80 * Math.pow(g.r + 1, 2)) : Math.round((5 + g.l * 3) * Math.pow(g.r + 1, 1.5)); }
 function gearCan(id) { const g = gearOf(id), C = campSave(); if (g.r >= RARITY.length - 1 && g.l >= 10) return false; if (g.l >= 10 && !SAVE.settings.testUnlock && !etappeCleared(RARITY_NEEDS[g.r + 1])) return false; return C.crystals >= gearCost(id); }
-function gearUp(id) { const C = campSave(); if (!gearCan(id)) return; const g = Object.assign({}, gearOf(id)); C.crystals -= gearCost(id); if (g.l >= 10) { g.r++; g.l = 1; } else g.l++; C.gear[id] = g; writeSave(); sfx(g.l === 1 ? 'fusion' : 'level'); }
+function gearUp(id) { const C = campSave(); if (!gearCan(id)) return; const g = Object.assign({}, gearOf(id)); C.crystals -= gearCost(id); if (g.l >= 10) { g.r++; g.l = 1; } else g.l++; gearStore(gearHero())[id] = g; writeSave(); sfx(g.l === 1 ? 'fusion' : 'level'); }
 
 /* ============================================================ Familie (Die Verfluchten) */
 const CASTLE_MAX = 10;
@@ -11723,8 +11725,9 @@ function campStart(mode, e, l) {
   const ch = mode === 'endless' ? CHAPTERS[0] : mode === 'tower' ? CHAPTERS[e - 1] : lvChapter(e, l);
   const camp = { mode, e, l, ch, lv: mode === 'level' ? lvDef(e, l) : null };
   AudioSys.init(); MENU = null; UI.clear(); applyQuality();
-  PENDING_FINN = hero === 'finn' ? 0 : undefined;
-  newRun(hero, { camp });
+  const bookRun = mode === 'level' && e === 1 && l === 1 && !lvStars(1, 1);
+  PENDING_FINN = hero === 'finn' ? (bookRun ? 0 : evoCap('finn')) : undefined;
+  newRun(hero, { camp, formFix: !bookRun });
   UI.showHud();
 }
 const _newRunCamp = newRun;
@@ -11737,7 +11740,8 @@ newRun = function (heroId, opts) {
   if (cp.lv && cp.lv.roles) G.roles = Object.assign({}, ch.roles, cp.lv.roles);
   const ek = cp.mode === 'endless' ? 0 : cp.e - 1; const ek1 = Math.min(ek, 6), ek2 = Math.max(0, ek - 6); G.diffHp *= CAMP_DIFF.hp * (1 + 0.25 * ek1 + 0 * ek2); G.diffDmg *= CAMP_DIFF.dmg * (1 + 0.12 * ek1 + 0 * ek2); // ab Etappe 7 waechst nur noch die Kapitelstaerke G.diffCount *= CAMP_DIFF.count * (1 + 0.02 * ek); // Kampagne haerter als die alte Story (Ausruestung, Burg, Talente)
   const C = campSave(), M = SAVE.meta, fam = C.castle;
-  G.statMod = (st) => { for (const id in GEAR2) GEAR2[id].apply(st, gearPower(id)); st.might *= 1 + 0.02 * fam; st.maxHp *= 1 + 0.03 * fam; };
+  const mm = cp.mode === 'endless' ? 1 : machtMul(G.hero, Math.min(ETAPPEN.length, Math.max(1, cp.e))); G.machtMul = mm;
+  G.statMod = (st) => { for (const id in GEAR2) GEAR2[id].apply(st, gearPower(id)); st.might *= mm; st.maxHp *= mm; };
   G.crystalMul = 1 + 0.15 * (M.kristall || 0);
   if (cp.mode === 'tower') { // Boss frueh, aber staerker
     G.campGoal = Infinity; G.diffBoss = 1 + cp.e * 0.15; G.diffDmg *= 1 + cp.e * 0.04;
@@ -11823,6 +11827,8 @@ function campResult(won) {
     C.stars[key] = Math.max(old, res.stars);
     if (!old) { const k = cp.e + '-' + cp.l; for (const id in HERO_UNLOCK) { const u = HERO_UNLOCK[id]; if (u === k || (u === cp.e && cp.l === lvCount(cp.e))) res.unlocked.push(id); } if (cp.l === lvCount(cp.e) && cp.e < ETAPPEN.length) C.etappe = cp.e + 1; }
   }
+  res.xp = G.kills + Math.round(G.t / 3) + (won ? (cp.mode === 'level' ? 60 + 25 * cp.e : cp.mode === 'tower' ? 80 + 20 * cp.e : 0) : 0);
+  res.lvUp = heroAddXp(G.hero, res.xp); res.heroLv = heroSave(G.hero).lv;
   C.crystals += res.crystals;
   if (res.bonus) { C.crystals += res.bonus.crystals; SAVE.souls += res.bonus.souls; }
   writeSave();
@@ -11834,7 +11840,7 @@ UI.showEnd = function (won, souls, newly, extra) {
   if (!G || !G.camp) return _showEndCamp.call(this, won, souls, newly, extra);
   this.hideHud();
   const R = campResult(won), cp = G.camp, C = campSave();
-  const title = cp.mode === 'endless' ? 'ASCHEFRIEDHOF' : cp.mode === 'tower' ? `BOSS-TURM · STOCK ${cp.e}` : `ETAPPE ${cp.e} · STUFE ${cp.l}`;
+  const title = cp.mode === 'endless' ? 'DIE ENDLOSE NACHT' : cp.mode === 'tower' ? `BOSS-TURM · STOCK ${cp.e}` : `ETAPPE ${cp.e} · STUFE ${cp.l}`;
   const stars = cp.mode === 'level' ? `<div class="bigstars">${[1, 2, 3].map((i) => `<span class="${i <= R.stars ? 'on' : ''}">★</span>`).join('')}</div>` : '';
   const tot = Object.values(G.stats.dmg).reduce((a, b) => a + b, 0) || 1;
   const top = Object.entries(G.stats.dmg).sort((a, b) => b[1] - a[1]).slice(0, 5), max = top.length ? top[0][1] : 1;
@@ -11850,7 +11856,8 @@ UI.showEnd = function (won, souls, newly, extra) {
     ${won && cp.lv && cp.lv.outro ? `<div class="syshead" style="margin-top:10px">[ SYSTEM ] · EPILOG</div>${cp.lv.outro.map((l) => `<p class="sysp">${l}</p>`).join('')}` : ''}
     ${R.unlocked.length ? `<div style="text-align:center;margin:10px 0"><div class="syshead">[ SYSTEM ] · NEUE HELDEN</div>${R.unlocked.map((id) => `<div class="cinzel" style="font-size:20px;font-weight:800;color:#ffe6a0">${HEROES[id].name}</div>`).join('')}</div>` : ''}
     <div class="kv"><span>Bestienkristalle</span><span style="color:#8ad8ff">+${R.crystals}${R.bonus ? ' +' + R.bonus.crystals + ' (erstes Mal)' : ''} ◆</span>
-      <span>Seelen</span><span style="color:#d8c0ff">+${souls}${R.bonus ? ' +' + R.bonus.souls + ' (erstes Mal)' : ''}</span>${form}</div>
+      <span>Seelen</span><span style="color:#d8c0ff">+${souls}${R.bonus ? ' +' + R.bonus.souls + ' (erstes Mal)' : ''}</span>${form}
+      <span>Helden-EP</span><span style="color:#9affb0">+${R.xp}${R.lvUp ? ` · Heldenstufe ${R.heroLv}!` : ''}</span></div>
     <div class="syshead" style="margin-top:6px">SCHADEN</div>${dm}
     <div class="btns">${nextOk ? '<button class="btn primary" data-act="campnext">Nächstes Level</button>' : ''}
       <button class="btn ${nextOk ? '' : 'primary'}" data-act="campagain">${won ? 'Wiederholen' : 'Nochmal'}</button>
@@ -11881,7 +11888,7 @@ UI.showHome = function (tab) {
   const C = campSave(); dailySave();
   if (!isUnlocked(C.hero)) C.hero = 'finn';
   MENU = null; setTheme(this.tab === 'kampagne' ? ET(this.selEtappe || C.etappe || 1).theme : 'friedhof'); menuScene();
-  const head = `<div class="hometop"><div class="hprof"><canvas id="homehero"></canvas><div><b>${HEROES[C.hero].name}</b><small title="Gesammelte Sterne">${starsTotal()} ★</small></div></div>
+  const head = `<div class="hometop"><div class="hprof"><canvas id="homehero"></canvas><div><b>${HEROES[C.hero].name}</b><small>Stufe ${heroSave(C.hero).lv} · Macht ${Math.floor(heroMacht(C.hero))}</small></div></div>
     <div class="hcur"><span style="color:#d8c0ff">✦ ${SAVE.souls}</span><span style="color:#8ad8ff">◆ ${C.crystals}</span></div>
     <div class="hbtns"><button class="ibtn" data-act="codex">📖</button><button class="ibtn" data-act="settings">⚙</button></div></div>`;
   const body = ({ kampagne: () => this.homeKampagne(), helden: () => this.homeHelden(), ausruestung: () => this.homeGear(), familie: () => this.homeFamilie(), system: () => this.homeSystem(), events: () => this.homeEvents() })[this.tab]();
@@ -11893,6 +11900,14 @@ UI.showHome = function (tab) {
   return d;
 };
 function dailyReadyAny() { const D = dailySave(); return DAILY.some((q) => !D.got[q.id] && (D.prog[q.id] || 0) >= q.goal); }
+function machtBlock(id) {
+  const h = heroSave(id), m = heroMacht(id), [a, b] = heroRange(id), need = h.lv >= HERO_LV_MAX ? 0 : heroXpNeed(h.lv);
+  return `<div class="machtblk"><div class="mrow"><b>Heldenstufe ${h.lv}</b><span>${need ? h.xp + ' / ' + need + ' EP' : 'Maximum'}</span></div>
+    <div class="mbar"><i style="width:${need ? Math.round(h.xp / need * 100) : 100}%"></i></div>
+    <div class="mrow"><span>Macht <b>${m.toFixed(1)}</b> · ${machtName(m)}</span><span>Höchstens ${b} · ${machtName(b)}</span></div>
+    <div class="mscale"><i style="left:${(a - 1) / 29 * 100}%;width:${(b - a) / 29 * 100}%"></i><u style="left:${(m - 1) / 29 * 100}%"></u></div>
+    <small>${id === 'finn' ? 'Finn wächst mit der Geschichte. Training bringt bis zu +2 Macht.' : 'Jeder Lauf bringt EP. Mit der Heldenstufe steigt die Macht bis zur Höchststufe aus dem Buch.'}</small></div>`;
+}
 function starsTotal() { let s = 0; for (const k in campSave().stars) s += campSave().stars[k]; return s; }
 function drawBossThumb(c, n) {
   const C2 = CHAPTERS[ET(n).ch - 1], r = c.getBoundingClientRect(); c.width = Math.round(r.width * VIEW.dpr); c.height = Math.round(r.height * VIEW.dpr);
@@ -11919,11 +11934,11 @@ UI.homeKampagne = function () {
 UI.homeHelden = function () {
   const C = campSave();
   if (!this.selHero || !HERO_ORDER.includes(this.selHero)) this.selHero = C.hero;
-  const cards = HERO_ORDER.map((id) => `<div class="hcard ${id === this.selHero ? 'sel' : ''} ${isUnlocked(id) ? '' : 'locked'}" data-act="hsel" data-id="${id}"><canvas data-prev="${id}"></canvas>${isUnlocked(id) ? '' : '<div class="lock">🔒</div>'}${id === C.hero ? '<div class="hmark">✔</div>' : ''}<div class="nm"${HEROES[id].name.length > 16 ? ' style="font-size:0.66em"' : ''}>${HEROES[id].name}${isUnlocked(id) ? '' : `<small class="hunl">${unlockShort(HERO_UNLOCK[id])}</small>`}</div></div>`).join('');
+  const cards = HERO_ORDER.map((id) => `<div class="hcard ${id === this.selHero ? 'sel' : ''} ${isUnlocked(id) ? '' : 'locked'}" data-act="hsel" data-id="${id}"><canvas data-prev="${id}"></canvas>${isUnlocked(id) ? '' : '<div class="lock">🔒</div>'}${id === C.hero ? '<div class="hmark">✔</div>' : ''}<div class="nm"${HEROES[id].name.length > 16 ? ' style="font-size:0.66em"' : ''}>${HEROES[id].name}${isUnlocked(id) ? (HERO_MACHT[id] ? `<small class="hunl" style="color:#bfe8ff">Stufe ${heroSave(id).lv} · Macht ${heroMacht(id).toFixed(0)}</small>` : '') : `<small class="hunl">${unlockShort(HERO_UNLOCK[id])}</small>`}</div></div>`).join('');
   const H = HEROES[this.selHero], un = isUnlocked(this.selHero);
   return `<div class="heroes">${cards}</div>
     <div class="hmini panel"><div class="ht"><h3>${H.name}</h3><span class="title2">${H.title}</span></div>
-      <div class="role">${H.role}</div>
+      ${HERO_MACHT[this.selHero] && un ? machtBlock(this.selHero) : ''}<div class="role">${H.role}</div>
       ${H.evoPath ? H.evoPath() : H.evo ? finnSelectHtml() : ''}
       <div class="blk"><b class="lbl">MECHANIK: ${H.mech.name.toUpperCase()}</b><p>${H.mech.desc}</p></div>
       <div class="blk"><b class="lbl">SPEZIAL: ${H.ult.name.toUpperCase()}</b><p>${H.ult.desc}</p></div>
@@ -11939,7 +11954,7 @@ UI.homeGear = function () {
       <div class="gtxt"><b>${G0.name}</b><small style="color:${R.col}">${g.l ? R.name + '-Stufe' : 'noch nicht geschmiedet'}</small><small>${G0.stat} je Punkt · jetzt ${P} Punkte</small>${locked ? `<small style="color:#ffb0b0">Nächste Stufe (${RARITY[g.r + 1].name}) nach Etappe ${RARITY_NEEDS[g.r + 1]}</small>` : ''}</div>
       <button class="btn small" data-act="gearup" data-id="${id}" ${gearCan(id) ? '' : 'disabled'}>${btn}${maxed ? '' : `<br><small>${cost} ◆</small>`}</button></div>`;
   }).join('');
-  return `<div class="syswin"><div class="syshead">[ SYSTEM ] · SCHMIEDE</div><p class="sysp">Aus den Kristallen besiegter Bestien schmiedest du Ausrüstung. Die Stufen folgen den Bestien des Buchs: ${RARITY.map((r) => `<b style="color:${r.col}">${r.name}</b>`).join(' · ')}. Höhere Stufen brauchen Kristalle stärkerer Bestien, also spätere Etappen.</p></div><div class="gearlist">${rows}</div>`;
+  return `<div class="syswin"><div class="syshead">[ SYSTEM ] · SCHMIEDE</div><p class="sysp">Aus den Kristallen besiegter Bestien schmiedest du Ausrüstung – für jeden Helden eigene, hier für <b>${HEROES[C.hero].name}</b>. Die Stufen folgen den Bestien des Buchs: ${RARITY.map((r) => `<b style="color:${r.col}">${r.name}</b>`).join(' · ')}. Höhere Stufen brauchen Kristalle stärkerer Bestien, also spätere Etappen.</p></div><div class="gearlist">${rows}</div>`;
 };
 for (const id in GEAR2) ICON_EXTRA['gear_' + id] = symIcon(GEAR2[id].icon, '#8ad8ff');
 UI.homeFamilie = function () {
@@ -11950,7 +11965,7 @@ UI.homeFamilie = function () {
   const cost = castleCost(), maxC = C.castle >= CASTLE_MAX;
   return `<div class="syswin"><div class="syshead">[ SYSTEM ] · DIE VERFLUCHTEN</div>
       <p class="sysp">Deine Familie. Freigeschaltete Helden werden Mitglieder und können als Begleiter mitkämpfen (sie sind unverwundbar und unterstützen dich).</p>
-      <div class="kv"><span>Burgstufe</span><span>${C.castle} / ${CASTLE_MAX}</span><span>Bonus</span><span>+${2 * C.castle} % Schaden · +${3 * C.castle} % Leben</span><span>Begleiter-Plätze</span><span>${slots} (mehr ab Burgstufe 3 und 7)</span></div>
+      <div class="kv"><span>Burgstufe</span><span>${C.castle} / ${CASTLE_MAX}</span><span>Begleiter-Plätze</span><span>${slots} (mehr ab Burgstufe 3 und 7)</span></div>
       <button class="btn" data-act="castle" ${!maxC && SAVE.souls >= cost ? '' : 'disabled'}>${maxC ? 'Burg voll ausgebaut' : `Burg ausbauen · ${cost} ✦`}</button></div>
     <div class="syshead" style="margin:8px 4px">MITGLIEDER · ${C.party.length}/${slots} im Kampf</div><div class="gearlist">${list}</div>`;
 };
@@ -11958,7 +11973,7 @@ UI.homeSystem = function () {
   const cost = talentCost(), all = TALENT_ORDER.every((k) => (SAVE.meta[k] || 0) >= META[k].max);
   const cards = TALENT_ORDER.map((k) => { const lv = SAVE.meta[k] || 0, M = META[k];
     return `<div class="tcard ${lv ? '' : 'dim'}"><div class="tstars">${'★'.repeat(lv)}<i>${'★'.repeat(M.max - lv)}</i></div><img src="${iconImg(k)}"><b>${M.name}</b><small>${M.desc}${M.max > 1 ? ' je Stern' : ''}</small></div>`; }).join('');
-  return `<div class="syswin"><div class="syshead">[ SYSTEM ] · TALENTE</div><p class="sysp">Das System verleiht dir dauerhafte Talente. Jeder Zug gibt einem zufälligen Talent einen Stern.</p>
+  return `<div class="syswin"><div class="syshead">[ SYSTEM ] · TALENTE</div><p class="sysp">Das System verleiht Finn dauerhafte Talente. Sie gelten nur für Finn – jeder andere Held wächst über seine eigene Heldenstufe. Jeder Zug gibt einem zufälligen Talent einen Stern.</p>
       <button class="btn primary" data-act="tdraw" ${!all && SAVE.souls >= cost ? '' : 'disabled'}>${all ? 'Alle Talente voll' : `Talent ziehen · ${cost} ✦`}</button></div>
     <div class="tgrid">${cards}</div>`;
 };
@@ -11979,7 +11994,7 @@ UI.act = function (a, ds, e) {
     case 'story': case 'play': return this.showHome('kampagne');
     case 'etappe': { const cur = this.selEtappe || C.etappe || 1; this.selEtappe = clamp(cur + (+ds.d), 1, ETAPPEN.length); this.selLevel = 0; return this.showHome('kampagne'); }
     case 'lvsel': this.selLevel = +ds.l; return this.showHome('kampagne');
-    case 'campgo': return campStart('level', this.selEtappe || C.etappe || 1, this.selLevel || 1);
+    case 'campgo': { const e = this.selEtappe || C.etappe || 1, l = this.selLevel || 1, R = machtRating(C.hero, e, l); if (R.lock) { this.toast(R.txt); return; } return campStart('level', e, l); }
     case 'hsel': this.selHero = ds.id; return this.showHome('helden');
     case 'hpick': C.hero = this.selHero; writeSave(); sfx('level'); return this.showHome('helden');
     case 'gearup': gearUp(ds.id); return this.showHome('ausruestung');
@@ -13139,6 +13154,10 @@ UI.homeKampagne = function () {
       <button class="backcur" data-act="mapcur" hidden>Zur aktuellen Etappe <span>⌄</span></button></div>
     ${this.campSheet()}`;
 };
+function machtLine(hero, e, l) {
+  const R = machtRating(hero, e, l), lm = levelMacht(e, l);
+  return `<div class="mrate r-${R.key}"><span>Gegner: Macht ${lm} · ${machtName(lm)}</span><b>${R.txt}</b></div>${R.why ? `<small class="mwhy">${R.why}</small>` : ''}`;
+}
 UI.campSheet = function () {
   const C = campSave(), e = this.selEtappe || C.etappe || 1, ch = ET(e), open = etappeOpen(e), N = lvCount(e);
   if (!this.selLevel || !lvOpen(e, this.selLevel)) { this.selLevel = 1; for (let l = 1; l <= N; l++) if (lvOpen(e, l)) this.selLevel = l; }
@@ -13148,8 +13167,8 @@ UI.campSheet = function () {
   const goal = lvGoal(e, l);
   return `<div class="campsheet"><div class="cshead"><span class="csnum">ETAPPE ${e}</span><b>${ch.title}</b><small>${ch.place}</small></div>
     <div class="lvrow">${nodes}</div>
-    <div class="csinfo">${open ? `<b class="csname">Stufe ${l}: ${L.name}${boss ? ' · Finale' : ''}</b><p class="cstext">${L.text}</p><div class="csgoal">▸ ${goal}</div><small style="color:#b8a8e8">★★ nie unter 30 % Leben · ★★★ nie unter 60 %</small>` : `🔒 Schließe zuerst Etappe ${e - 1} ab`}</div>
-    <button class="bigplay" data-act="campgo" ${open && lvOpen(e, l) ? '' : 'disabled'}><b>STARTEN</b><small>mit ${HEROES[C.hero].name}</small></button></div>`;
+    <div class="csinfo">${open ? `<b class="csname">Stufe ${l}: ${L.name}${boss ? ' · Finale' : ''}</b><p class="cstext">${L.text}</p><div class="csgoal">▸ ${goal}</div>${machtLine(C.hero, e, l)}<small style="color:#b8a8e8">★★ nie unter 30 % Leben · ★★★ nie unter 60 %</small>` : `🔒 Schließe zuerst Etappe ${e - 1} ab`}</div>
+    <button class="bigplay" data-act="campgo" ${open && lvOpen(e, l) && !machtRating(C.hero, e, l).lock ? '' : 'disabled'}><b>STARTEN</b><small>mit ${HEROES[C.hero].name}</small></button></div>`;
 };
 function mapRefreshSheet() {
   const s = document.querySelector('.campsheet'); if (!s) return;
@@ -13722,6 +13741,20 @@ function uiSkinCss() {
 .box { position: relative; }
 .box .backarrow + h2 { margin-top: 28px; }
 .backarrow { position: absolute; top: 6px; left: 8px; z-index: 3; border: 0; background: rgba(10,4,20,.6); color: #ffe6a0; font-family: 'Cinzel', serif; font-weight: 800; font-size: 13px; padding: 5px 10px; border-radius: 999px; border: 1px solid rgba(201,162,76,.6); cursor: pointer; }
+/* Macht */
+.machtblk { margin: 8px 0; padding: 8px 10px; border-radius: 10px; background: rgba(8,14,40,.6); border: 1px solid rgba(110,170,255,.35); font-size: 13px; }
+.machtblk .mrow { display: flex; justify-content: space-between; gap: 8px; margin: 2px 0; }
+.machtblk .mbar { height: 6px; border-radius: 3px; background: rgba(255,255,255,.12); overflow: hidden; margin: 3px 0 6px; }
+.machtblk .mbar i { display: block; height: 100%; background: linear-gradient(90deg, #4ad890, #9affb0); }
+.machtblk .mscale { position: relative; height: 8px; border-radius: 4px; background: linear-gradient(90deg, #3a3450, #6a2a8a 50%, #ff3a4e); margin: 5px 0 6px; }
+.machtblk .mscale i { position: absolute; top: -2px; height: 12px; border: 1.5px solid #ffe6a0; border-radius: 6px; }
+.machtblk .mscale u { position: absolute; top: -5px; width: 4px; height: 18px; margin-left: -2px; background: #fff; border-radius: 2px; box-shadow: 0 0 6px #fff; }
+.machtblk small { color: #b8c8e8; }
+.mrate { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 6px auto 0; max-width: 420px; padding: 4px 10px; border-radius: 999px; font-size: 12.5px; background: rgba(0,0,0,.35); border: 1px solid rgba(255,255,255,.15); }
+.mrate b { font-family: 'Cinzel', serif; }
+.mrate.r-leicht b { color: #7dff9a; } .mrate.r-fair b { color: #c8ff7a; } .mrate.r-hart b { color: #ffd070; } .mrate.r-sehrhart b { color: #ff9a5a; }
+.mrate.r-schwach, .mrate.r-nie { border-color: #ff4a5a; } .mrate.r-schwach b, .mrate.r-nie b { color: #ff5a6a; }
+.mwhy { display: block; color: #ffb0b0; margin-top: 3px; }
 /* Pause */
 .pset { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .pset .btn { font-size: 11px; padding: 8px 0; white-space: nowrap; letter-spacing: 0; }
@@ -13787,6 +13820,91 @@ function uiSkinDecorate(root) {
   const run = () => { queued = false; uiSkinDecorate(document.getElementById('ui')); };
   new MutationObserver(() => { if (!queued) { queued = true; requestAnimationFrame(run); } }).observe(document.getElementById('ui') || document.body, { childList: true, subtree: true, characterData: true });
 })();
+
+/* ---- src/31-macht.js ---- */
+'use strict';
+/* ==========================================================================
+   MACHT UND HELDENSTAND
+   - Feste Machtstufen 1–30 fuer Bosse und Etappen (nach dem Buch, nichts passt sich an)
+   - Jeder Held hat eine Start- und Hoechststufe; seine Heldenstufe (EP aus Laeufen)
+     hebt ihn von der Start- zur Hoechststufe. Finn waechst ueber die Story.
+   - Macht wirkt auf Schaden und Leben, und zu starke Stufen sind gesperrt.
+   ========================================================================== */
+
+const MACHT_MAX = 30;
+const MACHT_BAND = [[1, 'Mensch'], [4, 'Erwachter'], [6, 'Kämpfer'], [9, 'Elite'], [12, 'Adliger'], [14, 'Anführer'], [17, 'Original'], [20, 'Halbgott'], [22, 'Dämonenstufe'], [25, 'Gottbezwinger'], [28, 'Urgewalt'], [30, 'Der letzte Vampir']];
+function machtName(m) { let n = MACHT_BAND[0][1]; for (const [v, nm] of MACHT_BAND) if (m >= v - 0.001) n = nm; return n; }
+
+// [Start, Hoechststufe] je Held
+const HERO_MACHT = { finn: [1, 30], peter: [1, 22], lena: [4, 20], emma: [4, 22], fabian: [6, 17], fex: [9, 17], leo: [14, 17], sil: [6, 25], chris: [6, 22], leander: [4, 14], agathon: [17, 22], sam: [4, 12], mia: [4, 20], draco: [20, 25] };
+// normale Kaempfe je Etappe (zugleich Finns Storymacht in dieser Etappe)
+const ET_MACHT = [0, 3, 6, 8, 10, 12, 13, 15, 16, 17, 19, 20, 21, 22, 23, 25];
+// Bosse (Durchhalte-Kaempfe zaehlen mit der Etappe)
+const BOSS_MACHT = { b1_kyle: 4, b1_rylee: 4, b1_brandon: 4, b1_leo: 17, b1_nate: 6, b1_scordana: 6, b1_ben: 6, b2_fex: 9, b2_emma: 6, b2_leander: 6, b2_kenny: 6, b2_ranken: 9, b2_multi: 6, b2_sil: 9, b2_dillan: 9, b3_boneclaw: 22, b3_hase: 9, b3_clark: 9, b3_jin: 14, b3_edward: 12, b3_vadeen: 14, b3_paul: 12, b4_linda: 17, b4_hypolord: 12, b4_hundR: 12, b4_hundS: 14, b4_lemon: 6, b4_gox: 12, b4_kiln: 12, b4_chrimeta: 14, b4_twins: 17, b4_twinsF: 14, b5_sand: 14, b5_feuerstein: 14, b5_mantis: 12, b5_rowa: 17, b5_helen: 12, b5_tulk: 12, b5_lucy: 14, b5_krabbe: 22, b5_chris: 14, b5_hilston: 19, b5_krabbeF: 17, b6_bryce: 14, b6_amber: 12, b6_leader: 17, b6_ovinnik: 17, b6_remus: 17, b6_cindy: 17, b6_cindyF: 14, b7_sach: 14, b7_boneclaw: 17, b7_mag: 14, b7_motte: 17, b7_baum: 17, b7_drache: 22, b7_longblade: 14, b7_agent2: 14, b7_erde: 17, b8_graham: 19, b8_eno: 17, b8_sechs: 17, b8_wurm: 17, b8_dullahan: 17, b8_laxmus: 22, b8_laxmusF: 19, b9_samantha: 17, b9_agent3: 17, b9_genbu: 22, b9_ape: 17, b9_doppel: 17, b9_dhelen: 17, b9_blob: 17, b9_drache2: 19, b9_greenhorn: 17, b9_graham: 19, b10_tikker: 17, b10_werwolf: 19, b10_derik: 19, b10_andy: 19, b10_lock: 19, b10_russ: 25, b10_chris: 19, b10_laxmus: 25, b10_sedi: 19, b11_athos: 22, b11_laxmus: 25, b11_laser: 19, b11_yanny: 19, b11_zero: 25, b11_chris: 22, b11_hinto: 22, b11_kipo: 22, b11_gorgath: 22, b11_erin: 22, b11_escam: 22, b12_edvard: 22, b12_nell: 19, b12_ranke: 19, b12_eule: 19, b12_grenlet: 22, b12_spinne: 22, b12_prophet: 22, b12_magnus: 22, b12_ray: 27, b12_jim: 22, b13_h: 27, b13_stark: 22, b13_mundus: 27, b13_affe: 25, b13_phoenix: 25, b13_behemoth: 25, b13_asura: 25, b13_pine: 25, b13_sera: 25, b13_chris: 22, b13_h10: 25, b13_ray: 25, b14_magnus: 22, b14_general: 22, b14_lexor: 22, b14_kronker: 25, b14_kronkerW: 25, b14_unzoku: 27, b14_immortui: 30, b14_yakgen: 22, b15_cia: 19, b15_bisha: 25, b15_luce: 25, b15_calva: 22, b15_tenbris: 25, b15_luceW: 25, b15_unzoku: 25, b15_immortui: 27, b15_final: 27, b2_likmorn: 9, b3_borden: 9, b4_borden: 12, b7_dred: 14, b8_zweizack: 12, b8_slicer: 15, b9_onehorn: 20, b9_newgen: 17 };
+
+/* ------------------------------------------------------------ Heldenstand */
+const HERO_LV_MAX = 60;
+function heroXpNeed(lv) { return 120 + 30 * lv; }
+function heroSave(id) {
+  const C = campSave(); C.heroes = C.heroes || {};
+  return C.heroes[id] || (C.heroes[id] = { lv: 1, xp: 0 });
+}
+function heroAddXp(id, xp) {
+  const h = heroSave(id), lv0 = h.lv;
+  h.xp += xp;
+  while (h.lv < HERO_LV_MAX && h.xp >= heroXpNeed(h.lv)) { h.xp -= heroXpNeed(h.lv); h.lv++; }
+  if (h.lv >= HERO_LV_MAX) h.xp = 0;
+  return h.lv - lv0;
+}
+function heroRange(id) { return HERO_MACHT[id] || [1, 12]; }
+function heroMax(id) { return heroRange(id)[1]; }
+// hoechste offene Etappe (Finns Storypunkt)
+function storyEtappe() { let e = 1; for (let k = 1; k <= ETAPPEN.length; k++) if (etappeOpen(k)) e = k; return e; }
+function heroMacht(id) {
+  const [a, b] = heroRange(id), h = heroSave(id), f = (h.lv - 1) / (HERO_LV_MAX - 1);
+  if (id === 'finn') {
+    if (etappeCleared(ETAPPEN.length)) return MACHT_MAX;
+    return Math.min(b, ET_MACHT[storyEtappe()] + 2 * f); // Story plus bis zu +2 durch Training
+  }
+  return a + (b - a) * f;
+}
+
+/* ------------------------------------------------------------ Stufen bewerten */
+function levelMacht(e, l) {
+  const L = lvDef(e, l);
+  if (L && L.foe && L.type !== 'endure' && BOSS_MACHT[L.foe]) return BOSS_MACHT[L.foe];
+  return ET_MACHT[e] || 1;
+}
+// Werte-Abstand: Held gegenueber dem Stand, fuer den die Etappe gebaut ist
+function machtGap(id, e) { return heroMacht(id) - (ET_MACHT[e] || 1); }
+function machtMul(id, e) { return Math.max(0.45, Math.min(4, Math.pow(1.09, machtGap(id, e)))); }
+function machtRating(id, e, l) {
+  const lm = levelMacht(e, l), hm = heroMacht(id), g = machtGap(id, e), N = id === 'draco' ? HEROES[id].name : HEROES[id].name.split(' ')[0];
+  if (id !== 'finn' && heroMax(id) < lm) return { key: 'nie', lock: true, txt: `Unmöglich für ${N}`, why: `Selbst in voller Kraft (Macht ${heroMax(id)}) reicht ${N} nicht an diesen Gegner heran (Macht ${lm}).` };
+  if (id !== 'finn' && g < -3) return { key: 'schwach', lock: true, txt: `${N} ist noch zu schwach`, why: `Macht ${hm.toFixed(1)}, gebraucht wird etwa ${Math.ceil((ET_MACHT[e] || 1) - 3)}. Heldenstufe steigern.` };
+  if (g >= 4) return { key: 'leicht', txt: 'leicht' };
+  if (g >= 1.5) return { key: 'fair', txt: 'fair' };
+  if (g >= -1) return { key: 'hart', txt: 'hart' };
+  return { key: 'sehrhart', txt: 'sehr hart' };
+}
+
+/* ------------------------------------------------------------ Datenpruefung (Entwicklung) */
+function datenCheck() {
+  const err = [];
+  for (let e = 1; e <= ETAPPEN.length; e++) for (let l = 1; l <= lvCount(e); l++) {
+    const L = lvDef(e, l), at = `Etappe ${e}-${l}`;
+    if (!L || !L.name || !L.text) err.push(at + ': Name oder Text fehlt');
+    if (L.foe && !ENEMIES[L.foe]) err.push(at + ': Boss fehlt ' + L.foe);
+    if (L.foe && /^b\d/.test(L.foe) && !BOSS_MACHT[L.foe]) err.push(at + ': keine Macht für ' + L.foe);
+    for (const r in (L.roles || {})) if (!ENEMIES[L.roles[r]]) err.push(at + ': Gegner fehlt ' + L.roles[r]);
+    for (const c of (L.comp || [])) if (!COMPANIONS[c]) err.push(at + ': Begleiter fehlt ' + c);
+  }
+  for (const id of HERO_ORDER) if (HERO_UNLOCK[id] !== undefined && !HERO_MACHT[id]) err.push('Held ohne Macht: ' + id);
+  for (const id in ENEMIES) if (!ENEMIES[id].name || /undefined/.test(ENEMIES[id].name)) err.push('Gegner ohne Namen: ' + id);
+  if (err.length) console.error('DATENFEHLER:\n' + err.join('\n'));
+  return err;
+}
+setTimeout(datenCheck, 0);
 
 /* ---- src/12-main.js ---- */
 'use strict';
