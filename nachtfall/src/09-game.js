@@ -513,7 +513,7 @@ function updatePlayer(dt) {
     healPlayer(h, true); p.healAcc = Math.min(p.healAcc - h, 30);
   }
   // Faehigkeiten
-  for (const id in p.ab) { const f = TICKS[id]; if (f) f(p, p.ab[id], dt); }
+  for (const id in p.ab) { const f = TICKS[id], ab = p.ab[id]; if (f) f(p, ab, ab.ulti ? dt * 1.3 : dt); if (ab.ulti && typeof ULTI !== 'undefined' && ULTI[id] && p.ab[id]) tickUlti(p, id, ab, dt); }
   // Licht der Figur (Lesbarkeit: der Held ist immer gut ausgeleuchtet)
   addLight(p.x, p.y - 20, 340, '#ffeedd', 1);
   addLight(p.x, p.y - 20, 150, '#ffffff', 0.6);

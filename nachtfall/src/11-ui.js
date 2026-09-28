@@ -156,7 +156,7 @@ const UI = {
         <div class="stat"><div class="k">RÜSTUNG</div><div class="v">${H.armor}</div></div>
         <div class="stat"><div class="k">AUSWEICHEN</div><div class="v">${H.dodgeCd}s</div></div>
       </div>
-      ${H.start ? `<div class="blk"><b class="lbl">START: ${CARDS[H.start].name.toUpperCase()}</b><p>${CARDS[H.start].lv[0]}</p></div>` : (finnSave().tier === 0 ? `<div class="blk"><b class="lbl">START: NICHTS</b><p>Kein Angriff, keine Kraft. Lauf zum leuchtenden Buch.</p></div>` : `<div class="blk"><b class="lbl">START</b><p>Mit allen Kräften seiner aktuellen Form.</p></div>`)}
+      ${H.start ? `<div class="blk"><b class="lbl">START: ${CARDS[H.start].name.toUpperCase()}</b><p>${CARDS[H.start].lv[0]}</p></div>` : (H.evo || finnSave().tier === 0 ? `<div class="blk"><b class="lbl">START: NICHTS</b><p>Kein Angriff, keine Kraft. Lauf zum leuchtenden Buch.</p></div>` : `<div class="blk"><b class="lbl">START</b><p>Mit allen Kräften seiner aktuellen Form.</p></div>`)}
       ${H.evo ? finnSelectHtml() : ''}
       <div class="blk"><b class="lbl" style="color:${sc.col}">MECHANIK: ${H.mech.name.toUpperCase()}</b><p>${H.mech.desc}</p></div>
       <div class="blk"><b class="lbl">ULTIMATIV: ${H.ult.name.toUpperCase()}</b><p>${H.ult.desc}</p></div>
@@ -239,10 +239,10 @@ const UI = {
     this.set('kills', String(G.kills));
     this.set('souls', String(G.souls));
     // Faehigkeiten
-    const key = Object.keys(p.ab).map((k) => k + p.ab[k].lvl).join() + '|' + Object.keys(p.passives).map((k) => k + p.passives[k]).join();
+    const key = Object.keys(p.ab).map((k) => k + p.ab[k].lvl + (p.ab[k].ulti ? 'U' : '')).join() + '|' + Object.keys(p.passives).map((k) => k + p.passives[k]).join();
     if (this.cache.slots !== key) {
       this.cache.slots = key;
-      $('#slots').innerHTML = Object.keys(p.ab).map((k) => `<div class="slot ${FUSIONS[k] || !CARDS[k] ? 'fus' : ''}"><img src="${icon(k)}"><span class="lv">${FUSIONS[k] || !CARDS[k] ? '★' : p.ab[k].lvl}</span></div>`).join('');
+      $('#slots').innerHTML = Object.keys(p.ab).map((k) => `<div class="slot ${FUSIONS[k] || !CARDS[k] || p.ab[k].ulti ? 'fus' : ''}"><img src="${icon(k)}"><span class="lv">${FUSIONS[k] || !CARDS[k] ? '★' : p.ab[k].ulti ? 'U' : p.ab[k].lvl}</span></div>`).join('');
       $('#pslots').innerHTML = Object.keys(p.passives).map((k) => `<div class="slot pas"><img src="${icon(k)}"><span class="lv">${p.passives[k]}</span></div>`).join('');
     }
     // Aktionen
@@ -259,7 +259,7 @@ const UI = {
     if (p.hero === 'vorian') { let n = 0; for (const e of G.enemies) if (!e.dead && e.bstack > 0) n += e.bstack; mv = Math.min(1, n / 60); mt = 'Blutmale: ' + n; }
     if (p.hero === 'liora') { mv = clamp((1 - p.hp / p.st.maxHp) / 0.72, 0, 1); mt = 'Blutrausch +' + Math.round(clamp((1 - p.hp / p.st.maxHp) * 1.25, 0, 0.9) * 100) + '%' + (p.buffAder > 0 ? ' · ADERLASS' : ''); }
     if (p.hero === 'nyx') { mv = p.flow; mc = '#a77bff'; mt = 'Schattenfluss +' + Math.round(p.flow * 45) + '%' + (p.ultT > 0 ? ' · MITTERNACHT' : ''); }
-    if (p.hero === 'finn') { const T = FINN_TIERS[p.tier || 0], F = finnSave(), N = FINN_TIERS[F.tier + 1]; mc = T.col; const run = finnRunEssence(G, false); if (!p.tier) { mv = 0; mt = 'Mensch · finde das Buch!'; } else if (G.finnTest) { mv = 1; mt = T.name + ' (Testform)'; } else if (N && N.req.essence) { mv = clamp((F.essence + run) / N.req.essence, 0, 1); mt = T.name + ' · Essenz +' + run; } else { mv = 1; mt = T.name + ' · Essenz +' + run; } }
+    if (p.hero === 'finn') { const T = FINN_TIERS[p.tier || 0], F = finnSave(), N = FINN_TIERS[F.tier + 1]; mc = T.col; const run = finnRunEssence(G, false); if (!p.tier) { mv = 0; mt = 'Mensch · finde das Buch!'; } else if (G.finnArcade) { const A = FINN_ARC[(p.tier || 0) + 1]; mv = A ? clamp(G.level / A.lv, 0, 1) : 1; mt = T.name + (A ? ' · nächste Form: ' + A.txt : ' · höchste Form'); } else if (G.finnTest) { mv = 1; mt = T.name + ' (Testform)'; } else if (N && N.req.essence) { mv = clamp((F.essence + run) / N.req.essence, 0, 1); mt = T.name + ' · Essenz +' + run; } else { mv = 1; mt = T.name + ' · Essenz +' + run; } }
     if (p.hero === 'shen') { mv = p.qi / 5; mc = '#4ff0cc'; mt = 'Qi ' + Math.floor(p.qi) + '/5' + (p.rooted > 0.5 ? ' · Wurzelstand' : ''); }
     this.set('mfill', (mv * 100).toFixed(0) + '%', 'width');
     this.set('mfill', mc, 'background');

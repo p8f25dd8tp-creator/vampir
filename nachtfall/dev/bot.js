@@ -32,7 +32,7 @@ readMove = function () {
 };
 window.botPick = function () {
   const o = GAME.offers;
-  let i = o.findIndex((x) => x.fusion);
+  let i = o.findIndex((x) => x.fusion || x.ulti);
   if (i < 0 && BOT.pick === 'greedy') {
     const p = GAME.p;
     let bestS = -1;
