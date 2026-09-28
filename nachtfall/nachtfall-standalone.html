@@ -8334,7 +8334,31 @@ COMPANIONS.sendraco = {
   hero: 'vorian', pal: [[HERO_PAL.vorian, { skin: '#d8c0b0', skinD: '#8a6a58', armor: '#14100c', armorL: '#4a3a24', armorD: '#060402', red: '#8a5a10', redL: '#ffc040', redD: '#3a2204', hair: '#8a1a14', eye: '#ffc040', rim: '#ffb02a' }]],
   look: { glow: 0.8 }, speed: 175, range: 150, cd: 2.2
 };
-const COMP_ORDER = ['peter', 'lena', 'fabian', 'leo', 'emma', 'fex', 'sendraco', 'minny'];
+COMPANIONS.agathon = {
+  name: 'Agathon', role: 'Großrichter der Punisher · Schatten', unlock: 99, col: '#8a6aff',
+  desc: 'Der erste Punisher. Sein Schattenschwert schneidet in weitem Bogen, und wo er steht, erstarren die Kämpfe.',
+  hero: 'nyx', pal: [[HERO_PAL.nyx, { cloak: '#1a1424', cloakL: '#3a2a5a', cloakD: '#06040a', scarf: '#2a1a4a', scarfL: '#8a6aff', eye: '#8a6aff', rim: '#8a6aff' }]],
+  look: { flow: 0.6 }, speed: 180, range: 110, cd: 1.6
+};
+COMPANIONS.sam = {
+  name: 'Sam', role: 'Wind · Stratege', unlock: 99, col: '#8affc8',
+  desc: 'Sieht das Schlachtfeld wie eine Karte. Seine Windstöße fegen ganze Reihen zurück.',
+  hero: 'liora', pal: [[HERO_PAL.liora, { coat: '#3a5a4a', coatL: '#6a9a7a', coatD: '#142018', hair: '#6a4a2a', hairL: '#9a7a4a', eye: '#8affc8', rim: '#8affc8' }]],
+  look: {}, speed: 170, range: 220, cd: 1.4
+};
+COMPANIONS.sil = {
+  name: 'Sil', role: 'Kopiert Fähigkeiten · Elemente', unlock: 99, col: '#c8a0ff',
+  desc: 'Das jüngste der drei Ichs. Hält mehrere kopierte Kräfte zugleich und lässt Feuer, Eis und Erde auf einmal einschlagen.',
+  hero: 'vorian', pal: [[HERO_PAL.vorian, { skin: '#ecd8c8', skinD: '#a88878', armor: '#1a1e3a', armorL: '#3a3a6a', armorD: '#080a14', red: '#2a2a6a', redL: '#c8a0ff', redD: '#10102a', hair: '#e8cf7a', eye: '#c8a0ff', rim: '#c8a0ff' }]],
+  look: { glow: 0.4, plain: true }, speed: 175, range: 200, cd: 1.5
+};
+COMPANIONS.leander = {
+  name: 'Leander', role: 'Metall und Nanobots · Erfinder', unlock: 99, col: '#6ab8e8',
+  desc: 'Steuert jede Maschine im Raum. Seine Drohnen feuern Laser auf die nächsten Gegner.',
+  hero: 'liora', pal: [[HERO_PAL.liora, { coat: '#4a5260', coatL: '#7a8698', coatD: '#1a1e26', hair: '#3a2a1e', hairL: '#6a4a30', eye: '#6ab8e8', rim: '#6ab8e8' }]],
+  look: {}, speed: 160, range: 260, cd: 1.2
+};
+const COMP_ORDER = ['peter', 'lena', 'fabian', 'leo', 'emma', 'fex', 'leander', 'sam', 'sil', 'agathon', 'sendraco', 'minny'];
 function partyMax() { return typeof finnSkills === 'function' && finnSkills().has('fraktion') ? 3 : 2; }
 function companionOpen(id) { const S = storySave(); return SAVE.settings.testUnlock || !!S.cleared[COMPANIONS[id].unlock]; }
 // Figuren, die in spaeteren Kapiteln nicht mehr an Finns Seite stehen (Leo stirbt, Emma wird zur Gegnerin)
@@ -8421,6 +8445,23 @@ function compAttack(c, tgt, pw) {
       forEnemiesInRadius(c.x + Math.cos(a) * 26, c.y + Math.sin(a) * 18, 44, (en) => dealDamage(en, 11 * pw, 'none', 'fabian', { kb: 70, kx: Math.cos(a), ky: Math.sin(a), norm: true, noMark: true }));
       burstSparks(c.x + Math.cos(a) * 26, c.y - 12 + Math.sin(a) * 18, 3, '#ffd27a'); sfx('whip', 0, 0.06);
     });
+  } else if (id === 'agathon') { // Schattenschwert: weiter Bogen
+    const a = c.aim, R = 120;
+    forEnemiesInRadius(x, y, R, (en) => { if (!inArc(en.x, en.y, x, y, a, 1.6)) return; dealDamage(en, 30 * pw, 'shadow', 'agathon', { kb: 160, kx: en.x - x, ky: en.y - y, norm: true, noMark: true }); });
+    fxRing(x, y, 12, R, 0.3, '#8a6aff', 6); burstShadow(x + Math.cos(a) * 60, y + Math.sin(a) * 40, 6, 0.5); sfx('whip', 0, 0.12);
+  } else if (id === 'sam') { // Windstoss in einer Linie
+    const a = c.aim;
+    for (let k = 1; k <= 5; k++) GAME.later(k * 0.03, () => { const px = x + Math.cos(a) * k * 42, py = y + Math.sin(a) * k * 30;
+      forEnemiesInRadius(px, py, 38, (en) => dealDamage(en, 7 * pw, 'none', 'sam', { kb: 320, kx: Math.cos(a), ky: Math.sin(a), norm: true, noMark: true }));
+      fxRing(px, py, 4, 34, 0.25, '#8affc8', 3); });
+    sfx('whip', 0, 0.08);
+  } else if (id === 'sil') { // Elemente zugleich
+    const tx = tgt.x, ty = tgt.y, r = 70;
+    GAME.later(0.12, () => { forEnemiesInRadius(tx, ty, r, (en) => { dealDamage(en, 24 * pw, 'none', 'sil', { kb: 150, kx: en.x - tx, ky: en.y - ty, norm: true, noMark: true }); if (Math.random() < 0.3) freezeEnemy(en, 0.6); });
+      fxRing(tx, ty, 6, r, 0.3, '#ff8a3a', 4); fxRing(tx, ty, 4, r * 0.7, 0.3, '#bfe8ff', 3); spikeFx(tx, ty, 14, '#a8845a', 40); sfx('stomp', 0, 0.15); });
+  } else if (id === 'leander') { // Drohnenlaser
+    sfx('whip', 0, 0.06);
+    nearestEnemies(x, y, 300, 2).forEach((en) => { dealDamage(en, 15 * pw, 'none', 'leander', { kb: 40, kx: en.x - x, ky: en.y - y, norm: true, noMark: true }); tetherFx(en, 0.15, '#6ab8e8', 3); });
   } else if (id === 'sendraco') { // Meteoritenfaust: Drachenenergie schlaegt von oben ein
     const tx = tgt.x, ty = tgt.y, r = 92;
     addEffect({ x: tx, y: ty, dur: 0.28, layer: 2, draw(g, e, k) {
@@ -10479,7 +10520,8 @@ humanArt('leander', [
      hunt     — erlege `n` Gegner der Rolle `role`
      boss     — Etappen-Finale: Wellen, dann der Boss
      berserk  — Finn als wahnsinniger Bloodsucker (doppelte Kraft, halbes Leben)
-   Etappen 4 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
+   Zusatz `berserk: true` macht jede andere Stufenart zum Bloodsucker-Kampf.
+   Etappen 5 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
    ========================================================================== */
 
 /* ------------------------------------------------------------ Gegner der Etappe 1 */
@@ -10495,7 +10537,7 @@ defBoss('b1_rylee', 'mono', 'Rylee (Verhärtung)', 950, Object.assign({ look: 'b
 defBoss('b1_brandon', 'mono', 'Brandon Richardson (Speer)', 1250, Object.assign({ look: 'b_brandon', bellShot: 'spike' }, B1));
 defBoss('b1_leo', 'hagon', 'Leo, der blinde Schwertkämpfer', 60000, Object.assign({ look: 'leo', bellShot: 'spike', spd: 58 }, B1));
 defBoss('b1_nate', 'mono', 'Nate „Hardsteely“ Snell', 1900, Object.assign({ look: 'b_nate', bellShot: 'spike', armor: 6 }, B1));
-defBoss('b1_scordana', 'krabbe', 'Scordana (Mittelstufen-Bestie)', 2600, { model: 'scordana', bellShot: 'acid', r: 40 });
+defBoss('b1_scordana', 'krabbe', 'Scordana (Mittelstufen-Bestie)', 2200, { model: 'scordana', bellShot: 'acid', r: 40 });
 defBoss('b1_ben', 'mono', 'Ben (Keule)', 1900, Object.assign({ look: 'b_ben', bellShot: 'spike' }, B1));
 
 /* ------------------------------------------------------------ Etappe 1: Die Militaerakademie (Kapitel 1–138) */
@@ -10655,8 +10697,80 @@ const ETAPPE3 = {
   ]
 };
 
+/* ------------------------------------------------------------ Etappe 4: Die Verfluchten (Kapitel 535–668) */
+defEnemy('e4_hypo', 'ghoul', 'q_fort', 'Hypocen', { hp: 26, spd: 52 });
+defEnemy('e4_pomplee', 'ghoul', 'q_hase', 'Pomplee', { hp: 12, spd: 60 });
+defEnemy('e4_kaefer', 'bat', 'bat_aas', 'Kakuen-Käfer', { hp: 24 });
+defEnemy('e4_hoehle', 'ghoul', 'q_caladi', 'Höhlenbestie', { hp: 22 });
+defEnemy('e4_kristall', 'knight', 'q_panzer', 'Kristallpanzer', { armor: 3 });
+defEnemy('e4_graylash', 'knight', 'h_wache', 'Graylash-Schüler', { armor: 2 });
+defEnemy('e4_blitz', 'witch', 'h_truedream', 'Blitznutzer', { shot: 'light', flier: false });
+defEnemy('e4_altum', 'captain', 'h_wache', 'Graylash-Anführer', { scale: 1.25, hp: 2400 });
+defEnemy('e4_sun', 'ghoul', 'h_sunshield', 'Sunshield-Fußvolk', { hp: 22 });
+defEnemy('e4_sunR', 'knight', 'h_sunshield', 'Sunshield-Elite', { armor: 3 });
+defEnemy('e4_feuer', 'witch', 'h_pure', 'Feuernutzer', { shot: 'bell', flier: false });
+defEnemy('e4_trupp', 'captain', 'h_sunshield', 'Sunshield-Zugführer', { scale: 1.25, hp: 2600 });
+defEnemy('e4_tentakel', 'ghoul', 'q_void', 'Augenloser Tentakelhund', { hp: 24, spd: 78 });
+defEnemy('e4_insel', 'knight', 'q_panzer', 'Inselbestie', { armor: 3 });
+defEnemy('e4_katze', 'brute', 'q_koenig', 'Zweikiefer-Katze', { splits: 0, hp: 170 });
+defEnemy('e4_dorf', 'knight', 'h_blade', 'Dorfkrieger der Blades', { armor: 3 });
+defEnemy('e4_dorfL', 'ghoul', 'h_blade', 'Blade-Diener', { hp: 24 });
+defEnemy('e4_chained', 'witch', 'h_seherin', 'Kopierte Fähigkeit', { shot: 'soul', flier: false });
+defEnemy('e4_brock', 'captain', 'h_blade', 'Blade-Veteran', { scale: 1.3, hp: 3000 });
+defBoss('b4_linda', 'mono', 'Linda (Rang B)', 60000, Object.assign({ look: 'b_linda', bellShot: 'soul', spd: 70 }, B1));
+defBoss('b4_hypolord', 'krabbe', 'Hypolord (Advanced)', 4200, { model: 'hypolord', bellShot: 'acid', r: 42 });
+defBoss('b4_hundR', 'krabbe', 'Roter King-Hund', 5000, { model: 'hundR', bellShot: 'spike', r: 40 });
+defBoss('b4_hundS', 'krabbe', 'Schwarzer King-Hund', 6500, { model: 'hundS', bellShot: 'spike', r: 40 });
+defBoss('b4_lemon', 'mono', 'Lemon (Graylash-Schüler)', 3600, Object.assign({ look: 'b_lemon', bellShot: 'light', spd: 72 }, B1));
+defBoss('b4_gox', 'stahlmann', 'Gox, Kommandant der Sunshields', 6200, Object.assign({ look: 'b_gox', bellShot: 'bell', armor: 4 }, B1));
+defBoss('b4_kiln', 'silva', 'Kiln und Tupple (Adlige)', 4600, Object.assign({ look: 'b_kiln', bellShot: 'blood' }, B1));
+defBoss('b4_borden', 'dalki1', 'Borden (drei Stacheln)', 60000, { model: 'borden3', bellShot: 'spike', r: 30 });
+defBoss('b4_chrimeta', 'kronker', 'Chrimeta (Emperor-Tier)', 9000, { model: 'chrimeta', bellShot: 'bell', r: 46 });
+defBoss('b4_twins', 'erin', 'Vicky und Pai Blade', 60000, Object.assign({ look: 'b_vicky', bellShot: 'soul', spd: 70 }, B1));
+defBoss('b4_twinsF', 'erin', 'Vicky und Pai Blade', 7000, Object.assign({ look: 'b_vicky', bellShot: 'soul', spd: 66 }, B1));
+const R_FLUSS = { ghoul: 'e4_hypo', bat: 'c3_aas', knight: 'e4_hypo', witch: 'c3_spucker', brute: 'c3_koenig', captain: 'c3_koenigB' };
+const R_WIESE = { ghoul: 'e4_pomplee', bat: 'e4_kaefer', knight: 'e4_pomplee', witch: 'c2_spore', brute: 'c2_mutter', captain: 'c2_alpha' };
+const R_BERG = { ghoul: 'e4_hoehle', bat: 'c3_aas', knight: 'e4_kristall', witch: 'c3_spucker', brute: 'c3_koenig', captain: 'c3_koenigB' };
+const R_EAGLES = { ghoul: 'e4_graylash', bat: 'e4_graylash', knight: 'e4_graylash', witch: 'e4_blitz', brute: 'e4_graylash', captain: 'e4_altum' };
+const R_SUN = { ghoul: 'e4_sun', bat: 'e4_sun', knight: 'e4_sunR', witch: 'e4_feuer', brute: 'e4_sunR', captain: 'e4_trupp' };
+const R_INSEL = { ghoul: 'e4_tentakel', bat: 'c3_aas', knight: 'e4_insel', witch: 'c3_spucker', brute: 'e4_katze', captain: 'c3_koenigB' };
+const R_DORF = { ghoul: 'e4_dorfL', bat: 'e4_dorfL', knight: 'e4_dorf', witch: 'e4_chained', brute: 'e4_dorf', captain: 'e4_brock' };
+const ETAPPE4 = {
+  title: 'Die Verfluchten', place: 'Crows · Eagles-Basis · Blade-Insel', src: 'Kapitel 535–668', theme: 'ruinen', ch: 6,
+  levels: [
+    { name: 'Die Aufnahmeprüfung der Crows', type: 'endure', foe: 'b4_linda', dur: 60, crowd: 0.15, theme: 'basisnacht', roles: R_EAGLES,
+      text: 'Die Basis liegt in Trümmern, der Bürgerkrieg hat begonnen. Finn tarnt sich als Reisender mit Tempo-Fähigkeit und bewirbt sich bei den Crows. Im Sparring wartet Linda, Blips Schwester – und Finn darf nicht zeigen, was er kann.' },
+    { name: 'Der Hypolord', type: 'waveboss', at: 110, foe: 'b4_hypolord', pace: 1.5, theme: 'rotezone', roles: R_FLUSS, comp: ['fex'],
+      text: 'Erste Jagd auf einem roten Flussplaneten. Fex angelt Hypocen mit seinen Fäden aus dem Wasser. Dann bricht der Hypolord aus dem Fluss – und Freddy, der gute Kartenhändler, kommt nicht mehr heim.' },
+    { name: 'Käfer auf der Pomplee-Wiese', type: 'hunt', role: 'bat', n: 26, pace: 1.5, theme: 'bestienplanet', roles: R_WIESE, comp: ['fex'],
+      text: 'Wo die flauschigen Pomplees grasen, schlüpfen springende Käfer. Die Sonne brennt, die Ringe werden leer – und Suze, die neue Fünfte im Team, soll eigentlich spionieren.' },
+    { name: 'Der rote King-Hund', type: 'waveboss', at: 90, foe: 'b4_hundR', pace: 1.6, theme: 'burg', roles: R_BERG, comp: ['sam'],
+      text: 'Unter dem schwarzen Berg schläft ein King-Tier: ein Hund mit Keulenschwanz, die Kristalle pulsieren mit seinem Atem. Kong schickt ein Mädchen als Köder vor. Finn geht mit.' },
+    { name: 'Der schwarze King-Hund', type: 'duel', foe: 'b4_hundS', crowd: 0.3, theme: 'burg', roles: R_BERG, comp: ['sam'],
+      text: 'Der Gefährte heult über den toten Hund und rollt als Stachelkugel durch die Höhle. Seine Rückenstacheln fliegen wie Geschosse. Jetzt hilft nur noch der Hammer-Hook.' },
+    { name: 'Sparring bei den Eagles', type: 'duel', foe: 'b4_lemon', crowd: 0.35, theme: 'basisnacht', roles: R_EAGLES,
+      text: 'Die Graylash zeigen bei den Eagles ihre Macht: Sparring bis kurz vor den Tod. Finn meldet sich freiwillig – ohne Schatten, nur mit Phantomschlägen.' },
+    { name: 'Die Sunshields greifen an', type: 'survive', dur: 180, pace: 1.7, theme: 'schlachtfeld', roles: R_SUN, elites: 3,
+      text: 'Laserschiffe beschießen den Shelter, hundert Elitekrieger in dunkelroter Rüstung landen. Feuer gegen Blitz – und mittendrin Zivilisten, die zum Teleporter müssen.' },
+    { name: 'Twin Tail Chain', type: 'waveboss', at: 140, foe: 'b4_gox', pace: 1.7, theme: 'schlachtfeld', roles: R_SUN, comp: ['sam', 'fex'],
+      text: 'Die Crows sind von zweihundert auf sechzig geschrumpft. Finn steigt allein aus dem Schatten in der Mitte der Plaza: Seine Seelenwaffe erwacht – zwei Knochenketten, die mit jedem Treffer Blut trinken.' },
+    { name: 'Kiln und Tupple', type: 'duel', foe: 'b4_kiln', crowd: 0.15, theme: 'schlachtfeld', roles: R_SUN,
+      text: 'Bryce schickt zwei Adlige, die offene Blutjagden veranstalten sollen – der Zehnte soll die Schuld bekommen. Paul stellt sich schützend vor einen alten Mann und wird zerfetzt. Finn spürt es über das Blutband.' },
+    { name: 'Die Blade-Insel', type: 'hunt', role: 'ghoul', n: 60, pace: 1.6, theme: 'bestienplanet', roles: R_INSEL, comp: ['peter', 'leander'],
+      text: 'Ein Seeungeheuer schlägt das U-Boot wie einen Ball auf die Insel. Im Dschungel lauern King-Tiere: Zweikiefer-Katzen und augenlose Tentakelhunde.' },
+    { name: 'Zehn Minuten gegen Borden', type: 'endure', foe: 'b4_borden', dur: 90, crowd: 0.1, theme: 'bestienplanet', roles: R_INSEL,
+      text: 'Borden hat auf der Insel gegen King-Tiere trainiert. „Besiege mich, dann komme ich mit.“ Jeder seiner Schläge frisst Schatten – halte durch, bis seine Dalki-Form erlischt.' },
+    { name: 'Chrimeta im Vulkan', type: 'duel', foe: 'b4_chrimeta', crowd: 0.2, theme: 'roterhimmel', roles: R_INSEL,
+      text: 'Auf einer Brücke über Lavaseen erwacht ein Emperor-Tier: vier Meter, goldene Mähne, Dutzende gelbe Augen und drei Schlangenschwänze, die Feuer spucken.' },
+    { name: 'Die Blade-Zwillinge', type: 'endure', foe: 'b4_twins', dur: 80, crowd: 0.3, theme: 'bestienplanet', roles: R_DORF, comp: ['fabian'],
+      text: 'Vicky und Pai fassen sich an den Händen und teilen ihre Kräfte – fast so stark wie Hilston. Das System gibt nur ein Ziel vor: Überlebe die Begegnung.' },
+    { name: 'Rette sie', type: 'boss', at: 60, foe: 'b4_twinsF', pace: 1.7, theme: 'bestienplanet', roles: R_DORF, berserk: true, comp: ['sil'],
+      text: 'Finn trinkt von den Dorfkriegern und wird zum wahnsinnigen Bloodsucker. Fabian und Raten verabschieden sich lächelnd – Sil bleibt allein zurück und bändigt die Wasserhose, damit das Schiff entkommt.' }
+  ]
+};
+
 /* ------------------------------------------------------------ Alle Etappen */
-// Etappen 4 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
+// Etappen 5 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
 function autoLevels(ch) {
   const out = [];
   for (let l = 1; l <= 8; l++) {
@@ -10665,7 +10779,7 @@ function autoLevels(ch) {
   }
   return out;
 }
-const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3].concat(CHAPTERS.slice(5).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
+const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3, ETAPPE4].concat(CHAPTERS.slice(6).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
 ETAPPEN.forEach((E, i) => { E.n = i + 1; E.levels.forEach((L, j) => { L.l = j + 1; }); });
 // Kapitel (Gegner-/Boss-Sammlungen) -> Etappe, fuer den Boss-Turm
 const ET_OF_CH = {}; ETAPPEN.forEach((E) => { const chs = new Set([E.ch]); E.levels.forEach((L) => L.ch && chs.add(L.ch)); if (E.n === 1) chs.add(3); chs.forEach((c) => { ET_OF_CH[c] = E.n; }); });
@@ -10676,6 +10790,10 @@ function lvIsBoss(e, l) { const L = lvDef(e, l); return L.type === 'boss'; }
 function lvChapter(e, l) { const L = lvDef(e, l); return CHAPTERS[(L.ch || ET(e).ch) - 1]; }
 // Ziel-Text fuer Menue und Systemfenster
 function lvGoal(e, l) {
+  const g = lvGoal0(e, l), L = lvDef(e, l);
+  return L.berserk && L.type !== 'berserk' ? g + ' – als Bloodsucker' : g;
+}
+function lvGoal0(e, l) {
   const L = lvDef(e, l), foe = L.foe && ENEMIES[L.foe] ? ENEMIES[L.foe].name : L.type === 'boss' ? ENEMIES[lvChapter(e, l).roles.boss].name : '';
   switch (L.type) {
     case 'duel': return 'Besiege ' + foe;
@@ -10764,7 +10882,7 @@ function gearUp(id) { const C = campSave(); if (!gearCan(id)) return; const g = 
 const CASTLE_MAX = 10;
 function castleCost() { return Math.round(150 * Math.pow(campSave().castle + 1, 1.6)); }
 function partySlots() { const c = campSave().castle; return c >= 7 ? 3 : c >= 3 ? 2 : 1; }
-const COMP_HERO = { peter: 'peter', lena: 'lena', fabian: 'fabian', leo: 'leo', emma: 'emma', fex: 'fex', sendraco: 'draco', minny: 'mia' };
+const COMP_HERO = { peter: 'peter', lena: 'lena', fabian: 'fabian', leo: 'leo', emma: 'emma', fex: 'fex', sendraco: 'draco', minny: 'mia', agathon: 'agathon', sam: 'sam', sil: 'sil', leander: 'leander' };
 companionOpen = function (id) { return isUnlocked(COMP_HERO[id] || id); };
 companionFits = function () { return true; };
 compName = function (id) { return COMPANIONS[id].name; };
@@ -10874,7 +10992,7 @@ function campLevelSetup(G, cp) {
   }
   if (L.elites) for (let i = 0; i < L.elites; i++) G.events.push({ t: (i + 1) * G.campGoal / (L.elites + 1), kind: 'elite', type: 'knight' });
   G.events.sort((a, b) => a.t - b.t);
-  if (L.type === 'berserk') G.berserk = { cd: 0 };
+  if (L.type === 'berserk' || L.berserk) G.berserk = { cd: 0 };
 }
 // Bloodsucker: wilde Klauenhiebe gegen alles in Reichweite (zusaetzlich zu den Faehigkeiten)
 function bloodsuckerClaws(G, dt) {
@@ -11199,7 +11317,7 @@ const CHIBI = {
   nyx: { skin: '#ddd4c2', hair: '#221c3a', hs: 'short', top: '#221c3a', bot: '#0c0916', shoe: '#0c0916', eye: '#c9a8ff', mask: true },
   shen: { skin: '#c89d7a', hair: '#eeeae2', hs: 'bald', top: '#1f5a50', bot: '#0b2723', shoe: '#3a2a14', eye: '#5ff0d0', hat: true }
 };
-const COMP_CHIBI = { peter: 'peter', lena: 'lena', fabian: 'fabian', leo: 'leo', emma: 'emma', fex: 'fex', sendraco: 'draco', minny: 'mia' };
+const COMP_CHIBI = { peter: 'peter', lena: 'lena', fabian: 'fabian', leo: 'leo', emma: 'emma', fex: 'fex', sendraco: 'draco', minny: 'mia', agathon: 'agathon', sam: 'sam', sil: 'sil', leander: 'leander' };
 function heroTierCol(hero, tier) {
   const H = HEROES[hero];
   if (hero === 'finn') return FINN_TIERS[tier || 0].col;
@@ -11450,6 +11568,24 @@ const BOSS_BUILD = {
     add(SPH(), M('#3a3444'), [0, 34, -40], [10, 10, 10]);
     for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ff2a2a' })); x.position.set(sd * 9, 62, 42); x.scale.setScalar(3.5); body.add(x); }
   },
+  borden3: (add, M, body) => dalkiBody(add, M, body, 3, '#8a9a7a', '#e8d890'),
+  hypolord(add, M, body) { // nilpferdartig, riesige Kiefer
+    add(SPH(), M('#6a4a5a'), [0, 40, -6], [58, 38, 70]);
+    add(SPH(), M('#7a5a6a'), [0, 56, 66], [40, 30, 36]); add(SPH(), M('#5a3a4a'), [0, 30, 80], [36, 16, 32]);
+    for (const sd of [-1, 1]) { add(CON(), M('#f0e8d0'), [sd * 18, 42, 104], [5, 16, 5], [0.2, 0, 0]); add(CAP(), M('#4a2a3a'), [sd * 36, 14, 34], [14, 16, 14]); add(CAP(), M('#4a2a3a'), [sd * 36, 14, -40], [14, 16, 14]); add(SPH(), M('#5a3a4a'), [sd * 22, 84, 58], [8, 8, 6]); }
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffd23a' })); x.position.set(sd * 18, 74, 84); x.scale.setScalar(4.5); body.add(x); }
+  },
+  hundR: (add, M, body) => kingHund(add, M, body, '#8a2a1e', '#e8c8a0'),
+  hundS: (add, M, body) => kingHund(add, M, body, '#1e1a24', '#ff5a3a'),
+  chrimeta(add, M, body) { // schwarz, goldene Maehne, viele gelbe Augen, drei Feuerschlangen-Schwaenze
+    add(SPH(), M('#1a161e'), [0, 70, -10], [44, 40, 60]);
+    add(SPH(), M('#241e2a'), [0, 108, 50], [30, 30, 30]);
+    for (let k = 0; k < 9; k++) { const a = k / 9 * TAU; add(CON(), M('#e8b030', { emissive: new THREE.Color('#c88a10'), emissiveIntensity: 0.4 }), [Math.cos(a) * 30, 116 + Math.sin(a) * 26, 36], [8, 30, 8], [Math.sin(a) * 1.2 - 0.3, 0, -Math.cos(a) * 1.2]); }
+    for (const sd of [-1, 1]) { add(CAP(), M('#14101a'), [sd * 32, 26, 40], [11, 30, 11]); add(CAP(), M('#14101a'), [sd * 32, 26, -50], [11, 30, 11]); add(CON(), M('#2a2020'), [sd * 32, 2, 52], [8, 12, 8], [Math.PI / 2, 0, 0]); }
+    for (let k = 0; k < 3; k++) { const a = (k - 1) * 0.6; for (let j = 0; j < 4; j++) add(SPH(), M('#2a2a1a'), [Math.sin(a) * (20 + j * 14), 80 + j * 16, -70 - j * 12], [8 - j, 8 - j, 8 - j]); add(SPH(), M('#ff6a1a', { emissive: new THREE.Color('#ff4a0a'), emissiveIntensity: 0.9 }), [Math.sin(a) * 76, 150, -118], [9, 9, 9]); }
+    const eyeM = new THREE.MeshBasicMaterial({ color: '#ffe040' });
+    for (let k = 0; k < 10; k++) { const x = new THREE.Mesh(SPH(), eyeM); x.position.set((k % 5 - 2) * 9, 104 + Math.floor(k / 5) * 12 + (k % 2) * 3, 78); x.scale.setScalar(3); body.add(x); }
+  },
   ranken(add, M, body) { // hausgross, langer Hals, Knospe mit sechs Ranken
     add(SPH(), M('#3a6a3a'), [0, 40, -10], [56, 34, 64]);
     for (let k = 0; k < 4; k++) add(SPH(), M('#4a7a3a'), [0, 70 + k * 22, 30 + k * 10], [16 - k, 16 - k, 16 - k]);
@@ -11507,6 +11643,15 @@ const BOSS_BUILD = {
     for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#d0b0ff' })); x.position.set(sd * 9, 148, 30); x.scale.set(5, 2.5, 2); body.add(x); }
   }
 };
+function kingHund(add, M, body, skin, acc) { // hundeartig, grosse Schnauze, Keulenschwanz, Rueckenstacheln
+  add(SPH(), M(skin), [0, 54, -6], [36, 32, 58]);
+  add(SPH(), M(shadeHex(skin, 0.1)), [0, 80, 56], [28, 26, 28]); add(SPH(), M(shadeHex(skin, -0.2)), [0, 70, 86], [20, 16, 24]);
+  for (const sd of [-1, 1]) { add(CAP(), M(shadeHex(skin, -0.3)), [sd * 24, 20, 36], [9, 22, 9]); add(CAP(), M(shadeHex(skin, -0.3)), [sd * 24, 20, -44], [9, 22, 9]); add(CON(), M(shadeHex(skin, -0.2)), [sd * 16, 106, 50], [6, 14, 6], [0, 0, sd * 0.4]); }
+  for (let k = 0; k < 6; k++) add(CON(), M(acc, { emissive: new THREE.Color(acc), emissiveIntensity: 0.3 }), [0, 88 - k * 3, 30 - k * 16], [5, 22, 5], [-0.3, 0, 0]);
+  for (let k = 0; k < 3; k++) add(SPH(), M(skin), [0, 50 + k * 6, -70 - k * 14], [8, 8, 8]);
+  add(SPH(), M(shadeHex(skin, -0.35)), [0, 70, -120], [18, 18, 18]);
+  for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffd23a' })); x.position.set(sd * 12, 88, 78); x.scale.set(4, 3, 2); body.add(x); }
+}
 function dalkiBody(add, M, body, spikes, skin, acc) {
   add(CAP(), M(shadeHex(skin, -0.35)), [0, 46, 0], [30, 28, 26]);
   add(SPH(), M(skin), [0, 86, 0], [38, 30, 32]);
@@ -12171,6 +12316,11 @@ const LOOK = {
   b_edward: { body: 'magier', top: '#2a2e3a', acc: '#a8b0c8', pants: '#14161e', boots: '#0c0e14', cape: '#3a4058', skin: '#e4e0e4', hair: 'lang', hairCol: '#c8ccd8', eye: '#ff4a5a', fangs: true, weapon: 'none' },
   b_vadeen: { body: 'barbar', top: '#4a2a14', acc: '#c8903a', pants: '#1e140c', boots: '#140c08', cape: '#6a3a14', skin: '#dcc8c0', hair: 'stachel', hairCol: '#1a1410', eye: '#ff3a2a', fangs: true, weapon: 'staff' },
   b_paul: { body: 'barbar', top: '#3a4a3a', acc: '#c8b060', pants: '#1e281e', boots: '#101410', cape: '#2a3a2a', skin: '#e0c0a0', hair: 'kurz', hairCol: '#6a6a6a', eye: '#4a4a3a', weapon: 'none' },
+  b_linda: { body: 'magier', top: '#e8e0d0', acc: '#c8a040', pants: '#d8d0c0', boots: '#8a7040', skin: '#f0d8c8', hair: 'mittel', hairCol: '#1a1418', eye: '#5a4a6a', girl: true, weapon: 'none' },
+  b_lemon: { body: 'schurke', top: '#e8e0a0', pants: '#4a4a2a', boots: '#2a2a1a', skin: '#ecd0b8', hair: 'stachel', hairCol: '#e8d040', eye: '#8ad8ff', weapon: 'none' },
+  b_gox: { body: 'barbar', top: '#7a1a14', acc: '#ff8a2a', pants: '#3a0c0a', boots: '#1e0806', cape: '#a02a14', skin: '#d8a888', hair: 'stachel', hairCol: '#ff6a1a', eye: '#ffb02a', weapon: 'axe' },
+  b_kiln: { body: 'schurke', top: '#1a1a2a', pants: '#0a0a14', boots: '#08080e', cape: '#4a0a1a', skin: '#ece4e4', hair: 'seite', hairCol: '#e8e8f0', eye: '#ff2a3a', fangs: true, weapon: 'knife2' },
+  b_vicky: { body: 'magier', top: '#e8e8f0', acc: '#4a8ac8', pants: '#1a2a4a', boots: '#0a1428', skin: '#f4e0d4', hair: 'zopf', hairCol: '#f0dc8a', eye: '#4a8ac8', girl: true, weapon: 'none' },
   bloodsucker: { body: 'schurke', top: '#6a3a38', pants: '#4a3030', boots: '#2a1a1a', skin: '#d0ccc4', hair: 'glatze', eye: '#0a0000', fangs: true, weapon: 'none', scale: 1.1 },
   b_mono: { body: 'schurke', top: '#1a2440', pants: '#0a1020', boots: '#101018', skin: '#e8d0c0', hair: 'stachel', hairCol: '#1a1a2a', eye: '#6a8ad8', weapon: 'sword', blade: '#d8e8ff' },
   b_ian: { body: 'schurke', top: '#6a4a2a', pants: '#3a2a1a', boots: '#2a1a10', cape: '#4a3a2a', skin: '#e0c0a0', hair: 'kurz', hairCol: '#6a4a2a', eye: '#4a3020', hat: '#6a4a2a', weapon: 'staff' },

@@ -55,7 +55,31 @@ COMPANIONS.sendraco = {
   hero: 'vorian', pal: [[HERO_PAL.vorian, { skin: '#d8c0b0', skinD: '#8a6a58', armor: '#14100c', armorL: '#4a3a24', armorD: '#060402', red: '#8a5a10', redL: '#ffc040', redD: '#3a2204', hair: '#8a1a14', eye: '#ffc040', rim: '#ffb02a' }]],
   look: { glow: 0.8 }, speed: 175, range: 150, cd: 2.2
 };
-const COMP_ORDER = ['peter', 'lena', 'fabian', 'leo', 'emma', 'fex', 'sendraco', 'minny'];
+COMPANIONS.agathon = {
+  name: 'Agathon', role: 'Großrichter der Punisher · Schatten', unlock: 99, col: '#8a6aff',
+  desc: 'Der erste Punisher. Sein Schattenschwert schneidet in weitem Bogen, und wo er steht, erstarren die Kämpfe.',
+  hero: 'nyx', pal: [[HERO_PAL.nyx, { cloak: '#1a1424', cloakL: '#3a2a5a', cloakD: '#06040a', scarf: '#2a1a4a', scarfL: '#8a6aff', eye: '#8a6aff', rim: '#8a6aff' }]],
+  look: { flow: 0.6 }, speed: 180, range: 110, cd: 1.6
+};
+COMPANIONS.sam = {
+  name: 'Sam', role: 'Wind · Stratege', unlock: 99, col: '#8affc8',
+  desc: 'Sieht das Schlachtfeld wie eine Karte. Seine Windstöße fegen ganze Reihen zurück.',
+  hero: 'liora', pal: [[HERO_PAL.liora, { coat: '#3a5a4a', coatL: '#6a9a7a', coatD: '#142018', hair: '#6a4a2a', hairL: '#9a7a4a', eye: '#8affc8', rim: '#8affc8' }]],
+  look: {}, speed: 170, range: 220, cd: 1.4
+};
+COMPANIONS.sil = {
+  name: 'Sil', role: 'Kopiert Fähigkeiten · Elemente', unlock: 99, col: '#c8a0ff',
+  desc: 'Das jüngste der drei Ichs. Hält mehrere kopierte Kräfte zugleich und lässt Feuer, Eis und Erde auf einmal einschlagen.',
+  hero: 'vorian', pal: [[HERO_PAL.vorian, { skin: '#ecd8c8', skinD: '#a88878', armor: '#1a1e3a', armorL: '#3a3a6a', armorD: '#080a14', red: '#2a2a6a', redL: '#c8a0ff', redD: '#10102a', hair: '#e8cf7a', eye: '#c8a0ff', rim: '#c8a0ff' }]],
+  look: { glow: 0.4, plain: true }, speed: 175, range: 200, cd: 1.5
+};
+COMPANIONS.leander = {
+  name: 'Leander', role: 'Metall und Nanobots · Erfinder', unlock: 99, col: '#6ab8e8',
+  desc: 'Steuert jede Maschine im Raum. Seine Drohnen feuern Laser auf die nächsten Gegner.',
+  hero: 'liora', pal: [[HERO_PAL.liora, { coat: '#4a5260', coatL: '#7a8698', coatD: '#1a1e26', hair: '#3a2a1e', hairL: '#6a4a30', eye: '#6ab8e8', rim: '#6ab8e8' }]],
+  look: {}, speed: 160, range: 260, cd: 1.2
+};
+const COMP_ORDER = ['peter', 'lena', 'fabian', 'leo', 'emma', 'fex', 'leander', 'sam', 'sil', 'agathon', 'sendraco', 'minny'];
 function partyMax() { return typeof finnSkills === 'function' && finnSkills().has('fraktion') ? 3 : 2; }
 function companionOpen(id) { const S = storySave(); return SAVE.settings.testUnlock || !!S.cleared[COMPANIONS[id].unlock]; }
 // Figuren, die in spaeteren Kapiteln nicht mehr an Finns Seite stehen (Leo stirbt, Emma wird zur Gegnerin)
@@ -142,6 +166,23 @@ function compAttack(c, tgt, pw) {
       forEnemiesInRadius(c.x + Math.cos(a) * 26, c.y + Math.sin(a) * 18, 44, (en) => dealDamage(en, 11 * pw, 'none', 'fabian', { kb: 70, kx: Math.cos(a), ky: Math.sin(a), norm: true, noMark: true }));
       burstSparks(c.x + Math.cos(a) * 26, c.y - 12 + Math.sin(a) * 18, 3, '#ffd27a'); sfx('whip', 0, 0.06);
     });
+  } else if (id === 'agathon') { // Schattenschwert: weiter Bogen
+    const a = c.aim, R = 120;
+    forEnemiesInRadius(x, y, R, (en) => { if (!inArc(en.x, en.y, x, y, a, 1.6)) return; dealDamage(en, 30 * pw, 'shadow', 'agathon', { kb: 160, kx: en.x - x, ky: en.y - y, norm: true, noMark: true }); });
+    fxRing(x, y, 12, R, 0.3, '#8a6aff', 6); burstShadow(x + Math.cos(a) * 60, y + Math.sin(a) * 40, 6, 0.5); sfx('whip', 0, 0.12);
+  } else if (id === 'sam') { // Windstoss in einer Linie
+    const a = c.aim;
+    for (let k = 1; k <= 5; k++) GAME.later(k * 0.03, () => { const px = x + Math.cos(a) * k * 42, py = y + Math.sin(a) * k * 30;
+      forEnemiesInRadius(px, py, 38, (en) => dealDamage(en, 7 * pw, 'none', 'sam', { kb: 320, kx: Math.cos(a), ky: Math.sin(a), norm: true, noMark: true }));
+      fxRing(px, py, 4, 34, 0.25, '#8affc8', 3); });
+    sfx('whip', 0, 0.08);
+  } else if (id === 'sil') { // Elemente zugleich
+    const tx = tgt.x, ty = tgt.y, r = 70;
+    GAME.later(0.12, () => { forEnemiesInRadius(tx, ty, r, (en) => { dealDamage(en, 24 * pw, 'none', 'sil', { kb: 150, kx: en.x - tx, ky: en.y - ty, norm: true, noMark: true }); if (Math.random() < 0.3) freezeEnemy(en, 0.6); });
+      fxRing(tx, ty, 6, r, 0.3, '#ff8a3a', 4); fxRing(tx, ty, 4, r * 0.7, 0.3, '#bfe8ff', 3); spikeFx(tx, ty, 14, '#a8845a', 40); sfx('stomp', 0, 0.15); });
+  } else if (id === 'leander') { // Drohnenlaser
+    sfx('whip', 0, 0.06);
+    nearestEnemies(x, y, 300, 2).forEach((en) => { dealDamage(en, 15 * pw, 'none', 'leander', { kb: 40, kx: en.x - x, ky: en.y - y, norm: true, noMark: true }); tetherFx(en, 0.15, '#6ab8e8', 3); });
   } else if (id === 'sendraco') { // Meteoritenfaust: Drachenenergie schlaegt von oben ein
     const tx = tgt.x, ty = tgt.y, r = 92;
     addEffect({ x: tx, y: ty, dur: 0.28, layer: 2, draw(g, e, k) {

@@ -10,7 +10,8 @@
      hunt     — erlege `n` Gegner der Rolle `role`
      boss     — Etappen-Finale: Wellen, dann der Boss
      berserk  — Finn als wahnsinniger Bloodsucker (doppelte Kraft, halbes Leben)
-   Etappen 4 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
+   Zusatz `berserk: true` macht jede andere Stufenart zum Bloodsucker-Kampf.
+   Etappen 5 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
    ========================================================================== */
 
 /* ------------------------------------------------------------ Gegner der Etappe 1 */
@@ -26,7 +27,7 @@ defBoss('b1_rylee', 'mono', 'Rylee (Verhärtung)', 950, Object.assign({ look: 'b
 defBoss('b1_brandon', 'mono', 'Brandon Richardson (Speer)', 1250, Object.assign({ look: 'b_brandon', bellShot: 'spike' }, B1));
 defBoss('b1_leo', 'hagon', 'Leo, der blinde Schwertkämpfer', 60000, Object.assign({ look: 'leo', bellShot: 'spike', spd: 58 }, B1));
 defBoss('b1_nate', 'mono', 'Nate „Hardsteely“ Snell', 1900, Object.assign({ look: 'b_nate', bellShot: 'spike', armor: 6 }, B1));
-defBoss('b1_scordana', 'krabbe', 'Scordana (Mittelstufen-Bestie)', 2600, { model: 'scordana', bellShot: 'acid', r: 40 });
+defBoss('b1_scordana', 'krabbe', 'Scordana (Mittelstufen-Bestie)', 2200, { model: 'scordana', bellShot: 'acid', r: 40 });
 defBoss('b1_ben', 'mono', 'Ben (Keule)', 1900, Object.assign({ look: 'b_ben', bellShot: 'spike' }, B1));
 
 /* ------------------------------------------------------------ Etappe 1: Die Militaerakademie (Kapitel 1–138) */
@@ -186,8 +187,80 @@ const ETAPPE3 = {
   ]
 };
 
+/* ------------------------------------------------------------ Etappe 4: Die Verfluchten (Kapitel 535–668) */
+defEnemy('e4_hypo', 'ghoul', 'q_fort', 'Hypocen', { hp: 26, spd: 52 });
+defEnemy('e4_pomplee', 'ghoul', 'q_hase', 'Pomplee', { hp: 12, spd: 60 });
+defEnemy('e4_kaefer', 'bat', 'bat_aas', 'Kakuen-Käfer', { hp: 24 });
+defEnemy('e4_hoehle', 'ghoul', 'q_caladi', 'Höhlenbestie', { hp: 22 });
+defEnemy('e4_kristall', 'knight', 'q_panzer', 'Kristallpanzer', { armor: 3 });
+defEnemy('e4_graylash', 'knight', 'h_wache', 'Graylash-Schüler', { armor: 2 });
+defEnemy('e4_blitz', 'witch', 'h_truedream', 'Blitznutzer', { shot: 'light', flier: false });
+defEnemy('e4_altum', 'captain', 'h_wache', 'Graylash-Anführer', { scale: 1.25, hp: 2400 });
+defEnemy('e4_sun', 'ghoul', 'h_sunshield', 'Sunshield-Fußvolk', { hp: 22 });
+defEnemy('e4_sunR', 'knight', 'h_sunshield', 'Sunshield-Elite', { armor: 3 });
+defEnemy('e4_feuer', 'witch', 'h_pure', 'Feuernutzer', { shot: 'bell', flier: false });
+defEnemy('e4_trupp', 'captain', 'h_sunshield', 'Sunshield-Zugführer', { scale: 1.25, hp: 2600 });
+defEnemy('e4_tentakel', 'ghoul', 'q_void', 'Augenloser Tentakelhund', { hp: 24, spd: 78 });
+defEnemy('e4_insel', 'knight', 'q_panzer', 'Inselbestie', { armor: 3 });
+defEnemy('e4_katze', 'brute', 'q_koenig', 'Zweikiefer-Katze', { splits: 0, hp: 170 });
+defEnemy('e4_dorf', 'knight', 'h_blade', 'Dorfkrieger der Blades', { armor: 3 });
+defEnemy('e4_dorfL', 'ghoul', 'h_blade', 'Blade-Diener', { hp: 24 });
+defEnemy('e4_chained', 'witch', 'h_seherin', 'Kopierte Fähigkeit', { shot: 'soul', flier: false });
+defEnemy('e4_brock', 'captain', 'h_blade', 'Blade-Veteran', { scale: 1.3, hp: 3000 });
+defBoss('b4_linda', 'mono', 'Linda (Rang B)', 60000, Object.assign({ look: 'b_linda', bellShot: 'soul', spd: 70 }, B1));
+defBoss('b4_hypolord', 'krabbe', 'Hypolord (Advanced)', 4200, { model: 'hypolord', bellShot: 'acid', r: 42 });
+defBoss('b4_hundR', 'krabbe', 'Roter King-Hund', 5000, { model: 'hundR', bellShot: 'spike', r: 40 });
+defBoss('b4_hundS', 'krabbe', 'Schwarzer King-Hund', 6500, { model: 'hundS', bellShot: 'spike', r: 40 });
+defBoss('b4_lemon', 'mono', 'Lemon (Graylash-Schüler)', 3600, Object.assign({ look: 'b_lemon', bellShot: 'light', spd: 72 }, B1));
+defBoss('b4_gox', 'stahlmann', 'Gox, Kommandant der Sunshields', 6200, Object.assign({ look: 'b_gox', bellShot: 'bell', armor: 4 }, B1));
+defBoss('b4_kiln', 'silva', 'Kiln und Tupple (Adlige)', 4600, Object.assign({ look: 'b_kiln', bellShot: 'blood' }, B1));
+defBoss('b4_borden', 'dalki1', 'Borden (drei Stacheln)', 60000, { model: 'borden3', bellShot: 'spike', r: 30 });
+defBoss('b4_chrimeta', 'kronker', 'Chrimeta (Emperor-Tier)', 9000, { model: 'chrimeta', bellShot: 'bell', r: 46 });
+defBoss('b4_twins', 'erin', 'Vicky und Pai Blade', 60000, Object.assign({ look: 'b_vicky', bellShot: 'soul', spd: 70 }, B1));
+defBoss('b4_twinsF', 'erin', 'Vicky und Pai Blade', 7000, Object.assign({ look: 'b_vicky', bellShot: 'soul', spd: 66 }, B1));
+const R_FLUSS = { ghoul: 'e4_hypo', bat: 'c3_aas', knight: 'e4_hypo', witch: 'c3_spucker', brute: 'c3_koenig', captain: 'c3_koenigB' };
+const R_WIESE = { ghoul: 'e4_pomplee', bat: 'e4_kaefer', knight: 'e4_pomplee', witch: 'c2_spore', brute: 'c2_mutter', captain: 'c2_alpha' };
+const R_BERG = { ghoul: 'e4_hoehle', bat: 'c3_aas', knight: 'e4_kristall', witch: 'c3_spucker', brute: 'c3_koenig', captain: 'c3_koenigB' };
+const R_EAGLES = { ghoul: 'e4_graylash', bat: 'e4_graylash', knight: 'e4_graylash', witch: 'e4_blitz', brute: 'e4_graylash', captain: 'e4_altum' };
+const R_SUN = { ghoul: 'e4_sun', bat: 'e4_sun', knight: 'e4_sunR', witch: 'e4_feuer', brute: 'e4_sunR', captain: 'e4_trupp' };
+const R_INSEL = { ghoul: 'e4_tentakel', bat: 'c3_aas', knight: 'e4_insel', witch: 'c3_spucker', brute: 'e4_katze', captain: 'c3_koenigB' };
+const R_DORF = { ghoul: 'e4_dorfL', bat: 'e4_dorfL', knight: 'e4_dorf', witch: 'e4_chained', brute: 'e4_dorf', captain: 'e4_brock' };
+const ETAPPE4 = {
+  title: 'Die Verfluchten', place: 'Crows · Eagles-Basis · Blade-Insel', src: 'Kapitel 535–668', theme: 'ruinen', ch: 6,
+  levels: [
+    { name: 'Die Aufnahmeprüfung der Crows', type: 'endure', foe: 'b4_linda', dur: 60, crowd: 0.15, theme: 'basisnacht', roles: R_EAGLES,
+      text: 'Die Basis liegt in Trümmern, der Bürgerkrieg hat begonnen. Finn tarnt sich als Reisender mit Tempo-Fähigkeit und bewirbt sich bei den Crows. Im Sparring wartet Linda, Blips Schwester – und Finn darf nicht zeigen, was er kann.' },
+    { name: 'Der Hypolord', type: 'waveboss', at: 110, foe: 'b4_hypolord', pace: 1.5, theme: 'rotezone', roles: R_FLUSS, comp: ['fex'],
+      text: 'Erste Jagd auf einem roten Flussplaneten. Fex angelt Hypocen mit seinen Fäden aus dem Wasser. Dann bricht der Hypolord aus dem Fluss – und Freddy, der gute Kartenhändler, kommt nicht mehr heim.' },
+    { name: 'Käfer auf der Pomplee-Wiese', type: 'hunt', role: 'bat', n: 26, pace: 1.5, theme: 'bestienplanet', roles: R_WIESE, comp: ['fex'],
+      text: 'Wo die flauschigen Pomplees grasen, schlüpfen springende Käfer. Die Sonne brennt, die Ringe werden leer – und Suze, die neue Fünfte im Team, soll eigentlich spionieren.' },
+    { name: 'Der rote King-Hund', type: 'waveboss', at: 90, foe: 'b4_hundR', pace: 1.6, theme: 'burg', roles: R_BERG, comp: ['sam'],
+      text: 'Unter dem schwarzen Berg schläft ein King-Tier: ein Hund mit Keulenschwanz, die Kristalle pulsieren mit seinem Atem. Kong schickt ein Mädchen als Köder vor. Finn geht mit.' },
+    { name: 'Der schwarze King-Hund', type: 'duel', foe: 'b4_hundS', crowd: 0.3, theme: 'burg', roles: R_BERG, comp: ['sam'],
+      text: 'Der Gefährte heult über den toten Hund und rollt als Stachelkugel durch die Höhle. Seine Rückenstacheln fliegen wie Geschosse. Jetzt hilft nur noch der Hammer-Hook.' },
+    { name: 'Sparring bei den Eagles', type: 'duel', foe: 'b4_lemon', crowd: 0.35, theme: 'basisnacht', roles: R_EAGLES,
+      text: 'Die Graylash zeigen bei den Eagles ihre Macht: Sparring bis kurz vor den Tod. Finn meldet sich freiwillig – ohne Schatten, nur mit Phantomschlägen.' },
+    { name: 'Die Sunshields greifen an', type: 'survive', dur: 180, pace: 1.7, theme: 'schlachtfeld', roles: R_SUN, elites: 3,
+      text: 'Laserschiffe beschießen den Shelter, hundert Elitekrieger in dunkelroter Rüstung landen. Feuer gegen Blitz – und mittendrin Zivilisten, die zum Teleporter müssen.' },
+    { name: 'Twin Tail Chain', type: 'waveboss', at: 140, foe: 'b4_gox', pace: 1.7, theme: 'schlachtfeld', roles: R_SUN, comp: ['sam', 'fex'],
+      text: 'Die Crows sind von zweihundert auf sechzig geschrumpft. Finn steigt allein aus dem Schatten in der Mitte der Plaza: Seine Seelenwaffe erwacht – zwei Knochenketten, die mit jedem Treffer Blut trinken.' },
+    { name: 'Kiln und Tupple', type: 'duel', foe: 'b4_kiln', crowd: 0.15, theme: 'schlachtfeld', roles: R_SUN,
+      text: 'Bryce schickt zwei Adlige, die offene Blutjagden veranstalten sollen – der Zehnte soll die Schuld bekommen. Paul stellt sich schützend vor einen alten Mann und wird zerfetzt. Finn spürt es über das Blutband.' },
+    { name: 'Die Blade-Insel', type: 'hunt', role: 'ghoul', n: 60, pace: 1.6, theme: 'bestienplanet', roles: R_INSEL, comp: ['peter', 'leander'],
+      text: 'Ein Seeungeheuer schlägt das U-Boot wie einen Ball auf die Insel. Im Dschungel lauern King-Tiere: Zweikiefer-Katzen und augenlose Tentakelhunde.' },
+    { name: 'Zehn Minuten gegen Borden', type: 'endure', foe: 'b4_borden', dur: 90, crowd: 0.1, theme: 'bestienplanet', roles: R_INSEL,
+      text: 'Borden hat auf der Insel gegen King-Tiere trainiert. „Besiege mich, dann komme ich mit.“ Jeder seiner Schläge frisst Schatten – halte durch, bis seine Dalki-Form erlischt.' },
+    { name: 'Chrimeta im Vulkan', type: 'duel', foe: 'b4_chrimeta', crowd: 0.2, theme: 'roterhimmel', roles: R_INSEL,
+      text: 'Auf einer Brücke über Lavaseen erwacht ein Emperor-Tier: vier Meter, goldene Mähne, Dutzende gelbe Augen und drei Schlangenschwänze, die Feuer spucken.' },
+    { name: 'Die Blade-Zwillinge', type: 'endure', foe: 'b4_twins', dur: 80, crowd: 0.3, theme: 'bestienplanet', roles: R_DORF, comp: ['fabian'],
+      text: 'Vicky und Pai fassen sich an den Händen und teilen ihre Kräfte – fast so stark wie Hilston. Das System gibt nur ein Ziel vor: Überlebe die Begegnung.' },
+    { name: 'Rette sie', type: 'boss', at: 60, foe: 'b4_twinsF', pace: 1.7, theme: 'bestienplanet', roles: R_DORF, berserk: true, comp: ['sil'],
+      text: 'Finn trinkt von den Dorfkriegern und wird zum wahnsinnigen Bloodsucker. Fabian und Raten verabschieden sich lächelnd – Sil bleibt allein zurück und bändigt die Wasserhose, damit das Schiff entkommt.' }
+  ]
+};
+
 /* ------------------------------------------------------------ Alle Etappen */
-// Etappen 4 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
+// Etappen 5 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
 function autoLevels(ch) {
   const out = [];
   for (let l = 1; l <= 8; l++) {
@@ -196,7 +269,7 @@ function autoLevels(ch) {
   }
   return out;
 }
-const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3].concat(CHAPTERS.slice(5).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
+const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3, ETAPPE4].concat(CHAPTERS.slice(6).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
 ETAPPEN.forEach((E, i) => { E.n = i + 1; E.levels.forEach((L, j) => { L.l = j + 1; }); });
 // Kapitel (Gegner-/Boss-Sammlungen) -> Etappe, fuer den Boss-Turm
 const ET_OF_CH = {}; ETAPPEN.forEach((E) => { const chs = new Set([E.ch]); E.levels.forEach((L) => L.ch && chs.add(L.ch)); if (E.n === 1) chs.add(3); chs.forEach((c) => { ET_OF_CH[c] = E.n; }); });
@@ -207,6 +280,10 @@ function lvIsBoss(e, l) { const L = lvDef(e, l); return L.type === 'boss'; }
 function lvChapter(e, l) { const L = lvDef(e, l); return CHAPTERS[(L.ch || ET(e).ch) - 1]; }
 // Ziel-Text fuer Menue und Systemfenster
 function lvGoal(e, l) {
+  const g = lvGoal0(e, l), L = lvDef(e, l);
+  return L.berserk && L.type !== 'berserk' ? g + ' – als Bloodsucker' : g;
+}
+function lvGoal0(e, l) {
   const L = lvDef(e, l), foe = L.foe && ENEMIES[L.foe] ? ENEMIES[L.foe].name : L.type === 'boss' ? ENEMIES[lvChapter(e, l).roles.boss].name : '';
   switch (L.type) {
     case 'duel': return 'Besiege ' + foe;

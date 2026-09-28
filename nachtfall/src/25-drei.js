@@ -99,7 +99,7 @@ const CHIBI = {
   nyx: { skin: '#ddd4c2', hair: '#221c3a', hs: 'short', top: '#221c3a', bot: '#0c0916', shoe: '#0c0916', eye: '#c9a8ff', mask: true },
   shen: { skin: '#c89d7a', hair: '#eeeae2', hs: 'bald', top: '#1f5a50', bot: '#0b2723', shoe: '#3a2a14', eye: '#5ff0d0', hat: true }
 };
-const COMP_CHIBI = { peter: 'peter', lena: 'lena', fabian: 'fabian', leo: 'leo', emma: 'emma', fex: 'fex', sendraco: 'draco', minny: 'mia' };
+const COMP_CHIBI = { peter: 'peter', lena: 'lena', fabian: 'fabian', leo: 'leo', emma: 'emma', fex: 'fex', sendraco: 'draco', minny: 'mia', agathon: 'agathon', sam: 'sam', sil: 'sil', leander: 'leander' };
 function heroTierCol(hero, tier) {
   const H = HEROES[hero];
   if (hero === 'finn') return FINN_TIERS[tier || 0].col;
@@ -350,6 +350,24 @@ const BOSS_BUILD = {
     add(SPH(), M('#3a3444'), [0, 34, -40], [10, 10, 10]);
     for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ff2a2a' })); x.position.set(sd * 9, 62, 42); x.scale.setScalar(3.5); body.add(x); }
   },
+  borden3: (add, M, body) => dalkiBody(add, M, body, 3, '#8a9a7a', '#e8d890'),
+  hypolord(add, M, body) { // nilpferdartig, riesige Kiefer
+    add(SPH(), M('#6a4a5a'), [0, 40, -6], [58, 38, 70]);
+    add(SPH(), M('#7a5a6a'), [0, 56, 66], [40, 30, 36]); add(SPH(), M('#5a3a4a'), [0, 30, 80], [36, 16, 32]);
+    for (const sd of [-1, 1]) { add(CON(), M('#f0e8d0'), [sd * 18, 42, 104], [5, 16, 5], [0.2, 0, 0]); add(CAP(), M('#4a2a3a'), [sd * 36, 14, 34], [14, 16, 14]); add(CAP(), M('#4a2a3a'), [sd * 36, 14, -40], [14, 16, 14]); add(SPH(), M('#5a3a4a'), [sd * 22, 84, 58], [8, 8, 6]); }
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffd23a' })); x.position.set(sd * 18, 74, 84); x.scale.setScalar(4.5); body.add(x); }
+  },
+  hundR: (add, M, body) => kingHund(add, M, body, '#8a2a1e', '#e8c8a0'),
+  hundS: (add, M, body) => kingHund(add, M, body, '#1e1a24', '#ff5a3a'),
+  chrimeta(add, M, body) { // schwarz, goldene Maehne, viele gelbe Augen, drei Feuerschlangen-Schwaenze
+    add(SPH(), M('#1a161e'), [0, 70, -10], [44, 40, 60]);
+    add(SPH(), M('#241e2a'), [0, 108, 50], [30, 30, 30]);
+    for (let k = 0; k < 9; k++) { const a = k / 9 * TAU; add(CON(), M('#e8b030', { emissive: new THREE.Color('#c88a10'), emissiveIntensity: 0.4 }), [Math.cos(a) * 30, 116 + Math.sin(a) * 26, 36], [8, 30, 8], [Math.sin(a) * 1.2 - 0.3, 0, -Math.cos(a) * 1.2]); }
+    for (const sd of [-1, 1]) { add(CAP(), M('#14101a'), [sd * 32, 26, 40], [11, 30, 11]); add(CAP(), M('#14101a'), [sd * 32, 26, -50], [11, 30, 11]); add(CON(), M('#2a2020'), [sd * 32, 2, 52], [8, 12, 8], [Math.PI / 2, 0, 0]); }
+    for (let k = 0; k < 3; k++) { const a = (k - 1) * 0.6; for (let j = 0; j < 4; j++) add(SPH(), M('#2a2a1a'), [Math.sin(a) * (20 + j * 14), 80 + j * 16, -70 - j * 12], [8 - j, 8 - j, 8 - j]); add(SPH(), M('#ff6a1a', { emissive: new THREE.Color('#ff4a0a'), emissiveIntensity: 0.9 }), [Math.sin(a) * 76, 150, -118], [9, 9, 9]); }
+    const eyeM = new THREE.MeshBasicMaterial({ color: '#ffe040' });
+    for (let k = 0; k < 10; k++) { const x = new THREE.Mesh(SPH(), eyeM); x.position.set((k % 5 - 2) * 9, 104 + Math.floor(k / 5) * 12 + (k % 2) * 3, 78); x.scale.setScalar(3); body.add(x); }
+  },
   ranken(add, M, body) { // hausgross, langer Hals, Knospe mit sechs Ranken
     add(SPH(), M('#3a6a3a'), [0, 40, -10], [56, 34, 64]);
     for (let k = 0; k < 4; k++) add(SPH(), M('#4a7a3a'), [0, 70 + k * 22, 30 + k * 10], [16 - k, 16 - k, 16 - k]);
@@ -407,6 +425,15 @@ const BOSS_BUILD = {
     for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#d0b0ff' })); x.position.set(sd * 9, 148, 30); x.scale.set(5, 2.5, 2); body.add(x); }
   }
 };
+function kingHund(add, M, body, skin, acc) { // hundeartig, grosse Schnauze, Keulenschwanz, Rueckenstacheln
+  add(SPH(), M(skin), [0, 54, -6], [36, 32, 58]);
+  add(SPH(), M(shadeHex(skin, 0.1)), [0, 80, 56], [28, 26, 28]); add(SPH(), M(shadeHex(skin, -0.2)), [0, 70, 86], [20, 16, 24]);
+  for (const sd of [-1, 1]) { add(CAP(), M(shadeHex(skin, -0.3)), [sd * 24, 20, 36], [9, 22, 9]); add(CAP(), M(shadeHex(skin, -0.3)), [sd * 24, 20, -44], [9, 22, 9]); add(CON(), M(shadeHex(skin, -0.2)), [sd * 16, 106, 50], [6, 14, 6], [0, 0, sd * 0.4]); }
+  for (let k = 0; k < 6; k++) add(CON(), M(acc, { emissive: new THREE.Color(acc), emissiveIntensity: 0.3 }), [0, 88 - k * 3, 30 - k * 16], [5, 22, 5], [-0.3, 0, 0]);
+  for (let k = 0; k < 3; k++) add(SPH(), M(skin), [0, 50 + k * 6, -70 - k * 14], [8, 8, 8]);
+  add(SPH(), M(shadeHex(skin, -0.35)), [0, 70, -120], [18, 18, 18]);
+  for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffd23a' })); x.position.set(sd * 12, 88, 78); x.scale.set(4, 3, 2); body.add(x); }
+}
 function dalkiBody(add, M, body, spikes, skin, acc) {
   add(CAP(), M(shadeHex(skin, -0.35)), [0, 46, 0], [30, 28, 26]);
   add(SPH(), M(skin), [0, 86, 0], [38, 30, 32]);

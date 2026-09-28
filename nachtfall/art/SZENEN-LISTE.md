@@ -19,3 +19,10 @@ Am Ende gibt es daraus einen gemeinsamen GPT-Prompt-Block.
 | 3 | Tunnel unter den Burgen | alte Steinquader |
 | 3 | Viertel der zehnten Familie | verfallenes Kopfsteinpflaster |
 | 3 | Plaza vor dem Königsschloss | edles Pflaster mit Blutkuppel-Rand |
+| 4 | Roter Flussplanet | rote Erde, Flussufer, Schlamm |
+| 4 | Pomplee-Wiese | helle Blumenwiese |
+| 4 | Schwarzer Berg, Kristallhöhle | schwarzer Fels, leuchtende Kristalle |
+| 4 | Eagles-Basis, Sparring-Halle | Hallenboden, Metall |
+| 4 | Shelter-Plaza im Krieg | Pflaster mit Brandspuren, Trümmer |
+| 4 | Blade-Insel, Dschungel und Strand | Dschungelboden, Sand |
+| 4 | Vulkan, Lavabrücke | erkaltete Lava mit glühenden Rissen |
