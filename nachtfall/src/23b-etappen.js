@@ -211,13 +211,13 @@ defBoss('b4_linda', 'mono', 'Linda (Rang B)', 60000, Object.assign({ look: 'b_li
 defBoss('b4_hypolord', 'krabbe', 'Hypolord (Advanced)', 4200, { model: 'hypolord', bellShot: 'acid', r: 42 });
 defBoss('b4_hundR', 'krabbe', 'Roter King-Hund', 5000, { model: 'hundR', bellShot: 'spike', r: 40 });
 defBoss('b4_hundS', 'krabbe', 'Schwarzer King-Hund', 6500, { model: 'hundS', bellShot: 'spike', r: 40 });
-defBoss('b4_lemon', 'mono', 'Lemon (Graylash-Schüler)', 3600, Object.assign({ look: 'b_lemon', bellShot: 'light', spd: 72 }, B1));
+defBoss('b4_lemon', 'mono', 'Lemon (Graylash-Schüler)', 3200, Object.assign({ look: 'b_lemon', bellShot: 'light', spd: 72 }, B1));
 defBoss('b4_gox', 'stahlmann', 'Gox, Kommandant der Sunshields', 6200, Object.assign({ look: 'b_gox', bellShot: 'bell', armor: 4 }, B1));
-defBoss('b4_kiln', 'silva', 'Kiln und Tupple (Adlige)', 4600, Object.assign({ look: 'b_kiln', bellShot: 'blood' }, B1));
+defBoss('b4_kiln', 'silva', 'Kiln und Tupple (Adlige)', 4200, Object.assign({ look: 'b_kiln', bellShot: 'blood' }, B1));
 defBoss('b4_borden', 'dalki1', 'Borden (drei Stacheln)', 60000, { model: 'borden3', bellShot: 'spike', r: 30 });
 defBoss('b4_chrimeta', 'kronker', 'Chrimeta (Emperor-Tier)', 9000, { model: 'chrimeta', bellShot: 'bell', r: 46 });
 defBoss('b4_twins', 'erin', 'Vicky und Pai Blade', 60000, Object.assign({ look: 'b_vicky', bellShot: 'soul', spd: 70 }, B1));
-defBoss('b4_twinsF', 'erin', 'Vicky und Pai Blade', 7000, Object.assign({ look: 'b_vicky', bellShot: 'soul', spd: 66 }, B1));
+defBoss('b4_twinsF', 'erin', 'Vicky und Pai Blade', 9500, Object.assign({ look: 'b_vicky', bellShot: 'soul', spd: 66 }, B1));
 const R_FLUSS = { ghoul: 'e4_hypo', bat: 'c3_aas', knight: 'e4_hypo', witch: 'c3_spucker', brute: 'c3_koenig', captain: 'c3_koenigB' };
 const R_WIESE = { ghoul: 'e4_pomplee', bat: 'e4_kaefer', knight: 'e4_pomplee', witch: 'c2_spore', brute: 'c2_mutter', captain: 'c2_alpha' };
 const R_BERG = { ghoul: 'e4_hoehle', bat: 'c3_aas', knight: 'e4_kristall', witch: 'c3_spucker', brute: 'c3_koenig', captain: 'c3_koenigB' };
