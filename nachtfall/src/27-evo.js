@@ -17,7 +17,7 @@ function evoCap(id) {
 // Benoetigte Etappe: gleichmaessig ueber die Kampagne verteilt, nie vor der Heldenfreischaltung
 function evoReqE(id, k) {
   const T = evoTiersOf(id), n = T.length, b = evoBaseCap(id);
-  return Math.min(CHAPTERS.length, Math.max((HERO_UNLOCK_ETAPPE[id] || 0) + 1, Math.round((k - b) * 9 / Math.max(1, n - 1 - b)) + 1));
+  return Math.min(ETAPPEN.length, Math.max((HERO_UNLOCK_ETAPPE[id] || 0) + 1, Math.round((k - b) * 9 / Math.max(1, n - 1 - b)) + 1));
 }
 function evoCost(id, k) { return { souls: 120 + 110 * k, crystals: Math.round(20 * Math.pow(k, 1.7)) }; }
 function evoCanUnlock(id) {

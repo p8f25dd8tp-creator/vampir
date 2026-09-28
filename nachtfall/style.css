@@ -426,3 +426,9 @@ h1, h2, h3, .cinzel { font-family: 'Cinzel', serif; letter-spacing: .06em; }
 .spltitle { position: absolute; top: 10%; font-family: 'Cinzel', serif; color: #fff4c0; font-size: 44px; }
 .spltap { position: relative; font-family: 'Cinzel', serif; font-weight: 800; color: #fff; font-size: 20px; letter-spacing: .1em; text-shadow: 0 2px 0 #1a0a2a, 0 0 14px rgba(255,120,160,.8); animation: spltap 1.4s ease-in-out infinite; }
 @keyframes spltap { 50% { opacity: .45; } }
+/* Stufen nach dem Buch */
+.lvrow { grid-template-columns: repeat(8, 1fr); row-gap: 7px; }
+.csname { display: block; font-family: 'Cinzel', serif; color: #fff4c0; font-size: 15px; margin-bottom: 2px; }
+.cstext { margin: 2px 0 4px; font-size: 13px; line-height: 1.3; color: #d8d0f0; font-style: italic; }
+.csgoal { font-size: 13.5px; font-weight: 700; color: #ffd86a; margin-bottom: 2px; }
+.csinfo { max-width: 520px; }

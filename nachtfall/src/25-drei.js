@@ -264,7 +264,7 @@ function buildBoss(e) {
   const root = new T.Group(), body = new T.Group(); root.add(body);
   const mats = [], M = (c, o) => { const x = toon(c, o); mats.push(x); return x; };
   const add = (g, mat, p, s, r) => { const x = new T.Mesh(g, mat); x.position.set(...p); x.scale.set(...s); if (r) x.rotation.set(...r); body.add(x); const o = new T.Mesh(g, R3N.outline); o.scale.setScalar(1.06); x.add(o); return x; };
-  const own = BOSS_BUILD[e.def.bossDraw];
+  const own = BOSS_BUILD[e.def.model || e.def.bossDraw];
   if (own) own(add, M, body);
   else {
   add(CAP(), M(d), [0, 50, 0], [34, 30, 28]);
@@ -330,6 +330,17 @@ Object.assign(CHIBI, {
 const BOSS_BUILD = {
   dalki1: (add, M, body) => dalkiBody(add, M, body, 1, '#6a7a8a', '#c8d0d8'),
   graham: (add, M, body) => dalkiBody(add, M, body, 10, '#5a5a6a', '#ffd060'),
+  scordana(add, M, body) { // Skorpion-Unterleib, vier Scheren, Stachelschwanz
+    add(SPH(), M('#6a3a2a'), [0, 34, -10], [46, 22, 58]);
+    add(SPH(), M('#8a4a30'), [0, 58, 30], [30, 30, 28]);
+    for (const sd of [-1, 1]) {
+      for (let k = 0; k < 3; k++) add(CAP(), M('#4a2418'), [sd * (44 + k * 3), 16, -34 + k * 22], [5, 22, 5], [0, 0, sd * 1.1]);
+      for (const y of [70, 50]) { add(CAP(), M('#7a4028'), [sd * 38, y, 50], [7, 18, 7], [1.1, 0, sd * 0.6]); add(CON(), M('#c86a3a'), [sd * 44, y, 76], [9, 20, 9], [Math.PI / 2, 0, 0]); }
+      const eye = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffd23a' })); eye.position.set(sd * 10, 66, 54); eye.scale.setScalar(4.5); body.add(eye);
+    }
+    for (let k = 0; k < 5; k++) add(SPH(), M('#6a3a2a'), [0, 40 + k * 16, -58 - k * 6 + k * k * 1.5], [12 - k, 12 - k, 12 - k]);
+    add(CON(), M('#e8c060', { emissive: new THREE.Color('#ff8a2a'), emissiveIntensity: 0.4 }), [0, 118, -52], [7, 26, 7], [-0.6, 0, 0]);
+  },
   krabbe(add, M, body) {
     add(SPH(), M('#4a6a8a'), [0, 40, 0], [70, 30, 56]);
     add(SPH(), M('#6a8aa8'), [0, 52, 6], [54, 18, 42]);
@@ -502,7 +513,7 @@ function r3nRender(G, time, dt) {
     if (p) {
       const key = 'p';
       seenH.add(key);
-      const R = r3nHero(key, p.hero, p.tier || 0);
+      const R = r3nHero(key, GAME.berserk ? 'bloodsucker' : p.hero, GAME.berserk ? 0 : p.tier || 0);
       const aimYaw = p.castT > 0 ? Math.atan2(Math.cos(p.castAim), Math.sin(p.castAim)) : (Math.abs(p.lastMoveX) + Math.abs(p.lastMoveY) > 0.1 ? Math.atan2(p.lastMoveX, p.lastMoveY) : undefined);
       poseChibi(R, { x: p.x, y: p.y, face: p.face, aimYaw, run: p.runAmt || 0, phase: p.phase || 0, t: time, cast: p.castT > 0 ? clamp(p.castT / (p.castMax || 0.3), 0, 1) : 0, flash: p.hurtT > 0 ? Math.min(0.5, p.hurtT * 2) : 0, dead: !p.alive, deadT: p.deadT, dodge: p.dodgeT > 0, visible: !(p.dodgeT > 0 && p.dodgeKind === 'shadowstep') }, dt);
       if (p.dodgeT > 0 && !R.kay) R.body.rotation.y = (1 - p.dodgeT / (p.dodgeMax || 0.3)) * Math.PI * 2;
@@ -536,7 +547,7 @@ function r3nHero(key, hero, tier) {
 }
 function r3nBoss(e, p, time, dt) {
   let B = R3N.bosses.get(e.id);
-  const hum = BOSS_HUMAN[e.def.bossDraw];
+  const hum = e.def.look || BOSS_HUMAN[e.def.bossDraw];
   if (!B) { if (hum) { B = buildChibi(hum, 2); B.human = true; R3N.scene.add(B.root); } else B = buildBoss(e); R3N.bosses.set(e.id, B); }
   if (B.human) {
     const s = 1.6 * (e.def.scale || 1), mv = Math.min(1, Math.hypot(e.vx || 0, e.vy || 0) / 40 + (e.run || 0));

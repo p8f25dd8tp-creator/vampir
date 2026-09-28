@@ -32,6 +32,12 @@ const LOOK = {
   mia: { body: 'magier', top: '#2a2438', acc: '#a07aff', pants: '#0c0a14', boots: '#2a2030', skin: '#8a5a3e', hair: 'zopf', hairCol: '#1a100c', eye: '#e8e0ff', scale: 0.85, weapon: 'none' },
   draco: { body: 'barbar', top: '#2a2018', acc: '#c8902a', pants: '#0c0806', boots: '#3a2204', cape: '#8a5a10', skin: '#d8c0b0', hair: 'stachel', hairCol: '#8a1a14', eye: '#ffc040', horns: true, weapon: 'axe' },
   // menschliche Bosse
+  b_kyle: { body: 'schurke', top: '#8a4a1a', pants: '#2a1a10', boots: '#1a1010', skin: '#e8c8a8', hair: 'stachel', hairCol: '#d8801a', eye: '#e8a020', weapon: 'none' },
+  b_rylee: { body: 'barbar', top: '#4a4a52', acc: '#8a8a94', pants: '#2a2a30', boots: '#1a1a20', skin: '#e0c4a8', hair: 'kurz', hairCol: '#1a1a1a', eye: '#5a4030', weapon: 'none' },
+  b_brandon: { body: 'schurke', top: '#2a4a6a', pants: '#1a2230', boots: '#101418', skin: '#ecd0b8', hair: 'seite', hairCol: '#6a4a2a', eye: '#4a6a8a', weapon: 'staff' },
+  b_nate: { body: 'barbar', top: '#6a6e78', acc: '#c8ccd8', pants: '#3a3e48', boots: '#1a1c20', skin: '#b8bcc8', hair: 'kurz', hairCol: '#2a2a2a', eye: '#3a3a4a', weapon: 'none' },
+  b_ben: { body: 'barbar', top: '#5a3a1a', acc: '#8a6a3a', pants: '#2a1c10', boots: '#1a120a', skin: '#e0b898', hair: 'kurz', hairCol: '#3a2a18', eye: '#3a2a18', weapon: 'axe' },
+  bloodsucker: { body: 'schurke', top: '#6a3a38', pants: '#4a3030', boots: '#2a1a1a', skin: '#d0ccc4', hair: 'glatze', eye: '#0a0000', fangs: true, weapon: 'none', scale: 1.1 },
   b_mono: { body: 'schurke', top: '#1a2440', pants: '#0a1020', boots: '#101018', skin: '#e8d0c0', hair: 'stachel', hairCol: '#1a1a2a', eye: '#6a8ad8', weapon: 'sword', blade: '#d8e8ff' },
   b_ian: { body: 'schurke', top: '#6a4a2a', pants: '#3a2a1a', boots: '#2a1a10', cape: '#4a3a2a', skin: '#e0c0a0', hair: 'kurz', hairCol: '#6a4a2a', eye: '#4a3020', hat: '#6a4a2a', weapon: 'staff' },
   b_duke: { body: 'schurke', top: '#3a3a44', pants: '#1a1a20', boots: '#101014', cape: '#2a2a34', skin: '#e8c8b0', hair: 'kurz', hairCol: '#c8c8d0', eye: '#4a4a5a', weapon: 'sword' },

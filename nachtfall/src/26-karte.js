@@ -50,7 +50,7 @@ const TOPG = () => geo('topg', () => new THREE.CylinderGeometry(1, 0.96, 1, 9));
 const HEX = () => geo('hexg', () => new THREE.CylinderGeometry(1, 1, 1, 6));
 
 function buildIsle(n, dim) {
-  const T = THREE, ch = CHAPTERS[n - 1], L = ISLE_LOOK[ch.theme] || ISLE_LOOK.friedhof;
+  const T = THREE, ch = ET(n), L = ISLE_LOOK[ch.theme] || ISLE_LOOK.friedhof;
   const grp = new T.Group(), { B } = isleKit(grp, dim);
   // Felsenkoerper mit haengenden Brocken, Grasdecke, Wolkenkranz
   B(ROCKG(), L.rock, [0, -48, 0], [100, 92, 100], null, { flat: true });
@@ -170,7 +170,7 @@ function mapInit() {
   const sel = new T.PointLight('#ffd8a0', 5, 420, 1.2); sc.add(sel);
   // Sterne und Funken
   const N = 700, pos = new Float32Array(N * 3);
-  for (let i = 0; i < N; i++) { pos[i * 3] = (Math.random() - 0.5) * 1400; pos[i * 3 + 1] = -500 + Math.random() * 500; pos[i * 3 + 2] = 600 - Math.random() * (CHAPTERS.length * ISLE_GAP + 1400); }
+  for (let i = 0; i < N; i++) { pos[i * 3] = (Math.random() - 0.5) * 1400; pos[i * 3 + 1] = -500 + Math.random() * 500; pos[i * 3 + 2] = 600 - Math.random() * (ETAPPEN.length * ISLE_GAP + 1400); }
   const sg = new T.BufferGeometry(); sg.setAttribute('position', new T.BufferAttribute(pos, 3));
   const stars = new T.Points(sg, new T.PointsMaterial({ color: '#d8c8ff', size: 3.2, transparent: true, opacity: 0.8, depthWrite: false }));
   sc.add(stars);
@@ -187,19 +187,19 @@ function mapInit() {
   // Eingabe: ziehen scrollt, tippen waehlt eine Insel
   let down = null;
   c.addEventListener('pointerdown', (e) => { down = { x: e.clientX, y: e.clientY, y0: e.clientY, t: performance.now(), moved: 0 }; MAP3.vel = 0; try { c.setPointerCapture(e.pointerId); } catch (err) { /* egal */ } });
-  c.addEventListener('pointermove', (e) => { if (!down) return; const dy = e.clientY - down.y; down.y = e.clientY; down.moved += Math.abs(dy); const k = dy / mapPxPerIsle(); MAP3.target = clamp(MAP3.target + k, -0.2, CHAPTERS.length - 0.8); MAP3.vel = k / Math.max(0.008, (performance.now() - down.t) / 1000); down.t = performance.now(); });
+  c.addEventListener('pointermove', (e) => { if (!down) return; const dy = e.clientY - down.y; down.y = e.clientY; down.moved += Math.abs(dy); const k = dy / mapPxPerIsle(); MAP3.target = clamp(MAP3.target + k, -0.2, ETAPPEN.length - 0.8); MAP3.vel = k / Math.max(0.008, (performance.now() - down.t) / 1000); down.t = performance.now(); });
   const up = (e) => { if (!down) return; const tap = down.moved < 10; down = null; if (tap) mapTap(e.clientX, e.clientY); };
   c.addEventListener('pointerup', up); c.addEventListener('pointercancel', () => { down = null; });
-  c.addEventListener('wheel', (e) => { MAP3.target = clamp(MAP3.target - e.deltaY / mapPxPerIsle(), -0.2, CHAPTERS.length - 0.8); e.preventDefault(); }, { passive: false });
+  c.addEventListener('wheel', (e) => { MAP3.target = clamp(MAP3.target - e.deltaY / mapPxPerIsle(), -0.2, ETAPPEN.length - 0.8); e.preventDefault(); }, { passive: false });
 }
 function mapPxPerIsle() { return Math.max(160, (MAP3.h || 600) * 0.42); }
 function islePos(n) { return { x: Math.sin(n * 1.7) * 40, z: -(n - 1) * ISLE_GAP }; }
 function mapBuildIsles() {
-  const key = CHAPTERS.map((_, i) => etappeOpen(i + 1) ? 1 : 0).join('');
+  const key = ETAPPEN.map((_, i) => etappeOpen(i + 1) ? 1 : 0).join('');
   if (MAP3.key === key) return;
   MAP3.key = key;
   for (const g of MAP3.isles) g.removeFromParent();
-  MAP3.isles = CHAPTERS.map((_, i) => { const n = i + 1, g = buildIsle(n, !etappeOpen(n)), p = islePos(n); g.position.set(p.x, 0, p.z); g.rotation.y = Math.sin(n * 2.3) * 0.35; MAP3.sc.add(g); return g; });
+  MAP3.isles = ETAPPEN.map((_, i) => { const n = i + 1, g = buildIsle(n, !etappeOpen(n)), p = islePos(n); g.position.set(p.x, 0, p.z); g.rotation.y = Math.sin(n * 2.3) * 0.35; MAP3.sc.add(g); return g; });
 }
 function mapSetHero() {
   const C = campSave(), id = C.hero;
@@ -214,8 +214,8 @@ UI.homeKampagne = function () {
   const C = campSave();
   this.selEtappe = this.selEtappe || C.etappe || 1;
   if (!MAP3.placed) { MAP3.scroll = MAP3.target = this.selEtappe - 1; MAP3.placed = true; }
-  const labels = CHAPTERS.map((ch, i) => { const n = i + 1, o = etappeOpen(n);
-    return `<div class="mlab ${o ? '' : 'locked'}" data-n="${n}"><div class="mlt"><span class="mnum">${n}</span><b>${ch.title}</b></div>${o ? `<small>${starsOf(n)}/${LEVELS_PER * 3} ★${etappeCleared(n) ? ' · geschafft' : ''}</small>` : ''}</div>${o ? '' : `<div class="mlab mlk" data-k="${n}"><div class="mlock">🔒</div><small>Schließe Etappe ${n - 1} ab</small></div>`}`; }).join('');
+  const labels = ETAPPEN.map((ch, i) => { const n = i + 1, o = etappeOpen(n);
+    return `<div class="mlab ${o ? '' : 'locked'}" data-n="${n}"><div class="mlt"><span class="mnum">${n}</span><b>${ch.title}</b></div>${o ? `<small>${starsOf(n)}/${lvCount(n) * 3} ★${etappeCleared(n) ? ' · geschafft' : ''}</small>` : ''}</div>${o ? '' : `<div class="mlab mlk" data-k="${n}"><div class="mlock">🔒</div><small>Schließe Etappe ${n - 1} ab</small></div>`}`; }).join('');
   const D = dailySave(), dailyReady = DAILY.some((q) => !D.got[q.id] && (D.prog[q.id] || 0) >= q.goal);
   const side = (act, sym, col, nm, dot, tab) => `<button class="sbtn" data-act="${act}"${tab ? ` data-tab="${tab}"` : ''}><img src="${tabIcon(sym, col)}">${dot ? '<i class="dot">!</i>' : ''}<span>${nm}</span></button>`;
   return `<div class="map3d"><div class="mapslot"></div><div class="maplabels">${labels}</div>
@@ -225,15 +225,15 @@ UI.homeKampagne = function () {
     ${this.campSheet()}`;
 };
 UI.campSheet = function () {
-  const C = campSave(), e = this.selEtappe || C.etappe || 1, ch = CHAPTERS[e - 1], open = etappeOpen(e);
-  if (!this.selLevel || !lvOpen(e, this.selLevel)) { this.selLevel = 1; for (let l = 1; l <= LEVELS_PER; l++) if (lvOpen(e, l)) this.selLevel = l; }
-  const l = this.selLevel, boss = l === LEVELS_PER;
-  const nodes = Array.from({ length: LEVELS_PER }, (_, i) => { const k = i + 1, s = lvStars(e, k), o = lvOpen(e, k), b = k === LEVELS_PER;
+  const C = campSave(), e = this.selEtappe || C.etappe || 1, ch = ET(e), open = etappeOpen(e), N = lvCount(e);
+  if (!this.selLevel || !lvOpen(e, this.selLevel)) { this.selLevel = 1; for (let l = 1; l <= N; l++) if (lvOpen(e, l)) this.selLevel = l; }
+  const l = this.selLevel, boss = l === N, L = lvDef(e, l);
+  const nodes = Array.from({ length: N }, (_, i) => { const k = i + 1, s = lvStars(e, k), o = lvOpen(e, k), b = k === N;
     return `<button class="lvdot ${b ? 'boss' : ''} ${o ? '' : 'locked'} ${k === l ? 'sel' : ''} ${s ? 'done' : ''}" data-act="lvsel" data-l="${k}" ${o ? '' : 'disabled'}><b>${b ? '☠' : k}</b><i>${o ? '★'.repeat(s) + '<u>' + '★'.repeat(3 - s) + '</u>' : '🔒'}</i></button>`; }).join('');
-  const goal = boss ? `Besiege ${ENEMIES[ch.roles.boss].name}` : `Überlebe ${fmtTime(LV_DUR[l - 1])} · Gegner +${Math.round((lvDiff(l).hp - 1) * 100)} % Leben`;
+  const goal = lvGoal(e, l);
   return `<div class="campsheet"><div class="cshead"><span class="csnum">ETAPPE ${e}</span><b>${ch.title}</b><small>${ch.place}</small></div>
     <div class="lvrow">${nodes}</div>
-    <div class="csinfo">${open ? `<b>Level ${l}${boss ? ' · Boss' : ''}</b> — ${goal}<br><small style="color:#b8a8e8">★★ nie unter 30 % Leben · ★★★ nie unter 60 %</small>` : `🔒 Schließe zuerst Etappe ${e - 1} ab`}</div>
+    <div class="csinfo">${open ? `<b class="csname">Stufe ${l}: ${L.name}${boss ? ' · Finale' : ''}</b><p class="cstext">${L.text}</p><div class="csgoal">▸ ${goal}</div><small style="color:#b8a8e8">★★ nie unter 30 % Leben · ★★★ nie unter 60 %</small>` : `🔒 Schließe zuerst Etappe ${e - 1} ab`}</div>
     <button class="bigplay" data-act="campgo" ${open && lvOpen(e, l) ? '' : 'disabled'}><b>STARTEN</b><small>mit ${HEROES[C.hero].name}</small></button></div>`;
 };
 function mapRefreshSheet() {
@@ -285,7 +285,7 @@ function mapFrame(now) {
   const t = now / 1000, par = MAP3.c.parentNode, w = par.clientWidth, h = par.clientHeight;
   if (w !== MAP3.w || h !== MAP3.h) { MAP3.w = w; MAP3.h = h; MAP3.ren.setPixelRatio(Math.min(VIEW.dpr, 2)); MAP3.ren.setSize(w, h, false); MAP3.cam.aspect = w / Math.max(1, h); MAP3.cam.updateProjectionMatrix(); }
   // Schwung nach dem Loslassen, dann sanft einrasten
-  if (Math.abs(MAP3.vel) > 0.05) { MAP3.target = clamp(MAP3.target + MAP3.vel * dt, -0.2, CHAPTERS.length - 0.8); MAP3.vel *= Math.exp(-dt * 5); }
+  if (Math.abs(MAP3.vel) > 0.05) { MAP3.target = clamp(MAP3.target + MAP3.vel * dt, -0.2, ETAPPEN.length - 0.8); MAP3.vel *= Math.exp(-dt * 5); }
   MAP3.scroll += (MAP3.target - MAP3.scroll) * (1 - Math.exp(-dt * 8));
   const z = -MAP3.scroll * ISLE_GAP, cam = MAP3.cam, narrow = clamp(420 / Math.max(300, w), 0.8, 1.35);
   cam.position.set(0, 700 * narrow, z + 640 * narrow); cam.lookAt(0, -10, z - 150);
