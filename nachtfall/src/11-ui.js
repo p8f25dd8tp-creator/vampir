@@ -97,6 +97,9 @@ const UI = {
       case 'reroll': return rerollCards();
       case 'resume': return togglePause(false);
       case 'giveup': return giveUp();
+      case 'giveupask': return this.show(`<div class="box panel"><h2>Lauf aufgeben?</h2><p style="text-align:center">Der Fortschritt dieses Laufs geht verloren.</p><div class="btns"><button class="btn primary" data-act="pauseback">Weiterspielen</button><button class="btn ghost" data-act="giveup">Ja, aufgeben</button></div></div>`, 'pause', 'dim');
+      case 'pauseback': return this.showPause();
+      case 'pset': { const k = ds.k, S0 = SAVE.settings; if (k === 'music' || k === 'sfx') S0[k] = S0[k] >= 1 ? 0 : Math.round((S0[k] + 0.25) * 4) / 4; else S0[k] = !S0[k]; writeSave(); AudioSys.applyVolumes(); return this.showPause(); }
       case 'again': return startGame(GAME.hero);
       case 'buymeta': {
         const M = META[ds.id], lv = SAVE.meta[ds.id] || 0;
@@ -232,6 +235,7 @@ const UI = {
   updateHud() {
     if (!this.hud || !GAME) return;
     const G = GAME, p = G.p, H = HEROES[p.hero];
+    { const ub = $('#ubtn'), nu = p.hero === 'finn' && !p.tier ? 'hidden' : ''; if (ub && ub.style.visibility !== nu) ub.style.visibility = nu; }
     if (!this._hintMoved && G.t > 1.5 && Math.hypot(p.vx, p.vy) > 30) { this._hintMoved = true; const h = $('#hint'); if (h) setTimeout(() => { h.style.opacity = '0'; }, 1500); }
     this.set('xpf', (G.xp / G.xpNext * 100).toFixed(1) + '%', 'width');
     this.set('lvl', 'STUFE ' + G.level);
@@ -311,8 +315,8 @@ const UI = {
     const G = GAME, p = G.p;
     const html = offers.map((o, i) => {
       if (o.filler) {
-        const nm = o.id === 'bloodcup' ? 'Blutkelch' : 'Seelenbeutel';
-        const ds = o.id === 'bloodcup' ? 'Heilt sofort 35 % deines Lebens.' : '+25 Seelen für den Altar der Nacht.';
+        const FT = { bloodcup: ['Blutkelch', 'Heilt sofort 35 % deines Lebens.'], soulgift: ['Seelenbeutel', '+25 Seelen.'], kristallsplitter: ['Kristallsplitter', '+3 Bestienkristalle für die Schmiede.'] };
+        const [nm, ds] = FT[o.id] || FT.bloodcup;
         return `<button class="card" data-act="card" data-i="${i}"><div class="ci"><img src="${icon(o.id)}"></div><div class="cb"><div class="cn">${nm}</div><div class="cm"><span class="tag t-none">GABE</span></div><div class="cd">${ds}</div></div></button>`;
       }
       if (o.fusion) {
@@ -350,17 +354,24 @@ const UI = {
       const ds = FUSIONS[k] ? FUSIONS[k].desc : CARDS[k] ? CARDS[k].lv.slice(0, p.ab[k].lvl).join(' ') : (FINN_TIERS.find((T) => T.grants.includes(k)) || { desc: '' }).desc;
       return `<div class="bl"><img src="${icon(k)}"><div><div class="bn2">${nm} ${FUSIONS[k] || !CARDS[k] ? '' : '· Stufe ' + p.ab[k].lvl}</div><div style="font-size:14px;color:#cdbdb0">${ds}</div></div></div>`;
     }).join('') + Object.keys(p.passives).map((k) => `<div class="bl"><img src="${icon(k)}"><div><div class="bn2">${CARDS[k].name} · Stufe ${p.passives[k]}</div></div></div>`).join('');
-    // moegliche Fusionen fuer diesen Helden
-    const fus = Object.keys(FUSIONS).filter((f) => FUSIONS[f].heroes.includes(p.hero)).map((f) => {
+    // nur Fusionen, zu denen schon mindestens eine Zutat vorhanden ist
+    const has = (r) => { if (r.startsWith('any')) { const sc = { anyBlood: 'blood', anyShadow: 'shadow', anyQi: 'qi' }[r]; let m = 0; for (const k in p.ab) if (CARDS[k] && CARDS[k].school === sc) m = Math.max(m, p.ab[k].lvl); return m; } return p.ab[r] ? p.ab[r].lvl : (p.passives[r] || 0); };
+    const fus = Object.keys(FUSIONS).filter((f) => FUSIONS[f].heroes.includes(p.hero) && !p.ab[f] && Object.keys(FUSIONS[f].req).some((r) => has(r) > 0)).map((f) => {
       const F = FUSIONS[f];
-      const req = Object.keys(F.req).map((r) => r.startsWith('any') ? `eine ${ {anyBlood: 'Blut', anyShadow: 'Schatten', anyQi: 'Qi'}[r] }-Fähigkeit St. ${F.req[r]}` : `${CARDS[r].name} St. ${F.req[r]}`).join(' + ');
-      return `<li><b style="color:${p.ab[f] ? '#7dff9a' : '#ffe6a0'}">${p.ab[f] ? '✓ ' : ''}${F.name}</b> — ${req}</li>`;
+      const req = Object.keys(F.req).map((r) => { const n = r.startsWith('any') ? `${{ anyBlood: 'Blut', anyShadow: 'Schatten', anyQi: 'Qi' }[r]}-Fähigkeit` : CARDS[r].name, v = Math.min(has(r), F.req[r]); return `<span style="color:${v >= F.req[r] ? '#7dff9a' : '#e8d8c8'}">${n} ${v}/${F.req[r]}</span>`; }).join(' + ');
+      return `<li><b style="color:#ffe6a0">${F.name}</b> — ${req}</li>`;
     }).join('');
+    const got = Object.keys(p.ab).filter((f) => FUSIONS[f]).map((f) => `<li><b style="color:#7dff9a">✓ ${FUSIONS[f].name}</b></li>`).join('');
+    const vol = (k, nm) => `<button class="btn small ghost" data-act="pset" data-k="${k}">${nm}: ${Math.round(SAVE.settings[k] * 100)} %</button>`;
+    const tog = (k, nm) => `<button class="btn small ghost" data-act="pset" data-k="${k}">${nm}: ${SAVE.settings[k] ? 'an' : 'aus'}</button>`;
     this.show(`<div class="box panel"><h2>Pause</h2>
-      <div class="kv"><span>Zeit</span><span>${fmtTime(G.t)}</span><span>Stufe</span><span>${G.level}</span><span>Besiegt</span><span>${G.kills}</span><span>Reaktionen</span><span>${G.stats.reactions}</span></div>
-      <div class="buildlist">${rows}</div>
-      <div class="codex"><h3>Mögliche Fusionen</h3><ul>${fus}</ul></div>
-      <div class="btns"><button class="btn primary" data-act="resume">Weiter</button><button class="btn ghost" data-act="giveup">Lauf aufgeben</button></div></div>`, 'pause', 'dim');
+      <div class="lbl" style="margin:2px 0 4px">DEIN BUILD</div>
+      <div class="buildlist">${rows || '<p class="small">Noch keine Fähigkeiten.</p>'}</div>
+      <div class="kv"><span>Zeit</span><span>${fmtTime(G.t)}</span><span>Stufe</span><span>${G.level}</span><span>Besiegt</span><span>${G.kills}</span><span>Kristalle</span><span>${G.crystals || 0} ◆</span></div>
+      <div class="codex"><h3>Fusionen in Reichweite</h3><ul>${got}${fus || (got ? '' : '<li class="small">Noch keine – steigere deine Fähigkeiten.</li>')}</ul></div>
+      <div class="lbl" style="margin:6px 0 4px">EINSTELLUNGEN</div>
+      <div class="pset">${vol('music', 'Musik')}${vol('sfx', 'Effekte')}${tog('shake', 'Wackeln')}${tog('dmgNumbers', 'Schadenszahlen')}</div>
+      <div class="btns"><button class="btn primary" data-act="resume">Weiter</button><button class="btn ghost" data-act="giveupask">Lauf aufgeben</button></div></div>`, 'pause', 'dim');
   },
 
   /* ---------------------------------------------- Ende */
@@ -375,7 +386,7 @@ const UI = {
     const nl = newly.map((id) => `<div style="color:#7dff9a;text-align:center;margin-top:6px">Freigeschaltet: <b>${HEROES[id].name}</b>!</div>`).join('');
     this.show(`<div class="box panel">
       <div class="bigres ${won ? 'win' : 'lose'}">${won ? 'SIEG' : 'GEFALLEN'}</div>
-      <div style="text-align:center;color:var(--dim);margin-bottom:6px">${won ? 'Vaelgor ist gefallen. Der Morgen graut über Varn.' : 'Die Nacht hat dich verschlungen.'}</div>
+      <div style="text-align:center;color:var(--dim);margin-bottom:6px">${won ? 'Der Boss ist gefallen. Der Morgen graut.' : 'Die Nacht hat dich verschlungen.'}</div>
       <div class="kv"><span>Held</span><span>${HEROES[G.hero].name}</span><span>Überlebt</span><span>${fmtTime(G.t)}</span><span>Stufe</span><span>${G.level}</span><span>Besiegt</span><span>${G.kills}</span>
       <span>Reaktionen</span><span>${G.stats.reactions}</span><span>Fusionen</span><span>${G.stats.fusions.map((f) => FUSIONS[f].name).join(', ') || '—'}</span><span>Seelen erhalten</span><span style="color:#d8c0ff">+${souls}</span></div>
       ${extra && G.hero === 'finn' ? finnEndHtml(extra) : ''}
@@ -399,23 +410,22 @@ const UI = {
   /* ---------------------------------------------- Chronik */
   showCodex() {
     menuScene();
-    const fus = Object.keys(FUSIONS).map((f) => { const F = FUSIONS[f]; const req = Object.keys(F.req).map((r) => r.startsWith('any') ? `${ {anyBlood: 'Blut', anyShadow: 'Schatten', anyQi: 'Qi'}[r] }-Fähigkeit St. ${F.req[r]}` : `${CARDS[r].name} St. ${F.req[r]}`).join(' + ');
-      return `<li><b style="color:#ffe6a0">${SAVE.seenFusions[f] ? '✦ ' : ''}${F.name}</b> (${F.heroes.map((h) => HEROES[h].name).join(', ')})<br>${req}<br><span style="color:var(--dim)">${F.desc}</span></li>`; }).join('');
+    const heroOk = (h) => typeof HERO_ORDER === 'undefined' || HERO_ORDER.includes(h);
+    const fus = Object.keys(FUSIONS).filter((f) => FUSIONS[f].heroes.some(heroOk)).map((f) => { const F = FUSIONS[f]; const req = Object.keys(F.req).map((r) => r.startsWith('any') ? `${ {anyBlood: 'Blut', anyShadow: 'Schatten', anyQi: 'Qi'}[r] }-Fähigkeit St. ${F.req[r]}` : `${CARDS[r].name} St. ${F.req[r]}`).join(' + ');
+      return `<li><b style="color:#ffe6a0">${SAVE.seenFusions[f] ? '✦ ' : ''}${F.name}</b> (${F.heroes.filter(heroOk).map((h) => HEROES[h].name).join(', ')})<br>${req}<br><span style="color:var(--dim)">${F.desc}</span></li>`; }).join('');
     const re = Object.keys(REACTIONS).map((k) => `<li><b style="color:${REACTIONS[k].col}">${REACTIONS[k].name}</b> — ${REACTIONS[k].desc}</li>`).join('');
-    const en = Object.keys(ENEMIES).map((k) => `<li><b>${ENEMIES[k].name}</b> — ${ENEMY_DESC[k]}</li>`).join('');
     const S = SAVE.stats;
-    this.show(`<div class="box panel codex"><h2>Chronik</h2>
-      <div class="kv"><span>Läufe</span><span>${S.runs}</span><span>Besiegte Gegner</span><span>${S.kills}</span><span>Längste Nacht</span><span>${fmtTime(S.bestTime)}</span><span>Höchste Stufe</span><span>${S.maxLevel}</span><span>Vaelgor besiegt</span><span>${S.bossKills}×</span><span>Fusionen</span><span>${S.fusions}</span></div>
+    this.show(`<div class="box panel codex"><button class="backarrow" data-act="title">‹ Zurück</button><h2>Chronik</h2>
+      <div class="kv"><span>Läufe</span><span>${S.runs}</span><span>Besiegte Gegner</span><span>${S.kills}</span><span>Längste Nacht</span><span>${fmtTime(S.bestTime)}</span><span>Höchste Stufe</span><span>${S.maxLevel}</span><span>Bosse besiegt</span><span>${S.bossKills}×</span><span>Fusionen</span><span>${S.fusions}</span></div>
       <h3>Element-Reaktionen</h3><p>Jeder Treffer hinterlässt ein Mal seiner Schule (3 s). Trifft eine andere Schule, entsteht eine Reaktion:</p><ul>${re}</ul>
       <h3>Fusionen</h3><ul>${fus}</ul>
-      <h3>Die Toten von Varn</h3><ul>${en}</ul>
       <div class="btns"><button class="btn" data-act="title">Zurück</button></div></div>`, 'codex', 'dim');
   },
 
   /* ---------------------------------------------- Einstellungen */
   showSettings() {
     const s = SAVE.settings;
-    const d = this.show(`<div class="box panel"><h2>Einstellungen</h2>
+    const d = this.show(`<div class="box panel"><button class="backarrow" data-act="title">‹ Zurück</button><h2>Einstellungen</h2>
       <div class="setrow"><span>Effekte</span><input type="range" min="0" max="1" step="0.05" value="${s.sfx}" id="rsfx"></div>
       <div class="setrow"><span>Musik</span><input type="range" min="0" max="1" step="0.05" value="${s.music}" id="rmus"></div>
       <div class="setrow"><span>Bildschirmwackeln</span><input type="range" min="0" max="1.5" step="0.1" value="${s.shake}" id="rshk"></div>

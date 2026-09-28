@@ -18,7 +18,8 @@ function uiSkinCss() {
 .btn { border-style: solid; border-width: 0 30px; border-image: var(--ui-btn-purple) 0 118 fill / 0 30px stretch; border-radius: 0; background: none; box-shadow: none; padding: 12px 6px; color: #fff4dc; text-shadow: 0 2px 0 rgba(20,0,30,.8); }
 .btn.primary { border-image-source: var(--ui-btn-red); background: none; }
 .btn.ghost { border-image-source: var(--ui-btn-grey); background: none; }
-.btn:disabled, .btn.off { border-image-source: var(--ui-btn-grey); color: #c8c0d0; }
+.btn:disabled, .btn.off { border-image-source: var(--ui-btn-grey); color: #9a90a8; filter: grayscale(.8) brightness(.72); opacity: .7; text-shadow: none; }
+.bigplay:disabled, .startbtn:disabled { filter: grayscale(.9) brightness(.6); opacity: .75; }
 .btn.small { border-width: 0 20px; border-image-width: 0 20px; padding: 6px 4px; }
 .startbtn, .bigplay { border-style: solid; border-width: 0 46px; border-image: var(--ui-btn-gold) 0 132 fill / 0 46px stretch; border-radius: 0; background: none; box-shadow: none; color: #4a2200; text-shadow: 0 1px 0 rgba(255,240,180,.7); padding: 12px 0 10px; }
 .bigplay:active, .startbtn:active { transform: translateY(2px) scale(.98); box-shadow: none; filter: brightness(1.1); }
@@ -26,18 +27,39 @@ function uiSkinCss() {
 /* Kopf- und Tab-Leiste */
 .hometop { border-style: solid; border-width: 0 40px 10px; border-image: var(--ui-topbar) 40 150 30 fill / 0 40px 10px stretch; background: #140a2a; box-shadow: 0 3px 12px rgba(0,0,0,.5); padding-left: calc(var(--safe-l)); padding-right: calc(var(--safe-r)); }
 .tabbar { border-style: solid; border-width: 10px 30px 0; border-image: var(--ui-tabbar) 30 110 0 fill / 10px 30px 0 stretch; background: #0e0826; padding-left: calc(var(--safe-l)); padding-right: calc(var(--safe-r)); }
-.tabb.on { background: var(--ui-tab-active) center / 100% 100% no-repeat; box-shadow: none; color: #fff4c0; text-shadow: 0 1px 2px #000, 0 0 6px #000; }
+.tabb { position: relative; }
+.tabb.on { background: radial-gradient(ellipse 55% 75% at 50% 100%, rgba(255,190,80,.42), rgba(255,190,80,0) 72%); box-shadow: none; color: #ffe6a0; text-shadow: 0 1px 2px #000, 0 0 6px #000; }
+.tabb.on::after { content: ''; position: absolute; left: 50%; bottom: 2px; width: min(52px, 62%); height: 3px; transform: translateX(-50%); border-radius: 2px; background: linear-gradient(90deg, rgba(255,208,112,0), #ffd070, rgba(255,208,112,0)); box-shadow: 0 0 10px #ffb040; }
+.tabb.on img { opacity: 1; transform: scale(1.22) translateY(-3px); filter: drop-shadow(0 0 8px rgba(255,200,90,.85)); }
+.tabb .dot { position: absolute; top: 2px; left: calc(50% + 10px); min-width: 16px; height: 16px; border-radius: 8px; background: #e0303a; color: #fff; font: 800 11px/16px sans-serif; font-style: normal; box-shadow: 0 0 6px #ff3a4e; }
 .hcur span { background: var(--ui-pill) center / 100% 100% no-repeat; border: 0; box-shadow: none; padding: 5px 14px 5px 10px; }
 .ibtn:not(.hasimg) { background: var(--ui-btn-square) center / 100% 100% no-repeat; border: 0; box-shadow: none; }
 .sbtn { background: var(--ui-btn-square) center / 100% 100% no-repeat; border: 0; box-shadow: none; padding: 8px 0 6px; }
+/* Kampf-HUD */
+.sysmsg { width: min(300px, 78vw); font-size: 13.5px; padding: 6px 10px; background: rgba(8,14,40,.78); }
+.hint { bottom: calc(132px + var(--safe-b)); font-size: 14px; padding: 6px 14px; border-radius: 999px; background: rgba(10,4,20,.72); border: 1px solid rgba(200,170,255,.35); width: max-content; max-width: 86vw; }
+/* Zurueck-Pfeil oben links */
+.box { position: relative; }
+.box .backarrow + h2 { margin-top: 28px; }
+.backarrow { position: absolute; top: 6px; left: 8px; z-index: 3; border: 0; background: rgba(10,4,20,.6); color: #ffe6a0; font-family: 'Cinzel', serif; font-weight: 800; font-size: 13px; padding: 5px 10px; border-radius: 999px; border: 1px solid rgba(201,162,76,.6); cursor: pointer; }
+/* Pause */
+.pset { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.pset .btn { font-size: 11px; padding: 8px 0; white-space: nowrap; letter-spacing: 0; }
+.maplabels { -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 56px); mask-image: linear-gradient(180deg, transparent 0, #000 56px); }
+/* Helden */
+.hcard .nm .hunl { display: block; margin-top: 2px; font-family: sans-serif; font-size: 9px; font-weight: 600; color: #ffcf8a; letter-spacing: 0; text-transform: none; }
+.selbadge { margin-top: 8px; padding: 10px; text-align: center; font-family: 'Cinzel', serif; font-weight: 800; color: #9affb0; border: 1.5px solid rgba(120,255,160,.5); border-radius: 10px; background: rgba(40,120,70,.18); }
 /* Kampagne */
+.cshead { margin-top: 10px; }
+.backcur { background: linear-gradient(180deg, rgba(40,20,80,.92), rgba(14,6,30,.92)); border: 1.5px solid #c9a24c; border-radius: 999px; padding: 6px 16px; font-size: 13px; box-shadow: 0 4px 14px rgba(0,0,0,.6); }
+.backcur span { font-size: 18px; vertical-align: -2px; }
 .campsheet { border-style: solid; border-width: 22px 34px 0; border-image: var(--ui-sheet) 70 110 0 fill / 22px 34px 0 stretch; background: #140a30; box-shadow: 0 -6px 20px rgba(0,0,0,.5); padding-left: calc(var(--safe-l)); padding-right: calc(var(--safe-r)); }
 .lvdot { background: var(--ui-lv-open) center / 100% 100% no-repeat; border: 0; box-shadow: none; border-radius: 0; color: #fff; }
 .lvdot.boss { background-image: var(--ui-lv-boss); }
 .lvdot.sel { background: var(--ui-lv-sel) center / 100% 100% no-repeat; box-shadow: none; filter: drop-shadow(0 0 8px rgba(255,200,90,.7)); color: #4a2200; }
 .lvdot.locked { background-image: var(--ui-lv-locked); opacity: .85; }
-.mlab .mlt b { padding: 2px 4px; }
-.mlab .mlt { border-style: solid; border-width: 0 26px; border-image: var(--ui-nameplate) 0 100 fill / 0 26px stretch; padding: 4px 0; }
+.mlab .mlt { background: linear-gradient(180deg, rgba(40,20,80,.92), rgba(14,6,30,.92)); border: 1.5px solid #c9a24c; border-radius: 12px; padding: 3px 14px 3px 4px; box-shadow: 0 4px 14px rgba(0,0,0,.6), inset 0 0 12px rgba(160,120,255,.25); }
+.mlab .mlt b { font-size: 17px; -webkit-text-stroke: 0; text-shadow: 0 2px 0 #0a0418; }
 .mnum { background: var(--ui-badge) center / 100% 100% no-repeat !important; border: 0; box-shadow: none; min-width: 34px; height: 36px; color: #ffe6a0 !important; }
 /* Fenster und Karten */
 .syswin, .box.panel { border-style: solid; border-width: 22px; border-image: var(--ui-panel) 90 fill / 22px stretch; border-radius: 0; background: none; box-shadow: 0 10px 30px rgba(0,0,0,.6); }

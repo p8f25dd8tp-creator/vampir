@@ -79,7 +79,7 @@ const HEROES = {
       { name: 'Wanderer', desc: 'Qi-Kette + Nachbilder + Nebelgang: in Bewegung bleiben, Klone kämpfen lassen.' }
     ],
     pool: ['qihand', 'qikette', 'blutnova', 'blutwisch', 'bluternte', 'schattenflammen', 'nachbilder', 'nachtschlund', 'eisenmeridiane', 'lebensraub', 'kettenreaktion', 'vampirblut', 'nebelgang', 'grabesmacht', 'seelenmagnet'],
-    unlock: { desc: 'Besiege Vaelgor, den Gruftkoloss — oder opfere 1500 Seelen.', cost: 1500, check: (s) => s.stats.bossKills >= 1 }
+    unlock: { desc: 'Besiege einen Etappenboss — oder opfere 1500 Seelen.', cost: 1500, check: (s) => s.stats.bossKills >= 1 }
   }
 };
 const HERO_ORDER = ['vorian', 'liora', 'nyx', 'shen'];
@@ -256,8 +256,8 @@ const ENEMIES = {
   knight: { name: 'Grabritter', hp: 58, spd: 36, dmg: 13, r: 14, xp: 4, mass: 3, art: 'knight', scale: 1, armor: 2 },
   witch: { name: 'Laternenwitwe', hp: 22, spd: 44, dmg: 9, r: 12, xp: 3, mass: 1, art: 'witch', scale: 1, ranged: true, flier: true },
   brute: { name: 'Aasbrocken', hp: 110, spd: 30, dmg: 16, r: 18, xp: 7, mass: 5, art: 'brute', scale: 1, splits: 3 },
-  captain: { name: 'Hauptmann Kharn', hp: 1600, spd: 42, dmg: 20, r: 22, xp: 60, mass: 30, art: 'captain', scale: 1.9, armor: 4, miniboss: true },
-  boss: { name: 'Vaelgor, der Gruftkoloss', hp: 10000, spd: 52, dmg: 28, r: 44, xp: 0, mass: 200, art: 'boss', scale: 1, boss: true, armor: 3 }
+  captain: { name: 'Hauptmann der Horde', hp: 1600, spd: 42, dmg: 20, r: 22, xp: 60, mass: 30, art: 'captain', scale: 1.9, armor: 4, miniboss: true },
+  boss: { name: 'Der Gruftkoloss', hp: 10000, spd: 52, dmg: 28, r: 44, xp: 0, mass: 200, art: 'boss', scale: 1, boss: true, armor: 3 }
 };
 
 /* Lauf-Ablauf (Sekunden). Gewichte = Anteil der Gegnertypen beim Nachschub. */
@@ -281,13 +281,13 @@ const EVENTS = [
   { t: 150, kind: 'ring', type: 'ghoul', n: 34, text: 'Die Toten umzingeln dich …' },
   { t: 210, kind: 'elite', type: 'knight' },
   { t: 270, kind: 'swarm', type: 'bat', n: 40, text: 'Die Nacht wird schwarz vor Flügeln!' },
-  { t: 300, kind: 'miniboss', type: 'captain', text: 'Hauptmann Kharn erhebt sich!' },
+  { t: 300, kind: 'miniboss', type: 'captain', text: 'Ein Hauptmann der Horde erhebt sich!' },
   { t: 380, kind: 'ring', type: 'knight', n: 18, text: 'Ein Ring aus Grabrittern!' },
   { t: 420, kind: 'elite', type: 'brute' },
   { t: 450, kind: 'swarm', type: 'bat', n: 50, text: 'Blutschwarm!' },
   { t: 500, kind: 'ring', type: 'ghoul', n: 60, text: 'Die Gruft öffnet sich …' },
   { t: 510, kind: 'elite', type: 'witch' },
-  { t: BOSS_AT, kind: 'boss', type: 'boss', text: 'Die Glocke läutet. Vaelgor erwacht.' }
+  { t: BOSS_AT, kind: 'boss', type: 'boss', text: 'Die Glocke läutet. Der Boss erwacht.' }
 ];
 function hpScale(t) { const m = t / 60; return 1 + m * 0.3 + m * m * 0.034; }
 

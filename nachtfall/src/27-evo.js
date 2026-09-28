@@ -47,6 +47,13 @@ const _finnEvolveCap = finnEvolve;
 finnEvolve = function (tier) { if (GAME && GAME.p && tier > evoCap('finn')) return evoBlocked(tier); return _finnEvolveCap(tier); };
 
 /* ------------------------------------------------------------ Heldenansicht */
+// Bedingung im Lauf: Finn nutzt FINN_ARC, andere Helden stehen direkt in der Form
+function evoRunText(id, i) {
+  const src = id === 'finn' && typeof FINN_ARC !== 'undefined' ? FINN_ARC[i] : evoTiersOf(id)[i];
+  if (!src) return '';
+  if (src.txt) return 'im Lauf: ' + src.txt;
+  return src.lv ? 'im Lauf ab Stufe ' + src.lv : '';
+}
 UI.evoUnlockHtml = function (id) {
   const T = evoTiersOf(id); if (!T) return '';
   const cap = evoCap(id), C = campSave();
@@ -58,7 +65,7 @@ UI.evoUnlockHtml = function (id) {
       st = done ? `<button class="btn small ${evoCanUnlock(id) ? 'primary' : ''}" data-act="evoup" data-id="${id}" ${evoCanUnlock(id) ? '' : 'disabled'}>Freischalten<br><small><span style="color:${SAVE.souls >= c.souls ? '#d8c0ff' : '#ff8a8a'}">${c.souls} ✦</span> · <span style="color:${C.crystals >= c.crystals ? '#8ad8ff' : '#ff8a8a'}">${c.crystals} ◆</span></small></button>`
         : `<span class="evlk">🔒 nach Etappe ${rq}</span>`;
     } else st = `<span class="evlk">🔒</span>`;
-    return `<div class="evrow ${i <= cap ? 'on' : ''}"><i style="background:${t.col}"></i><div><b style="color:${i <= cap ? t.col : ''}">${t.name}</b>${i ? `<small>im Lauf: ${t.txt || ('Stufe ' + t.lv)}</small>` : '<small>Startform</small>'}</div>${st}</div>`;
+    return `<div class="evrow ${i <= cap ? 'on' : ''}"><i style="background:${t.col}"></i><div><b style="color:${i <= cap ? t.col : ''}">${t.name}</b>${i ? `<small>${evoRunText(id, i)}</small>` : '<small>Startform</small>'}</div>${st}</div>`;
   }).join('');
   return `<div class="blk"><b class="lbl">FORMEN · ${cap + 1} VON ${T.length} FREI</b><p class="small" style="margin:2px 0 6px">Im Lauf entwickelt sich der Held bis zur höchsten freigeschalteten Form.</p><div class="evlist">${rows}</div></div>`;
 };

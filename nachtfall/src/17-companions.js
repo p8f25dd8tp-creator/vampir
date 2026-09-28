@@ -38,7 +38,7 @@ const COMPANIONS = {
   }
 };
 COMPANIONS.fabian = {
-  name: 'Fabian Schneider', role: 'Kopiert Fähigkeiten · Raten · Sil', unlock: 1, col: '#ffd27a',
+  name: 'Fabian Schneider', role: 'Kopiert Fähigkeiten · teilt den Körper mit Raten und Sil', unlock: 1, col: '#ffd27a',
   desc: 'Stellt sich offen vor die Schwachen. Im selben Körper leben Raten und Sil — wenn es ernst wird, übernimmt Raten: schnelle Schlagfolgen mitten in die Gegner. Ab Kapitel 7 kämpft Sil.',
   hero: 'vorian', pal: [[HERO_PAL.vorian, { skin: '#ecd8c8', skinD: '#a88878', armor: '#1a2436', armorL: '#3a4a6a', armorD: '#080c14', red: '#2a3a6a', redL: '#ffd27a', redD: '#10182a', hair: '#e8cf7a', eye: '#ffd27a', rim: '#ffd27a' }]],
   look: { glow: 0, plain: true }, speed: 190, range: 70, cd: 1.0
@@ -68,7 +68,7 @@ COMPANIONS.sam = {
   look: {}, speed: 170, range: 220, cd: 1.4
 };
 COMPANIONS.sil = {
-  name: 'Sil', role: 'Kopiert Fähigkeiten · Elemente', unlock: 99, col: '#c8a0ff',
+  name: 'Sil Skala', role: 'Kopiert Fähigkeiten · Elemente', unlock: 99, col: '#c8a0ff',
   desc: 'Das jüngste der drei Ichs. Hält mehrere kopierte Kräfte zugleich und lässt Feuer, Eis und Erde auf einmal einschlagen.',
   hero: 'vorian', pal: [[HERO_PAL.vorian, { skin: '#ecd8c8', skinD: '#a88878', armor: '#1a1e3a', armorL: '#3a3a6a', armorD: '#080a14', red: '#2a2a6a', redL: '#c8a0ff', redD: '#10102a', hair: '#e8cf7a', eye: '#c8a0ff', rim: '#c8a0ff' }]],
   look: { glow: 0.4, plain: true }, speed: 175, range: 200, cd: 1.5

@@ -149,7 +149,7 @@ UI.sysWindow = function (title, line, line2) {
   const el = document.createElement('div'); el.className = 'sysmsg';
   el.innerHTML = `<div class="syshead">[ ${title} ]</div><div>${line}</div>${line2 ? `<div class="sysnote">${line2}</div>` : ''}`;
   hud.appendChild(el);
-  const others = hud.querySelectorAll('.sysmsg'); el.style.top = `calc(${Math.round(VIEW.cssH * 0.3) + (others.length - 1) * 78}px + var(--safe-t))`;
+  const others = hud.querySelectorAll('.sysmsg'); el.style.top = `calc(${62 + (others.length - 1) * 74}px + var(--safe-t))`;
   setTimeout(() => el.classList.add('out'), 3200); setTimeout(() => el.remove(), 3800);
 };
 UI.showHud = function () {

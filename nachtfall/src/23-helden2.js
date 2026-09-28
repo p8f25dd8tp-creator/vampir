@@ -150,7 +150,7 @@ defineEvoHero('lena', {
     tier('Telekinetin', 'Stufe 6', 6, 115, 178, 0, 1.15, 3, '#d8b8ff', ['telestoss'], ['telestoss'], 'Ihre Telekinese wird stärker.'),
     tier('Agentin 84', 'Stufe 13', 13, 140, 184, 1, 1.35, 4, '#e8e0ff', ['geisterketten'], ['geisterketten'], 'Die geheime Agentin zeigt, was sie kann: Geisterketten.'),
     tier('Honnari', 'Stufe 21', 21, 170, 190, 1, 1.55, 5, '#ff7a3a', ['honnariflamme'], ['honnariflamme'], 'Die Verwandlung: Flammen, deren Farbe ihrem Gefühl folgt.'),
-    tier('Flammenherz', 'Stufe 29 oder Hauptmann Kharn besiegen', 29, 200, 198, 2, 1.8, 6, '#ffb040', ['flammenfalke'], ['flammenfalke'], 'Sie formt ihre Flammen zu Gestalten.', KHARN)
+    tier('Flammenherz', 'Stufe 29 oder einen Zwischenboss besiegen', 29, 200, 198, 2, 1.8, 6, '#ffb040', ['flammenfalke'], ['flammenfalke'], 'Sie formt ihre Flammen zu Gestalten.', KHARN)
   ],
   passives: ['lebensraub'],
   art: { base: 'liora', fn: drawLiora, spec: SPEC_LIORA, h: 64, look: { weapon: 'bow', rage: 0 }, pals: [
@@ -229,7 +229,7 @@ defineEvoHero('fabian', {
     tier('Raten bricht durch', 'Stufe 6', 6, 130, 178, 1, 1.15, 3, '#ff5a5a', ['ratenschlag'], ['ratenschlag'], 'Die zweite Persönlichkeit übernimmt die Fäuste.'),
     tier('Geisterspeere', 'Stufe 13', 13, 155, 184, 1, 1.35, 4, '#c8d0ff', ['geisterspeer'], ['geisterspeer'], 'Raten wirft Geisterspeere.'),
     tier('Drei Kopien', 'Stufe 21', 21, 180, 190, 2, 1.55, 5, '#ff8a3a', ['kopiefeuer'], ['kopiefeuer'], 'Feuer, Eis und Regeneration zugleich.'),
-    tier('Blade-Oberhaupt', 'Stufe 29 oder Hauptmann Kharn besiegen', 29, 210, 196, 2, 1.8, 6, '#ffd27a', ['bladeschwur'], ['bladeschwur'], 'Er steht für seine Familie ein.', KHARN)
+    tier('Blade-Oberhaupt', 'Stufe 29 oder einen Zwischenboss besiegen', 29, 210, 196, 2, 1.8, 6, '#ffd27a', ['bladeschwur'], ['bladeschwur'], 'Er steht für seine Familie ein.', KHARN)
   ],
   passives: ['lebensraub'],
   art: { base: 'vorian', fn: drawVorian, spec: SPEC_VORIAN, h: 66, look: { glow: 0, plain: true }, pals: [
@@ -305,7 +305,7 @@ defineEvoHero('fex', {
     tier('Blutbarriere', 'Stufe 6', 6, 125, 182, 1, 1.15, 3, '#ff3a4e', ['blutbarriere'], ['blutbarriere'], 'Eine Wand aus Blut.'),
     tier('Puppenspieler', 'Stufe 13', 13, 150, 188, 1, 1.35, 4, '#ff6a7a', ['marionette'], ['marionette'], 'Wen seine Fäden halten, der tanzt für ihn.'),
     tier('Blutfäden', 'Stufe 21', 21, 175, 194, 2, 1.55, 5, '#ff3a4e', ['blutfaeden'], ['blutfaeden'], 'Blutverstärkte Fäden, rot wie seine Familie.'),
-    tier('Blutwaffe', 'Stufe 29 oder Hauptmann Kharn besiegen', 29, 205, 200, 2, 1.8, 6, '#c8203a', ['blutnadel'], ['blutnadel'], 'Aus seinem eigenen Kristall entsteht eine Waffe.', KHARN)
+    tier('Blutwaffe', 'Stufe 29 oder einen Zwischenboss besiegen', 29, 205, 200, 2, 1.8, 6, '#c8203a', ['blutnadel'], ['blutnadel'], 'Aus seinem eigenen Kristall entsteht eine Waffe.', KHARN)
   ],
   passives: ['lebensraub', 'kettenreaktion'],
   art: { base: 'nyx', fn: drawNyx, spec: SPEC_NYX, h: 58, look: { flow: 0.4 }, pals: [
@@ -383,7 +383,7 @@ defineEvoHero('leo', {
     tier('Aurensicht', 'Stufe 7', 7, 135, 178, 1, 1.15, 3, '#9affe6', ['aurensicht'], ['aurensicht'], 'Er liest Auren und weicht allem aus.'),
     tier('Qi-Klinge', 'Stufe 14', 14, 160, 184, 2, 1.35, 4, '#4ff0cc', ['qiklinge'], ['qiklinge'], 'Qi fließt in die Klinge.'),
     tier('Vampir-Ritter', 'Stufe 21', 21, 190, 190, 2, 1.6, 5, '#ff3a4e', ['qiblutschnitt'], ['qiblutschnitt'], 'Als Vampir wird er Ritter seiner Familie.'),
-    tier('Großmeister', 'Stufe 29 oder Hauptmann Kharn besiegen', 29, 220, 196, 3, 1.85, 6, '#ffffff', ['seelenschwert'], ['seelenschwert'], 'Seine Seelenwaffe erwacht vollständig.', KHARN)
+    tier('Großmeister', 'Stufe 29 oder einen Zwischenboss besiegen', 29, 220, 196, 3, 1.85, 6, '#ffffff', ['seelenschwert'], ['seelenschwert'], 'Seine Seelenwaffe erwacht vollständig.', KHARN)
   ],
   passives: ['lebensraub', 'eisenmeridiane'],
   art: { base: 'shen', fn: drawShen, spec: SPEC_SHEN, h: 66, look: { qi: 0 }, pals: [
@@ -458,7 +458,7 @@ defineEvoHero('leander', {
     tier('Nanobots', 'Stufe 6', 6, 115, 174, 1, 1.15, 3, '#c8d0d8', ['nanoschwarm'], ['nanoschwarm'], 'Seine Metall-Fähigkeit reicht bis zu Nanobots.'),
     tier('Angriffsanzug', 'Stufe 13', 13, 145, 180, 2, 1.35, 4, '#6affd8', ['energiekanone'], ['energiekanone'], 'Silber-grüner Anzug mit Energiewaffe.'),
     tier('Lichtkugeln', 'Stufe 21', 21, 170, 186, 2, 1.55, 5, '#fff4c0', ['lichtkugeln'], ['lichtkugeln'], 'Schwebende Lichtkugeln blenden die Nacht.'),
-    tier('Genie', 'Stufe 29 oder Hauptmann Kharn besiegen', 29, 200, 192, 3, 1.8, 6, '#6ab8ff', ['satellit'], ['satellit'], 'Laser aus dem Orbit.', KHARN)
+    tier('Genie', 'Stufe 29 oder einen Zwischenboss besiegen', 29, 200, 192, 3, 1.8, 6, '#6ab8ff', ['satellit'], ['satellit'], 'Laser aus dem Orbit.', KHARN)
   ],
   passives: [],
   art: { base: 'vorian', fn: drawVorian, spec: SPEC_VORIAN, h: 66, look: { glow: 0, plain: true }, pals: [
@@ -535,7 +535,7 @@ defineEvoHero('agathon', {
     tier('Schattenklon', 'Stufe 7', 7, 145, 182, 1, 1.2, 3, '#8a6aff', ['schattenklon'], ['schattenklon'], 'Sein Schatten kämpft als Klon mit.'),
     tier('Schattenreise', 'Stufe 14', 14, 170, 188, 2, 1.4, 4, '#a88aff', ['schattensprung'], ['schattensprung', 'schattenflut'], 'Er reist von Schatten zu Schatten.'),
     tier('Erster Anführer', 'Stufe 22', 22, 200, 194, 2, 1.65, 5, '#c8a0ff', ['schattenflut'], [], 'Stärker als jeder andere Anführer.'),
-    tier('Schattenheer', 'Stufe 30 oder Hauptmann Kharn besiegen', 30, 235, 200, 3, 1.9, 6, '#e8d8ff', ['schattenheer'], ['schattenheer'], 'Ein Heer aus Schatten gehorcht ihm.', KHARN)
+    tier('Schattenheer', 'Stufe 30 oder einen Zwischenboss besiegen', 30, 235, 200, 3, 1.9, 6, '#e8d8ff', ['schattenheer'], ['schattenheer'], 'Ein Heer aus Schatten gehorcht ihm.', KHARN)
   ],
   passives: [],
   art: { base: 'nyx', fn: drawNyx, spec: SPEC_NYX, h: 58, look: { flow: 0.6 }, pals: [
@@ -622,7 +622,7 @@ defineEvoHero('sam', {
     tier('Stufe 5', 'Stufe 6', 6, 120, 182, 0, 1.15, 3, '#9ae8c8', ['wirbelsturm'], ['wirbelsturm'], 'Er erreicht die Grenze seiner Fähigkeit.'),
     tier('Windmantel', 'Stufe 13', 13, 145, 190, 1, 1.35, 4, '#d8fff0', ['windmantel'], ['windmantel'], 'Der Wind schützt ihn.'),
     tier('Vampir', 'Stufe 21', 21, 175, 196, 1, 1.6, 5, '#ff5a6a', ['blutwind'], ['blutwind'], 'Er wird Vampir in Finns Familie.'),
-    tier('Stratege', 'Stufe 29 oder Hauptmann Kharn besiegen', 29, 205, 204, 2, 1.8, 6, '#ffe6a0', ['schlachtplan'], ['schlachtplan'], 'Er plant jeden Kampf.', KHARN)
+    tier('Stratege', 'Stufe 29 oder einen Zwischenboss besiegen', 29, 205, 204, 2, 1.8, 6, '#ffe6a0', ['schlachtplan'], ['schlachtplan'], 'Er plant jeden Kampf.', KHARN)
   ],
   passives: ['lebensraub'],
   art: { base: 'finnlook', fn: drawFinn, spec: SPEC_FINN, h: 64, look: { tier: 0 }, pals: [
@@ -696,7 +696,7 @@ defineEvoHero('mia', {
     tier('Himmelsenergie', 'Stufe 6', 6, 120, 182, 0, 1.15, 3, '#fff4c0', ['lichtsaeule2'], ['lichtsaeule2'], 'Das Licht schlägt als Säule ein.'),
     tier('Lichtschild', 'Stufe 13', 13, 145, 188, 1, 1.35, 4, '#fffadc', ['himmelsschild'], ['himmelsschild'], 'Licht schützt sie.'),
     tier('Sternenkind', 'Stufe 21', 21, 175, 194, 1, 1.55, 5, '#fff4c0', ['sternenregen'], ['sternenregen'], 'Sterne fallen für sie.'),
-    tier('Erbin des letzten Vampirs', 'Stufe 29 oder Hauptmann Kharn besiegen', 29, 205, 200, 2, 1.8, 6, '#ff5a6a', ['vatererbe'], ['vatererbe'], 'Das Blut ihres Vaters erwacht.', KHARN)
+    tier('Erbin des letzten Vampirs', 'Stufe 29 oder einen Zwischenboss besiegen', 29, 205, 200, 2, 1.8, 6, '#ff5a6a', ['vatererbe'], ['vatererbe'], 'Das Blut ihres Vaters erwacht.', KHARN)
   ],
   passives: ['lebensraub'],
   art: { base: 'liora', fn: drawLiora, spec: SPEC_LIORA, h: 60, look: { rage: 0, weapon: 'none' }, pals: [
@@ -795,3 +795,4 @@ humanArt('leander', [
   Object.assign({}, LEANDER_BASE, { top: '#6a7a78', topL: '#b8c8c4', topD: '#2a3432', eye: '#fff4c0', trim: '#fff4c0' }),
   Object.assign({}, LEANDER_BASE, { top: '#2a3a5a', topL: '#5a7aaa', topD: '#0a1428', eye: '#6ab8ff', trim: '#6ab8ff', coat: true, lining: '#3a6aaa' })
 ], 0.8);
+ICON_EXTRA.kristallsplitter = symIcon('star', '#8ad8ff');

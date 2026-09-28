@@ -410,13 +410,15 @@ function makeOffers() {
     out.push(pool.splice(idx, 1)[0]);
   }
   // Mindestens eine Bewegungs- oder Ueberlebenskarte, wenn moeglich nicht nur Schaden
-  while (out.length < 3) out.push({ id: out.length % 2 ? 'soulgift' : 'bloodcup', filler: true });
+  const FILL = ['bloodcup', 'soulgift', 'kristallsplitter'];
+  for (const f of FILL) if (out.length < 3) out.push({ id: f, filler: true });
   return out;
 }
 function giveCard(id, silent) {
   const G = GAME, p = G.p;
   if (id === 'bloodcup') { healPlayer(p.st.maxHp * 0.35); return; }
   if (id === 'soulgift') { G.souls += 25; return; }
+  if (id === 'kristallsplitter') { G.crystals = (G.crystals || 0) + 3; return; }
   if (FUSIONS[id]) {
     const F = FUSIONS[id];
     for (const c of F.consumes) delete p.ab[c];

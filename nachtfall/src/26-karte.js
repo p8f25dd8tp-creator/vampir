@@ -216,12 +216,8 @@ UI.homeKampagne = function () {
   if (!MAP3.placed) { MAP3.scroll = MAP3.target = this.selEtappe - 1; MAP3.placed = true; }
   const labels = ETAPPEN.map((ch, i) => { const n = i + 1, o = etappeOpen(n);
     return `<div class="mlab ${o ? '' : 'locked'}" data-n="${n}"><div class="mlt"><span class="mnum">${n}</span><b>${ch.title}</b></div>${o ? `<small>${starsOf(n)}/${lvCount(n) * 3} ★${etappeCleared(n) ? ' · geschafft' : ''}</small>` : ''}</div>${o ? '' : `<div class="mlab mlk" data-k="${n}"><div class="mlock">🔒</div><small>Schließe Etappe ${n - 1} ab</small></div>`}`; }).join('');
-  const D = dailySave(), dailyReady = DAILY.some((q) => !D.got[q.id] && (D.prog[q.id] || 0) >= q.goal);
-  const side = (act, sym, col, nm, dot, tab) => `<button class="sbtn" data-act="${act}"${tab ? ` data-tab="${tab}"` : ''}><img src="${tabIcon(sym, col)}">${dot ? '<i class="dot">!</i>' : ''}<span>${nm}</span></button>`;
   return `<div class="map3d"><div class="mapslot"></div><div class="maplabels">${labels}</div>
-      <div class="mside l">${side('home', 'tornado', '#6affd8', 'Aufgaben', dailyReady, 'events')}${side('tower', 'shield', '#c8a0ff', 'Boss-Turm')}${side('endless', 'eye', '#ff9aaa', 'Endlos')}</div>
-      <div class="mside r">${side('home', 'clone', '#ff9aaa', 'Helden', false, 'helden')}${side('home', 'blade', '#8ad8ff', 'Schmiede', false, 'ausruestung')}</div>
-      <button class="backcur" data-act="mapcur" hidden>Zur aktuellen Etappe<br><span>⌄</span></button></div>
+      <button class="backcur" data-act="mapcur" hidden>Zur aktuellen Etappe <span>⌄</span></button></div>
     ${this.campSheet()}`;
 };
 UI.campSheet = function () {

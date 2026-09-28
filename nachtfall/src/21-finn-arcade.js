@@ -15,10 +15,10 @@ const FINN_ARC = [
   { lv: 1, txt: 'das Buch finden' },
   { lv: 6, txt: 'Stufe 6' },
   { lv: 12, txt: 'Stufe 12' },
-  { lv: 19, txt: 'Stufe 19 oder Hauptmann Kharn besiegen', ev: (G) => G.miniKilled },
+  { lv: 19, txt: 'Stufe 19 oder einen Zwischenboss besiegen', ev: (G) => G.miniKilled },
   { lv: 26, txt: 'Stufe 26' },
-  { lv: 33, txt: 'Stufe 33 oder wenn Vaelgor erwacht', ev: (G) => !!G.boss },
-  { lv: 40, txt: 'Stufe 40 oder Vaelgor unter halber Kraft', ev: (G) => G.boss && G.boss.hp < G.boss.maxHp * 0.5 }
+  { lv: 33, txt: 'Stufe 33 oder wenn der Boss erscheint', ev: (G) => !!G.boss },
+  { lv: 40, txt: 'Stufe 40 oder den Boss unter halbe Kraft bringen', ev: (G) => G.boss && G.boss.hp < G.boss.maxHp * 0.5 }
 ];
 // Nur Finns eigene Faehigkeiten (angelehnt an seine Systemfaehigkeiten im Roman) und allgemeine Passive
 const FINN_ARC_POOL = [
@@ -44,13 +44,13 @@ finnGrant = function (p, tier) {
 const _offersFinnArc = makeOffers;
 makeOffers = function () {
   const out = _offersFinnArc();
-  if (GAME.finnArcade || (HEROES[GAME.p.hero] && HEROES[GAME.p.hero].evoHero)) for (let i = 0; i < out.length; i++) if (out[i].fusion) out[i] = { id: i % 2 ? 'soulgift' : 'bloodcup', filler: true };
+  if (GAME.finnArcade || (HEROES[GAME.p.hero] && HEROES[GAME.p.hero].evoHero)) { const used = new Set(out.map((o) => o.id)); for (let i = 0; i < out.length; i++) if (out[i].fusion) { const f = ['bloodcup', 'soulgift', 'kristallsplitter'].find((k) => !used.has(k)); used.add(f); out[i] = { id: f, filler: true }; } }
   return out;
 };
 
 // Finn in die Arcade-Heldenwahl (vor Sen Draco)
 (function () { if (!HERO_ORDER.includes('finn')) { const i = HERO_ORDER.indexOf('draco'); HERO_ORDER.splice(i >= 0 ? i : HERO_ORDER.length, 0, 'finn'); } })();
-HEROES.finn.mech = { name: 'Evolution im Lauf', desc: 'Jeder Lauf beginnt als Mensch ohne Kraft: Finde das Buch und werde zum Halbling. Danach entwickelt sich Finn im Lauf weiter wie im Roman — Vampir (Stufe 6), Vampiradliger (Stufe 12), Vampirlord (Stufe 19 oder Sieg über Kharn), Himmlischer Vampirlord (Stufe 26), Gottbezwinger (Stufe 33 oder wenn Vaelgor erwacht) und schließlich Der letzte Vampir. Jede Form bringt mehr Leben, Tempo, Kraft, neue eigene Fähigkeiten (Blutspray, Hammerschlag, Blitzschritt, Schattenfesseln, Blutsicheltritt, Blutkugeln, Blutwald, Himmelsstrahl, Götterfall) und mehr Plätze. Als letzter Vampir erreicht jede Fähigkeit sofort ihre Ulti.' };
+HEROES.finn.mech = { name: 'Evolution im Lauf', desc: 'Finn beginnt als Mensch und muss das Buch finden. Danach wächst er im Lauf Form für Form – bis zur höchsten Form, die du in der Kampagne freigeschaltet hast. Jede Form bringt mehr Leben, Tempo und Kraft, neue eigene Fähigkeiten und mehr Plätze.' };
 
 const _poolOfArc = HEROES.finn.poolOf;
 HEROES.finn.poolOf = function (p) {

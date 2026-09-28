@@ -42,6 +42,7 @@ function lvDiff(l) { const k = l - 1; return { hp: 1 + 0.14 * k, count: 1 + 0.05
 /* ============================================================ Helden ueber die Kampagne */
 const HERO_UNLOCK = { finn: 0, lena: '1-5', leo: '1-7', emma: '1-8', leander: '1-9', fabian: '1-10', sil: '1-14', peter: '1-15', fex: '2-2', agathon: '2-9', sam: '2-10', chris: 5, mia: 10, draco: 13 };
 function unlockDone(u) { if (!u) return true; if (typeof u === 'number') return etappeCleared(u); const [e, l] = u.split('-').map(Number); return lvStars(e, l) > 0; }
+function unlockShort(u) { if (u === undefined || u === 0) return ''; if (typeof u === 'number') return 'nach Etappe ' + u; const [e, l] = u.split('-'); return 'Etappe ' + e + ' · Stufe ' + l; }
 function unlockText(u) { if (typeof u === 'number') return `Etappe ${u} „${ET(u).title}“ abschließen`; const [e, l] = u.split('-').map(Number); return `Etappe ${e}, Stufe ${l} „${lvDef(e, l).name}“ schaffen`; }
 const HERO_UNLOCK_ETAPPE = {}; for (const id in HERO_UNLOCK) { const u = HERO_UNLOCK[id]; HERO_UNLOCK_ETAPPE[id] = typeof u === 'number' ? u : +u.split('-')[0]; }
 for (const id in HERO_UNLOCK) {
@@ -287,17 +288,18 @@ UI.showHome = function (tab) {
   const C = campSave(); dailySave();
   if (!isUnlocked(C.hero)) C.hero = 'finn';
   MENU = null; setTheme(this.tab === 'kampagne' ? ET(this.selEtappe || C.etappe || 1).theme : 'friedhof'); menuScene();
-  const head = `<div class="hometop"><div class="hprof"><canvas id="homehero"></canvas><div><b>${HEROES[C.hero].name}</b><small>${starsTotal()} ★</small></div></div>
+  const head = `<div class="hometop"><div class="hprof"><canvas id="homehero"></canvas><div><b>${HEROES[C.hero].name}</b><small title="Gesammelte Sterne">${starsTotal()} ★</small></div></div>
     <div class="hcur"><span style="color:#d8c0ff">✦ ${SAVE.souls}</span><span style="color:#8ad8ff">◆ ${C.crystals}</span></div>
     <div class="hbtns"><button class="ibtn" data-act="codex">📖</button><button class="ibtn" data-act="settings">⚙</button></div></div>`;
   const body = ({ kampagne: () => this.homeKampagne(), helden: () => this.homeHelden(), ausruestung: () => this.homeGear(), familie: () => this.homeFamilie(), system: () => this.homeSystem(), events: () => this.homeEvents() })[this.tab]();
-  const bar = `<div class="tabbar">${TABS.map(([id, nm, sym, col]) => `<button class="tabb ${id === this.tab ? 'on' : ''}" data-act="home" data-tab="${id}"><img src="${tabIcon(sym, col)}"><span>${nm}</span></button>`).join('')}</div>`;
+  const bar = `<div class="tabbar">${TABS.map(([id, nm, sym, col]) => `<button class="tabb ${id === this.tab ? 'on' : ''}" data-act="home" data-tab="${id}"><img src="${tabIcon(sym, col)}"><span>${nm}</span>${id === 'events' && dailyReadyAny() ? '<i class="dot">!</i>' : ''}</button>`).join('')}</div>`;
   const d = this.show(`<div class="home">${head}<div class="hbody">${body}</div>${bar}</div>`, 'home');
   const hc = $('#homehero'); if (hc) { const r = hc.getBoundingClientRect(); hc.width = Math.round(r.width * VIEW.dpr); hc.height = Math.round(r.height * VIEW.dpr); this.previews.push({ c: hc, id: C.hero, t: 0 }); }
   d.querySelectorAll('canvas[data-prev]').forEach((c) => { const r = c.getBoundingClientRect(); c.width = Math.round(r.width * VIEW.dpr); c.height = Math.round(r.height * VIEW.dpr); this.previews.push({ c, id: c.dataset.prev, t: Math.random() * 5 }); });
   d.querySelectorAll('canvas[data-boss]').forEach((c) => drawBossThumb(c, +c.dataset.boss));
   return d;
 };
+function dailyReadyAny() { const D = dailySave(); return DAILY.some((q) => !D.got[q.id] && (D.prog[q.id] || 0) >= q.goal); }
 function starsTotal() { let s = 0; for (const k in campSave().stars) s += campSave().stars[k]; return s; }
 function drawBossThumb(c, n) {
   const C2 = CHAPTERS[ET(n).ch - 1], r = c.getBoundingClientRect(); c.width = Math.round(r.width * VIEW.dpr); c.height = Math.round(r.height * VIEW.dpr);
@@ -324,7 +326,7 @@ UI.homeKampagne = function () {
 UI.homeHelden = function () {
   const C = campSave();
   if (!this.selHero || !HERO_ORDER.includes(this.selHero)) this.selHero = C.hero;
-  const cards = HERO_ORDER.map((id) => `<div class="hcard ${id === this.selHero ? 'sel' : ''} ${isUnlocked(id) ? '' : 'locked'}" data-act="hsel" data-id="${id}"><canvas data-prev="${id}"></canvas>${isUnlocked(id) ? '' : '<div class="lock">🔒</div>'}${id === C.hero ? '<div class="hmark">✔</div>' : ''}<div class="nm"${HEROES[id].name.length > 16 ? ' style="font-size:0.66em"' : ''}>${HEROES[id].name}</div></div>`).join('');
+  const cards = HERO_ORDER.map((id) => `<div class="hcard ${id === this.selHero ? 'sel' : ''} ${isUnlocked(id) ? '' : 'locked'}" data-act="hsel" data-id="${id}"><canvas data-prev="${id}"></canvas>${isUnlocked(id) ? '' : '<div class="lock">🔒</div>'}${id === C.hero ? '<div class="hmark">✔</div>' : ''}<div class="nm"${HEROES[id].name.length > 16 ? ' style="font-size:0.66em"' : ''}>${HEROES[id].name}${isUnlocked(id) ? '' : `<small class="hunl">${unlockShort(HERO_UNLOCK[id])}</small>`}</div></div>`).join('');
   const H = HEROES[this.selHero], un = isUnlocked(this.selHero);
   return `<div class="heroes">${cards}</div>
     <div class="hmini panel"><div class="ht"><h3>${H.name}</h3><span class="title2">${H.title}</span></div>
@@ -332,7 +334,7 @@ UI.homeHelden = function () {
       ${H.evoPath ? H.evoPath() : H.evo ? finnSelectHtml() : ''}
       <div class="blk"><b class="lbl">MECHANIK: ${H.mech.name.toUpperCase()}</b><p>${H.mech.desc}</p></div>
       <div class="blk"><b class="lbl">SPEZIAL: ${H.ult.name.toUpperCase()}</b><p>${H.ult.desc}</p></div>
-      ${un ? `<button class="btn primary" data-act="hpick" ${this.selHero === C.hero ? 'disabled' : ''}>${this.selHero === C.hero ? 'Ausgewählt' : 'Auswählen'}</button>` : `<div class="blk" style="color:#ffb0b0">🔒 ${H.unlock.desc}</div>`}</div>`;
+      ${un ? (this.selHero === C.hero ? '<div class="selbadge">✔ Ausgewählt</div>' : '<button class="btn primary" data-act="hpick">Auswählen</button>') : `<div class="blk" style="color:#ffb0b0">🔒 Freischalten: ${HERO_UNLOCK[this.selHero] !== undefined ? unlockText(HERO_UNLOCK[this.selHero]) : H.unlock.desc}</div>`}</div>`;
 };
 UI.homeGear = function () {
   const C = campSave();
@@ -370,8 +372,8 @@ UI.homeSystem = function () {
 UI.homeEvents = function () {
   const C = campSave(), D = dailySave(), towerNext = Math.min(CHAPTERS.length, (C.tower || 0) + 1), towerOpen = chapterCleared(towerNext) || SAVE.settings.testUnlock;
   const daily = DAILY.map((q) => { const pr = Math.min(q.goal, D.prog[q.id] || 0), done = pr >= q.goal, got = D.got[q.id];
-    return `<div class="famrow"><div class="gtxt"><b>${q.text}</b><small>${pr} / ${q.goal} · Belohnung ${q.reward.souls} ✦ ${q.reward.crystals} ◆</small></div><button class="btn small ${done && !got ? 'primary' : ''}" data-act="dailyget" data-id="${q.id}" ${done && !got ? '' : 'disabled'}>${got ? '✔' : 'Abholen'}</button></div>`; }).join('');
-  return `<div class="evcard" style="--ec:#6a2a4a"><div><b>Nacht auf dem Aschefriedhof</b><small>Die klassische Nacht: zehn Minuten Horden, dann Vaelgor. Längste Nacht: ${fmtTime(C.endless || 0)}</small></div><button class="btn primary" data-act="endless">Starten</button></div>
+    return `<div class="famrow"><div class="gtxt"><b>${q.text}</b><small>${pr} / ${q.goal} · Belohnung: <span style="color:#d8c0ff">${q.reward.souls} Seelen ✦</span> · <span style="color:#8ad8ff">${q.reward.crystals} Kristalle ◆</span></small></div><button class="btn small ${done && !got ? 'primary' : ''}" data-act="dailyget" data-id="${q.id}" ${done && !got ? '' : 'disabled'}>${got ? '✔' : 'Abholen'}</button></div>`; }).join('');
+  return `<div class="evcard" style="--ec:#6a2a4a"><div><b>Die endlose Nacht</b><small>Horden ohne Ende – wie lange hältst du durch?<br>Beste Nacht: ${fmtTime(C.endless || 0)}</small></div><button class="btn primary" data-act="endless">Starten</button></div>
     <div class="evcard" style="--ec:#4a2a6a"><div><b>Boss-Turm · Stock ${towerNext}</b><small>${towerOpen ? `Die Bosse der Kampagne, stärker als zuvor. Nächster: ${ENEMIES[CHAPTERS[towerNext - 1].roles.boss].name}` : `Stock ${towerNext} öffnet nach Etappe ${ET_OF_CH[towerNext] || '?'}.`} · Höchster Stock: ${C.tower || 0}</small></div><button class="btn primary" data-act="tower" ${towerOpen ? '' : 'disabled'}>Starten</button></div>
     <div class="syshead" style="margin:10px 4px 6px">TÄGLICHE AUFGABEN</div><div class="gearlist">${daily}</div>`;
 };

@@ -905,7 +905,7 @@ UI.showSettings = function () {
   if (box) {
     const row = document.createElement('div'); row.className = 'setrow';
     row.innerHTML = `<span>3D-Grafik<br><small style="color:var(--dim)">Held, Gegner und Welt in 3D. Aus = klassische 2D-Grafik (schneller auf alten Handys).</small></span><div class="toggle interactive ${SAVE.settings.gfx3d !== false ? 'on' : ''}" data-act="toggle" data-k="gfx3d"></div>`;
-    box.insertBefore(row, box.firstChild);
+    box.insertBefore(row, first);
     row.querySelector('[data-act]').addEventListener('click', () => { AudioSys.init(); sfx('click'); this.act('toggle', { k: 'gfx3d' }); });
   }
   return d;

@@ -285,7 +285,7 @@ defineEvoHero('peter', {
     { name: 'Ghul', txt: 'Stufe 6', lv: 6, hp: 125, speed: 160, armor: 1, might: 1.15, slots: 3, col: '#9aff9a', rim: '#9aff9a', grants: ['ghulbiss'], unlocks: ['ghulbiss'], desc: 'Das Blutritual rettet ihn — der Hunger bleibt. Bisse heilen.' },
     { name: 'Wight', txt: 'Stufe 13', lv: 13, hp: 170, speed: 168, armor: 2, might: 1.35, slots: 4, col: '#e8e4d8', rim: '#e8e4d8', grants: ['wightfaust'], unlocks: ['wightfaust', 'doppelklingen'], desc: 'Untot, kein Herzschlag, vielfache Menschenkraft.' },
     { name: 'Maskenträger', txt: 'Stufe 21', lv: 21, hp: 200, speed: 175, armor: 2, might: 1.55, slots: 5, col: '#b8a0ff', rim: '#b8a0ff', grants: ['maske'], unlocks: ['maske'], desc: 'Seine Seelenwaffe erwacht: eine Maske, die Gestalten formt.' },
-    { name: 'Wight-Anführer', txt: 'Stufe 29 oder Hauptmann Kharn besiegen', lv: 29, ev: (G) => G.miniKilled, hp: 245, speed: 182, armor: 3, might: 1.8, slots: 6, col: '#6aff8a', rim: '#6aff8a', grants: ['kleinewights'], unlocks: ['kleinewights'], desc: 'Er führt eigene kleine Wights in den Kampf.' }
+    { name: 'Wight-Anführer', txt: 'Stufe 29 oder einen Zwischenboss besiegen', lv: 29, ev: (G) => G.miniKilled, hp: 245, speed: 182, armor: 3, might: 1.8, slots: 6, col: '#6aff8a', rim: '#6aff8a', grants: ['kleinewights'], unlocks: ['kleinewights'], desc: 'Er führt eigene kleine Wights in den Kampf.' }
   ],
   passives: ['lebensraub'],
   tick(p) { if ((p.tier || 0) >= 1 && GAME.kills > (p.lastK || 0)) { healPlayer((GAME.kills - (p.lastK || 0)) * 0.4); } p.lastK = GAME.kills; },
@@ -380,7 +380,7 @@ defineEvoHero('emma', {
     { name: 'Schwertschülerin', txt: 'Stufe 7', lv: 7, hp: 120, speed: 176, armor: 1, might: 1.15, slots: 3, col: '#bfe8ff', grants: ['eisschwert'], unlocks: ['eisschwert'], desc: 'Beim blinden Schwertmeister lernt sie, Kraft in die Klinge zu legen.' },
     { name: 'Dhampir', txt: 'Stufe 14', lv: 14, hp: 150, speed: 184, armor: 1, might: 1.35, slots: 4, col: '#ffd84a', grants: ['dhampirklinge'], unlocks: ['dhampirklinge'], desc: 'Sie wird verwandelt — und das System erkennt eine Dhampir. Gelbe Energie.' },
     { name: 'Kettenklinge', txt: 'Stufe 21', lv: 21, hp: 175, speed: 190, armor: 2, might: 1.55, slots: 5, col: '#e8f4ff', grants: ['frostkette'], unlocks: ['frostkette'], desc: 'Ketten- und Schwerttechnik: sie zieht Gegner heran.' },
-    { name: 'Drachenaugen', txt: 'Stufe 29 oder Hauptmann Kharn besiegen', lv: 29, ev: (G) => G.miniKilled, hp: 205, speed: 198, armor: 2, might: 1.8, slots: 6, col: '#ffb020', grants: ['drachenblick'], unlocks: ['drachenblick'], desc: 'Ihre Augen durchschauen jede Schwäche.' }
+    { name: 'Drachenaugen', txt: 'Stufe 29 oder einen Zwischenboss besiegen', lv: 29, ev: (G) => G.miniKilled, hp: 205, speed: 198, armor: 2, might: 1.8, slots: 6, col: '#ffb020', grants: ['drachenblick'], unlocks: ['drachenblick'], desc: 'Ihre Augen durchschauen jede Schwäche.' }
   ],
   passives: ['lebensraub'],
   art: { base: 'liora', fn: drawLiora, spec: SPEC_LIORA, h: 64, look: { weapon: 'sword', rage: 0 }, pals: [
@@ -477,7 +477,7 @@ defineEvoHero('chris', {
     { name: 'Qi-Stufe 2', txt: 'Stufe 8', lv: 8, hp: 135, speed: 182, armor: 1, might: 1.18, slots: 3, col: '#6affd8', grants: ['qiwelle'], unlocks: ['qiwelle'], desc: 'Qi verlässt den Körper und wird blitzschnell umgelenkt.' },
     { name: 'Halbgott-Klingen', txt: 'Stufe 15', lv: 15, hp: 160, speed: 188, armor: 2, might: 1.4, slots: 4, col: '#ff5a3a', grants: ['klingensturm'], unlocks: ['klingensturm'], desc: 'Die Klingen auf seinem Rücken erwachen und stärken ihn.' },
     { name: 'Qi-Stufe 3', txt: 'Stufe 23', lv: 23, hp: 185, speed: 194, armor: 2, might: 1.6, slots: 5, col: '#9affe6', grants: ['qireinigung'], unlocks: ['qireinigung'], desc: 'Er stößt fremde Energie einfach wieder aus.' },
-    { name: 'Roter Schnitter', txt: 'Stufe 31 oder Hauptmann Kharn besiegen', lv: 31, ev: (G) => G.miniKilled, hp: 215, speed: 202, armor: 3, might: 1.85, slots: 6, col: '#ff2a2a', grants: ['schnitter'], unlocks: ['schnitter'], desc: 'Die Nummer eins — gefürchtet als Roter Schnitter.' }
+    { name: 'Roter Schnitter', txt: 'Stufe 31 oder einen Zwischenboss besiegen', lv: 31, ev: (G) => G.miniKilled, hp: 215, speed: 202, armor: 3, might: 1.85, slots: 6, col: '#ff2a2a', grants: ['schnitter'], unlocks: ['schnitter'], desc: 'Die Nummer eins — gefürchtet als Roter Schnitter.' }
   ],
   passives: ['eisenmeridiane'],
   tick(p, dt) { if (p.alive) healPlayer(0.5 * ((p.tier || 0) + 1) * dt, true); },
@@ -574,7 +574,7 @@ defineEvoHero('sil', {
     { name: 'Drei Kräfte', txt: 'Stufe 6', lv: 6, hp: 105, speed: 172, armor: 0, might: 1.15, slots: 3, col: '#ffb040', grants: ['feuerstoss'], unlocks: ['eissplitter', 'erdspeer'], desc: 'Feuer, Eis und Erde zugleich.' },
     { name: 'Verschmelzung', txt: 'Stufe 13', lv: 13, hp: 130, speed: 178, armor: 1, might: 1.35, slots: 4, col: '#e8e8ff', grants: ['elementfusion'], unlocks: ['elementfusion'], desc: 'Er verbindet Kräfte zu etwas Neuem.' },
     { name: 'Sechs Kräfte', txt: 'Stufe 21', lv: 21, hp: 155, speed: 184, armor: 1, might: 1.55, slots: 6, col: '#d8e0f0', grants: ['metallkugeln'], unlocks: ['metallkugeln'], desc: 'Sechs Kräfte gleichzeitig.' },
-    { name: 'Sil allein', txt: 'Stufe 29 oder Hauptmann Kharn besiegen', lv: 29, ev: (G) => G.miniKilled, hp: 190, speed: 192, armor: 2, might: 1.85, slots: 6, col: '#ffffff', grants: [], unlocks: [], desc: 'Die anderen beiden haben ihren Platz aufgegeben: Sils volle Kraft. Alle Fähigkeiten 20 % schneller.' }
+    { name: 'Sil allein', txt: 'Stufe 29 oder einen Zwischenboss besiegen', lv: 29, ev: (G) => G.miniKilled, hp: 190, speed: 192, armor: 2, might: 1.85, slots: 6, col: '#ffffff', grants: [], unlocks: [], desc: 'Die anderen beiden haben ihren Platz aufgegeben: Sils volle Kraft. Alle Fähigkeiten 20 % schneller.' }
   ],
   passives: [],
   art: { base: 'vorian', fn: drawVorian, spec: SPEC_VORIAN, h: 66, look: { glow: 0, plain: true }, pals: [

@@ -3032,7 +3032,7 @@ const HEROES = {
       { name: 'Wanderer', desc: 'Qi-Kette + Nachbilder + Nebelgang: in Bewegung bleiben, Klone kämpfen lassen.' }
     ],
     pool: ['qihand', 'qikette', 'blutnova', 'blutwisch', 'bluternte', 'schattenflammen', 'nachbilder', 'nachtschlund', 'eisenmeridiane', 'lebensraub', 'kettenreaktion', 'vampirblut', 'nebelgang', 'grabesmacht', 'seelenmagnet'],
-    unlock: { desc: 'Besiege Vaelgor, den Gruftkoloss — oder opfere 1500 Seelen.', cost: 1500, check: (s) => s.stats.bossKills >= 1 }
+    unlock: { desc: 'Besiege einen Etappenboss — oder opfere 1500 Seelen.', cost: 1500, check: (s) => s.stats.bossKills >= 1 }
   }
 };
 const HERO_ORDER = ['vorian', 'liora', 'nyx', 'shen'];
@@ -3209,8 +3209,8 @@ const ENEMIES = {
   knight: { name: 'Grabritter', hp: 58, spd: 36, dmg: 13, r: 14, xp: 4, mass: 3, art: 'knight', scale: 1, armor: 2 },
   witch: { name: 'Laternenwitwe', hp: 22, spd: 44, dmg: 9, r: 12, xp: 3, mass: 1, art: 'witch', scale: 1, ranged: true, flier: true },
   brute: { name: 'Aasbrocken', hp: 110, spd: 30, dmg: 16, r: 18, xp: 7, mass: 5, art: 'brute', scale: 1, splits: 3 },
-  captain: { name: 'Hauptmann Kharn', hp: 1600, spd: 42, dmg: 20, r: 22, xp: 60, mass: 30, art: 'captain', scale: 1.9, armor: 4, miniboss: true },
-  boss: { name: 'Vaelgor, der Gruftkoloss', hp: 10000, spd: 52, dmg: 28, r: 44, xp: 0, mass: 200, art: 'boss', scale: 1, boss: true, armor: 3 }
+  captain: { name: 'Hauptmann der Horde', hp: 1600, spd: 42, dmg: 20, r: 22, xp: 60, mass: 30, art: 'captain', scale: 1.9, armor: 4, miniboss: true },
+  boss: { name: 'Der Gruftkoloss', hp: 10000, spd: 52, dmg: 28, r: 44, xp: 0, mass: 200, art: 'boss', scale: 1, boss: true, armor: 3 }
 };
 
 /* Lauf-Ablauf (Sekunden). Gewichte = Anteil der Gegnertypen beim Nachschub. */
@@ -3234,13 +3234,13 @@ const EVENTS = [
   { t: 150, kind: 'ring', type: 'ghoul', n: 34, text: 'Die Toten umzingeln dich …' },
   { t: 210, kind: 'elite', type: 'knight' },
   { t: 270, kind: 'swarm', type: 'bat', n: 40, text: 'Die Nacht wird schwarz vor Flügeln!' },
-  { t: 300, kind: 'miniboss', type: 'captain', text: 'Hauptmann Kharn erhebt sich!' },
+  { t: 300, kind: 'miniboss', type: 'captain', text: 'Ein Hauptmann der Horde erhebt sich!' },
   { t: 380, kind: 'ring', type: 'knight', n: 18, text: 'Ein Ring aus Grabrittern!' },
   { t: 420, kind: 'elite', type: 'brute' },
   { t: 450, kind: 'swarm', type: 'bat', n: 50, text: 'Blutschwarm!' },
   { t: 500, kind: 'ring', type: 'ghoul', n: 60, text: 'Die Gruft öffnet sich …' },
   { t: 510, kind: 'elite', type: 'witch' },
-  { t: BOSS_AT, kind: 'boss', type: 'boss', text: 'Die Glocke läutet. Vaelgor erwacht.' }
+  { t: BOSS_AT, kind: 'boss', type: 'boss', text: 'Die Glocke läutet. Der Boss erwacht.' }
 ];
 function hpScale(t) { const m = t / 60; return 1 + m * 0.3 + m * m * 0.034; }
 
@@ -5316,13 +5316,15 @@ function makeOffers() {
     out.push(pool.splice(idx, 1)[0]);
   }
   // Mindestens eine Bewegungs- oder Ueberlebenskarte, wenn moeglich nicht nur Schaden
-  while (out.length < 3) out.push({ id: out.length % 2 ? 'soulgift' : 'bloodcup', filler: true });
+  const FILL = ['bloodcup', 'soulgift', 'kristallsplitter'];
+  for (const f of FILL) if (out.length < 3) out.push({ id: f, filler: true });
   return out;
 }
 function giveCard(id, silent) {
   const G = GAME, p = G.p;
   if (id === 'bloodcup') { healPlayer(p.st.maxHp * 0.35); return; }
   if (id === 'soulgift') { G.souls += 25; return; }
+  if (id === 'kristallsplitter') { G.crystals = (G.crystals || 0) + 3; return; }
   if (FUSIONS[id]) {
     const F = FUSIONS[id];
     for (const c of F.consumes) delete p.ab[c];
@@ -6188,6 +6190,9 @@ const UI = {
       case 'reroll': return rerollCards();
       case 'resume': return togglePause(false);
       case 'giveup': return giveUp();
+      case 'giveupask': return this.show(`<div class="box panel"><h2>Lauf aufgeben?</h2><p style="text-align:center">Der Fortschritt dieses Laufs geht verloren.</p><div class="btns"><button class="btn primary" data-act="pauseback">Weiterspielen</button><button class="btn ghost" data-act="giveup">Ja, aufgeben</button></div></div>`, 'pause', 'dim');
+      case 'pauseback': return this.showPause();
+      case 'pset': { const k = ds.k, S0 = SAVE.settings; if (k === 'music' || k === 'sfx') S0[k] = S0[k] >= 1 ? 0 : Math.round((S0[k] + 0.25) * 4) / 4; else S0[k] = !S0[k]; writeSave(); AudioSys.applyVolumes(); return this.showPause(); }
       case 'again': return startGame(GAME.hero);
       case 'buymeta': {
         const M = META[ds.id], lv = SAVE.meta[ds.id] || 0;
@@ -6323,6 +6328,7 @@ const UI = {
   updateHud() {
     if (!this.hud || !GAME) return;
     const G = GAME, p = G.p, H = HEROES[p.hero];
+    { const ub = $('#ubtn'), nu = p.hero === 'finn' && !p.tier ? 'hidden' : ''; if (ub && ub.style.visibility !== nu) ub.style.visibility = nu; }
     if (!this._hintMoved && G.t > 1.5 && Math.hypot(p.vx, p.vy) > 30) { this._hintMoved = true; const h = $('#hint'); if (h) setTimeout(() => { h.style.opacity = '0'; }, 1500); }
     this.set('xpf', (G.xp / G.xpNext * 100).toFixed(1) + '%', 'width');
     this.set('lvl', 'STUFE ' + G.level);
@@ -6402,8 +6408,8 @@ const UI = {
     const G = GAME, p = G.p;
     const html = offers.map((o, i) => {
       if (o.filler) {
-        const nm = o.id === 'bloodcup' ? 'Blutkelch' : 'Seelenbeutel';
-        const ds = o.id === 'bloodcup' ? 'Heilt sofort 35 % deines Lebens.' : '+25 Seelen für den Altar der Nacht.';
+        const FT = { bloodcup: ['Blutkelch', 'Heilt sofort 35 % deines Lebens.'], soulgift: ['Seelenbeutel', '+25 Seelen.'], kristallsplitter: ['Kristallsplitter', '+3 Bestienkristalle für die Schmiede.'] };
+        const [nm, ds] = FT[o.id] || FT.bloodcup;
         return `<button class="card" data-act="card" data-i="${i}"><div class="ci"><img src="${icon(o.id)}"></div><div class="cb"><div class="cn">${nm}</div><div class="cm"><span class="tag t-none">GABE</span></div><div class="cd">${ds}</div></div></button>`;
       }
       if (o.fusion) {
@@ -6441,17 +6447,24 @@ const UI = {
       const ds = FUSIONS[k] ? FUSIONS[k].desc : CARDS[k] ? CARDS[k].lv.slice(0, p.ab[k].lvl).join(' ') : (FINN_TIERS.find((T) => T.grants.includes(k)) || { desc: '' }).desc;
       return `<div class="bl"><img src="${icon(k)}"><div><div class="bn2">${nm} ${FUSIONS[k] || !CARDS[k] ? '' : '· Stufe ' + p.ab[k].lvl}</div><div style="font-size:14px;color:#cdbdb0">${ds}</div></div></div>`;
     }).join('') + Object.keys(p.passives).map((k) => `<div class="bl"><img src="${icon(k)}"><div><div class="bn2">${CARDS[k].name} · Stufe ${p.passives[k]}</div></div></div>`).join('');
-    // moegliche Fusionen fuer diesen Helden
-    const fus = Object.keys(FUSIONS).filter((f) => FUSIONS[f].heroes.includes(p.hero)).map((f) => {
+    // nur Fusionen, zu denen schon mindestens eine Zutat vorhanden ist
+    const has = (r) => { if (r.startsWith('any')) { const sc = { anyBlood: 'blood', anyShadow: 'shadow', anyQi: 'qi' }[r]; let m = 0; for (const k in p.ab) if (CARDS[k] && CARDS[k].school === sc) m = Math.max(m, p.ab[k].lvl); return m; } return p.ab[r] ? p.ab[r].lvl : (p.passives[r] || 0); };
+    const fus = Object.keys(FUSIONS).filter((f) => FUSIONS[f].heroes.includes(p.hero) && !p.ab[f] && Object.keys(FUSIONS[f].req).some((r) => has(r) > 0)).map((f) => {
       const F = FUSIONS[f];
-      const req = Object.keys(F.req).map((r) => r.startsWith('any') ? `eine ${ {anyBlood: 'Blut', anyShadow: 'Schatten', anyQi: 'Qi'}[r] }-Fähigkeit St. ${F.req[r]}` : `${CARDS[r].name} St. ${F.req[r]}`).join(' + ');
-      return `<li><b style="color:${p.ab[f] ? '#7dff9a' : '#ffe6a0'}">${p.ab[f] ? '✓ ' : ''}${F.name}</b> — ${req}</li>`;
+      const req = Object.keys(F.req).map((r) => { const n = r.startsWith('any') ? `${{ anyBlood: 'Blut', anyShadow: 'Schatten', anyQi: 'Qi' }[r]}-Fähigkeit` : CARDS[r].name, v = Math.min(has(r), F.req[r]); return `<span style="color:${v >= F.req[r] ? '#7dff9a' : '#e8d8c8'}">${n} ${v}/${F.req[r]}</span>`; }).join(' + ');
+      return `<li><b style="color:#ffe6a0">${F.name}</b> — ${req}</li>`;
     }).join('');
+    const got = Object.keys(p.ab).filter((f) => FUSIONS[f]).map((f) => `<li><b style="color:#7dff9a">✓ ${FUSIONS[f].name}</b></li>`).join('');
+    const vol = (k, nm) => `<button class="btn small ghost" data-act="pset" data-k="${k}">${nm}: ${Math.round(SAVE.settings[k] * 100)} %</button>`;
+    const tog = (k, nm) => `<button class="btn small ghost" data-act="pset" data-k="${k}">${nm}: ${SAVE.settings[k] ? 'an' : 'aus'}</button>`;
     this.show(`<div class="box panel"><h2>Pause</h2>
-      <div class="kv"><span>Zeit</span><span>${fmtTime(G.t)}</span><span>Stufe</span><span>${G.level}</span><span>Besiegt</span><span>${G.kills}</span><span>Reaktionen</span><span>${G.stats.reactions}</span></div>
-      <div class="buildlist">${rows}</div>
-      <div class="codex"><h3>Mögliche Fusionen</h3><ul>${fus}</ul></div>
-      <div class="btns"><button class="btn primary" data-act="resume">Weiter</button><button class="btn ghost" data-act="giveup">Lauf aufgeben</button></div></div>`, 'pause', 'dim');
+      <div class="lbl" style="margin:2px 0 4px">DEIN BUILD</div>
+      <div class="buildlist">${rows || '<p class="small">Noch keine Fähigkeiten.</p>'}</div>
+      <div class="kv"><span>Zeit</span><span>${fmtTime(G.t)}</span><span>Stufe</span><span>${G.level}</span><span>Besiegt</span><span>${G.kills}</span><span>Kristalle</span><span>${G.crystals || 0} ◆</span></div>
+      <div class="codex"><h3>Fusionen in Reichweite</h3><ul>${got}${fus || (got ? '' : '<li class="small">Noch keine – steigere deine Fähigkeiten.</li>')}</ul></div>
+      <div class="lbl" style="margin:6px 0 4px">EINSTELLUNGEN</div>
+      <div class="pset">${vol('music', 'Musik')}${vol('sfx', 'Effekte')}${tog('shake', 'Wackeln')}${tog('dmgNumbers', 'Schadenszahlen')}</div>
+      <div class="btns"><button class="btn primary" data-act="resume">Weiter</button><button class="btn ghost" data-act="giveupask">Lauf aufgeben</button></div></div>`, 'pause', 'dim');
   },
 
   /* ---------------------------------------------- Ende */
@@ -6466,7 +6479,7 @@ const UI = {
     const nl = newly.map((id) => `<div style="color:#7dff9a;text-align:center;margin-top:6px">Freigeschaltet: <b>${HEROES[id].name}</b>!</div>`).join('');
     this.show(`<div class="box panel">
       <div class="bigres ${won ? 'win' : 'lose'}">${won ? 'SIEG' : 'GEFALLEN'}</div>
-      <div style="text-align:center;color:var(--dim);margin-bottom:6px">${won ? 'Vaelgor ist gefallen. Der Morgen graut über Varn.' : 'Die Nacht hat dich verschlungen.'}</div>
+      <div style="text-align:center;color:var(--dim);margin-bottom:6px">${won ? 'Der Boss ist gefallen. Der Morgen graut.' : 'Die Nacht hat dich verschlungen.'}</div>
       <div class="kv"><span>Held</span><span>${HEROES[G.hero].name}</span><span>Überlebt</span><span>${fmtTime(G.t)}</span><span>Stufe</span><span>${G.level}</span><span>Besiegt</span><span>${G.kills}</span>
       <span>Reaktionen</span><span>${G.stats.reactions}</span><span>Fusionen</span><span>${G.stats.fusions.map((f) => FUSIONS[f].name).join(', ') || '—'}</span><span>Seelen erhalten</span><span style="color:#d8c0ff">+${souls}</span></div>
       ${extra && G.hero === 'finn' ? finnEndHtml(extra) : ''}
@@ -6490,23 +6503,22 @@ const UI = {
   /* ---------------------------------------------- Chronik */
   showCodex() {
     menuScene();
-    const fus = Object.keys(FUSIONS).map((f) => { const F = FUSIONS[f]; const req = Object.keys(F.req).map((r) => r.startsWith('any') ? `${ {anyBlood: 'Blut', anyShadow: 'Schatten', anyQi: 'Qi'}[r] }-Fähigkeit St. ${F.req[r]}` : `${CARDS[r].name} St. ${F.req[r]}`).join(' + ');
-      return `<li><b style="color:#ffe6a0">${SAVE.seenFusions[f] ? '✦ ' : ''}${F.name}</b> (${F.heroes.map((h) => HEROES[h].name).join(', ')})<br>${req}<br><span style="color:var(--dim)">${F.desc}</span></li>`; }).join('');
+    const heroOk = (h) => typeof HERO_ORDER === 'undefined' || HERO_ORDER.includes(h);
+    const fus = Object.keys(FUSIONS).filter((f) => FUSIONS[f].heroes.some(heroOk)).map((f) => { const F = FUSIONS[f]; const req = Object.keys(F.req).map((r) => r.startsWith('any') ? `${ {anyBlood: 'Blut', anyShadow: 'Schatten', anyQi: 'Qi'}[r] }-Fähigkeit St. ${F.req[r]}` : `${CARDS[r].name} St. ${F.req[r]}`).join(' + ');
+      return `<li><b style="color:#ffe6a0">${SAVE.seenFusions[f] ? '✦ ' : ''}${F.name}</b> (${F.heroes.filter(heroOk).map((h) => HEROES[h].name).join(', ')})<br>${req}<br><span style="color:var(--dim)">${F.desc}</span></li>`; }).join('');
     const re = Object.keys(REACTIONS).map((k) => `<li><b style="color:${REACTIONS[k].col}">${REACTIONS[k].name}</b> — ${REACTIONS[k].desc}</li>`).join('');
-    const en = Object.keys(ENEMIES).map((k) => `<li><b>${ENEMIES[k].name}</b> — ${ENEMY_DESC[k]}</li>`).join('');
     const S = SAVE.stats;
-    this.show(`<div class="box panel codex"><h2>Chronik</h2>
-      <div class="kv"><span>Läufe</span><span>${S.runs}</span><span>Besiegte Gegner</span><span>${S.kills}</span><span>Längste Nacht</span><span>${fmtTime(S.bestTime)}</span><span>Höchste Stufe</span><span>${S.maxLevel}</span><span>Vaelgor besiegt</span><span>${S.bossKills}×</span><span>Fusionen</span><span>${S.fusions}</span></div>
+    this.show(`<div class="box panel codex"><button class="backarrow" data-act="title">‹ Zurück</button><h2>Chronik</h2>
+      <div class="kv"><span>Läufe</span><span>${S.runs}</span><span>Besiegte Gegner</span><span>${S.kills}</span><span>Längste Nacht</span><span>${fmtTime(S.bestTime)}</span><span>Höchste Stufe</span><span>${S.maxLevel}</span><span>Bosse besiegt</span><span>${S.bossKills}×</span><span>Fusionen</span><span>${S.fusions}</span></div>
       <h3>Element-Reaktionen</h3><p>Jeder Treffer hinterlässt ein Mal seiner Schule (3 s). Trifft eine andere Schule, entsteht eine Reaktion:</p><ul>${re}</ul>
       <h3>Fusionen</h3><ul>${fus}</ul>
-      <h3>Die Toten von Varn</h3><ul>${en}</ul>
       <div class="btns"><button class="btn" data-act="title">Zurück</button></div></div>`, 'codex', 'dim');
   },
 
   /* ---------------------------------------------- Einstellungen */
   showSettings() {
     const s = SAVE.settings;
-    const d = this.show(`<div class="box panel"><h2>Einstellungen</h2>
+    const d = this.show(`<div class="box panel"><button class="backarrow" data-act="title">‹ Zurück</button><h2>Einstellungen</h2>
       <div class="setrow"><span>Effekte</span><input type="range" min="0" max="1" step="0.05" value="${s.sfx}" id="rsfx"></div>
       <div class="setrow"><span>Musik</span><input type="range" min="0" max="1" step="0.05" value="${s.music}" id="rmus"></div>
       <div class="setrow"><span>Bildschirmwackeln</span><input type="range" min="0" max="1.5" step="0.1" value="${s.shake}" id="rshk"></div>
@@ -6588,16 +6600,16 @@ const FINN_TIERS = [
   { id: 'adliger', name: 'Vampiradliger', hp: 150, speed: 175, armor: 1, might: 1.22, req: { essence: 2500, text: 'Erreiche Stufe 22 in einem Lauf', check: (r) => r.level >= 22 }, slots: 7, rim: '#b07bff', col: '#a77bff',
     grants: ['schattenflammen'], unlocks: [],
     desc: 'Oberhaupt der zehnten Familie: Adelsmantel, mehr Kraft, Schattenflammen von Beginn an.' },
-  { id: 'lord', name: 'Vampirlord', hp: 180, speed: 180, armor: 2, might: 1.38, req: { essence: 6000, text: 'Besiege Hauptmann Kharn', check: (r) => r.miniKilled }, slots: 8, rim: '#ff3a4e', col: '#4ff0cc',
+  { id: 'lord', name: 'Vampirlord', hp: 180, speed: 180, armor: 2, might: 1.38, req: { essence: 6000, text: 'Besiege einen Zwischenboss', check: (r) => r.miniKilled }, slots: 8, rim: '#ff3a4e', col: '#4ff0cc',
     grants: ['qihand', 'blutnova'], unlocks: [],
     desc: 'Der Sonnenmalus ist herausgewachsen: Qi-Hand und Blutnova von Beginn an.' },
-  { id: 'himmelslord', name: 'Himmlischer Vampirlord', hp: 210, speed: 186, armor: 2, might: 1.55, req: { essence: 11000, text: 'Besiege Vaelgor, den Gruftkoloss', check: (r) => r.won }, slots: 9, rim: '#ffd27a', col: '#ffd27a',
+  { id: 'himmelslord', name: 'Himmlischer Vampirlord', hp: 210, speed: 186, armor: 2, might: 1.55, req: { essence: 11000, text: 'Besiege einen Etappenboss', check: (r) => r.won }, slots: 9, rim: '#ffd27a', col: '#ffd27a',
     grants: ['himmelsstrahl'], unlocks: [],
     desc: 'Himmelslicht: Lichtsäulen strafen die Toten. Blut, Schatten und Qi verschmelzen.' },
-  { id: 'rein', name: 'Gottbezwinger', hp: 245, speed: 192, armor: 3, might: 1.75, req: { essence: 18000, text: 'Besiege Vaelgor — insgesamt 3 Siege mit Finn', check: (r) => r.won && r.wins >= 3 }, slots: 9, rim: '#fff4d0', col: '#fff4d0',
+  { id: 'rein', name: 'Gottbezwinger', hp: 245, speed: 192, armor: 3, might: 1.75, req: { essence: 18000, text: 'Insgesamt 3 Etappenbosse mit Finn besiegen', check: (r) => r.won && r.wins >= 3 }, slots: 9, rim: '#fff4d0', col: '#fff4d0',
     grants: ['siegel'], unlocks: [],
     desc: 'Die Kräfte des Gottbezwingers (Kap. 1688): das Dreifaltige Siegel vereint Blut, Schatten und Qi.' },
-  { id: 'gott', name: 'Der letzte Vampir', hp: 300, speed: 200, armor: 4, might: 2.05, req: { essence: 28000, text: 'Besiege Vaelgor in der Form des Gottbezwingers mit über 50 % Leben', check: (r) => r.won && r.hpFrac > 0.5 }, slots: 10, rim: '#ffb040', col: '#ffb040',
+  { id: 'gott', name: 'Der letzte Vampir', hp: 300, speed: 200, armor: 4, might: 2.05, req: { essence: 28000, text: 'Einen Etappenboss als Gottbezwinger mit über 50 % Leben besiegen', check: (r) => r.won && r.hpFrac > 0.5 }, slots: 10, rim: '#ffb040', col: '#ffb040',
     grants: ['goetterfall'], unlocks: [],
     desc: 'Das Blut aller dreizehn Familien (Kap. 2537): Götterfall — Speere aus Gold und Blut regnen vom Himmel.' }
 ];
@@ -8179,7 +8191,7 @@ UI.sysWindow = function (title, line, line2) {
   const el = document.createElement('div'); el.className = 'sysmsg';
   el.innerHTML = `<div class="syshead">[ ${title} ]</div><div>${line}</div>${line2 ? `<div class="sysnote">${line2}</div>` : ''}`;
   hud.appendChild(el);
-  const others = hud.querySelectorAll('.sysmsg'); el.style.top = `calc(${Math.round(VIEW.cssH * 0.3) + (others.length - 1) * 78}px + var(--safe-t))`;
+  const others = hud.querySelectorAll('.sysmsg'); el.style.top = `calc(${62 + (others.length - 1) * 74}px + var(--safe-t))`;
   setTimeout(() => el.classList.add('out'), 3200); setTimeout(() => el.remove(), 3800);
 };
 UI.showHud = function () {
@@ -8318,7 +8330,7 @@ const COMPANIONS = {
   }
 };
 COMPANIONS.fabian = {
-  name: 'Fabian Schneider', role: 'Kopiert Fähigkeiten · Raten · Sil', unlock: 1, col: '#ffd27a',
+  name: 'Fabian Schneider', role: 'Kopiert Fähigkeiten · teilt den Körper mit Raten und Sil', unlock: 1, col: '#ffd27a',
   desc: 'Stellt sich offen vor die Schwachen. Im selben Körper leben Raten und Sil — wenn es ernst wird, übernimmt Raten: schnelle Schlagfolgen mitten in die Gegner. Ab Kapitel 7 kämpft Sil.',
   hero: 'vorian', pal: [[HERO_PAL.vorian, { skin: '#ecd8c8', skinD: '#a88878', armor: '#1a2436', armorL: '#3a4a6a', armorD: '#080c14', red: '#2a3a6a', redL: '#ffd27a', redD: '#10182a', hair: '#e8cf7a', eye: '#ffd27a', rim: '#ffd27a' }]],
   look: { glow: 0, plain: true }, speed: 190, range: 70, cd: 1.0
@@ -8348,7 +8360,7 @@ COMPANIONS.sam = {
   look: {}, speed: 170, range: 220, cd: 1.4
 };
 COMPANIONS.sil = {
-  name: 'Sil', role: 'Kopiert Fähigkeiten · Elemente', unlock: 99, col: '#c8a0ff',
+  name: 'Sil Skala', role: 'Kopiert Fähigkeiten · Elemente', unlock: 99, col: '#c8a0ff',
   desc: 'Das jüngste der drei Ichs. Hält mehrere kopierte Kräfte zugleich und lässt Feuer, Eis und Erde auf einmal einschlagen.',
   hero: 'vorian', pal: [[HERO_PAL.vorian, { skin: '#ecd8c8', skinD: '#a88878', armor: '#1a1e3a', armorL: '#3a3a6a', armorD: '#080a14', red: '#2a2a6a', redL: '#c8a0ff', redD: '#10102a', hair: '#e8cf7a', eye: '#c8a0ff', rim: '#c8a0ff' }]],
   look: { glow: 0.4, plain: true }, speed: 175, range: 200, cd: 1.5
@@ -8974,10 +8986,10 @@ const FINN_ARC = [
   { lv: 1, txt: 'das Buch finden' },
   { lv: 6, txt: 'Stufe 6' },
   { lv: 12, txt: 'Stufe 12' },
-  { lv: 19, txt: 'Stufe 19 oder Hauptmann Kharn besiegen', ev: (G) => G.miniKilled },
+  { lv: 19, txt: 'Stufe 19 oder einen Zwischenboss besiegen', ev: (G) => G.miniKilled },
   { lv: 26, txt: 'Stufe 26' },
-  { lv: 33, txt: 'Stufe 33 oder wenn Vaelgor erwacht', ev: (G) => !!G.boss },
-  { lv: 40, txt: 'Stufe 40 oder Vaelgor unter halber Kraft', ev: (G) => G.boss && G.boss.hp < G.boss.maxHp * 0.5 }
+  { lv: 33, txt: 'Stufe 33 oder wenn der Boss erscheint', ev: (G) => !!G.boss },
+  { lv: 40, txt: 'Stufe 40 oder den Boss unter halbe Kraft bringen', ev: (G) => G.boss && G.boss.hp < G.boss.maxHp * 0.5 }
 ];
 // Nur Finns eigene Faehigkeiten (angelehnt an seine Systemfaehigkeiten im Roman) und allgemeine Passive
 const FINN_ARC_POOL = [
@@ -9003,13 +9015,13 @@ finnGrant = function (p, tier) {
 const _offersFinnArc = makeOffers;
 makeOffers = function () {
   const out = _offersFinnArc();
-  if (GAME.finnArcade || (HEROES[GAME.p.hero] && HEROES[GAME.p.hero].evoHero)) for (let i = 0; i < out.length; i++) if (out[i].fusion) out[i] = { id: i % 2 ? 'soulgift' : 'bloodcup', filler: true };
+  if (GAME.finnArcade || (HEROES[GAME.p.hero] && HEROES[GAME.p.hero].evoHero)) { const used = new Set(out.map((o) => o.id)); for (let i = 0; i < out.length; i++) if (out[i].fusion) { const f = ['bloodcup', 'soulgift', 'kristallsplitter'].find((k) => !used.has(k)); used.add(f); out[i] = { id: f, filler: true }; } }
   return out;
 };
 
 // Finn in die Arcade-Heldenwahl (vor Sen Draco)
 (function () { if (!HERO_ORDER.includes('finn')) { const i = HERO_ORDER.indexOf('draco'); HERO_ORDER.splice(i >= 0 ? i : HERO_ORDER.length, 0, 'finn'); } })();
-HEROES.finn.mech = { name: 'Evolution im Lauf', desc: 'Jeder Lauf beginnt als Mensch ohne Kraft: Finde das Buch und werde zum Halbling. Danach entwickelt sich Finn im Lauf weiter wie im Roman — Vampir (Stufe 6), Vampiradliger (Stufe 12), Vampirlord (Stufe 19 oder Sieg über Kharn), Himmlischer Vampirlord (Stufe 26), Gottbezwinger (Stufe 33 oder wenn Vaelgor erwacht) und schließlich Der letzte Vampir. Jede Form bringt mehr Leben, Tempo, Kraft, neue eigene Fähigkeiten (Blutspray, Hammerschlag, Blitzschritt, Schattenfesseln, Blutsicheltritt, Blutkugeln, Blutwald, Himmelsstrahl, Götterfall) und mehr Plätze. Als letzter Vampir erreicht jede Fähigkeit sofort ihre Ulti.' };
+HEROES.finn.mech = { name: 'Evolution im Lauf', desc: 'Finn beginnt als Mensch und muss das Buch finden. Danach wächst er im Lauf Form für Form – bis zur höchsten Form, die du in der Kampagne freigeschaltet hast. Jede Form bringt mehr Leben, Tempo und Kraft, neue eigene Fähigkeiten und mehr Plätze.' };
 
 const _poolOfArc = HEROES.finn.poolOf;
 HEROES.finn.poolOf = function (p) {
@@ -9350,7 +9362,7 @@ defineEvoHero('peter', {
     { name: 'Ghul', txt: 'Stufe 6', lv: 6, hp: 125, speed: 160, armor: 1, might: 1.15, slots: 3, col: '#9aff9a', rim: '#9aff9a', grants: ['ghulbiss'], unlocks: ['ghulbiss'], desc: 'Das Blutritual rettet ihn — der Hunger bleibt. Bisse heilen.' },
     { name: 'Wight', txt: 'Stufe 13', lv: 13, hp: 170, speed: 168, armor: 2, might: 1.35, slots: 4, col: '#e8e4d8', rim: '#e8e4d8', grants: ['wightfaust'], unlocks: ['wightfaust', 'doppelklingen'], desc: 'Untot, kein Herzschlag, vielfache Menschenkraft.' },
     { name: 'Maskenträger', txt: 'Stufe 21', lv: 21, hp: 200, speed: 175, armor: 2, might: 1.55, slots: 5, col: '#b8a0ff', rim: '#b8a0ff', grants: ['maske'], unlocks: ['maske'], desc: 'Seine Seelenwaffe erwacht: eine Maske, die Gestalten formt.' },
-    { name: 'Wight-Anführer', txt: 'Stufe 29 oder Hauptmann Kharn besiegen', lv: 29, ev: (G) => G.miniKilled, hp: 245, speed: 182, armor: 3, might: 1.8, slots: 6, col: '#6aff8a', rim: '#6aff8a', grants: ['kleinewights'], unlocks: ['kleinewights'], desc: 'Er führt eigene kleine Wights in den Kampf.' }
+    { name: 'Wight-Anführer', txt: 'Stufe 29 oder einen Zwischenboss besiegen', lv: 29, ev: (G) => G.miniKilled, hp: 245, speed: 182, armor: 3, might: 1.8, slots: 6, col: '#6aff8a', rim: '#6aff8a', grants: ['kleinewights'], unlocks: ['kleinewights'], desc: 'Er führt eigene kleine Wights in den Kampf.' }
   ],
   passives: ['lebensraub'],
   tick(p) { if ((p.tier || 0) >= 1 && GAME.kills > (p.lastK || 0)) { healPlayer((GAME.kills - (p.lastK || 0)) * 0.4); } p.lastK = GAME.kills; },
@@ -9445,7 +9457,7 @@ defineEvoHero('emma', {
     { name: 'Schwertschülerin', txt: 'Stufe 7', lv: 7, hp: 120, speed: 176, armor: 1, might: 1.15, slots: 3, col: '#bfe8ff', grants: ['eisschwert'], unlocks: ['eisschwert'], desc: 'Beim blinden Schwertmeister lernt sie, Kraft in die Klinge zu legen.' },
     { name: 'Dhampir', txt: 'Stufe 14', lv: 14, hp: 150, speed: 184, armor: 1, might: 1.35, slots: 4, col: '#ffd84a', grants: ['dhampirklinge'], unlocks: ['dhampirklinge'], desc: 'Sie wird verwandelt — und das System erkennt eine Dhampir. Gelbe Energie.' },
     { name: 'Kettenklinge', txt: 'Stufe 21', lv: 21, hp: 175, speed: 190, armor: 2, might: 1.55, slots: 5, col: '#e8f4ff', grants: ['frostkette'], unlocks: ['frostkette'], desc: 'Ketten- und Schwerttechnik: sie zieht Gegner heran.' },
-    { name: 'Drachenaugen', txt: 'Stufe 29 oder Hauptmann Kharn besiegen', lv: 29, ev: (G) => G.miniKilled, hp: 205, speed: 198, armor: 2, might: 1.8, slots: 6, col: '#ffb020', grants: ['drachenblick'], unlocks: ['drachenblick'], desc: 'Ihre Augen durchschauen jede Schwäche.' }
+    { name: 'Drachenaugen', txt: 'Stufe 29 oder einen Zwischenboss besiegen', lv: 29, ev: (G) => G.miniKilled, hp: 205, speed: 198, armor: 2, might: 1.8, slots: 6, col: '#ffb020', grants: ['drachenblick'], unlocks: ['drachenblick'], desc: 'Ihre Augen durchschauen jede Schwäche.' }
   ],
   passives: ['lebensraub'],
   art: { base: 'liora', fn: drawLiora, spec: SPEC_LIORA, h: 64, look: { weapon: 'sword', rage: 0 }, pals: [
@@ -9542,7 +9554,7 @@ defineEvoHero('chris', {
     { name: 'Qi-Stufe 2', txt: 'Stufe 8', lv: 8, hp: 135, speed: 182, armor: 1, might: 1.18, slots: 3, col: '#6affd8', grants: ['qiwelle'], unlocks: ['qiwelle'], desc: 'Qi verlässt den Körper und wird blitzschnell umgelenkt.' },
     { name: 'Halbgott-Klingen', txt: 'Stufe 15', lv: 15, hp: 160, speed: 188, armor: 2, might: 1.4, slots: 4, col: '#ff5a3a', grants: ['klingensturm'], unlocks: ['klingensturm'], desc: 'Die Klingen auf seinem Rücken erwachen und stärken ihn.' },
     { name: 'Qi-Stufe 3', txt: 'Stufe 23', lv: 23, hp: 185, speed: 194, armor: 2, might: 1.6, slots: 5, col: '#9affe6', grants: ['qireinigung'], unlocks: ['qireinigung'], desc: 'Er stößt fremde Energie einfach wieder aus.' },
-    { name: 'Roter Schnitter', txt: 'Stufe 31 oder Hauptmann Kharn besiegen', lv: 31, ev: (G) => G.miniKilled, hp: 215, speed: 202, armor: 3, might: 1.85, slots: 6, col: '#ff2a2a', grants: ['schnitter'], unlocks: ['schnitter'], desc: 'Die Nummer eins — gefürchtet als Roter Schnitter.' }
+    { name: 'Roter Schnitter', txt: 'Stufe 31 oder einen Zwischenboss besiegen', lv: 31, ev: (G) => G.miniKilled, hp: 215, speed: 202, armor: 3, might: 1.85, slots: 6, col: '#ff2a2a', grants: ['schnitter'], unlocks: ['schnitter'], desc: 'Die Nummer eins — gefürchtet als Roter Schnitter.' }
   ],
   passives: ['eisenmeridiane'],
   tick(p, dt) { if (p.alive) healPlayer(0.5 * ((p.tier || 0) + 1) * dt, true); },
@@ -9639,7 +9651,7 @@ defineEvoHero('sil', {
     { name: 'Drei Kräfte', txt: 'Stufe 6', lv: 6, hp: 105, speed: 172, armor: 0, might: 1.15, slots: 3, col: '#ffb040', grants: ['feuerstoss'], unlocks: ['eissplitter', 'erdspeer'], desc: 'Feuer, Eis und Erde zugleich.' },
     { name: 'Verschmelzung', txt: 'Stufe 13', lv: 13, hp: 130, speed: 178, armor: 1, might: 1.35, slots: 4, col: '#e8e8ff', grants: ['elementfusion'], unlocks: ['elementfusion'], desc: 'Er verbindet Kräfte zu etwas Neuem.' },
     { name: 'Sechs Kräfte', txt: 'Stufe 21', lv: 21, hp: 155, speed: 184, armor: 1, might: 1.55, slots: 6, col: '#d8e0f0', grants: ['metallkugeln'], unlocks: ['metallkugeln'], desc: 'Sechs Kräfte gleichzeitig.' },
-    { name: 'Sil allein', txt: 'Stufe 29 oder Hauptmann Kharn besiegen', lv: 29, ev: (G) => G.miniKilled, hp: 190, speed: 192, armor: 2, might: 1.85, slots: 6, col: '#ffffff', grants: [], unlocks: [], desc: 'Die anderen beiden haben ihren Platz aufgegeben: Sils volle Kraft. Alle Fähigkeiten 20 % schneller.' }
+    { name: 'Sil allein', txt: 'Stufe 29 oder einen Zwischenboss besiegen', lv: 29, ev: (G) => G.miniKilled, hp: 190, speed: 192, armor: 2, might: 1.85, slots: 6, col: '#ffffff', grants: [], unlocks: [], desc: 'Die anderen beiden haben ihren Platz aufgegeben: Sils volle Kraft. Alle Fähigkeiten 20 % schneller.' }
   ],
   passives: [],
   art: { base: 'vorian', fn: drawVorian, spec: SPEC_VORIAN, h: 66, look: { glow: 0, plain: true }, pals: [
@@ -9871,7 +9883,7 @@ defineEvoHero('lena', {
     tier('Telekinetin', 'Stufe 6', 6, 115, 178, 0, 1.15, 3, '#d8b8ff', ['telestoss'], ['telestoss'], 'Ihre Telekinese wird stärker.'),
     tier('Agentin 84', 'Stufe 13', 13, 140, 184, 1, 1.35, 4, '#e8e0ff', ['geisterketten'], ['geisterketten'], 'Die geheime Agentin zeigt, was sie kann: Geisterketten.'),
     tier('Honnari', 'Stufe 21', 21, 170, 190, 1, 1.55, 5, '#ff7a3a', ['honnariflamme'], ['honnariflamme'], 'Die Verwandlung: Flammen, deren Farbe ihrem Gefühl folgt.'),
-    tier('Flammenherz', 'Stufe 29 oder Hauptmann Kharn besiegen', 29, 200, 198, 2, 1.8, 6, '#ffb040', ['flammenfalke'], ['flammenfalke'], 'Sie formt ihre Flammen zu Gestalten.', KHARN)
+    tier('Flammenherz', 'Stufe 29 oder einen Zwischenboss besiegen', 29, 200, 198, 2, 1.8, 6, '#ffb040', ['flammenfalke'], ['flammenfalke'], 'Sie formt ihre Flammen zu Gestalten.', KHARN)
   ],
   passives: ['lebensraub'],
   art: { base: 'liora', fn: drawLiora, spec: SPEC_LIORA, h: 64, look: { weapon: 'bow', rage: 0 }, pals: [
@@ -9950,7 +9962,7 @@ defineEvoHero('fabian', {
     tier('Raten bricht durch', 'Stufe 6', 6, 130, 178, 1, 1.15, 3, '#ff5a5a', ['ratenschlag'], ['ratenschlag'], 'Die zweite Persönlichkeit übernimmt die Fäuste.'),
     tier('Geisterspeere', 'Stufe 13', 13, 155, 184, 1, 1.35, 4, '#c8d0ff', ['geisterspeer'], ['geisterspeer'], 'Raten wirft Geisterspeere.'),
     tier('Drei Kopien', 'Stufe 21', 21, 180, 190, 2, 1.55, 5, '#ff8a3a', ['kopiefeuer'], ['kopiefeuer'], 'Feuer, Eis und Regeneration zugleich.'),
-    tier('Blade-Oberhaupt', 'Stufe 29 oder Hauptmann Kharn besiegen', 29, 210, 196, 2, 1.8, 6, '#ffd27a', ['bladeschwur'], ['bladeschwur'], 'Er steht für seine Familie ein.', KHARN)
+    tier('Blade-Oberhaupt', 'Stufe 29 oder einen Zwischenboss besiegen', 29, 210, 196, 2, 1.8, 6, '#ffd27a', ['bladeschwur'], ['bladeschwur'], 'Er steht für seine Familie ein.', KHARN)
   ],
   passives: ['lebensraub'],
   art: { base: 'vorian', fn: drawVorian, spec: SPEC_VORIAN, h: 66, look: { glow: 0, plain: true }, pals: [
@@ -10026,7 +10038,7 @@ defineEvoHero('fex', {
     tier('Blutbarriere', 'Stufe 6', 6, 125, 182, 1, 1.15, 3, '#ff3a4e', ['blutbarriere'], ['blutbarriere'], 'Eine Wand aus Blut.'),
     tier('Puppenspieler', 'Stufe 13', 13, 150, 188, 1, 1.35, 4, '#ff6a7a', ['marionette'], ['marionette'], 'Wen seine Fäden halten, der tanzt für ihn.'),
     tier('Blutfäden', 'Stufe 21', 21, 175, 194, 2, 1.55, 5, '#ff3a4e', ['blutfaeden'], ['blutfaeden'], 'Blutverstärkte Fäden, rot wie seine Familie.'),
-    tier('Blutwaffe', 'Stufe 29 oder Hauptmann Kharn besiegen', 29, 205, 200, 2, 1.8, 6, '#c8203a', ['blutnadel'], ['blutnadel'], 'Aus seinem eigenen Kristall entsteht eine Waffe.', KHARN)
+    tier('Blutwaffe', 'Stufe 29 oder einen Zwischenboss besiegen', 29, 205, 200, 2, 1.8, 6, '#c8203a', ['blutnadel'], ['blutnadel'], 'Aus seinem eigenen Kristall entsteht eine Waffe.', KHARN)
   ],
   passives: ['lebensraub', 'kettenreaktion'],
   art: { base: 'nyx', fn: drawNyx, spec: SPEC_NYX, h: 58, look: { flow: 0.4 }, pals: [
@@ -10104,7 +10116,7 @@ defineEvoHero('leo', {
     tier('Aurensicht', 'Stufe 7', 7, 135, 178, 1, 1.15, 3, '#9affe6', ['aurensicht'], ['aurensicht'], 'Er liest Auren und weicht allem aus.'),
     tier('Qi-Klinge', 'Stufe 14', 14, 160, 184, 2, 1.35, 4, '#4ff0cc', ['qiklinge'], ['qiklinge'], 'Qi fließt in die Klinge.'),
     tier('Vampir-Ritter', 'Stufe 21', 21, 190, 190, 2, 1.6, 5, '#ff3a4e', ['qiblutschnitt'], ['qiblutschnitt'], 'Als Vampir wird er Ritter seiner Familie.'),
-    tier('Großmeister', 'Stufe 29 oder Hauptmann Kharn besiegen', 29, 220, 196, 3, 1.85, 6, '#ffffff', ['seelenschwert'], ['seelenschwert'], 'Seine Seelenwaffe erwacht vollständig.', KHARN)
+    tier('Großmeister', 'Stufe 29 oder einen Zwischenboss besiegen', 29, 220, 196, 3, 1.85, 6, '#ffffff', ['seelenschwert'], ['seelenschwert'], 'Seine Seelenwaffe erwacht vollständig.', KHARN)
   ],
   passives: ['lebensraub', 'eisenmeridiane'],
   art: { base: 'shen', fn: drawShen, spec: SPEC_SHEN, h: 66, look: { qi: 0 }, pals: [
@@ -10179,7 +10191,7 @@ defineEvoHero('leander', {
     tier('Nanobots', 'Stufe 6', 6, 115, 174, 1, 1.15, 3, '#c8d0d8', ['nanoschwarm'], ['nanoschwarm'], 'Seine Metall-Fähigkeit reicht bis zu Nanobots.'),
     tier('Angriffsanzug', 'Stufe 13', 13, 145, 180, 2, 1.35, 4, '#6affd8', ['energiekanone'], ['energiekanone'], 'Silber-grüner Anzug mit Energiewaffe.'),
     tier('Lichtkugeln', 'Stufe 21', 21, 170, 186, 2, 1.55, 5, '#fff4c0', ['lichtkugeln'], ['lichtkugeln'], 'Schwebende Lichtkugeln blenden die Nacht.'),
-    tier('Genie', 'Stufe 29 oder Hauptmann Kharn besiegen', 29, 200, 192, 3, 1.8, 6, '#6ab8ff', ['satellit'], ['satellit'], 'Laser aus dem Orbit.', KHARN)
+    tier('Genie', 'Stufe 29 oder einen Zwischenboss besiegen', 29, 200, 192, 3, 1.8, 6, '#6ab8ff', ['satellit'], ['satellit'], 'Laser aus dem Orbit.', KHARN)
   ],
   passives: [],
   art: { base: 'vorian', fn: drawVorian, spec: SPEC_VORIAN, h: 66, look: { glow: 0, plain: true }, pals: [
@@ -10256,7 +10268,7 @@ defineEvoHero('agathon', {
     tier('Schattenklon', 'Stufe 7', 7, 145, 182, 1, 1.2, 3, '#8a6aff', ['schattenklon'], ['schattenklon'], 'Sein Schatten kämpft als Klon mit.'),
     tier('Schattenreise', 'Stufe 14', 14, 170, 188, 2, 1.4, 4, '#a88aff', ['schattensprung'], ['schattensprung', 'schattenflut'], 'Er reist von Schatten zu Schatten.'),
     tier('Erster Anführer', 'Stufe 22', 22, 200, 194, 2, 1.65, 5, '#c8a0ff', ['schattenflut'], [], 'Stärker als jeder andere Anführer.'),
-    tier('Schattenheer', 'Stufe 30 oder Hauptmann Kharn besiegen', 30, 235, 200, 3, 1.9, 6, '#e8d8ff', ['schattenheer'], ['schattenheer'], 'Ein Heer aus Schatten gehorcht ihm.', KHARN)
+    tier('Schattenheer', 'Stufe 30 oder einen Zwischenboss besiegen', 30, 235, 200, 3, 1.9, 6, '#e8d8ff', ['schattenheer'], ['schattenheer'], 'Ein Heer aus Schatten gehorcht ihm.', KHARN)
   ],
   passives: [],
   art: { base: 'nyx', fn: drawNyx, spec: SPEC_NYX, h: 58, look: { flow: 0.6 }, pals: [
@@ -10343,7 +10355,7 @@ defineEvoHero('sam', {
     tier('Stufe 5', 'Stufe 6', 6, 120, 182, 0, 1.15, 3, '#9ae8c8', ['wirbelsturm'], ['wirbelsturm'], 'Er erreicht die Grenze seiner Fähigkeit.'),
     tier('Windmantel', 'Stufe 13', 13, 145, 190, 1, 1.35, 4, '#d8fff0', ['windmantel'], ['windmantel'], 'Der Wind schützt ihn.'),
     tier('Vampir', 'Stufe 21', 21, 175, 196, 1, 1.6, 5, '#ff5a6a', ['blutwind'], ['blutwind'], 'Er wird Vampir in Finns Familie.'),
-    tier('Stratege', 'Stufe 29 oder Hauptmann Kharn besiegen', 29, 205, 204, 2, 1.8, 6, '#ffe6a0', ['schlachtplan'], ['schlachtplan'], 'Er plant jeden Kampf.', KHARN)
+    tier('Stratege', 'Stufe 29 oder einen Zwischenboss besiegen', 29, 205, 204, 2, 1.8, 6, '#ffe6a0', ['schlachtplan'], ['schlachtplan'], 'Er plant jeden Kampf.', KHARN)
   ],
   passives: ['lebensraub'],
   art: { base: 'finnlook', fn: drawFinn, spec: SPEC_FINN, h: 64, look: { tier: 0 }, pals: [
@@ -10417,7 +10429,7 @@ defineEvoHero('mia', {
     tier('Himmelsenergie', 'Stufe 6', 6, 120, 182, 0, 1.15, 3, '#fff4c0', ['lichtsaeule2'], ['lichtsaeule2'], 'Das Licht schlägt als Säule ein.'),
     tier('Lichtschild', 'Stufe 13', 13, 145, 188, 1, 1.35, 4, '#fffadc', ['himmelsschild'], ['himmelsschild'], 'Licht schützt sie.'),
     tier('Sternenkind', 'Stufe 21', 21, 175, 194, 1, 1.55, 5, '#fff4c0', ['sternenregen'], ['sternenregen'], 'Sterne fallen für sie.'),
-    tier('Erbin des letzten Vampirs', 'Stufe 29 oder Hauptmann Kharn besiegen', 29, 205, 200, 2, 1.8, 6, '#ff5a6a', ['vatererbe'], ['vatererbe'], 'Das Blut ihres Vaters erwacht.', KHARN)
+    tier('Erbin des letzten Vampirs', 'Stufe 29 oder einen Zwischenboss besiegen', 29, 205, 200, 2, 1.8, 6, '#ff5a6a', ['vatererbe'], ['vatererbe'], 'Das Blut ihres Vaters erwacht.', KHARN)
   ],
   passives: ['lebensraub'],
   art: { base: 'liora', fn: drawLiora, spec: SPEC_LIORA, h: 60, look: { rage: 0, weapon: 'none' }, pals: [
@@ -10516,6 +10528,7 @@ humanArt('leander', [
   Object.assign({}, LEANDER_BASE, { top: '#6a7a78', topL: '#b8c8c4', topD: '#2a3432', eye: '#fff4c0', trim: '#fff4c0' }),
   Object.assign({}, LEANDER_BASE, { top: '#2a3a5a', topL: '#5a7aaa', topD: '#0a1428', eye: '#6ab8ff', trim: '#6ab8ff', coat: true, lining: '#3a6aaa' })
 ], 0.8);
+ICON_EXTRA.kristallsplitter = symIcon('star', '#8ad8ff');
 
 /* ---- src/23b-etappen.js ---- */
 'use strict';
@@ -11622,6 +11635,7 @@ function lvDiff(l) { const k = l - 1; return { hp: 1 + 0.14 * k, count: 1 + 0.05
 /* ============================================================ Helden ueber die Kampagne */
 const HERO_UNLOCK = { finn: 0, lena: '1-5', leo: '1-7', emma: '1-8', leander: '1-9', fabian: '1-10', sil: '1-14', peter: '1-15', fex: '2-2', agathon: '2-9', sam: '2-10', chris: 5, mia: 10, draco: 13 };
 function unlockDone(u) { if (!u) return true; if (typeof u === 'number') return etappeCleared(u); const [e, l] = u.split('-').map(Number); return lvStars(e, l) > 0; }
+function unlockShort(u) { if (u === undefined || u === 0) return ''; if (typeof u === 'number') return 'nach Etappe ' + u; const [e, l] = u.split('-'); return 'Etappe ' + e + ' · Stufe ' + l; }
 function unlockText(u) { if (typeof u === 'number') return `Etappe ${u} „${ET(u).title}“ abschließen`; const [e, l] = u.split('-').map(Number); return `Etappe ${e}, Stufe ${l} „${lvDef(e, l).name}“ schaffen`; }
 const HERO_UNLOCK_ETAPPE = {}; for (const id in HERO_UNLOCK) { const u = HERO_UNLOCK[id]; HERO_UNLOCK_ETAPPE[id] = typeof u === 'number' ? u : +u.split('-')[0]; }
 for (const id in HERO_UNLOCK) {
@@ -11867,17 +11881,18 @@ UI.showHome = function (tab) {
   const C = campSave(); dailySave();
   if (!isUnlocked(C.hero)) C.hero = 'finn';
   MENU = null; setTheme(this.tab === 'kampagne' ? ET(this.selEtappe || C.etappe || 1).theme : 'friedhof'); menuScene();
-  const head = `<div class="hometop"><div class="hprof"><canvas id="homehero"></canvas><div><b>${HEROES[C.hero].name}</b><small>${starsTotal()} ★</small></div></div>
+  const head = `<div class="hometop"><div class="hprof"><canvas id="homehero"></canvas><div><b>${HEROES[C.hero].name}</b><small title="Gesammelte Sterne">${starsTotal()} ★</small></div></div>
     <div class="hcur"><span style="color:#d8c0ff">✦ ${SAVE.souls}</span><span style="color:#8ad8ff">◆ ${C.crystals}</span></div>
     <div class="hbtns"><button class="ibtn" data-act="codex">📖</button><button class="ibtn" data-act="settings">⚙</button></div></div>`;
   const body = ({ kampagne: () => this.homeKampagne(), helden: () => this.homeHelden(), ausruestung: () => this.homeGear(), familie: () => this.homeFamilie(), system: () => this.homeSystem(), events: () => this.homeEvents() })[this.tab]();
-  const bar = `<div class="tabbar">${TABS.map(([id, nm, sym, col]) => `<button class="tabb ${id === this.tab ? 'on' : ''}" data-act="home" data-tab="${id}"><img src="${tabIcon(sym, col)}"><span>${nm}</span></button>`).join('')}</div>`;
+  const bar = `<div class="tabbar">${TABS.map(([id, nm, sym, col]) => `<button class="tabb ${id === this.tab ? 'on' : ''}" data-act="home" data-tab="${id}"><img src="${tabIcon(sym, col)}"><span>${nm}</span>${id === 'events' && dailyReadyAny() ? '<i class="dot">!</i>' : ''}</button>`).join('')}</div>`;
   const d = this.show(`<div class="home">${head}<div class="hbody">${body}</div>${bar}</div>`, 'home');
   const hc = $('#homehero'); if (hc) { const r = hc.getBoundingClientRect(); hc.width = Math.round(r.width * VIEW.dpr); hc.height = Math.round(r.height * VIEW.dpr); this.previews.push({ c: hc, id: C.hero, t: 0 }); }
   d.querySelectorAll('canvas[data-prev]').forEach((c) => { const r = c.getBoundingClientRect(); c.width = Math.round(r.width * VIEW.dpr); c.height = Math.round(r.height * VIEW.dpr); this.previews.push({ c, id: c.dataset.prev, t: Math.random() * 5 }); });
   d.querySelectorAll('canvas[data-boss]').forEach((c) => drawBossThumb(c, +c.dataset.boss));
   return d;
 };
+function dailyReadyAny() { const D = dailySave(); return DAILY.some((q) => !D.got[q.id] && (D.prog[q.id] || 0) >= q.goal); }
 function starsTotal() { let s = 0; for (const k in campSave().stars) s += campSave().stars[k]; return s; }
 function drawBossThumb(c, n) {
   const C2 = CHAPTERS[ET(n).ch - 1], r = c.getBoundingClientRect(); c.width = Math.round(r.width * VIEW.dpr); c.height = Math.round(r.height * VIEW.dpr);
@@ -11904,7 +11919,7 @@ UI.homeKampagne = function () {
 UI.homeHelden = function () {
   const C = campSave();
   if (!this.selHero || !HERO_ORDER.includes(this.selHero)) this.selHero = C.hero;
-  const cards = HERO_ORDER.map((id) => `<div class="hcard ${id === this.selHero ? 'sel' : ''} ${isUnlocked(id) ? '' : 'locked'}" data-act="hsel" data-id="${id}"><canvas data-prev="${id}"></canvas>${isUnlocked(id) ? '' : '<div class="lock">🔒</div>'}${id === C.hero ? '<div class="hmark">✔</div>' : ''}<div class="nm"${HEROES[id].name.length > 16 ? ' style="font-size:0.66em"' : ''}>${HEROES[id].name}</div></div>`).join('');
+  const cards = HERO_ORDER.map((id) => `<div class="hcard ${id === this.selHero ? 'sel' : ''} ${isUnlocked(id) ? '' : 'locked'}" data-act="hsel" data-id="${id}"><canvas data-prev="${id}"></canvas>${isUnlocked(id) ? '' : '<div class="lock">🔒</div>'}${id === C.hero ? '<div class="hmark">✔</div>' : ''}<div class="nm"${HEROES[id].name.length > 16 ? ' style="font-size:0.66em"' : ''}>${HEROES[id].name}${isUnlocked(id) ? '' : `<small class="hunl">${unlockShort(HERO_UNLOCK[id])}</small>`}</div></div>`).join('');
   const H = HEROES[this.selHero], un = isUnlocked(this.selHero);
   return `<div class="heroes">${cards}</div>
     <div class="hmini panel"><div class="ht"><h3>${H.name}</h3><span class="title2">${H.title}</span></div>
@@ -11912,7 +11927,7 @@ UI.homeHelden = function () {
       ${H.evoPath ? H.evoPath() : H.evo ? finnSelectHtml() : ''}
       <div class="blk"><b class="lbl">MECHANIK: ${H.mech.name.toUpperCase()}</b><p>${H.mech.desc}</p></div>
       <div class="blk"><b class="lbl">SPEZIAL: ${H.ult.name.toUpperCase()}</b><p>${H.ult.desc}</p></div>
-      ${un ? `<button class="btn primary" data-act="hpick" ${this.selHero === C.hero ? 'disabled' : ''}>${this.selHero === C.hero ? 'Ausgewählt' : 'Auswählen'}</button>` : `<div class="blk" style="color:#ffb0b0">🔒 ${H.unlock.desc}</div>`}</div>`;
+      ${un ? (this.selHero === C.hero ? '<div class="selbadge">✔ Ausgewählt</div>' : '<button class="btn primary" data-act="hpick">Auswählen</button>') : `<div class="blk" style="color:#ffb0b0">🔒 Freischalten: ${HERO_UNLOCK[this.selHero] !== undefined ? unlockText(HERO_UNLOCK[this.selHero]) : H.unlock.desc}</div>`}</div>`;
 };
 UI.homeGear = function () {
   const C = campSave();
@@ -11950,8 +11965,8 @@ UI.homeSystem = function () {
 UI.homeEvents = function () {
   const C = campSave(), D = dailySave(), towerNext = Math.min(CHAPTERS.length, (C.tower || 0) + 1), towerOpen = chapterCleared(towerNext) || SAVE.settings.testUnlock;
   const daily = DAILY.map((q) => { const pr = Math.min(q.goal, D.prog[q.id] || 0), done = pr >= q.goal, got = D.got[q.id];
-    return `<div class="famrow"><div class="gtxt"><b>${q.text}</b><small>${pr} / ${q.goal} · Belohnung ${q.reward.souls} ✦ ${q.reward.crystals} ◆</small></div><button class="btn small ${done && !got ? 'primary' : ''}" data-act="dailyget" data-id="${q.id}" ${done && !got ? '' : 'disabled'}>${got ? '✔' : 'Abholen'}</button></div>`; }).join('');
-  return `<div class="evcard" style="--ec:#6a2a4a"><div><b>Nacht auf dem Aschefriedhof</b><small>Die klassische Nacht: zehn Minuten Horden, dann Vaelgor. Längste Nacht: ${fmtTime(C.endless || 0)}</small></div><button class="btn primary" data-act="endless">Starten</button></div>
+    return `<div class="famrow"><div class="gtxt"><b>${q.text}</b><small>${pr} / ${q.goal} · Belohnung: <span style="color:#d8c0ff">${q.reward.souls} Seelen ✦</span> · <span style="color:#8ad8ff">${q.reward.crystals} Kristalle ◆</span></small></div><button class="btn small ${done && !got ? 'primary' : ''}" data-act="dailyget" data-id="${q.id}" ${done && !got ? '' : 'disabled'}>${got ? '✔' : 'Abholen'}</button></div>`; }).join('');
+  return `<div class="evcard" style="--ec:#6a2a4a"><div><b>Die endlose Nacht</b><small>Horden ohne Ende – wie lange hältst du durch?<br>Beste Nacht: ${fmtTime(C.endless || 0)}</small></div><button class="btn primary" data-act="endless">Starten</button></div>
     <div class="evcard" style="--ec:#4a2a6a"><div><b>Boss-Turm · Stock ${towerNext}</b><small>${towerOpen ? `Die Bosse der Kampagne, stärker als zuvor. Nächster: ${ENEMIES[CHAPTERS[towerNext - 1].roles.boss].name}` : `Stock ${towerNext} öffnet nach Etappe ${ET_OF_CH[towerNext] || '?'}.`} · Höchster Stock: ${C.tower || 0}</small></div><button class="btn primary" data-act="tower" ${towerOpen ? '' : 'disabled'}>Starten</button></div>
     <div class="syshead" style="margin:10px 4px 6px">TÄGLICHE AUFGABEN</div><div class="gearlist">${daily}</div>`;
 };
@@ -12895,7 +12910,7 @@ UI.showSettings = function () {
   if (box) {
     const row = document.createElement('div'); row.className = 'setrow';
     row.innerHTML = `<span>3D-Grafik<br><small style="color:var(--dim)">Held, Gegner und Welt in 3D. Aus = klassische 2D-Grafik (schneller auf alten Handys).</small></span><div class="toggle interactive ${SAVE.settings.gfx3d !== false ? 'on' : ''}" data-act="toggle" data-k="gfx3d"></div>`;
-    box.insertBefore(row, box.firstChild);
+    box.insertBefore(row, first);
     row.querySelector('[data-act]').addEventListener('click', () => { AudioSys.init(); sfx('click'); this.act('toggle', { k: 'gfx3d' }); });
   }
   return d;
@@ -13120,12 +13135,8 @@ UI.homeKampagne = function () {
   if (!MAP3.placed) { MAP3.scroll = MAP3.target = this.selEtappe - 1; MAP3.placed = true; }
   const labels = ETAPPEN.map((ch, i) => { const n = i + 1, o = etappeOpen(n);
     return `<div class="mlab ${o ? '' : 'locked'}" data-n="${n}"><div class="mlt"><span class="mnum">${n}</span><b>${ch.title}</b></div>${o ? `<small>${starsOf(n)}/${lvCount(n) * 3} ★${etappeCleared(n) ? ' · geschafft' : ''}</small>` : ''}</div>${o ? '' : `<div class="mlab mlk" data-k="${n}"><div class="mlock">🔒</div><small>Schließe Etappe ${n - 1} ab</small></div>`}`; }).join('');
-  const D = dailySave(), dailyReady = DAILY.some((q) => !D.got[q.id] && (D.prog[q.id] || 0) >= q.goal);
-  const side = (act, sym, col, nm, dot, tab) => `<button class="sbtn" data-act="${act}"${tab ? ` data-tab="${tab}"` : ''}><img src="${tabIcon(sym, col)}">${dot ? '<i class="dot">!</i>' : ''}<span>${nm}</span></button>`;
   return `<div class="map3d"><div class="mapslot"></div><div class="maplabels">${labels}</div>
-      <div class="mside l">${side('home', 'tornado', '#6affd8', 'Aufgaben', dailyReady, 'events')}${side('tower', 'shield', '#c8a0ff', 'Boss-Turm')}${side('endless', 'eye', '#ff9aaa', 'Endlos')}</div>
-      <div class="mside r">${side('home', 'clone', '#ff9aaa', 'Helden', false, 'helden')}${side('home', 'blade', '#8ad8ff', 'Schmiede', false, 'ausruestung')}</div>
-      <button class="backcur" data-act="mapcur" hidden>Zur aktuellen Etappe<br><span>⌄</span></button></div>
+      <button class="backcur" data-act="mapcur" hidden>Zur aktuellen Etappe <span>⌄</span></button></div>
     ${this.campSheet()}`;
 };
 UI.campSheet = function () {
@@ -13271,6 +13282,13 @@ const _finnEvolveCap = finnEvolve;
 finnEvolve = function (tier) { if (GAME && GAME.p && tier > evoCap('finn')) return evoBlocked(tier); return _finnEvolveCap(tier); };
 
 /* ------------------------------------------------------------ Heldenansicht */
+// Bedingung im Lauf: Finn nutzt FINN_ARC, andere Helden stehen direkt in der Form
+function evoRunText(id, i) {
+  const src = id === 'finn' && typeof FINN_ARC !== 'undefined' ? FINN_ARC[i] : evoTiersOf(id)[i];
+  if (!src) return '';
+  if (src.txt) return 'im Lauf: ' + src.txt;
+  return src.lv ? 'im Lauf ab Stufe ' + src.lv : '';
+}
 UI.evoUnlockHtml = function (id) {
   const T = evoTiersOf(id); if (!T) return '';
   const cap = evoCap(id), C = campSave();
@@ -13282,7 +13300,7 @@ UI.evoUnlockHtml = function (id) {
       st = done ? `<button class="btn small ${evoCanUnlock(id) ? 'primary' : ''}" data-act="evoup" data-id="${id}" ${evoCanUnlock(id) ? '' : 'disabled'}>Freischalten<br><small><span style="color:${SAVE.souls >= c.souls ? '#d8c0ff' : '#ff8a8a'}">${c.souls} ✦</span> · <span style="color:${C.crystals >= c.crystals ? '#8ad8ff' : '#ff8a8a'}">${c.crystals} ◆</span></small></button>`
         : `<span class="evlk">🔒 nach Etappe ${rq}</span>`;
     } else st = `<span class="evlk">🔒</span>`;
-    return `<div class="evrow ${i <= cap ? 'on' : ''}"><i style="background:${t.col}"></i><div><b style="color:${i <= cap ? t.col : ''}">${t.name}</b>${i ? `<small>im Lauf: ${t.txt || ('Stufe ' + t.lv)}</small>` : '<small>Startform</small>'}</div>${st}</div>`;
+    return `<div class="evrow ${i <= cap ? 'on' : ''}"><i style="background:${t.col}"></i><div><b style="color:${i <= cap ? t.col : ''}">${t.name}</b>${i ? `<small>${evoRunText(id, i)}</small>` : '<small>Startform</small>'}</div>${st}</div>`;
   }).join('');
   return `<div class="blk"><b class="lbl">FORMEN · ${cap + 1} VON ${T.length} FREI</b><p class="small" style="margin:2px 0 6px">Im Lauf entwickelt sich der Held bis zur höchsten freigeschalteten Form.</p><div class="evlist">${rows}</div></div>`;
 };
@@ -13680,7 +13698,8 @@ function uiSkinCss() {
 .btn { border-style: solid; border-width: 0 30px; border-image: var(--ui-btn-purple) 0 118 fill / 0 30px stretch; border-radius: 0; background: none; box-shadow: none; padding: 12px 6px; color: #fff4dc; text-shadow: 0 2px 0 rgba(20,0,30,.8); }
 .btn.primary { border-image-source: var(--ui-btn-red); background: none; }
 .btn.ghost { border-image-source: var(--ui-btn-grey); background: none; }
-.btn:disabled, .btn.off { border-image-source: var(--ui-btn-grey); color: #c8c0d0; }
+.btn:disabled, .btn.off { border-image-source: var(--ui-btn-grey); color: #9a90a8; filter: grayscale(.8) brightness(.72); opacity: .7; text-shadow: none; }
+.bigplay:disabled, .startbtn:disabled { filter: grayscale(.9) brightness(.6); opacity: .75; }
 .btn.small { border-width: 0 20px; border-image-width: 0 20px; padding: 6px 4px; }
 .startbtn, .bigplay { border-style: solid; border-width: 0 46px; border-image: var(--ui-btn-gold) 0 132 fill / 0 46px stretch; border-radius: 0; background: none; box-shadow: none; color: #4a2200; text-shadow: 0 1px 0 rgba(255,240,180,.7); padding: 12px 0 10px; }
 .bigplay:active, .startbtn:active { transform: translateY(2px) scale(.98); box-shadow: none; filter: brightness(1.1); }
@@ -13688,18 +13707,39 @@ function uiSkinCss() {
 /* Kopf- und Tab-Leiste */
 .hometop { border-style: solid; border-width: 0 40px 10px; border-image: var(--ui-topbar) 40 150 30 fill / 0 40px 10px stretch; background: #140a2a; box-shadow: 0 3px 12px rgba(0,0,0,.5); padding-left: calc(var(--safe-l)); padding-right: calc(var(--safe-r)); }
 .tabbar { border-style: solid; border-width: 10px 30px 0; border-image: var(--ui-tabbar) 30 110 0 fill / 10px 30px 0 stretch; background: #0e0826; padding-left: calc(var(--safe-l)); padding-right: calc(var(--safe-r)); }
-.tabb.on { background: var(--ui-tab-active) center / 100% 100% no-repeat; box-shadow: none; color: #fff4c0; text-shadow: 0 1px 2px #000, 0 0 6px #000; }
+.tabb { position: relative; }
+.tabb.on { background: radial-gradient(ellipse 55% 75% at 50% 100%, rgba(255,190,80,.42), rgba(255,190,80,0) 72%); box-shadow: none; color: #ffe6a0; text-shadow: 0 1px 2px #000, 0 0 6px #000; }
+.tabb.on::after { content: ''; position: absolute; left: 50%; bottom: 2px; width: min(52px, 62%); height: 3px; transform: translateX(-50%); border-radius: 2px; background: linear-gradient(90deg, rgba(255,208,112,0), #ffd070, rgba(255,208,112,0)); box-shadow: 0 0 10px #ffb040; }
+.tabb.on img { opacity: 1; transform: scale(1.22) translateY(-3px); filter: drop-shadow(0 0 8px rgba(255,200,90,.85)); }
+.tabb .dot { position: absolute; top: 2px; left: calc(50% + 10px); min-width: 16px; height: 16px; border-radius: 8px; background: #e0303a; color: #fff; font: 800 11px/16px sans-serif; font-style: normal; box-shadow: 0 0 6px #ff3a4e; }
 .hcur span { background: var(--ui-pill) center / 100% 100% no-repeat; border: 0; box-shadow: none; padding: 5px 14px 5px 10px; }
 .ibtn:not(.hasimg) { background: var(--ui-btn-square) center / 100% 100% no-repeat; border: 0; box-shadow: none; }
 .sbtn { background: var(--ui-btn-square) center / 100% 100% no-repeat; border: 0; box-shadow: none; padding: 8px 0 6px; }
+/* Kampf-HUD */
+.sysmsg { width: min(300px, 78vw); font-size: 13.5px; padding: 6px 10px; background: rgba(8,14,40,.78); }
+.hint { bottom: calc(132px + var(--safe-b)); font-size: 14px; padding: 6px 14px; border-radius: 999px; background: rgba(10,4,20,.72); border: 1px solid rgba(200,170,255,.35); width: max-content; max-width: 86vw; }
+/* Zurueck-Pfeil oben links */
+.box { position: relative; }
+.box .backarrow + h2 { margin-top: 28px; }
+.backarrow { position: absolute; top: 6px; left: 8px; z-index: 3; border: 0; background: rgba(10,4,20,.6); color: #ffe6a0; font-family: 'Cinzel', serif; font-weight: 800; font-size: 13px; padding: 5px 10px; border-radius: 999px; border: 1px solid rgba(201,162,76,.6); cursor: pointer; }
+/* Pause */
+.pset { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.pset .btn { font-size: 11px; padding: 8px 0; white-space: nowrap; letter-spacing: 0; }
+.maplabels { -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 56px); mask-image: linear-gradient(180deg, transparent 0, #000 56px); }
+/* Helden */
+.hcard .nm .hunl { display: block; margin-top: 2px; font-family: sans-serif; font-size: 9px; font-weight: 600; color: #ffcf8a; letter-spacing: 0; text-transform: none; }
+.selbadge { margin-top: 8px; padding: 10px; text-align: center; font-family: 'Cinzel', serif; font-weight: 800; color: #9affb0; border: 1.5px solid rgba(120,255,160,.5); border-radius: 10px; background: rgba(40,120,70,.18); }
 /* Kampagne */
+.cshead { margin-top: 10px; }
+.backcur { background: linear-gradient(180deg, rgba(40,20,80,.92), rgba(14,6,30,.92)); border: 1.5px solid #c9a24c; border-radius: 999px; padding: 6px 16px; font-size: 13px; box-shadow: 0 4px 14px rgba(0,0,0,.6); }
+.backcur span { font-size: 18px; vertical-align: -2px; }
 .campsheet { border-style: solid; border-width: 22px 34px 0; border-image: var(--ui-sheet) 70 110 0 fill / 22px 34px 0 stretch; background: #140a30; box-shadow: 0 -6px 20px rgba(0,0,0,.5); padding-left: calc(var(--safe-l)); padding-right: calc(var(--safe-r)); }
 .lvdot { background: var(--ui-lv-open) center / 100% 100% no-repeat; border: 0; box-shadow: none; border-radius: 0; color: #fff; }
 .lvdot.boss { background-image: var(--ui-lv-boss); }
 .lvdot.sel { background: var(--ui-lv-sel) center / 100% 100% no-repeat; box-shadow: none; filter: drop-shadow(0 0 8px rgba(255,200,90,.7)); color: #4a2200; }
 .lvdot.locked { background-image: var(--ui-lv-locked); opacity: .85; }
-.mlab .mlt b { padding: 2px 4px; }
-.mlab .mlt { border-style: solid; border-width: 0 26px; border-image: var(--ui-nameplate) 0 100 fill / 0 26px stretch; padding: 4px 0; }
+.mlab .mlt { background: linear-gradient(180deg, rgba(40,20,80,.92), rgba(14,6,30,.92)); border: 1.5px solid #c9a24c; border-radius: 12px; padding: 3px 14px 3px 4px; box-shadow: 0 4px 14px rgba(0,0,0,.6), inset 0 0 12px rgba(160,120,255,.25); }
+.mlab .mlt b { font-size: 17px; -webkit-text-stroke: 0; text-shadow: 0 2px 0 #0a0418; }
 .mnum { background: var(--ui-badge) center / 100% 100% no-repeat !important; border: 0; box-shadow: none; min-width: 34px; height: 36px; color: #ffe6a0 !important; }
 /* Fenster und Karten */
 .syswin, .box.panel { border-style: solid; border-width: 22px; border-image: var(--ui-panel) 90 fill / 22px stretch; border-radius: 0; background: none; box-shadow: 0 10px 30px rgba(0,0,0,.6); }
