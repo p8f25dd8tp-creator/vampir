@@ -103,3 +103,68 @@ on the right two thirds, empty darker area on the left third for a title.
 ```
 Für **[BESCHREIBUNG]** nimmst du die Beschreibung desselben Bosses aus Abschnitt 1.
 Die Dateinamen sind `intro_boss_1.png` bis `intro_boss_15.png`.
+
+---
+
+## 4. Etappen-Bilder (Kampagne)
+
+Ein Bild pro Etappe. Es erscheint unten in der Kampagne, wenn du eine Etappe auswählst, und als
+Ladebild vor dem Kampf. Die 3D-Inseln auf der Karte bleiben, diese Bilder zeigen den Schauplatz groß.
+
+Format für alle: `wide 1536x1024, full background, no transparency`
+
+Vor jede Beschreibung diesen Satz setzen (statt des normalen Stil-Bausteins):
+```
+Stylized mobile game location artwork, painterly 3D look, dark but colorful night palette (deep
+violet and indigo with glowing accents), wide establishing shot of the place, no characters in the
+foreground, soft atmospheric depth, the lower third a bit darker and calmer for text. No text, no
+letters, no watermark.
+```
+
+| Etappe | Titel | Dateiname | Beschreibung |
+|---|---|---|---|
+| 1 | Die Aula | `etappe_1.png` | `A military academy on a base at dusk: a large stone school building with a clock tower, a training ground with painted lines, warm lit windows.` |
+| 2 | Das rote Portal | `etappe_2.png` | `A huge glowing red portal ring standing on a dusty red alien plain, strange rock spires, a red sky.` |
+| 3 | Caladi | `etappe_3.png` | `A desert planet with two suns low on the horizon, a white dome shelter with antennas, sand dunes and crates.` |
+| 4 | Der Nachtdämon | `etappe_4.png` | `A military base at night: concrete walls, two watchtowers with searchlights, fog, a blue night sky.` |
+| 5 | Die Vampirsiedlung | `etappe_5.png` | `A gothic vampire town at night: dark castle with red-roofed spires, lantern-lit cobblestone streets, a big pale moon.` |
+| 6 | Die Verfluchten | `etappe_6.png` | `A rocky island with ancient broken columns and arches, an arena in the ruins, stormy violet sky over the sea.` |
+| 7 | Bürgerkrieg | `etappe_7.png` | `A battlefield camp: tents, sandbag walls, two opposing banners (blue and red), smoke and fires in the distance.` |
+| 8 | Kampf um den Thron | `etappe_8.png` | `A dark castle throne hall seen from outside, the council building burning, purple and red light, banners.` |
+| 9 | Der König mit Bedingungen | `etappe_9.png` | `Ruined temple on a hunting planet, broken sandstone, strange alien plants, a vampire castle silhouette far away.` |
+| 10 | Graham | `etappe_10.png` | `A war front under a red sky: lava cracks in black rock, giant red crystal spikes, an army camp in the distance.` |
+| 11 | Die Rückkehr einer Legende | `etappe_11.png` | `A heavenly realm above the clouds: a white marble temple with a golden dome, floating islands and soft golden light.` |
+| 12 | Die vergessene Legende | `etappe_12.png` | `A dense alien jungle at night: giant trees, glowing turquoise mushrooms, a huge beast skull half buried in moss.` |
+| 13 | Gottbezwinger | `etappe_13.png` | `A world of the gods: a golden step pyramid with a glowing crystal at the top, blue-violet sky, floating runes.` |
+| 14 | Dämonenkönige | `etappe_14.png` | `The Red Space: black obsidian obelisks on dark rock, glowing crimson cracks, red sparks floating in a black-red void.` |
+| 15 | Der letzte Vampir | `etappe_15.png` | `A dark demon realm: a throne of black stone under a burning red sky, violet flames, broken floating rocks.` |
+
+---
+
+## 5. Hintergrund der Kampagnenkarte
+
+Der Himmel hinter den schwebenden Inseln. Er soll ruhig sein, damit Inseln und Schrift gut lesbar
+bleiben, und oben und unten nahtlos aneinanderpassen (die Karte ist lang und wird gescrollt).
+
+**Kartenhimmel** → `karte_himmel.png`
+Format: `portrait 1024x1792, full background, no transparency`
+```
+Seamless vertically tileable night sky background for a mobile game map: deep indigo to violet
+gradient, soft glowing nebula clouds in violet and crimson, many small stars, a few soft light
+wisps, no planets, no moon, no objects, no horizon. The top and bottom edges must tile seamlessly.
+Calm and not too bright. No text.
+```
+
+**Mond** (wird oben am Himmel eingeblendet) → `karte_mond.png`
+Format: `square 1024x1024, transparent background`
+```
+A large pale moon with soft warm glow and subtle craters, slightly pink rim light, isolated on a
+transparent background, stylized painted look.
+```
+
+**Wolken unter den Inseln** → `karte_wolken.png`
+Format: `wide 1536x1024, transparent background`
+```
+A soft fluffy cloud bank in pale lavender and white with slight pink shading, stylized painted
+mobile game look, isolated on a transparent background, no sky.
+```
