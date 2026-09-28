@@ -71,3 +71,11 @@ Am Ende gibt es daraus einen gemeinsamen GPT-Prompt-Block.
 | 12 | Leuchtender Dschungel des Daisy-Planeten | leuchtende Pflanzen, Moos |
 | 12 | Grasplanet mit Spinnenfels | hohes Gras |
 | 12 | Namrik-Stadt im Krieg | fremdes Metall, Energieschilde |
+| 13 | Planet der alten Siedlung (H) | Trümmer, Kapselkrater |
+| 13 | Paranium, Turnierkuppel der Penswi | Hightech-Arena, Laufbahn |
+| 13 | Mermerial-Eisgarten | Eis, Muscheln, Perlen |
+| 13 | Gewitterplanet (Affenkönig) | nasser dunkler Fels |
+| 13 | Phönix-Planet | verbrannte Erde, Glut |
+| 13 | Behemoth-Planet | Schlamm, riesige Erdsäulen |
+| 13 | Asuras schwebende Inseln | bunte Felsinseln |
+| 13 | Amra-Planet im Krieg | goldener Stein, Turm |

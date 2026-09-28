@@ -11,7 +11,7 @@
      boss     — Etappen-Finale: Wellen, dann der Boss
      berserk  — Finn als wahnsinniger Bloodsucker (doppelte Kraft, halbes Leben)
    Zusatz `berserk: true` macht jede andere Stufenart zum Bloodsucker-Kampf.
-   Etappen 13 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
+   Etappen 14 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
    ========================================================================== */
 
 /* ------------------------------------------------------------ Gegner der Etappe 1 */
@@ -813,8 +813,66 @@ const ETAPPE12 = {
   ]
 };
 
+/* ------------------------------------------------------------ Etappe 13: Gottbezwinger (Kapitel 2108–2305) */
+defEnemy('e13_d3', 'ghoul', 'dalki3', 'Drei-Stachel-Dalki mit Fähigkeit', { hp: 92 });
+defEnemy('e13_d4', 'knight', 'dalki4', 'Vier-Stachel mit Stahlhaut', { armor: 10 });
+defEnemy('e13_dS', 'witch', 'dalki5', 'Laser-Dalki', { shot: 'light', flier: false });
+defEnemy('e13_dB', 'brute', 'dalki6', 'Dalki-Brecher', { splits: 0, hp: 560 });
+defEnemy('e13_d5', 'captain', 'dalkiW', 'Fünf-Stachel-Dalki', { scale: 1.35, hp: 9800 });
+defEnemy('e13_vamp', 'ghoul', 'v_wache', 'Vampir mit Stufe-5-Blut', { hp: 92 });
+defEnemy('e13_vampR', 'knight', 'v_ritter', 'Wache der Originals', { armor: 10 });
+defEnemy('e13_explo', 'witch', 'v_magier', 'Explosivblut-Nutzer', { shot: 'blood', flier: false });
+defEnemy('e13_orig', 'captain', 'v_ritter', 'Original der alten Familien', { scale: 1.35, hp: 9800 });
+defBoss('b13_h', 'graham', 'H (acht Stacheln)', 60000, { model: 'hproj', bellShot: 'light', r: 38, spd: 78 });
+defBoss('b13_stark', 'mono', 'Stark, der schnellste Penswi', 24000, Object.assign({ look: 'b_stark', bellShot: 'soul', spd: 96 }, B1));
+defBoss('b13_mundus', 'kronker', 'Mundus, Bote der Alten', 60000, { model: 'mundus', bellShot: 'light', r: 40, spd: 50 });
+defBoss('b13_affe', 'kronker', 'Der Affenkönig (God Slayer)', 28000, { model: 'affe', bellShot: 'spike', r: 38, spd: 80 });
+defBoss('b13_phoenix', 'kronker', 'Der Phönix (God Slayer)', 30000, { model: 'phoenix', bellShot: 'bell', r: 48 });
+defBoss('b13_behemoth', 'kronker', 'King Behemoth (God Slayer)', 34000, { model: 'behemoth', bellShot: 'spike', r: 60, scale: 1.3, spd: 36 });
+defBoss('b13_asura', 'kronker', 'Asura, der erste God Slayer', 32000, { model: 'asura', bellShot: 'blood', r: 42, spd: 78 });
+defBoss('b13_pine', 'graham', 'Pine (sieben Stacheln)', 30000, { model: 'pine', bellShot: 'light', r: 38 });
+defBoss('b13_sera', 'stahlmann', 'Sera, Gott des Krieges', 30000, Object.assign({ look: 'b_sera', bellShot: 'spike', armor: 10 }, B1));
+defBoss('b13_chris', 'kronker', 'Chris und Peter', 30000, { model: 'werwolfR', bellShot: 'spike', r: 40, spd: 84 });
+defBoss('b13_h10', 'graham', 'H (zehn Stacheln)', 34000, { model: 'h10', bellShot: 'light', r: 40, spd: 76 });
+defBoss('b13_ray', 'kronker', 'Ray Talen in der Drachenrüstung', 38000, { model: 'raydrache', bellShot: 'bell', r: 44, spd: 80 });
+const R_DALKI13 = { ghoul: 'e13_d3', bat: 'e7_d1', knight: 'e13_d4', witch: 'e13_dS', brute: 'e13_dB', captain: 'e13_d5' };
+const R_ORIG = { ghoul: 'e13_vamp', bat: 'c5_fleder', knight: 'e13_vampR', witch: 'e13_explo', brute: 'e5_bsRiese', captain: 'e13_orig' };
+const ETAPPE13 = {
+  title: 'Gottbezwinger', place: 'Alte Siedlung · Paranium · Mermerial-Planet · Welten der God Slayer · Amra-Planet', src: 'Kapitel 2108–2305', theme: 'goetter', ch: 13,
+  levels: [
+    { name: 'Projekt H', type: 'endure', foe: 'b13_h', dur: 80, crowd: 0.4, theme: 'ruinen', roles: R_DALKI13, comp: ['sil'],
+      text: 'Ein menschenähnlicher Dalki mit acht Stacheln, Blitzen und dem Gesicht der Blades: H, gebaut aus Hilstons DNA und sechs gestohlenen Fähigkeiten. Er schmilzt Bordens Gesicht. Sil schickt alle fort und bleibt allein.' },
+    { name: 'Das Planetenturnier', type: 'duel', foe: 'b13_stark', crowd: 0, theme: 'goetter', roles: R_CELEST,
+      text: 'Auf Paranium leben die Penswi – lila, dünn und unfassbar schnell. Im Finale „King of Tag“ trägt Stark die Marke. Finn wird immer schneller … und dann: Nitro.' },
+    { name: 'Mundus hält die Zeit an', type: 'endure', foe: 'b13_mundus', dur: 60, crowd: 0.1, theme: 'himmel', roles: R_CELEST, comp: ['lena', 'minny'],
+      text: 'Der Bote der Alten will Galen, einen unvollständigen Celestial. Die Zeit steht still – nur Lena bewegt sich, mit blutenden Augen. Minny holt Finns Geschenk aus dem Schatten: einen Ring, der den Raum beherrscht.' },
+    { name: 'Der Affenkönig', type: 'duel', foe: 'b13_affe', crowd: 0.1, theme: 'basisnacht', roles: R_CELEST,
+      text: 'Der erste von fünf God Slayern: ein Affe im goldenen Kettenhemd, sein Stab wächst zu einer hausdicken Säule, Rauchklone überall. Finns Seelenwaffe erwacht neu – Shadow Mist.' },
+    { name: 'Der Phönix', type: 'duel', foe: 'b13_phoenix', crowd: 0.1, theme: 'roterhimmel', roles: R_CELEST,
+      text: 'Es gibt immer nur einen Phönix. Seine Flammen wirken auf Vampire wie Sonnenlicht, und die brennende Welt heilt ihn. Nur im Schattenraum kann er nicht heilen.' },
+    { name: 'King Behemoth', type: 'duel', foe: 'b13_behemoth', crowd: 0.3, theme: 'redspace', roles: R_CELEST,
+      text: 'Der König der Bestien: Widderhörner bis in die Wolken, so schwer, dass der Planet bebt. Nichts hat ihn je verletzt. Finn wählt die Dämonenform – und wacht erst Monate später wieder auf.' },
+    { name: 'Asura', type: 'duel', foe: 'b13_asura', crowd: 0.1, theme: 'goetter', roles: R_CELEST,
+      text: 'Der erste God Slayer meditiert, um seinen Zorn loszuwerden. Dann wachsen ihm sechs Arme. Finn mischt Schatten und Blut zum Blutschatten – jeder Treffer schlägt ein zweites Mal ein.' },
+    { name: 'Dalki mit Fähigkeiten', type: 'survive', dur: 170, pace: 1.5, theme: 'roterhimmel', roles: R_DALKI13, elites: 2,
+      text: 'Jacks schwarze Kapseln regnen auf die Planeten der Allianz: Dalki mit Metallhaut, Unsichtbarkeit und Regeneration, dazu menschliche Truppen, die nichts mehr von Finn wissen.' },
+    { name: 'Die Originals greifen an', type: 'survive', dur: 180, pace: 1.7, theme: 'roterhimmel', roles: R_ORIG, elites: 3,
+      text: 'Jim schickt die Originals gegen die Amra. Hikel sprengt Straßen, Biancas Python spuckt Säure. Geo fängt Explosivblut mit goldenen Händen ab – und aus dem Wald helfen Finns Schattenbestien.' },
+    { name: 'Pine', type: 'duel', foe: 'b13_pine', crowd: 0.3, theme: 'roterhimmel', roles: R_DALKI13, comp: ['lena'],
+      text: 'Ein Horn, sieben Stacheln: Pine absorbiert jede Fähigkeit mit den Handflächen und schickt sie als Regenbogenwelle zurück. Nur Celestial-Energie schmerzt ihn – und das schwarze Schwert.' },
+    { name: 'Sera, Gott des Krieges', type: 'duel', foe: 'b13_sera', crowd: 0.3, theme: 'schlachtfeld', roles: R_ORIG,
+      text: '„Wo Krieg ist, bin ich.“ Jede Waffe in Seras Hand wird zur Dämonenwaffe – Speere, zielsuchende Dolche, Sprengscheiben. Auf seinem Schlachtfeld greift er jede Klinge blitzschnell auf.' },
+    { name: 'Chris und Peter', type: 'duel', foe: 'b13_chris', crowd: 0.2, theme: 'ruinen', roles: R_ORIG,
+      text: 'In der neuen God-Slayer-Rüstung tritt Finn aus dem Turm. Zwei alte Freunde ohne Erinnerung stellen sich ihm in den Weg: der rote Werwolf und Peter mit dem Doppelschweif. Finn will sie nicht töten.' },
+    { name: 'H mit zehn Stacheln', type: 'duel', foe: 'b13_h10', crowd: 0.3, theme: 'ruinen', roles: R_DALKI13, comp: ['sil', 'minny'],
+      text: 'H hat Wince und Ceril getötet und alle Blades außer Shiro. Sil ist ausgezehrt, aber frei – und verwandelt sich mit einer kopierten Fähigkeit in den, den alle für den Stärksten halten.' },
+    { name: 'Ray Talen', type: 'duel', foe: 'b13_ray', crowd: 0.1, theme: 'redspace', roles: R_CELEST, evo: 'God-Slayer-Rüstung',
+      text: 'Jim ist tot. Aus dem Himmel schlägt ein roter Laser ein: Ray in der Drachenrüstung, fast wieder der alte. Seine gelbe Aura löscht jeden Schatten. Asuras Zorn erwacht in den Handschuhen.' }
+  ]
+};
+
 /* ------------------------------------------------------------ Alle Etappen */
-// Etappen 13 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
+// Etappen 14 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
 function autoLevels(ch) {
   const out = [];
   for (let l = 1; l <= 8; l++) {
@@ -823,7 +881,7 @@ function autoLevels(ch) {
   }
   return out;
 }
-const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3, ETAPPE4, ETAPPE5, ETAPPE6, ETAPPE7, ETAPPE8, ETAPPE9, ETAPPE10, ETAPPE11, ETAPPE12].concat(CHAPTERS.slice(12).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
+const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3, ETAPPE4, ETAPPE5, ETAPPE6, ETAPPE7, ETAPPE8, ETAPPE9, ETAPPE10, ETAPPE11, ETAPPE12, ETAPPE13].concat(CHAPTERS.slice(13).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
 ETAPPEN.forEach((E, i) => { E.n = i + 1; E.levels.forEach((L, j) => { L.l = j + 1; }); });
 // Kapitel (Gegner-/Boss-Sammlungen) -> Etappe, fuer den Boss-Turm
 const ET_OF_CH = {}; ETAPPEN.forEach((E) => { const chs = new Set([E.ch]); E.levels.forEach((L) => L.ch && chs.add(L.ch)); if (E.n === 1) chs.add(3); chs.forEach((c) => { ET_OF_CH[c] = E.n; }); });

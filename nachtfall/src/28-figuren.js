@@ -80,6 +80,8 @@ const LOOK = {
   b_nell: { body: 'schurke', top: '#2a1a24', acc: '#8a3a4a', pants: '#140a10', boots: '#0a0508', skin: '#e4dcd8', hair: 'kurz', hairCol: '#1a1418', eye: '#ff2a3a', fangs: true, weapon: 'none' },
   b_grenlet: { body: 'magier', top: '#5a0a2a', acc: '#ff5a8a', pants: '#1a0610', boots: '#10040a', cape: '#3a0418', skin: '#e8d8d8', hair: 'lang', hairCol: '#c8c0b0', eye: '#ff2a4a', fangs: true, weapon: 'staff' },
   b_magnus: { body: 'barbar', top: '#4a2a14', acc: '#e8c060', pants: '#1e140c', boots: '#140c08', cape: '#8a1a14', skin: '#d8c8c0', hair: 'lang', hairCol: '#2a1a10', eye: '#ff3a2a', fangs: true, weapon: 'axe', scale: 1.15 },
+  b_stark: { body: 'schurke', top: '#5a2a8a', acc: '#c8a0ff', pants: '#2a1a4a', boots: '#1a0a2a', skin: '#b08ad8', hair: 'stachel', hairCol: '#e8d8ff', eye: '#ffe060', weapon: 'none', scale: 0.95 },
+  b_sera: { body: 'barbar', top: '#6a6a78', acc: '#e8c060', pants: '#2a2a34', boots: '#1a1a20', cape: '#8a1a14', skin: '#e0c0a0', hair: 'lang', hairCol: '#e8e8f0', eye: '#e8c060', weapon: 'sword', blade: '#e8e8f0' },
   bloodsucker: { body: 'schurke', top: '#6a3a38', pants: '#4a3030', boots: '#2a1a1a', skin: '#d0ccc4', hair: 'glatze', eye: '#0a0000', fangs: true, weapon: 'none', scale: 1.1 },
   b_mono: { body: 'schurke', top: '#1a2440', pants: '#0a1020', boots: '#101018', skin: '#e8d0c0', hair: 'stachel', hairCol: '#1a1a2a', eye: '#6a8ad8', weapon: 'sword', blade: '#d8e8ff' },
   b_ian: { body: 'schurke', top: '#6a4a2a', pants: '#3a2a1a', boots: '#2a1a10', cape: '#4a3a2a', skin: '#e0c0a0', hair: 'kurz', hairCol: '#6a4a2a', eye: '#4a3020', hat: '#6a4a2a', weapon: 'staff' },

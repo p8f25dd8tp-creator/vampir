@@ -519,6 +519,38 @@ const BOSS_BUILD = {
     for (const sd of [-1, 1]) add(SPH(), M('#6a0a0a'), [sd * 80, 120, -20], [60, 8, 30], [0, 0, sd * 0.45]);
     for (let k = 0; k < 6; k++) add(SPH(), M('#8a1a14'), [0, 40 - k * 3, -40 - k * 18], [9 - k, 9 - k, 9 - k]);
   },
+  hproj: (add, M, body) => dalkiBody(add, M, body, 8, '#d8c8b0', '#8ad8ff'),
+  h10: (add, M, body) => dalkiBody(add, M, body, 10, '#c8b8a0', '#8ad8ff'),
+  pine(add, M, body) { dalkiBody(add, M, body, 7, '#6a7a3a', '#e8e060'); add(CON(), M('#e8e060', { emissive: new THREE.Color('#c8c020'), emissiveIntensity: 0.5 }), [0, 186, 16], [7, 34, 7]); },
+  mundus(add, M, body) { // schwarz, rechteckiger Kopf, vier Augenpaare, rote Robe
+    add(CON(), M('#8a1a14'), [0, 60, 0], [40, 120, 40]); add(BOX(), M('#0a0a0e'), [0, 140, 4], [34, 40, 30]);
+    for (let r = 0; r < 4; r++) for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#8affff' })); x.position.set(sd * 8, 130 + r * 8, 20); x.scale.set(3, 1.8, 1.5); body.add(x); }
+    for (const sd of [-1, 1]) add(SPH(), M('#8affff', { emissive: new THREE.Color('#4affff'), emissiveIntensity: 0.9 }), [sd * 40, 80, 20], [9, 9, 9]);
+  },
+  affe(add, M, body) { // Affe im goldenen Kettenhemd mit Stab
+    add(CAP(), M('#c8a040'), [0, 58, 0], [20, 32, 18]); add(SPH(), M('#8a5a2a'), [0, 104, 6], [22, 20, 20]); add(SPH(), M('#d8b080'), [0, 104, 22], [12, 12, 6]);
+    for (const sd of [-1, 1]) { add(CAP(), M('#8a5a2a'), [sd * 30, 80, 10], [7, 26, 7], [0.4, 0, sd * 0.4]); add(CAP(), M('#6a4a2a'), [sd * 12, 16, 0], [8, 18, 8]); add(SPH(), M('#8a5a2a'), [sd * 18, 118, 0], [7, 7, 5]); }
+    add(CYL(), M('#f0f0f0'), [36, 90, 20], [3, 150, 3], [0, 0, 0.3]);
+    for (let k = 0; k < 5; k++) add(SPH(), M('#8a5a2a'), [Math.sin(k) * 20, 30 + k * 6, -30 - k * 6], [5, 5, 5]);
+  },
+  phoenix(add, M, body) { // Riesenvogel aus reinen Flammen
+    const fl = (c, i) => M(c, { emissive: new THREE.Color(c), emissiveIntensity: i });
+    add(SPH(), fl('#ff6a1a', 0.9), [0, 80, 0], [30, 40, 34]); add(SPH(), fl('#ffb02a', 1), [0, 128, 24], [18, 18, 18]); add(CON(), fl('#ffe060', 1), [0, 124, 46], [5, 14, 5], [Math.PI / 2, 0, 0]);
+    for (const sd of [-1, 1]) for (let k = 0; k < 4; k++) add(CON(), fl(k % 2 ? '#ff3a0a' : '#ff8a1a', 0.9), [sd * (40 + k * 22), 100 + k * 6, -k * 6], [10, 44, 6], [0, 0, sd * (1.1 + k * 0.15)]);
+    for (let k = 0; k < 5; k++) add(CON(), fl('#ff5a1a', 0.8), [(k - 2) * 8, 60, -50], [5, 40, 4], [-1.2, 0, (k - 2) * 0.2]);
+  },
+  behemoth(add, M, body) { // Stierkopf, Widderhoerner, schwarze Haut mit goldenen Adern
+    add(CAP(), M('#141214'), [0, 70, 0], [40, 50, 34]); add(SPH(), M('#1a1618'), [0, 140, 10], [46, 34, 36]); add(SPH(), M('#1a1618'), [0, 186, 26], [26, 22, 26]);
+    for (const sd of [-1, 1]) { add(CON(), M('#6a5a4a'), [sd * 34, 214, 16], [8, 44, 8], [0.4, 0, -sd * 1.1]); add(CON(), M('#e8e0cc'), [sd * 10, 176, 50], [3, 12, 3], [-0.8, 0, 0]); add(CAP(), M('#141214'), [sd * 64, 120, 16], [16, 44, 16], [0.3, 0, sd * 0.4]); add(CAP(), M('#0a080a'), [sd * 24, 20, 0], [18, 26, 18]); }
+    for (let k = 0; k < 8; k++) add(BOX(), M('#e8b030', { emissive: new THREE.Color('#c88a10'), emissiveIntensity: 0.8 }), [Math.cos(k) * 30, 70 + k * 12, 32], [2, 24, 2], [0, 0, k * 0.7]);
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffb02a' })); x.position.set(sd * 12, 192, 48); x.scale.set(4, 3, 2); body.add(x); }
+  },
+  asura(add, M, body) { // rothaeutig, sechs Arme, goldene Handschuhe, weisses Haar
+    add(CAP(), M('#a0302a'), [0, 60, 0], [22, 38, 18]); add(SPH(), M('#b03a30'), [0, 110, 6], [30, 26, 22]); add(SPH(), M('#c04a3a'), [0, 150, 12], [17, 19, 17]);
+    add(SPH(), M('#f0f0f0'), [0, 164, 4], [18, 12, 18]);
+    for (const sd of [-1, 1]) { for (const y of [126, 104, 82]) { add(CAP(), M('#a0302a'), [sd * 42, y, 14], [8, 26, 8], [0.4, 0, sd * 0.7]); add(SPH(), M('#e8c060', { emissive: new THREE.Color('#c8a020'), emissiveIntensity: 0.4 }), [sd * 60, y - 14, 28], [9, 9, 9]); } add(CAP(), M('#6a1a1a'), [sd * 14, 16, 0], [10, 20, 10]); }
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffffff' })); x.position.set(sd * 6, 154, 28); x.scale.set(3.5, 2.5, 2); body.add(x); }
+  },
   ranken(add, M, body) { // hausgross, langer Hals, Knospe mit sechs Ranken
     add(SPH(), M('#3a6a3a'), [0, 40, -10], [56, 34, 64]);
     for (let k = 0; k < 4; k++) add(SPH(), M('#4a7a3a'), [0, 70 + k * 22, 30 + k * 10], [16 - k, 16 - k, 16 - k]);

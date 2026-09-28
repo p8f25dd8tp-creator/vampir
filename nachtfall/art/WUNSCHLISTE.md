@@ -40,7 +40,8 @@ Wichtig: Treffer (Faust, Klinge), Blutspritzer, Explosion, Blitz, Feuer, Eis, Bo
   Doppelellenbogen-Dalki, Dalki-Helen, Blob, zweite Drachenhälfte, Green Horn, Graham mit acht Stacheln,
   Tikker, Hybrid-Werwolf, Derik, Andy, Lock, Russ, Chris mit Werwolf-DNA, Sedi-Riese, Athos, Laser-Dalki,
   Yanny, Zero, roter Werwolf, Hinto, Kipo, Gorgath, Emma als Königin der Dhampire, Escam, Edvard, Nell,
-  Rankenmensch, graue Eule, Grenlet, Spinnenfels, Prophet, Magnus, Ray als roter Drache, Jim mit X-Blut).
+  Rankenmensch, graue Eule, Grenlet, Spinnenfels, Prophet, Magnus, Ray als roter Drache, Jim mit X-Blut,
+  H, Stark, Mundus, Affenkönig, Phönix, Behemoth, Asura, Pine, Sera, Ray in der Drachenrüstung).
 - **Bodentexturen**: Liste wächst in `SZENEN-LISTE.md`.
 
 ---
