@@ -5,6 +5,45 @@ Hier sammle ich beim Bauen der Etappen alles, was das Spiel noch besser machen w
 
 ---
 
+## GESAMTLISTE (Stand: alle 15 Etappen fertig)
+
+### Du besorgst
+1. **Musik, 7 Stücke** (CC0, .ogg oder .mp3, je unter 3 MB) nach `art/musik/`: `menue`, `kampf_1`, `kampf_2`, `boss`, `siedlung`, `sieg`, `niederlage` (Stimmungen siehe unten).
+2. **Musik, 2 Zusatzstücke:** `redspace.ogg` (roter Raum, bedrohlich und dröhnend, für Etappe 14 und 15) und `finale.ogg` (episch mit Chor, für Immortuis Endform).
+3. **Soundeffekte** als ein CC0-Paket (z. B. Kenney „Impact Sounds“ plus ein RPG-Paket) nach `art/sfx/`: Treffer, Blut, Explosion, Blitz, Feuer, Eis, Boss-Brüllen, Level-up, Münze, Klick.
+4. **GPT: Etappenbilder 6 bis 15** (10 Bilder, Hochformat). Die Prompts schreibe ich dir.
+5. **GPT: Boss-Intro-Karten.** Es gibt 143 Bosse. Vorschlag: zuerst die rund 30 wichtigsten (Endbosse jeder Etappe und Schlüsselfiguren), danach in Paketen zu je 10. Die Prompts schreibe ich dir paketweise.
+6. **GPT: Bodentexturen.** Die 90 Szenen aus `SZENEN-LISTE.md` fasse ich auf etwa 20 kachelbare Texturen zusammen (z. B. „roter Kristallboden“ für den ganzen roten Raum). Den Prompt-Block bekommst du von mir.
+7. **GPT: UI für die Tabs Helden, Familie und System** (Rahmen, Karten, Reiter im Stil der 25 vorhandenen UI-Bilder). Die Prompts schreibe ich dir.
+8. **GPT: Epilog-Bild** – Finn legt sich in der Gruft der Siedlung schlafen (für den Abschluss nach Etappe 15).
+9. **Lizenz prüfen** für das Quaternius-Bestiary-Paket (Imp, Puglin): Nur mit klarer Lizenz kommt es ins öffentliche Repo.
+
+### Ich baue
+10. **Quaternius-Monster** statt der einfachen Gegnerformen, dunkler eingefärbt.
+11. **Neue UI in den Tabs Helden, Familie und System** mit den GPT-Rahmen.
+12. **Boss-Intro-Karte** mit Bild und Name, wenn ein Boss erscheint.
+13. **Eigene Angriffe für wichtige Bosse:**
+    - Boneclaw teleportiert sich.
+    - Jin lässt Blut regnen.
+    - Vadeen legt Fallen.
+    - Der King-Hund rollt als Stachelkugel.
+    - Kronker schießt Kristallstacheln.
+    - Luce zieht Lichtspuren.
+    - Tenbris erzeugt Sogwirbel.
+    - Immortui erzeugt eine Farblos-Zone, die Geschosse auflöst.
+14. **Durchhalte-Stufen** (z. B. Unzoku, Immortui, Mundus) mit sichtbarem Countdown und einem Satz vom System.
+15. **Musik und Sounds einbauen**, sobald sie da sind, mit getrennten Lautstärkereglern.
+16. **Bodentexturen je Szene einbauen.**
+17. **Deko am Arenarand:** Wasser, Lava, Abgründe, Brücken.
+18. **Bloodsucker-Optik** für Stufen wie „Kronkers wahre Form“: Flügel und Blutbomben.
+19. **Seelenwaffe „Twin Tail Chain“** sichtbar machen.
+20. **Kleinigkeiten:**
+    - Vibration bei starken Treffern (abschaltbar).
+    - Begleiternamen zum Stufenstart.
+    - Kurzes Tutorial in Etappe 1.
+
+---
+
 ## Du besorgst
 
 ### 1. Musik (wichtigster Punkt, bisher läuft nur erzeugter Klang)
