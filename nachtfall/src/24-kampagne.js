@@ -253,6 +253,7 @@ UI.showEnd = function (won, souls, newly, extra) {
     ${stars}
     <div class="sysplace" style="text-align:center">${cp.mode === 'endless' ? 'Beste Nacht: ' + fmtTime(C.endless) : cp.lv ? cp.lv.name : cp.ch.title} · Stufe ${G.level} · ${G.kills} besiegt</div>
     ${won && cp.lv && cp.lv.evo ? `<div style="text-align:center;margin:8px 0"><div class="syshead">[ SYSTEM ] · EVOLUTION</div><div class="cinzel" style="font-size:22px;font-weight:800;color:#ff5a6a">${cp.lv.evo}</div></div>` : ''}
+    ${won && cp.lv && cp.lv.outro ? `<div class="syshead" style="margin-top:10px">[ SYSTEM ] · EPILOG</div>${cp.lv.outro.map((l) => `<p class="sysp">${l}</p>`).join('')}` : ''}
     ${R.unlocked.length ? `<div style="text-align:center;margin:10px 0"><div class="syshead">[ SYSTEM ] · NEUE HELDEN</div>${R.unlocked.map((id) => `<div class="cinzel" style="font-size:20px;font-weight:800;color:#ffe6a0">${HEROES[id].name}</div>`).join('')}</div>` : ''}
     <div class="kv"><span>Bestienkristalle</span><span style="color:#8ad8ff">+${R.crystals}${R.bonus ? ' +' + R.bonus.crystals + ' (erstes Mal)' : ''} ◆</span>
       <span>Seelen</span><span style="color:#d8c0ff">+${souls}${R.bonus ? ' +' + R.bonus.souls + ' (erstes Mal)' : ''}</span>${form}</div>

@@ -381,7 +381,7 @@ const CHAPTERS = [
     outro: [
       'Immortui ist gefallen, der rote Nebel verschwunden. Mit ihm ist alle Kraft vergangen, die er je verliehen hat: Dämonen werden zu Menschen — und alle Vampire ebenso. Peter spürt zum ersten Mal wieder seinen Herzschlag. Finns Kraft aber gehört jetzt ihm allein. Er ist der letzte Vampir.',
       'Die Jahre vergehen. Freunde gründen Familien, die Erde wird neu aufgebaut, das Bündnis der Völker hält. Nur Finn altert nicht.',
-      'Als Layla alt geworden ist, nimmt er Abschied von seiner Familie und legt sich in der Gruft der Siedlung zum ewigen Schlaf. Eine Quest steht noch offen: Finde etwas über die Familie Talen heraus. Er wird wieder gebraucht werden.'
+      'Als Lena alt geworden ist, nimmt er Abschied von seiner Familie und legt sich in der Gruft der Siedlung zum ewigen Schlaf. Eine Quest steht noch offen: Finde etwas über die Familie Talen heraus. Er wird wieder gebraucht werden.'
     ]
   }
 ];

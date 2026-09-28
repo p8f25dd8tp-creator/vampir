@@ -79,3 +79,18 @@ Am Ende gibt es daraus einen gemeinsamen GPT-Prompt-Block.
 | 13 | Behemoth-Planet | Schlamm, riesige Erdsäulen |
 | 13 | Asuras schwebende Inseln | bunte Felsinseln |
 | 13 | Amra-Planet im Krieg | goldener Stein, Turm |
+| 14 | Unterirdisches Gefängnis der Siedlung | Glaszellen, Kristallwand |
+| 14 | Küstenstadt der modernen Erde | Hochhäuser, Dächer, Neon |
+| 14 | Kristallfabrik (Black Swans) | Förderbänder, Kristallkisten |
+| 14 | Insel der Runen | Arena, leuchtende Runen im Boden |
+| 14 | Zeathun: Wald der Riesenbäume | roter Boden, rubinrote Berge |
+| 14 | Dämonenlager der Durums | Knochenhaufen, Kristallsplitter |
+| 14 | Chrono-Gefängnis mit Grube | Waffenberge, rote Barriere |
+| 14 | Stadion des Grand Meet Up | Laufbahn, Tribünen |
+| 14 | Werft der Yaks | funkelndes Gestein, Schiffsgerüste |
+| 15 | Nebelwelt der Toten | grauer Nebel, schwebende Gestalten |
+| 15 | Planet der Riesen, Werftdeck | Schiffsplanken, rote Nebelhülle |
+| 15 | Graue Ödnis (Training) | Staub, Felsen, Schatten |
+| 15 | Yak-Stadt im Krieg | zerrissene Straßen, Divine-Portale |
+| 15 | Siedlung im Dreifrontenkrieg | Mauer, Kanonentürme, rotes Portal |
+| 15 | Zerbrechender Planet (Finale) | Risse im Boden, roter Nebel |

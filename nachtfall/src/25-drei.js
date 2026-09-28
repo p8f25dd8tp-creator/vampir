@@ -551,6 +551,66 @@ const BOSS_BUILD = {
     for (const sd of [-1, 1]) { for (const y of [126, 104, 82]) { add(CAP(), M('#a0302a'), [sd * 42, y, 14], [8, 26, 8], [0.4, 0, sd * 0.7]); add(SPH(), M('#e8c060', { emissive: new THREE.Color('#c8a020'), emissiveIntensity: 0.4 }), [sd * 60, y - 14, 28], [9, 9, 9]); } add(CAP(), M('#6a1a1a'), [sd * 14, 16, 0], [10, 20, 10]); }
     for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffffff' })); x.position.set(sd * 6, 154, 28); x.scale.set(3.5, 2.5, 2); body.add(x); }
   },
+  albtraum(add, M, body) { // Magnus: Schaedelpanzer, dunkle Haut, Klauenhand, ein Arm fehlt
+    add(CAP(), M('#1e1a22'), [0, 62, 0], [22, 40, 18]); add(SPH(), M('#2a2430'), [0, 112, 4], [30, 24, 22]); add(SPH(), M('#e8e0cc'), [0, 150, 10], [18, 20, 18]);
+    for (const sd of [-1, 1]) { add(CON(), M('#e8e0cc'), [sd * 12, 170, 6], [4, 16, 4], [0, 0, -sd * 0.4]); add(CAP(), M('#141018'), [sd * 14, 16, 0], [10, 20, 10]); }
+    add(CAP(), M('#1e1a22'), [44, 96, 16], [10, 34, 10], [0.5, 0, 0.6]); for (let k = 0; k < 4; k++) add(CON(), M('#c8c0b0'), [64 + k * 4, 70, 40 - k * 6], [3, 18, 3], [1.2, 0, 0]);
+    for (let k = 0; k < 6; k++) add(SPH(), M('#2a2430'), [0, 40 - k * 2, -28 - k * 14], [10 - k, 8 - k, 12]);
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ff3a2a' })); x.position.set(sd * 6, 152, 27); x.scale.set(3, 2, 1.5); body.add(x); }
+  },
+  general(add, M, body) { // riesige blaue Hand und Arm, blaue Schutzaura
+    const bl = M('#2a5aca', { emissive: new THREE.Color('#1a3a9a'), emissiveIntensity: 0.4 });
+    add(CAP(), bl, [0, 60, 0], [34, 60, 30]); add(SPH(), bl, [0, 140, 10], [50, 34, 30]);
+    for (let k = 0; k < 4; k++) add(CAP(), bl, [(k - 1.5) * 24, 196, 14], [9, 30, 9], [0.1, 0, (k - 1.5) * 0.15]); add(CAP(), bl, [-56, 146, 14], [9, 26, 9], [0, 0, 1.0]);
+  },
+  durum(add, M, body) { // kurze Beine, Panzer aus roten Kristallen, Wolfsschnauze
+    add(SPH(), M('#5a3a3a'), [0, 60, 0], [36, 34, 32]); add(SPH(), M('#6a4040'), [0, 96, 22], [20, 18, 20]); add(CAP(), M('#6a4040'), [0, 94, 44], [9, 14, 9], [Math.PI / 2, 0, 0]);
+    for (let k = 0; k < 9; k++) add(CON(), M('#d02a2a', { emissive: new THREE.Color('#8a0a0a'), emissiveIntensity: 0.5 }), [Math.cos(k * 0.7) * 26, 80 + (k % 3) * 8, -14 - (k % 2) * 8], [8, 26, 8], [-0.5, 0, Math.cos(k * 0.7) * 0.6]);
+    for (const sd of [-1, 1]) { add(CAP(), M('#4a2a2a'), [sd * 20, 18, 0], [11, 12, 11]); add(CAP(), M('#5a3a3a'), [sd * 40, 64, 16], [9, 20, 9], [0.4, 0, sd * 0.6]); }
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffd02a' })); x.position.set(sd * 8, 104, 38); x.scale.set(3, 2, 1.5); body.add(x); }
+  },
+  kronkerW(add, M, body) { // wahre Form: dunkelrote gluehende Haut, Augenmuster, Hoerner, Rueckenstacheln, Tentakel
+    const sk = M('#6a0a0a', { emissive: new THREE.Color('#5a0a04'), emissiveIntensity: 0.5 });
+    add(CAP(), sk, [0, 70, 0], [40, 56, 32]); add(SPH(), sk, [0, 150, 8], [52, 38, 36]); add(SPH(), sk, [0, 200, 18], [26, 24, 24]);
+    add(SPH(), M('#ffb02a', { emissive: new THREE.Color('#ff8a0a'), emissiveIntensity: 1 }), [0, 150, 42], [12, 8, 4]); add(SPH(), M('#1a0000'), [0, 150, 45], [5, 5, 3]);
+    for (const sd of [-1, 1]) { add(CON(), M('#1a0a0a'), [sd * 22, 232, 16], [7, 36, 7], [0.2, 0, -sd * 0.6]); add(CAP(), sk, [sd * 70, 130, 12], [15, 44, 15], [0.3, 0, sd * 0.5]); add(CAP(), M('#3a0404'), [sd * 26, 20, 0], [18, 26, 18]); }
+    for (let k = 0; k < 6; k++) add(CON(), M('#1a0a0a'), [0, 120 + k * 16, -34], [7, 26, 7], [-1.0, 0, 0]);
+    for (let k = 0; k < 6; k++) { const a = k * 1.05; add(CAP(), M('#8a1a1a'), [Math.cos(a) * 40, 30, Math.sin(a) * 40 - 20], [7, 34, 7], [Math.sin(a) * 1.2, 0, Math.cos(a) * 1.2]); }
+  },
+  unzoku(add, M, body) { // Werwolf mit Loewenmaehne, Schulterstacheln und Hoernern
+    werwolfBody(add, M, body, '#5a3a24');
+    for (let k = 0; k < 10; k++) { const a = k * 0.63; add(SPH(), M('#c88a3a'), [Math.cos(a) * 26, 128 + Math.sin(a) * 18, -4], [12, 12, 10]); }
+    for (const sd of [-1, 1]) { add(CON(), M('#e8e0cc'), [sd * 20, 162, 0], [5, 22, 5], [0, 0, -sd * 0.7]); for (let k = 0; k < 3; k++) add(CON(), M('#e8e0cc'), [sd * (40 + k * 8), 114 + k * 4, -4], [4, 18, 4], [0, 0, -sd * (0.5 + k * 0.2)]); }
+  },
+  yakgen(add, M, body) { // Yak-Daemon: zottiges Fell, geschwungene Hoerner, Goldschmuck
+    add(SPH(), M('#4a3a2a'), [0, 64, 0], [40, 46, 34]); add(SPH(), M('#3a2a1a'), [0, 120, 18], [26, 22, 24]); add(SPH(), M('#2a1e14'), [0, 112, 38], [12, 10, 10]);
+    for (const sd of [-1, 1]) { add(CON(), M('#e8e0cc'), [sd * 34, 138, 16], [6, 30, 6], [0.3, 0, -sd * 1.3]); add(CAP(), M('#4a3a2a'), [sd * 50, 76, 12], [12, 30, 12], [0.4, 0, sd * 0.4]); add(CAP(), M('#2a1e14'), [sd * 18, 16, 0], [14, 18, 14]); add(SPH(), M('#e8c040', { emissive: new THREE.Color('#a88010'), emissiveIntensity: 0.5 }), [sd * 58, 50, 24], [8, 8, 8]); }
+    add(CYL(), M('#e8c040', { emissive: new THREE.Color('#a88010'), emissiveIntensity: 0.5 }), [0, 96, 30], [22, 5, 12]);
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ff8a2a' })); x.position.set(sd * 9, 126, 40); x.scale.set(3, 2, 1.5); body.add(x); }
+  },
+  bisha(add, M, body) { // Yak-Koenig: groesser, Krone, Huelle aus rotem Nebel
+    BOSS_BUILD.yakgen(add, M, body);
+    for (let k = 0; k < 5; k++) add(CON(), M('#e8c040', { emissive: new THREE.Color('#a88010'), emissiveIntensity: 0.6 }), [(k - 2) * 7, 150, 18], [3, 12, 3]);
+    for (let k = 0; k < 8; k++) { const a = k * 0.8; add(SPH(), M('#c81a1a', { emissive: new THREE.Color('#8a0a0a'), emissiveIntensity: 0.6 }), [Math.cos(a) * 62, 40 + (k % 3) * 34, Math.sin(a) * 40], [9, 9, 9]); }
+  },
+  calva(add, M, body) { // Skully-Champion: Totenkopf, Knochenschild, Speer
+    add(CAP(), M('#4a4a3a'), [0, 64, 0], [22, 42, 18]); add(SPH(), M('#e8e0cc'), [0, 128, 6], [24, 24, 22]);
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#1a0a0a' })); x.position.set(sd * 9, 132, 26); x.scale.set(6, 6, 3); body.add(x); add(CAP(), M('#3a3a2a'), [sd * 14, 16, 0], [10, 20, 10]); }
+    add(SPH(), M('#e8e0cc'), [-40, 80, 24], [8, 34, 28]); add(CYL(), M('#c8c0a8'), [40, 90, 20], [3, 150, 3], [0.2, 0, 0.2]);
+  },
+  tenbris(add, M, body) { // Daemonenkoenig mit blauen Sogwirbeln
+    add(CON(), M('#1a2a4a'), [0, 60, 0], [40, 120, 40]); add(SPH(), M('#2a3a6a'), [0, 146, 6], [24, 26, 24]);
+    for (const sd of [-1, 1]) add(CON(), M('#8ab8ff', { emissive: new THREE.Color('#4a8aff'), emissiveIntensity: 0.8 }), [sd * 16, 176, 0], [5, 26, 5], [0, 0, -sd * 0.4]);
+    for (let k = 0; k < 10; k++) { const a = k * 0.63; add(SPH(), M('#4a8aff', { emissive: new THREE.Color('#2a6aff'), emissiveIntensity: 0.9 }), [Math.cos(a) * (46 + k * 3), 60 + k * 8, Math.sin(a) * 30], [7, 7, 7]); }
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#aaffff' })); x.position.set(sd * 8, 150, 28); x.scale.set(4, 2, 1.5); body.add(x); }
+  },
+  luceW(add, M, body) { // Daemonenform: Koerper ganz aus weisser Substanz
+    const w = M('#f4f4f8', { emissive: new THREE.Color('#c8d0ff'), emissiveIntensity: 0.3 });
+    add(CAP(), w, [0, 66, 0], [26, 46, 20]); add(SPH(), w, [0, 120, 6], [34, 26, 24]); add(SPH(), w, [0, 158, 10], [18, 20, 18]);
+    for (const sd of [-1, 1]) { add(CAP(), w, [sd * 44, 108, 14], [9, 34, 9], [0.4, 0, sd * 0.6]); add(CON(), w, [sd * 58, 76, 34], [5, 30, 5], [1.0, 0, 0]); add(CAP(), w, [sd * 16, 18, 0], [11, 22, 11]); }
+    for (let k = 0; k < 6; k++) add(SPH(), M('#ffffff', { emissive: new THREE.Color('#aab8ff'), emissiveIntensity: 1 }), [Math.cos(k) * 70, 150 + Math.sin(k * 2) * 20, Math.sin(k) * 30], [8, 8, 8]);
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#2a4aff' })); x.position.set(sd * 7, 162, 27); x.scale.set(3, 2, 1.5); body.add(x); }
+  },
   ranken(add, M, body) { // hausgross, langer Hals, Knospe mit sechs Ranken
     add(SPH(), M('#3a6a3a'), [0, 40, -10], [56, 34, 64]);
     for (let k = 0; k < 4; k++) add(SPH(), M('#4a7a3a'), [0, 70 + k * 22, 30 + k * 10], [16 - k, 16 - k, 16 - k]);

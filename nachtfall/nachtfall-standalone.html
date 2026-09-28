@@ -7877,7 +7877,7 @@ const CHAPTERS = [
     outro: [
       'Immortui ist gefallen, der rote Nebel verschwunden. Mit ihm ist alle Kraft vergangen, die er je verliehen hat: Dämonen werden zu Menschen — und alle Vampire ebenso. Peter spürt zum ersten Mal wieder seinen Herzschlag. Finns Kraft aber gehört jetzt ihm allein. Er ist der letzte Vampir.',
       'Die Jahre vergehen. Freunde gründen Familien, die Erde wird neu aufgebaut, das Bündnis der Völker hält. Nur Finn altert nicht.',
-      'Als Layla alt geworden ist, nimmt er Abschied von seiner Familie und legt sich in der Gruft der Siedlung zum ewigen Schlaf. Eine Quest steht noch offen: Finde etwas über die Familie Talen heraus. Er wird wieder gebraucht werden.'
+      'Als Lena alt geworden ist, nimmt er Abschied von seiner Familie und legt sich in der Gruft der Siedlung zum ewigen Schlaf. Eine Quest steht noch offen: Finde etwas über die Familie Talen heraus. Er wird wieder gebraucht werden.'
     ]
   }
 ];
@@ -10531,7 +10531,7 @@ humanArt('leander', [
      boss     — Etappen-Finale: Wellen, dann der Boss
      berserk  — Finn als wahnsinniger Bloodsucker (doppelte Kraft, halbes Leben)
    Zusatz `berserk: true` macht jede andere Stufenart zum Bloodsucker-Kampf.
-   Etappen 14 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
+   Etappen 15 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
    ========================================================================== */
 
 /* ------------------------------------------------------------ Gegner der Etappe 1 */
@@ -11391,17 +11391,166 @@ const ETAPPE13 = {
   ]
 };
 
+/* ------------------------------------------------------------ Etappe 14: Dämonenkönige (Kapitel 2306–2470) */
+defEnemy('e14_mark', 'ghoul', 'v_thrall', 'Gezeichneter Häftling', { hp: 96 });
+defEnemy('e14_vet', 'knight', 'v_ritter', 'Gezeichneter Kriegsveteran', { armor: 10 });
+defEnemy('e14_blutk', 'witch', 'v_magier', 'Blutklingen-Werfer', { shot: 'blood', flier: false });
+defEnemy('e14_jared', 'captain', 'v_ritter', 'Gezeichneter Vampirritter', { scale: 1.35, hp: 10000 });
+defEnemy('e14_swan', 'ghoul', 'h_sunshield', 'Dieb der Black Swans', { hp: 96 });
+defEnemy('e14_swanK', 'knight', 'h_wache', 'Schläger der Black Swans', { armor: 10 });
+defEnemy('e14_swanS', 'witch', 'h_truedream', 'Kristallschütze', { shot: 'light', flier: false });
+defEnemy('e14_swanM', 'brute', 'h_koloss', 'Fabrik-Lademaschine', { splits: 0, hp: 560 });
+defEnemy('e14_swanC', 'captain', 'h_blade', 'Anführer der Black Swans', { scale: 1.35, hp: 10000 });
+defEnemy('e14_fam', 'ghoul', 'q_rot', 'Wilder Familiar', { hp: 96 });
+defEnemy('e14_famF', 'bat', 'bat_braun', 'Flug-Familiar', { hp: 66 });
+defEnemy('e14_famK', 'knight', 'q_panzer', 'Bohrer-Familiar', { armor: 10 });
+defEnemy('e14_famS', 'witch', 'q_spore', 'Nebel-Familiar', { shot: 'acid', flier: false });
+defEnemy('e14_famB', 'brute', 'q_koenig', 'Familiar-Koloss', { splits: 0, hp: 560 });
+defEnemy('e14_famC', 'captain', 'q_daemon', 'Familiar-Fürst', { scale: 1.35, hp: 10000 });
+defEnemy('e14_dem', 'ghoul', 'q_void', 'Dämon', { hp: 98, gore: 'void' });
+defEnemy('e14_lesser', 'bat', 'bat_void', 'Lesser Demon', { hp: 68, gore: 'void' });
+defEnemy('e14_loewe', 'knight', 'q_daemon', 'Löwenkopf-Fledermaus', { armor: 10, gore: 'void' });
+defEnemy('e14_rotv', 'witch', 'h_rotvamp', 'Gezeichneter Vampir', { shot: 'blood', flier: false });
+defEnemy('e14_bestie', 'brute', 'q_voidP', 'Furchtlose Bestie', { splits: 0, hp: 560, gore: 'void' });
+defEnemy('e14_barbra', 'captain', 'h_rotvamp', 'Barbra mit Dämonenklauen', { scale: 1.35, hp: 10000 });
+defEnemy('e14_durum', 'ghoul', 'q_rotP', 'Durum-Dämon', { hp: 100, gore: 'void' });
+defEnemy('e14_splitter', 'bat', 'bat_blut', 'Kristallsplitter-Schwinge', { hp: 68 });
+defEnemy('e14_durumK', 'knight', 'q_panzer', 'Durum mit Panzerrücken', { armor: 12, gore: 'void' });
+defEnemy('e14_kristall', 'witch', 'q_rot', 'Kristallschleuderer', { shot: 'void', flier: false });
+defEnemy('e14_durumB', 'brute', 'q_fort', 'Durum-Brecher', { splits: 0, hp: 580 });
+defEnemy('e14_jaeger', 'captain', 'q_koenig', 'Durum-Jäger', { scale: 1.35, hp: 10500 });
+defEnemy('e14_glut', 'ghoul', 'q_rotP', 'Glutton-Werwolf', { hp: 104, spd: 92 });
+defEnemy('e14_glutK', 'knight', 'q_koenig', 'Glutton-Alpha', { armor: 10 });
+defEnemy('e14_glutS', 'witch', 'q_kroete', 'Glutton-Heuler', { shot: 'void', flier: false });
+defEnemy('e14_glutB', 'brute', 'q_alienM', 'Satter Glutton-Koloss', { splits: 0, hp: 600 });
+defEnemy('e14_shinto', 'captain', 'g_diener', 'Champion Shinto', { scale: 1.4, hp: 11000 });
+defEnemy('e14_divD', 'ghoul', 'h_ritter', 'Dunkler Divine', { hp: 100, gore: 'light' });
+defEnemy('e14_divG', 'bat', 'bat_licht', 'Goldener Divine', { hp: 70, gore: 'light' });
+defEnemy('e14_divK', 'knight', 'h_waechter', 'Divine-Speerträger', { armor: 11, gore: 'light' });
+defEnemy('e14_divS', 'witch', 'h_seherin', 'Heilender Divine', { shot: 'light', flier: false, gore: 'light' });
+defEnemy('e14_divB', 'brute', 'h_koloss', 'Divine-Koloss', { splits: 0, hp: 580, gore: 'light' });
+defEnemy('e14_xox', 'captain', 'g_diener', 'Xox, der Gestaltwandler', { scale: 1.3, hp: 10500 });
+defEnemy('e14_yak', 'ghoul', 'q_orange', 'Yak-Arbeiter', { hp: 100 });
+defEnemy('e14_yakK', 'knight', 'q_panzer', 'Yak-Wache', { armor: 12 });
+defEnemy('e14_yakS', 'witch', 'q_kanal', 'Yak-Kanonier', { shot: 'light', flier: false });
+defEnemy('e14_yakB', 'brute', 'q_koenig', 'Yak-Schmied', { splits: 0, hp: 600 });
+defEnemy('e14_yakC', 'captain', 'q_koenig', 'Yak-Vorarbeiter', { scale: 1.35, hp: 10500 });
+defBoss('b14_magnus', 'kronker', 'Magnus in Albtraumform', 30000, { model: 'albtraum', bellShot: 'void', r: 40, spd: 82 });
+defBoss('b14_general', 'kronker', 'Demon General (die blaue Hand)', 17000, { model: 'general', bellShot: 'soul', r: 58, scale: 1.3, spd: 40 });
+defBoss('b14_lexor', 'kronker', 'Lexor, Durum-Dämonengeneral', 28000, { model: 'durum', bellShot: 'spike', r: 42, spd: 62, armor: 8 });
+defBoss('b14_kronker', 'kronker', 'Kronker, Durum-Dämonenkönig', 32000, { model: 'kronker', bellShot: 'spike', r: 46, spd: 50, armor: 10 });
+defBoss('b14_kronkerW', 'kronker', 'Kronkers wahre Form', 38000, { model: 'kronkerW', bellShot: 'void', r: 62, scale: 1.3, spd: 42 });
+defBoss('b14_unzoku', 'kronker', 'Unzoku, der Allesverschlinger', 60000, { model: 'unzoku', bellShot: 'spike', r: 46, spd: 84 });
+defBoss('b14_immortui', 'mono', 'Immortui', 90000, Object.assign({ look: 'b_immortui', bellShot: 'void', spd: 80 }, B1));
+defBoss('b14_yakgen', 'kronker', 'Yak-General der Werft', 24000, { model: 'yakgen', bellShot: 'bell', r: 44, spd: 60 });
+const R_MAL = { ghoul: 'e14_mark', bat: 'c5_fleder', knight: 'e14_vet', witch: 'e14_blutk', brute: 'e5_bsRiese', captain: 'e14_jared' };
+const R_SWANS = { ghoul: 'e14_swan', bat: 'e12_namF', knight: 'e14_swanK', witch: 'e14_swanS', brute: 'e14_swanM', captain: 'e14_swanC' };
+const R_FAM14 = { ghoul: 'e14_fam', bat: 'e14_famF', knight: 'e14_famK', witch: 'e14_famS', brute: 'e14_famB', captain: 'e14_famC' };
+const R_LESSER = { ghoul: 'e14_dem', bat: 'e14_lesser', knight: 'e14_loewe', witch: 'e14_rotv', brute: 'e14_bestie', captain: 'e14_barbra' };
+const R_DURUM = { ghoul: 'e14_durum', bat: 'e14_splitter', knight: 'e14_durumK', witch: 'e14_kristall', brute: 'e14_durumB', captain: 'e14_jaeger' };
+const R_GLUTTON = { ghoul: 'e14_glut', bat: 'e14_lesser', knight: 'e14_glutK', witch: 'e14_glutS', brute: 'e14_glutB', captain: 'e14_shinto' };
+const R_DIVINE = { ghoul: 'e14_divD', bat: 'e14_divG', knight: 'e14_divK', witch: 'e14_divS', brute: 'e14_divB', captain: 'e14_xox' };
+const R_YAK = { ghoul: 'e14_yak', bat: 'e14_splitter', knight: 'e14_yakK', witch: 'e14_yakS', brute: 'e14_yakB', captain: 'e14_yakC' };
+const ETAPPE14 = {
+  title: 'Dämonenkönige', place: 'Siedlung · Erde · Insel der Runen · Zeathun, der rote Raum', src: 'Kapitel 2306–2470', theme: 'redspace', ch: 14,
+  levels: [
+    { name: 'Das Mal des Immortui', type: 'survive', dur: 150, pace: 1.5, theme: 'siedlung', roles: R_MAL, elites: 2,
+      text: 'Ein Auge mit Fledermausflügeln, eingebrannt in die Handfläche. Wer das Mal trägt, spricht mit Immortuis Stimme – und es tauchen immer mehr Gezeichnete auf, im Gefängnis, in der Stadt, sogar an Minnys Schule.' },
+    { name: 'Ich rette beide', type: 'hunt', role: 'witch', n: 45, pace: 1.5, theme: 'siedlung', roles: R_MAL,
+      text: 'Auf einem Dach hält ein Gezeichneter Ronkin und ein kleines Waisenmädchen fest: Finn soll wählen, wen er rettet. Er wählt nicht. Ein Schattenklon bleibt stehen, der echte Finn schleicht lautlos hinter die Täter.' },
+    { name: 'Die Black Swans', type: 'survive', dur: 150, pace: 1.4, theme: 'basisnacht', roles: R_SWANS, elites: 1,
+      text: 'Getarnt als Rekrut „Bake“ dient Finn im Vampire Corps der Erde, bei Captain Jessica. Eine Diebesbande überfällt die Kristallfabrik. Regel für heute: keine Aura, nur Fäuste und Knie.' },
+    { name: 'Magnus in Albtraumform', type: 'duel', foe: 'b14_magnus', crowd: 0.2, theme: 'schlachtfeld', roles: R_MAL,
+      text: 'Magnus verliert einen Arm gegen Andy, den ersten Colossal Draugr – und verwandelt sich mit Immortuis Kraft in ein Albtraumwesen mit Schädelpanzer und Klauen. Er will Jessica, und er will sie lebend.' },
+    { name: 'Der Aufstand der Familiars', type: 'survive', dur: 160, pace: 1.6, theme: 'siedlung', roles: R_FAM14, comp: ['peter'], elites: 2,
+      text: 'Aus Portalen im Wald stürmen Familiar-Horden, und in der Siedlung beißen Familiars plötzlich ihre eigenen Besitzer. Peter trägt Finns Gesicht – und muss so tun, als wäre er Finn.' },
+    { name: 'Die Insel der Runen', type: 'duel', foe: 'b14_general', crowd: 0.2, theme: 'schlachtfeld', roles: R_LESSER,
+      text: 'Magnus öffnet mit Jessicas Blut ein Portal nach Zeathun. Lesser Demons quellen hervor, dann greift eine riesige blaue Hand hindurch: ein Demon General. Das System legt eine neue Rangliste an.' },
+    { name: 'Das Jagdgebiet', type: 'survive', dur: 160, pace: 1.45, theme: 'redspace', roles: R_DURUM, elites: 1,
+      text: 'Allein im roten Raum. In einem Wald aus Riesenbäumen jagen Durum-Dämonen die Skullys – ein Punkt pro Kreatur, fünf pro Skully. Die Splitter kommen aus drei Richtungen. Finn fängt sie mit bloßen Händen.' },
+    { name: 'Lexor', type: 'duel', foe: 'b14_lexor', crowd: 0.3, theme: 'redspace', roles: R_DURUM,
+      text: 'Im Dämonenlager türmen sich Skully-Köpfe, auf der Rangliste verschwinden ständig Namen. Der Durum-General Lexor will wissen, wer seine Jäger frisst.' },
+    { name: 'Kronker', type: 'duel', foe: 'b14_kronker', crowd: 0.2, theme: 'redspace', roles: R_DURUM,
+      text: 'Ein Dämonenkönig ganz aus rotem Kristall. Seine Klinge saugt Blutspeere auf, seine Stacheln wachsen aus der Brust. Finns Schläge verschieben seinen Kopf nur um Zentimeter – vorerst.' },
+    { name: 'Kronkers wahre Form', type: 'duel', foe: 'b14_kronkerW', crowd: 0.3, theme: 'roterhimmel', roles: R_DURUM, berserk: true,
+      text: 'Die Kristallhülle platzt: ein zehn Meter hoher Riese mit Hörnern und Tentakeln. Finn verliert die Kontrolle. Aus seinen Flügeln tropfen Blutbomben – und das System meldet Fehler.' },
+    { name: 'Unzoku, der Allesverschlinger', type: 'endure', foe: 'b14_unzoku', dur: 80, crowd: 0.4, theme: 'ruinen', roles: R_GLUTTON, comp: ['chris'],
+      text: 'Ein Gefängnis, in dem Chronos gemästet werden, bis die Glutton-Wölfe sie fressen. Dann kommt ihr König: ein Werwolf mit Löwenmähne, dessen Stimme allein Übelkeit auslöst. Chris weicht jedem Hieb nur knapp aus.' },
+    { name: 'Immortui', type: 'endure', foe: 'b14_immortui', dur: 70, crowd: 0.1, theme: 'redspace', roles: R_LESSER,
+      text: 'Er sieht jung aus, grau, mit schwarz-weißem Haar. In seiner Nähe verliert alles seine Energie: Blut zerfällt, sogar der Schatten wird ausgesaugt. Finn weiß, dass er diesen Kampf verliert. Er muss nur lange genug durchhalten.' },
+    { name: 'Die Divine Brigade', type: 'survive', dur: 170, pace: 1.7, theme: 'akademie', roles: R_DIVINE, comp: ['minny', 'lena'], elites: 3,
+      text: 'Mitten im großen Schulsportfest reißt der Himmel auf: dunkle Divines werfen Speere in die Menge, goldene heilen sie wieder. Lena gibt die Befehle, Minny sperrt die goldenen in ihren Schattenraum.' },
+    { name: 'Die Werft der Yaks', type: 'waveboss', at: 60, foe: 'b14_yakgen', pace: 1.5, theme: 'redspace', roles: R_YAK, comp: ['chris'], evo: 'Dämonenform',
+      text: 'Auf dem Planeten der Riesen bauen Yak-Dämonen Schiffe für den Krieg gegen die Celestials. Chris jagt nachts unter dem roten Mond – und jede Beute macht ihn hungriger.' }
+  ]
+};
+
+/* ------------------------------------------------------------ Etappe 15: Der letzte Vampir (Kapitel 2471–2545) */
+defEnemy('e15_toter', 'ghoul', 'v_thrall', 'Ruheloser Toter', { hp: 106, gore: 'void' });
+defEnemy('e15_geist', 'bat', 'bat_aas', 'Nebelgeist', { hp: 74, gore: 'void' });
+defEnemy('e15_dalkiT', 'knight', 'dalki4', 'Toter Dalki', { armor: 12 });
+defEnemy('e15_vampT', 'witch', 'v_magier', 'Toter Vampir', { shot: 'soul', flier: false });
+defEnemy('e15_riese', 'brute', 'q_fort', 'Toter Riese', { splits: 0, hp: 620 });
+defEnemy('e15_graham', 'captain', 'dalkiW', 'Grahams Schatten', { scale: 1.4, hp: 11500 });
+defEnemy('e15_divD', 'ghoul', 'h_ritter', 'Dunkler Divine', { hp: 106, gore: 'light' });
+defEnemy('e15_divG', 'bat', 'bat_licht', 'Goldener Divine', { hp: 74, gore: 'light' });
+defEnemy('e15_divK', 'knight', 'h_waechter', 'Divine-Speerträger', { armor: 12, gore: 'light' });
+defEnemy('e15_divS', 'witch', 'h_seherin', 'Heilender Divine', { shot: 'light', flier: false, gore: 'light' });
+defEnemy('e15_divB', 'brute', 'h_koloss', 'Divine-Koloss', { splits: 0, hp: 620, gore: 'light' });
+defEnemy('e15_divC', 'captain', 'g_diener', 'Heerführer der Divine Brigade', { scale: 1.35, hp: 11500 });
+defEnemy('e15_wolf', 'ghoul', 'q_rotP', 'Werwolf aus dem Portal', { hp: 110, spd: 92 });
+defEnemy('e15_yak', 'brute', 'q_koenig', 'Yak-Krieger', { splits: 0, hp: 640 });
+defEnemy('e15_yakC', 'captain', 'q_koenig', 'Yak-Kapitän', { scale: 1.35, hp: 11500 });
+defEnemy('e15_flug', 'bat', 'bat_void', 'Flugdämon', { hp: 74, gore: 'void' });
+defBoss('b15_cia', 'mono', 'Cia, die Banshee', 22000, Object.assign({ look: 'b_cia', bellShot: 'soul', spd: 84 }, B1));
+defBoss('b15_bisha', 'kronker', 'Bisha, König der Yaks', 36000, { model: 'bisha', bellShot: 'bell', r: 54, scale: 1.2, spd: 50 });
+defBoss('b15_luce', 'mono', 'Luce, der rechte Arm', 32000, Object.assign({ look: 'b_luce', bellShot: 'light', spd: 86 }, B1));
+defBoss('b15_calva', 'kronker', 'Calva, Champion der Skullys', 24000, { model: 'calva', bellShot: 'spike', r: 44, spd: 70 });
+defBoss('b15_tenbris', 'kronker', 'Tenbris, Dämonenkönig', 30000, { model: 'tenbris', bellShot: 'soul', r: 44, spd: 64 });
+defBoss('b15_luceW', 'kronker', 'Luces Dämonenform', 30000, { model: 'luceW', bellShot: 'light', r: 46, spd: 70 });
+defBoss('b15_unzoku', 'kronker', 'Unzoku, satt von Tenbris', 38000, { model: 'unzoku', bellShot: 'spike', r: 50, scale: 1.15, spd: 80 });
+defBoss('b15_immortui', 'mono', 'Immortui mit Schlangenrüstung', 36000, Object.assign({ look: 'b_immortui', bellShot: 'void', spd: 84 }, B1));
+defBoss('b15_final', 'immortui', 'Immortuis Endform', 44000, { model: 'immortui', bellShot: 'void', r: 50, scale: 1.2, spd: 70 });
+const R_TOTE = { ghoul: 'e15_toter', bat: 'e15_geist', knight: 'e15_dalkiT', witch: 'e15_vampT', brute: 'e15_riese', captain: 'e15_graham' };
+const R_DIV15 = { ghoul: 'e15_divD', bat: 'e15_divG', knight: 'e15_divK', witch: 'e15_divS', brute: 'e15_divB', captain: 'e15_divC' };
+const R_KRIEG = { ghoul: 'e15_wolf', bat: 'e15_divG', knight: 'e15_divK', witch: 'e14_yakS', brute: 'e15_yak', captain: 'e15_yakC' };
+const R_ROTRAUM = { ghoul: 'e14_durum', bat: 'e15_flug', knight: 'e14_yakK', witch: 'e14_glutS', brute: 'e15_yak', captain: 'e15_yakC' };
+const ETAPPE15 = {
+  title: 'Der letzte Vampir', place: 'Nebelwelt · Planet der Riesen · Zeathun · die Siedlung', src: 'Kapitel 2471–2545', theme: 'roterhimmel', ch: 15,
+  levels: [
+    { name: 'Die Nebelwelt', type: 'survive', dur: 150, pace: 1.4, theme: 'friedhof', roles: R_TOTE, elites: 1,
+      text: 'Finn erwacht als halb durchsichtige Gestalt im grauen Nebel. Jeder Tote, den er je getötet hat, kommt zurück – und jeder Treffer lässt ihn ihre letzten Schmerzen fühlen.' },
+    { name: 'Cia, die Banshee', type: 'duel', foe: 'b15_cia', crowd: 0.2, theme: 'friedhof', roles: R_TOTE,
+      text: 'Cia ist wütend über ihre gelöschten Erinnerungen und schreit wie eine Banshee. Finn wehrt sich kaum. Er erzählt ihr, dass Lena lebt und dass sie ein Kind haben.' },
+    { name: 'Die Toten stehen bei ihm', type: 'survive', dur: 160, pace: 1.6, theme: 'friedhof', roles: R_TOTE, comp: ['leo', 'emma'], elites: 3,
+      text: 'Als Finn zu zerbrechen droht, formen sich neue Gestalten zu seinem Schutz: Leo, Emma und alle, die ihm etwas bedeutet haben. „Wir sind die Vergangenheit. Rette du die Welt.“' },
+    { name: 'Bisha, König der Yaks', type: 'duel', foe: 'b15_bisha', crowd: 0.2, theme: 'redspace', roles: R_ROTRAUM, comp: ['chris'],
+      text: 'Der gelangweilte Yak-König kommt selbst, als sein Bautrupp schweigt. Eine Hülle aus rotem Nebel schützt ihn, seine Fäuste schlagen ein wie Meteore. Chris, satt vom Fressen, lenkt sie ab.' },
+    { name: 'Luce', type: 'duel', foe: 'b15_luce', crowd: 0.1, theme: 'redspace', roles: R_ROTRAUM, comp: ['peter'],
+      text: 'Immortuis rechter Arm. Seine weißen Kugeln ziehen Lichtspuren durch die Luft, und wer die Spur berührt, wird von ihrer ganzen Länge getroffen. Peter landet in einer Schale aus weißem Eis.' },
+    { name: 'Training mit den Champions', type: 'duel', foe: 'b15_calva', crowd: 0, theme: 'rotezone', roles: R_ROTRAUM,
+      text: 'In einer grauen Ödnis kämpft Finn ohne Rüstung gegen drei Champions zugleich. Calvas Knochenregen, Pultras Tritte, Shintos schwarze Flammen. Die Antwort ist der Schatten – mit allem anderen verbunden.' },
+    { name: 'Die Divine-Invasion', type: 'survive', dur: 170, pace: 1.55, theme: 'redspace', roles: R_DIV15, elites: 2,
+      text: 'Überall im roten Raum öffnen sich weiße Portale. Zehntausende Divines fallen ein und töten alles: Dämonen, Skullys, ganze Dörfer. Finn hört das Leid – und greift ein.' },
+    { name: 'Tenbris', type: 'waveboss', at: 60, foe: 'b15_tenbris', pace: 1.6, theme: 'redspace', roles: R_GLUTTON, comp: ['chris'],
+      text: 'Chris in seiner neuen roten Werwolfform, Mähne und Schweif, gegen Unzoku. Dann kommt Tenbris hinzu: Seine blauen Wirbel machen alles, was sie berühren, unendlich schwer.' },
+    { name: 'Luces Dämonenform', type: 'duel', foe: 'b15_luceW', crowd: 0.2, theme: 'goetter', roles: R_DIV15, comp: ['peter'],
+      text: 'Ein Körper ganz aus weißer Substanz. Klingen heilen sofort, nur Celestial-Schläge wirken nach. Peter vereint seine Kopfschweife zu einer Axt.' },
+    { name: 'Unzoku, satt von Tenbris', type: 'duel', foe: 'b15_unzoku', crowd: 0.3, theme: 'redspace', roles: R_GLUTTON, comp: ['chris'],
+      text: 'Unzoku hat Tenbris geköpft und gefressen. Sein Heulen legt ganze Divine-Schwärme lahm, ein Hieb zerreißt die Yak-Stadt. Chris setzt ihm schwarze Flammen an Hände und Beine.' },
+    { name: 'Immortui mit Schlangenrüstung', type: 'duel', foe: 'b15_immortui', crowd: 0.1, theme: 'roterhimmel', roles: R_ROTRAUM,
+      text: 'Blutwirbel gegen Nebelhände, sechs Schattenarme gegen Schlangenstrahlen. Finn formt eine riesige, blitzgeladene Blutschatten-Sense. Und er verliert trotzdem.' },
+    { name: 'Krieg um die Siedlung', type: 'survive', dur: 180, pace: 1.8, theme: 'siedlung', roles: R_KRIEG, comp: ['lena', 'minny'], elites: 3,
+      text: 'Ein rotes Portal neben der Siedlung, ein schwarzes Schiff voller Werwölfe, dazu Divines vom Himmel. Die Schläfer in den Grüften werden geweckt. Lena kämpft mit Feueratem und Qi-Pfeilen.' },
+    { name: 'Eine neue Flamme', type: 'waveboss', at: 70, foe: 'b15_unzoku', pace: 1.7, theme: 'siedlung', roles: R_KRIEG, comp: ['peter', 'chris'],
+      text: 'Die Phönixflamme im Brustpanzer erschafft Finn neu: Herz, Körper, Blutkristall. Mundus hält Unzoku für einen Wimpernschlag in der Zeit fest – und alle feuern zugleich ihren stärksten Angriff.' },
+    { name: 'Der letzte Vampir', type: 'duel', foe: 'b15_final', crowd: 0.2, theme: 'roterhimmel', roles: R_DIV15, evo: 'Blut der dreizehn Familien', outro: CHAPTERS[14].outro,
+      text: 'Immortuis Endform ist eine Verschmelzung aller Dämonen. Finn trägt das Blut aller dreizehn Familien in sich. Doch stirbt Immortui, verschwindet alle Kraft, die er je gegeben hat – auch die der Vampire.' }
+  ]
+};
+
 /* ------------------------------------------------------------ Alle Etappen */
-// Etappen 14 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
-function autoLevels(ch) {
-  const out = [];
-  for (let l = 1; l <= 8; l++) {
-    if (l < 8) out.push({ name: 'Stufe ' + l, type: 'survive', dur: [150, 180, 210, 240, 270, 300, 330][l - 1], pace: [1.3, 1.45, 1.6, 1.75, 1.8, 1.85, 1.9][l - 1], text: ch.intro[Math.min(ch.intro.length - 1, l === 1 ? 0 : 1)] });
-    else out.push({ name: ENEMIES[ch.roles.boss].name, type: 'boss', full: true, text: ch.intro[ch.intro.length - 1] });
-  }
-  return out;
-}
-const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3, ETAPPE4, ETAPPE5, ETAPPE6, ETAPPE7, ETAPPE8, ETAPPE9, ETAPPE10, ETAPPE11, ETAPPE12, ETAPPE13].concat(CHAPTERS.slice(13).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
+const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3, ETAPPE4, ETAPPE5, ETAPPE6, ETAPPE7, ETAPPE8, ETAPPE9, ETAPPE10, ETAPPE11, ETAPPE12, ETAPPE13, ETAPPE14, ETAPPE15];
 ETAPPEN.forEach((E, i) => { E.n = i + 1; E.levels.forEach((L, j) => { L.l = j + 1; }); });
 // Kapitel (Gegner-/Boss-Sammlungen) -> Etappe, fuer den Boss-Turm
 const ET_OF_CH = {}; ETAPPEN.forEach((E) => { const chs = new Set([E.ch]); E.levels.forEach((L) => L.ch && chs.add(L.ch)); if (E.n === 1) chs.add(3); chs.forEach((c) => { ET_OF_CH[c] = E.n; }); });
@@ -11684,6 +11833,7 @@ UI.showEnd = function (won, souls, newly, extra) {
     ${stars}
     <div class="sysplace" style="text-align:center">${cp.mode === 'endless' ? 'Beste Nacht: ' + fmtTime(C.endless) : cp.lv ? cp.lv.name : cp.ch.title} · Stufe ${G.level} · ${G.kills} besiegt</div>
     ${won && cp.lv && cp.lv.evo ? `<div style="text-align:center;margin:8px 0"><div class="syshead">[ SYSTEM ] · EVOLUTION</div><div class="cinzel" style="font-size:22px;font-weight:800;color:#ff5a6a">${cp.lv.evo}</div></div>` : ''}
+    ${won && cp.lv && cp.lv.outro ? `<div class="syshead" style="margin-top:10px">[ SYSTEM ] · EPILOG</div>${cp.lv.outro.map((l) => `<p class="sysp">${l}</p>`).join('')}` : ''}
     ${R.unlocked.length ? `<div style="text-align:center;margin:10px 0"><div class="syshead">[ SYSTEM ] · NEUE HELDEN</div>${R.unlocked.map((id) => `<div class="cinzel" style="font-size:20px;font-weight:800;color:#ffe6a0">${HEROES[id].name}</div>`).join('')}</div>` : ''}
     <div class="kv"><span>Bestienkristalle</span><span style="color:#8ad8ff">+${R.crystals}${R.bonus ? ' +' + R.bonus.crystals + ' (erstes Mal)' : ''} ◆</span>
       <span>Seelen</span><span style="color:#d8c0ff">+${souls}${R.bonus ? ' +' + R.bonus.souls + ' (erstes Mal)' : ''}</span>${form}</div>
@@ -12390,6 +12540,66 @@ const BOSS_BUILD = {
     add(SPH(), M('#f0f0f0'), [0, 164, 4], [18, 12, 18]);
     for (const sd of [-1, 1]) { for (const y of [126, 104, 82]) { add(CAP(), M('#a0302a'), [sd * 42, y, 14], [8, 26, 8], [0.4, 0, sd * 0.7]); add(SPH(), M('#e8c060', { emissive: new THREE.Color('#c8a020'), emissiveIntensity: 0.4 }), [sd * 60, y - 14, 28], [9, 9, 9]); } add(CAP(), M('#6a1a1a'), [sd * 14, 16, 0], [10, 20, 10]); }
     for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffffff' })); x.position.set(sd * 6, 154, 28); x.scale.set(3.5, 2.5, 2); body.add(x); }
+  },
+  albtraum(add, M, body) { // Magnus: Schaedelpanzer, dunkle Haut, Klauenhand, ein Arm fehlt
+    add(CAP(), M('#1e1a22'), [0, 62, 0], [22, 40, 18]); add(SPH(), M('#2a2430'), [0, 112, 4], [30, 24, 22]); add(SPH(), M('#e8e0cc'), [0, 150, 10], [18, 20, 18]);
+    for (const sd of [-1, 1]) { add(CON(), M('#e8e0cc'), [sd * 12, 170, 6], [4, 16, 4], [0, 0, -sd * 0.4]); add(CAP(), M('#141018'), [sd * 14, 16, 0], [10, 20, 10]); }
+    add(CAP(), M('#1e1a22'), [44, 96, 16], [10, 34, 10], [0.5, 0, 0.6]); for (let k = 0; k < 4; k++) add(CON(), M('#c8c0b0'), [64 + k * 4, 70, 40 - k * 6], [3, 18, 3], [1.2, 0, 0]);
+    for (let k = 0; k < 6; k++) add(SPH(), M('#2a2430'), [0, 40 - k * 2, -28 - k * 14], [10 - k, 8 - k, 12]);
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ff3a2a' })); x.position.set(sd * 6, 152, 27); x.scale.set(3, 2, 1.5); body.add(x); }
+  },
+  general(add, M, body) { // riesige blaue Hand und Arm, blaue Schutzaura
+    const bl = M('#2a5aca', { emissive: new THREE.Color('#1a3a9a'), emissiveIntensity: 0.4 });
+    add(CAP(), bl, [0, 60, 0], [34, 60, 30]); add(SPH(), bl, [0, 140, 10], [50, 34, 30]);
+    for (let k = 0; k < 4; k++) add(CAP(), bl, [(k - 1.5) * 24, 196, 14], [9, 30, 9], [0.1, 0, (k - 1.5) * 0.15]); add(CAP(), bl, [-56, 146, 14], [9, 26, 9], [0, 0, 1.0]);
+  },
+  durum(add, M, body) { // kurze Beine, Panzer aus roten Kristallen, Wolfsschnauze
+    add(SPH(), M('#5a3a3a'), [0, 60, 0], [36, 34, 32]); add(SPH(), M('#6a4040'), [0, 96, 22], [20, 18, 20]); add(CAP(), M('#6a4040'), [0, 94, 44], [9, 14, 9], [Math.PI / 2, 0, 0]);
+    for (let k = 0; k < 9; k++) add(CON(), M('#d02a2a', { emissive: new THREE.Color('#8a0a0a'), emissiveIntensity: 0.5 }), [Math.cos(k * 0.7) * 26, 80 + (k % 3) * 8, -14 - (k % 2) * 8], [8, 26, 8], [-0.5, 0, Math.cos(k * 0.7) * 0.6]);
+    for (const sd of [-1, 1]) { add(CAP(), M('#4a2a2a'), [sd * 20, 18, 0], [11, 12, 11]); add(CAP(), M('#5a3a3a'), [sd * 40, 64, 16], [9, 20, 9], [0.4, 0, sd * 0.6]); }
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffd02a' })); x.position.set(sd * 8, 104, 38); x.scale.set(3, 2, 1.5); body.add(x); }
+  },
+  kronkerW(add, M, body) { // wahre Form: dunkelrote gluehende Haut, Augenmuster, Hoerner, Rueckenstacheln, Tentakel
+    const sk = M('#6a0a0a', { emissive: new THREE.Color('#5a0a04'), emissiveIntensity: 0.5 });
+    add(CAP(), sk, [0, 70, 0], [40, 56, 32]); add(SPH(), sk, [0, 150, 8], [52, 38, 36]); add(SPH(), sk, [0, 200, 18], [26, 24, 24]);
+    add(SPH(), M('#ffb02a', { emissive: new THREE.Color('#ff8a0a'), emissiveIntensity: 1 }), [0, 150, 42], [12, 8, 4]); add(SPH(), M('#1a0000'), [0, 150, 45], [5, 5, 3]);
+    for (const sd of [-1, 1]) { add(CON(), M('#1a0a0a'), [sd * 22, 232, 16], [7, 36, 7], [0.2, 0, -sd * 0.6]); add(CAP(), sk, [sd * 70, 130, 12], [15, 44, 15], [0.3, 0, sd * 0.5]); add(CAP(), M('#3a0404'), [sd * 26, 20, 0], [18, 26, 18]); }
+    for (let k = 0; k < 6; k++) add(CON(), M('#1a0a0a'), [0, 120 + k * 16, -34], [7, 26, 7], [-1.0, 0, 0]);
+    for (let k = 0; k < 6; k++) { const a = k * 1.05; add(CAP(), M('#8a1a1a'), [Math.cos(a) * 40, 30, Math.sin(a) * 40 - 20], [7, 34, 7], [Math.sin(a) * 1.2, 0, Math.cos(a) * 1.2]); }
+  },
+  unzoku(add, M, body) { // Werwolf mit Loewenmaehne, Schulterstacheln und Hoernern
+    werwolfBody(add, M, body, '#5a3a24');
+    for (let k = 0; k < 10; k++) { const a = k * 0.63; add(SPH(), M('#c88a3a'), [Math.cos(a) * 26, 128 + Math.sin(a) * 18, -4], [12, 12, 10]); }
+    for (const sd of [-1, 1]) { add(CON(), M('#e8e0cc'), [sd * 20, 162, 0], [5, 22, 5], [0, 0, -sd * 0.7]); for (let k = 0; k < 3; k++) add(CON(), M('#e8e0cc'), [sd * (40 + k * 8), 114 + k * 4, -4], [4, 18, 4], [0, 0, -sd * (0.5 + k * 0.2)]); }
+  },
+  yakgen(add, M, body) { // Yak-Daemon: zottiges Fell, geschwungene Hoerner, Goldschmuck
+    add(SPH(), M('#4a3a2a'), [0, 64, 0], [40, 46, 34]); add(SPH(), M('#3a2a1a'), [0, 120, 18], [26, 22, 24]); add(SPH(), M('#2a1e14'), [0, 112, 38], [12, 10, 10]);
+    for (const sd of [-1, 1]) { add(CON(), M('#e8e0cc'), [sd * 34, 138, 16], [6, 30, 6], [0.3, 0, -sd * 1.3]); add(CAP(), M('#4a3a2a'), [sd * 50, 76, 12], [12, 30, 12], [0.4, 0, sd * 0.4]); add(CAP(), M('#2a1e14'), [sd * 18, 16, 0], [14, 18, 14]); add(SPH(), M('#e8c040', { emissive: new THREE.Color('#a88010'), emissiveIntensity: 0.5 }), [sd * 58, 50, 24], [8, 8, 8]); }
+    add(CYL(), M('#e8c040', { emissive: new THREE.Color('#a88010'), emissiveIntensity: 0.5 }), [0, 96, 30], [22, 5, 12]);
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ff8a2a' })); x.position.set(sd * 9, 126, 40); x.scale.set(3, 2, 1.5); body.add(x); }
+  },
+  bisha(add, M, body) { // Yak-Koenig: groesser, Krone, Huelle aus rotem Nebel
+    BOSS_BUILD.yakgen(add, M, body);
+    for (let k = 0; k < 5; k++) add(CON(), M('#e8c040', { emissive: new THREE.Color('#a88010'), emissiveIntensity: 0.6 }), [(k - 2) * 7, 150, 18], [3, 12, 3]);
+    for (let k = 0; k < 8; k++) { const a = k * 0.8; add(SPH(), M('#c81a1a', { emissive: new THREE.Color('#8a0a0a'), emissiveIntensity: 0.6 }), [Math.cos(a) * 62, 40 + (k % 3) * 34, Math.sin(a) * 40], [9, 9, 9]); }
+  },
+  calva(add, M, body) { // Skully-Champion: Totenkopf, Knochenschild, Speer
+    add(CAP(), M('#4a4a3a'), [0, 64, 0], [22, 42, 18]); add(SPH(), M('#e8e0cc'), [0, 128, 6], [24, 24, 22]);
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#1a0a0a' })); x.position.set(sd * 9, 132, 26); x.scale.set(6, 6, 3); body.add(x); add(CAP(), M('#3a3a2a'), [sd * 14, 16, 0], [10, 20, 10]); }
+    add(SPH(), M('#e8e0cc'), [-40, 80, 24], [8, 34, 28]); add(CYL(), M('#c8c0a8'), [40, 90, 20], [3, 150, 3], [0.2, 0, 0.2]);
+  },
+  tenbris(add, M, body) { // Daemonenkoenig mit blauen Sogwirbeln
+    add(CON(), M('#1a2a4a'), [0, 60, 0], [40, 120, 40]); add(SPH(), M('#2a3a6a'), [0, 146, 6], [24, 26, 24]);
+    for (const sd of [-1, 1]) add(CON(), M('#8ab8ff', { emissive: new THREE.Color('#4a8aff'), emissiveIntensity: 0.8 }), [sd * 16, 176, 0], [5, 26, 5], [0, 0, -sd * 0.4]);
+    for (let k = 0; k < 10; k++) { const a = k * 0.63; add(SPH(), M('#4a8aff', { emissive: new THREE.Color('#2a6aff'), emissiveIntensity: 0.9 }), [Math.cos(a) * (46 + k * 3), 60 + k * 8, Math.sin(a) * 30], [7, 7, 7]); }
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#aaffff' })); x.position.set(sd * 8, 150, 28); x.scale.set(4, 2, 1.5); body.add(x); }
+  },
+  luceW(add, M, body) { // Daemonenform: Koerper ganz aus weisser Substanz
+    const w = M('#f4f4f8', { emissive: new THREE.Color('#c8d0ff'), emissiveIntensity: 0.3 });
+    add(CAP(), w, [0, 66, 0], [26, 46, 20]); add(SPH(), w, [0, 120, 6], [34, 26, 24]); add(SPH(), w, [0, 158, 10], [18, 20, 18]);
+    for (const sd of [-1, 1]) { add(CAP(), w, [sd * 44, 108, 14], [9, 34, 9], [0.4, 0, sd * 0.6]); add(CON(), w, [sd * 58, 76, 34], [5, 30, 5], [1.0, 0, 0]); add(CAP(), w, [sd * 16, 18, 0], [11, 22, 11]); }
+    for (let k = 0; k < 6; k++) add(SPH(), M('#ffffff', { emissive: new THREE.Color('#aab8ff'), emissiveIntensity: 1 }), [Math.cos(k) * 70, 150 + Math.sin(k * 2) * 20, Math.sin(k) * 30], [8, 8, 8]);
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#2a4aff' })); x.position.set(sd * 7, 162, 27); x.scale.set(3, 2, 1.5); body.add(x); }
   },
   ranken(add, M, body) { // hausgross, langer Hals, Knospe mit sechs Ranken
     add(SPH(), M('#3a6a3a'), [0, 40, -10], [56, 34, 64]);
@@ -13174,6 +13384,9 @@ const LOOK = {
   b_magnus: { body: 'barbar', top: '#4a2a14', acc: '#e8c060', pants: '#1e140c', boots: '#140c08', cape: '#8a1a14', skin: '#d8c8c0', hair: 'lang', hairCol: '#2a1a10', eye: '#ff3a2a', fangs: true, weapon: 'axe', scale: 1.15 },
   b_stark: { body: 'schurke', top: '#5a2a8a', acc: '#c8a0ff', pants: '#2a1a4a', boots: '#1a0a2a', skin: '#b08ad8', hair: 'stachel', hairCol: '#e8d8ff', eye: '#ffe060', weapon: 'none', scale: 0.95 },
   b_sera: { body: 'barbar', top: '#6a6a78', acc: '#e8c060', pants: '#2a2a34', boots: '#1a1a20', cape: '#8a1a14', skin: '#e0c0a0', hair: 'lang', hairCol: '#e8e8f0', eye: '#e8c060', weapon: 'sword', blade: '#e8e8f0' },
+  b_immortui: { body: 'magier', top: '#1a1420', acc: '#e8e8f0', pants: '#0e0a12', boots: '#08060a', cape: '#2a1a3a', skin: '#a8a4ac', hair: 'mittel', hairCol: '#e8e8f0', eye: '#1a1a1a', fangs: true, weapon: 'none', scale: 1.05 },
+  b_cia: { body: 'magier', top: '#c8d0e0', acc: '#8a9ab8', pants: '#6a7a98', boots: '#3a4a68', cape: '#e8ecf4', skin: '#d8e0ec', hair: 'sehrlang', hairCol: '#f0f4ff', eye: '#8affff', weapon: 'none', scale: 0.95 },
+  b_luce: { body: 'magier', top: '#f0f0f4', acc: '#c8d0ff', pants: '#d8d8e0', boots: '#a8a8b8', cape: '#ffffff', skin: '#e8e8f0', hair: 'kurz', hairCol: '#ffffff', eye: '#6a8aff', weapon: 'none', scale: 1.1 },
   bloodsucker: { body: 'schurke', top: '#6a3a38', pants: '#4a3030', boots: '#2a1a1a', skin: '#d0ccc4', hair: 'glatze', eye: '#0a0000', fangs: true, weapon: 'none', scale: 1.1 },
   b_mono: { body: 'schurke', top: '#1a2440', pants: '#0a1020', boots: '#101018', skin: '#e8d0c0', hair: 'stachel', hairCol: '#1a1a2a', eye: '#6a8ad8', weapon: 'sword', blade: '#d8e8ff' },
   b_ian: { body: 'schurke', top: '#6a4a2a', pants: '#3a2a1a', boots: '#2a1a10', cape: '#4a3a2a', skin: '#e0c0a0', hair: 'kurz', hairCol: '#6a4a2a', eye: '#4a3020', hat: '#6a4a2a', weapon: 'staff' },

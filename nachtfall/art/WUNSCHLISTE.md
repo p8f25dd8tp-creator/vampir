@@ -41,7 +41,9 @@ Wichtig: Treffer (Faust, Klinge), Blutspritzer, Explosion, Blitz, Feuer, Eis, Bo
   Tikker, Hybrid-Werwolf, Derik, Andy, Lock, Russ, Chris mit Werwolf-DNA, Sedi-Riese, Athos, Laser-Dalki,
   Yanny, Zero, roter Werwolf, Hinto, Kipo, Gorgath, Emma als Königin der Dhampire, Escam, Edvard, Nell,
   Rankenmensch, graue Eule, Grenlet, Spinnenfels, Prophet, Magnus, Ray als roter Drache, Jim mit X-Blut,
-  H, Stark, Mundus, Affenkönig, Phönix, Behemoth, Asura, Pine, Sera, Ray in der Drachenrüstung).
+  H, Stark, Mundus, Affenkönig, Phönix, Behemoth, Asura, Pine, Sera, Ray in der Drachenrüstung,
+  Magnus in Albtraumform, Demon General, Lexor, Kronker, Kronkers wahre Form, Unzoku, Immortui, Yak-General,
+  Cia als Banshee, Bisha, Luce, Calva, Tenbris, Luces Dämonenform, Immortuis Endform).
 - **Bodentexturen**: Liste wächst in `SZENEN-LISTE.md`.
 
 ---

@@ -11,7 +11,7 @@
      boss     — Etappen-Finale: Wellen, dann der Boss
      berserk  — Finn als wahnsinniger Bloodsucker (doppelte Kraft, halbes Leben)
    Zusatz `berserk: true` macht jede andere Stufenart zum Bloodsucker-Kampf.
-   Etappen 14 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
+   Etappen 15 ff. nutzen vorerst die bisherigen Kapitel mit 8 Stufen.
    ========================================================================== */
 
 /* ------------------------------------------------------------ Gegner der Etappe 1 */
@@ -871,17 +871,166 @@ const ETAPPE13 = {
   ]
 };
 
+/* ------------------------------------------------------------ Etappe 14: Dämonenkönige (Kapitel 2306–2470) */
+defEnemy('e14_mark', 'ghoul', 'v_thrall', 'Gezeichneter Häftling', { hp: 96 });
+defEnemy('e14_vet', 'knight', 'v_ritter', 'Gezeichneter Kriegsveteran', { armor: 10 });
+defEnemy('e14_blutk', 'witch', 'v_magier', 'Blutklingen-Werfer', { shot: 'blood', flier: false });
+defEnemy('e14_jared', 'captain', 'v_ritter', 'Gezeichneter Vampirritter', { scale: 1.35, hp: 10000 });
+defEnemy('e14_swan', 'ghoul', 'h_sunshield', 'Dieb der Black Swans', { hp: 96 });
+defEnemy('e14_swanK', 'knight', 'h_wache', 'Schläger der Black Swans', { armor: 10 });
+defEnemy('e14_swanS', 'witch', 'h_truedream', 'Kristallschütze', { shot: 'light', flier: false });
+defEnemy('e14_swanM', 'brute', 'h_koloss', 'Fabrik-Lademaschine', { splits: 0, hp: 560 });
+defEnemy('e14_swanC', 'captain', 'h_blade', 'Anführer der Black Swans', { scale: 1.35, hp: 10000 });
+defEnemy('e14_fam', 'ghoul', 'q_rot', 'Wilder Familiar', { hp: 96 });
+defEnemy('e14_famF', 'bat', 'bat_braun', 'Flug-Familiar', { hp: 66 });
+defEnemy('e14_famK', 'knight', 'q_panzer', 'Bohrer-Familiar', { armor: 10 });
+defEnemy('e14_famS', 'witch', 'q_spore', 'Nebel-Familiar', { shot: 'acid', flier: false });
+defEnemy('e14_famB', 'brute', 'q_koenig', 'Familiar-Koloss', { splits: 0, hp: 560 });
+defEnemy('e14_famC', 'captain', 'q_daemon', 'Familiar-Fürst', { scale: 1.35, hp: 10000 });
+defEnemy('e14_dem', 'ghoul', 'q_void', 'Dämon', { hp: 98, gore: 'void' });
+defEnemy('e14_lesser', 'bat', 'bat_void', 'Lesser Demon', { hp: 68, gore: 'void' });
+defEnemy('e14_loewe', 'knight', 'q_daemon', 'Löwenkopf-Fledermaus', { armor: 10, gore: 'void' });
+defEnemy('e14_rotv', 'witch', 'h_rotvamp', 'Gezeichneter Vampir', { shot: 'blood', flier: false });
+defEnemy('e14_bestie', 'brute', 'q_voidP', 'Furchtlose Bestie', { splits: 0, hp: 560, gore: 'void' });
+defEnemy('e14_barbra', 'captain', 'h_rotvamp', 'Barbra mit Dämonenklauen', { scale: 1.35, hp: 10000 });
+defEnemy('e14_durum', 'ghoul', 'q_rotP', 'Durum-Dämon', { hp: 100, gore: 'void' });
+defEnemy('e14_splitter', 'bat', 'bat_blut', 'Kristallsplitter-Schwinge', { hp: 68 });
+defEnemy('e14_durumK', 'knight', 'q_panzer', 'Durum mit Panzerrücken', { armor: 12, gore: 'void' });
+defEnemy('e14_kristall', 'witch', 'q_rot', 'Kristallschleuderer', { shot: 'void', flier: false });
+defEnemy('e14_durumB', 'brute', 'q_fort', 'Durum-Brecher', { splits: 0, hp: 580 });
+defEnemy('e14_jaeger', 'captain', 'q_koenig', 'Durum-Jäger', { scale: 1.35, hp: 10500 });
+defEnemy('e14_glut', 'ghoul', 'q_rotP', 'Glutton-Werwolf', { hp: 104, spd: 92 });
+defEnemy('e14_glutK', 'knight', 'q_koenig', 'Glutton-Alpha', { armor: 10 });
+defEnemy('e14_glutS', 'witch', 'q_kroete', 'Glutton-Heuler', { shot: 'void', flier: false });
+defEnemy('e14_glutB', 'brute', 'q_alienM', 'Satter Glutton-Koloss', { splits: 0, hp: 600 });
+defEnemy('e14_shinto', 'captain', 'g_diener', 'Champion Shinto', { scale: 1.4, hp: 11000 });
+defEnemy('e14_divD', 'ghoul', 'h_ritter', 'Dunkler Divine', { hp: 100, gore: 'light' });
+defEnemy('e14_divG', 'bat', 'bat_licht', 'Goldener Divine', { hp: 70, gore: 'light' });
+defEnemy('e14_divK', 'knight', 'h_waechter', 'Divine-Speerträger', { armor: 11, gore: 'light' });
+defEnemy('e14_divS', 'witch', 'h_seherin', 'Heilender Divine', { shot: 'light', flier: false, gore: 'light' });
+defEnemy('e14_divB', 'brute', 'h_koloss', 'Divine-Koloss', { splits: 0, hp: 580, gore: 'light' });
+defEnemy('e14_xox', 'captain', 'g_diener', 'Xox, der Gestaltwandler', { scale: 1.3, hp: 10500 });
+defEnemy('e14_yak', 'ghoul', 'q_orange', 'Yak-Arbeiter', { hp: 100 });
+defEnemy('e14_yakK', 'knight', 'q_panzer', 'Yak-Wache', { armor: 12 });
+defEnemy('e14_yakS', 'witch', 'q_kanal', 'Yak-Kanonier', { shot: 'light', flier: false });
+defEnemy('e14_yakB', 'brute', 'q_koenig', 'Yak-Schmied', { splits: 0, hp: 600 });
+defEnemy('e14_yakC', 'captain', 'q_koenig', 'Yak-Vorarbeiter', { scale: 1.35, hp: 10500 });
+defBoss('b14_magnus', 'kronker', 'Magnus in Albtraumform', 30000, { model: 'albtraum', bellShot: 'void', r: 40, spd: 82 });
+defBoss('b14_general', 'kronker', 'Demon General (die blaue Hand)', 17000, { model: 'general', bellShot: 'soul', r: 58, scale: 1.3, spd: 40 });
+defBoss('b14_lexor', 'kronker', 'Lexor, Durum-Dämonengeneral', 28000, { model: 'durum', bellShot: 'spike', r: 42, spd: 62, armor: 8 });
+defBoss('b14_kronker', 'kronker', 'Kronker, Durum-Dämonenkönig', 32000, { model: 'kronker', bellShot: 'spike', r: 46, spd: 50, armor: 10 });
+defBoss('b14_kronkerW', 'kronker', 'Kronkers wahre Form', 38000, { model: 'kronkerW', bellShot: 'void', r: 62, scale: 1.3, spd: 42 });
+defBoss('b14_unzoku', 'kronker', 'Unzoku, der Allesverschlinger', 60000, { model: 'unzoku', bellShot: 'spike', r: 46, spd: 84 });
+defBoss('b14_immortui', 'mono', 'Immortui', 90000, Object.assign({ look: 'b_immortui', bellShot: 'void', spd: 80 }, B1));
+defBoss('b14_yakgen', 'kronker', 'Yak-General der Werft', 24000, { model: 'yakgen', bellShot: 'bell', r: 44, spd: 60 });
+const R_MAL = { ghoul: 'e14_mark', bat: 'c5_fleder', knight: 'e14_vet', witch: 'e14_blutk', brute: 'e5_bsRiese', captain: 'e14_jared' };
+const R_SWANS = { ghoul: 'e14_swan', bat: 'e12_namF', knight: 'e14_swanK', witch: 'e14_swanS', brute: 'e14_swanM', captain: 'e14_swanC' };
+const R_FAM14 = { ghoul: 'e14_fam', bat: 'e14_famF', knight: 'e14_famK', witch: 'e14_famS', brute: 'e14_famB', captain: 'e14_famC' };
+const R_LESSER = { ghoul: 'e14_dem', bat: 'e14_lesser', knight: 'e14_loewe', witch: 'e14_rotv', brute: 'e14_bestie', captain: 'e14_barbra' };
+const R_DURUM = { ghoul: 'e14_durum', bat: 'e14_splitter', knight: 'e14_durumK', witch: 'e14_kristall', brute: 'e14_durumB', captain: 'e14_jaeger' };
+const R_GLUTTON = { ghoul: 'e14_glut', bat: 'e14_lesser', knight: 'e14_glutK', witch: 'e14_glutS', brute: 'e14_glutB', captain: 'e14_shinto' };
+const R_DIVINE = { ghoul: 'e14_divD', bat: 'e14_divG', knight: 'e14_divK', witch: 'e14_divS', brute: 'e14_divB', captain: 'e14_xox' };
+const R_YAK = { ghoul: 'e14_yak', bat: 'e14_splitter', knight: 'e14_yakK', witch: 'e14_yakS', brute: 'e14_yakB', captain: 'e14_yakC' };
+const ETAPPE14 = {
+  title: 'Dämonenkönige', place: 'Siedlung · Erde · Insel der Runen · Zeathun, der rote Raum', src: 'Kapitel 2306–2470', theme: 'redspace', ch: 14,
+  levels: [
+    { name: 'Das Mal des Immortui', type: 'survive', dur: 150, pace: 1.5, theme: 'siedlung', roles: R_MAL, elites: 2,
+      text: 'Ein Auge mit Fledermausflügeln, eingebrannt in die Handfläche. Wer das Mal trägt, spricht mit Immortuis Stimme – und es tauchen immer mehr Gezeichnete auf, im Gefängnis, in der Stadt, sogar an Minnys Schule.' },
+    { name: 'Ich rette beide', type: 'hunt', role: 'witch', n: 45, pace: 1.5, theme: 'siedlung', roles: R_MAL,
+      text: 'Auf einem Dach hält ein Gezeichneter Ronkin und ein kleines Waisenmädchen fest: Finn soll wählen, wen er rettet. Er wählt nicht. Ein Schattenklon bleibt stehen, der echte Finn schleicht lautlos hinter die Täter.' },
+    { name: 'Die Black Swans', type: 'survive', dur: 150, pace: 1.4, theme: 'basisnacht', roles: R_SWANS, elites: 1,
+      text: 'Getarnt als Rekrut „Bake“ dient Finn im Vampire Corps der Erde, bei Captain Jessica. Eine Diebesbande überfällt die Kristallfabrik. Regel für heute: keine Aura, nur Fäuste und Knie.' },
+    { name: 'Magnus in Albtraumform', type: 'duel', foe: 'b14_magnus', crowd: 0.2, theme: 'schlachtfeld', roles: R_MAL,
+      text: 'Magnus verliert einen Arm gegen Andy, den ersten Colossal Draugr – und verwandelt sich mit Immortuis Kraft in ein Albtraumwesen mit Schädelpanzer und Klauen. Er will Jessica, und er will sie lebend.' },
+    { name: 'Der Aufstand der Familiars', type: 'survive', dur: 160, pace: 1.6, theme: 'siedlung', roles: R_FAM14, comp: ['peter'], elites: 2,
+      text: 'Aus Portalen im Wald stürmen Familiar-Horden, und in der Siedlung beißen Familiars plötzlich ihre eigenen Besitzer. Peter trägt Finns Gesicht – und muss so tun, als wäre er Finn.' },
+    { name: 'Die Insel der Runen', type: 'duel', foe: 'b14_general', crowd: 0.2, theme: 'schlachtfeld', roles: R_LESSER,
+      text: 'Magnus öffnet mit Jessicas Blut ein Portal nach Zeathun. Lesser Demons quellen hervor, dann greift eine riesige blaue Hand hindurch: ein Demon General. Das System legt eine neue Rangliste an.' },
+    { name: 'Das Jagdgebiet', type: 'survive', dur: 160, pace: 1.45, theme: 'redspace', roles: R_DURUM, elites: 1,
+      text: 'Allein im roten Raum. In einem Wald aus Riesenbäumen jagen Durum-Dämonen die Skullys – ein Punkt pro Kreatur, fünf pro Skully. Die Splitter kommen aus drei Richtungen. Finn fängt sie mit bloßen Händen.' },
+    { name: 'Lexor', type: 'duel', foe: 'b14_lexor', crowd: 0.3, theme: 'redspace', roles: R_DURUM,
+      text: 'Im Dämonenlager türmen sich Skully-Köpfe, auf der Rangliste verschwinden ständig Namen. Der Durum-General Lexor will wissen, wer seine Jäger frisst.' },
+    { name: 'Kronker', type: 'duel', foe: 'b14_kronker', crowd: 0.2, theme: 'redspace', roles: R_DURUM,
+      text: 'Ein Dämonenkönig ganz aus rotem Kristall. Seine Klinge saugt Blutspeere auf, seine Stacheln wachsen aus der Brust. Finns Schläge verschieben seinen Kopf nur um Zentimeter – vorerst.' },
+    { name: 'Kronkers wahre Form', type: 'duel', foe: 'b14_kronkerW', crowd: 0.3, theme: 'roterhimmel', roles: R_DURUM, berserk: true,
+      text: 'Die Kristallhülle platzt: ein zehn Meter hoher Riese mit Hörnern und Tentakeln. Finn verliert die Kontrolle. Aus seinen Flügeln tropfen Blutbomben – und das System meldet Fehler.' },
+    { name: 'Unzoku, der Allesverschlinger', type: 'endure', foe: 'b14_unzoku', dur: 80, crowd: 0.4, theme: 'ruinen', roles: R_GLUTTON, comp: ['chris'],
+      text: 'Ein Gefängnis, in dem Chronos gemästet werden, bis die Glutton-Wölfe sie fressen. Dann kommt ihr König: ein Werwolf mit Löwenmähne, dessen Stimme allein Übelkeit auslöst. Chris weicht jedem Hieb nur knapp aus.' },
+    { name: 'Immortui', type: 'endure', foe: 'b14_immortui', dur: 70, crowd: 0.1, theme: 'redspace', roles: R_LESSER,
+      text: 'Er sieht jung aus, grau, mit schwarz-weißem Haar. In seiner Nähe verliert alles seine Energie: Blut zerfällt, sogar der Schatten wird ausgesaugt. Finn weiß, dass er diesen Kampf verliert. Er muss nur lange genug durchhalten.' },
+    { name: 'Die Divine Brigade', type: 'survive', dur: 170, pace: 1.7, theme: 'akademie', roles: R_DIVINE, comp: ['minny', 'lena'], elites: 3,
+      text: 'Mitten im großen Schulsportfest reißt der Himmel auf: dunkle Divines werfen Speere in die Menge, goldene heilen sie wieder. Lena gibt die Befehle, Minny sperrt die goldenen in ihren Schattenraum.' },
+    { name: 'Die Werft der Yaks', type: 'waveboss', at: 60, foe: 'b14_yakgen', pace: 1.5, theme: 'redspace', roles: R_YAK, comp: ['chris'], evo: 'Dämonenform',
+      text: 'Auf dem Planeten der Riesen bauen Yak-Dämonen Schiffe für den Krieg gegen die Celestials. Chris jagt nachts unter dem roten Mond – und jede Beute macht ihn hungriger.' }
+  ]
+};
+
+/* ------------------------------------------------------------ Etappe 15: Der letzte Vampir (Kapitel 2471–2545) */
+defEnemy('e15_toter', 'ghoul', 'v_thrall', 'Ruheloser Toter', { hp: 106, gore: 'void' });
+defEnemy('e15_geist', 'bat', 'bat_aas', 'Nebelgeist', { hp: 74, gore: 'void' });
+defEnemy('e15_dalkiT', 'knight', 'dalki4', 'Toter Dalki', { armor: 12 });
+defEnemy('e15_vampT', 'witch', 'v_magier', 'Toter Vampir', { shot: 'soul', flier: false });
+defEnemy('e15_riese', 'brute', 'q_fort', 'Toter Riese', { splits: 0, hp: 620 });
+defEnemy('e15_graham', 'captain', 'dalkiW', 'Grahams Schatten', { scale: 1.4, hp: 11500 });
+defEnemy('e15_divD', 'ghoul', 'h_ritter', 'Dunkler Divine', { hp: 106, gore: 'light' });
+defEnemy('e15_divG', 'bat', 'bat_licht', 'Goldener Divine', { hp: 74, gore: 'light' });
+defEnemy('e15_divK', 'knight', 'h_waechter', 'Divine-Speerträger', { armor: 12, gore: 'light' });
+defEnemy('e15_divS', 'witch', 'h_seherin', 'Heilender Divine', { shot: 'light', flier: false, gore: 'light' });
+defEnemy('e15_divB', 'brute', 'h_koloss', 'Divine-Koloss', { splits: 0, hp: 620, gore: 'light' });
+defEnemy('e15_divC', 'captain', 'g_diener', 'Heerführer der Divine Brigade', { scale: 1.35, hp: 11500 });
+defEnemy('e15_wolf', 'ghoul', 'q_rotP', 'Werwolf aus dem Portal', { hp: 110, spd: 92 });
+defEnemy('e15_yak', 'brute', 'q_koenig', 'Yak-Krieger', { splits: 0, hp: 640 });
+defEnemy('e15_yakC', 'captain', 'q_koenig', 'Yak-Kapitän', { scale: 1.35, hp: 11500 });
+defEnemy('e15_flug', 'bat', 'bat_void', 'Flugdämon', { hp: 74, gore: 'void' });
+defBoss('b15_cia', 'mono', 'Cia, die Banshee', 22000, Object.assign({ look: 'b_cia', bellShot: 'soul', spd: 84 }, B1));
+defBoss('b15_bisha', 'kronker', 'Bisha, König der Yaks', 36000, { model: 'bisha', bellShot: 'bell', r: 54, scale: 1.2, spd: 50 });
+defBoss('b15_luce', 'mono', 'Luce, der rechte Arm', 32000, Object.assign({ look: 'b_luce', bellShot: 'light', spd: 86 }, B1));
+defBoss('b15_calva', 'kronker', 'Calva, Champion der Skullys', 24000, { model: 'calva', bellShot: 'spike', r: 44, spd: 70 });
+defBoss('b15_tenbris', 'kronker', 'Tenbris, Dämonenkönig', 30000, { model: 'tenbris', bellShot: 'soul', r: 44, spd: 64 });
+defBoss('b15_luceW', 'kronker', 'Luces Dämonenform', 30000, { model: 'luceW', bellShot: 'light', r: 46, spd: 70 });
+defBoss('b15_unzoku', 'kronker', 'Unzoku, satt von Tenbris', 38000, { model: 'unzoku', bellShot: 'spike', r: 50, scale: 1.15, spd: 80 });
+defBoss('b15_immortui', 'mono', 'Immortui mit Schlangenrüstung', 36000, Object.assign({ look: 'b_immortui', bellShot: 'void', spd: 84 }, B1));
+defBoss('b15_final', 'immortui', 'Immortuis Endform', 44000, { model: 'immortui', bellShot: 'void', r: 50, scale: 1.2, spd: 70 });
+const R_TOTE = { ghoul: 'e15_toter', bat: 'e15_geist', knight: 'e15_dalkiT', witch: 'e15_vampT', brute: 'e15_riese', captain: 'e15_graham' };
+const R_DIV15 = { ghoul: 'e15_divD', bat: 'e15_divG', knight: 'e15_divK', witch: 'e15_divS', brute: 'e15_divB', captain: 'e15_divC' };
+const R_KRIEG = { ghoul: 'e15_wolf', bat: 'e15_divG', knight: 'e15_divK', witch: 'e14_yakS', brute: 'e15_yak', captain: 'e15_yakC' };
+const R_ROTRAUM = { ghoul: 'e14_durum', bat: 'e15_flug', knight: 'e14_yakK', witch: 'e14_glutS', brute: 'e15_yak', captain: 'e15_yakC' };
+const ETAPPE15 = {
+  title: 'Der letzte Vampir', place: 'Nebelwelt · Planet der Riesen · Zeathun · die Siedlung', src: 'Kapitel 2471–2545', theme: 'roterhimmel', ch: 15,
+  levels: [
+    { name: 'Die Nebelwelt', type: 'survive', dur: 150, pace: 1.4, theme: 'friedhof', roles: R_TOTE, elites: 1,
+      text: 'Finn erwacht als halb durchsichtige Gestalt im grauen Nebel. Jeder Tote, den er je getötet hat, kommt zurück – und jeder Treffer lässt ihn ihre letzten Schmerzen fühlen.' },
+    { name: 'Cia, die Banshee', type: 'duel', foe: 'b15_cia', crowd: 0.2, theme: 'friedhof', roles: R_TOTE,
+      text: 'Cia ist wütend über ihre gelöschten Erinnerungen und schreit wie eine Banshee. Finn wehrt sich kaum. Er erzählt ihr, dass Lena lebt und dass sie ein Kind haben.' },
+    { name: 'Die Toten stehen bei ihm', type: 'survive', dur: 160, pace: 1.6, theme: 'friedhof', roles: R_TOTE, comp: ['leo', 'emma'], elites: 3,
+      text: 'Als Finn zu zerbrechen droht, formen sich neue Gestalten zu seinem Schutz: Leo, Emma und alle, die ihm etwas bedeutet haben. „Wir sind die Vergangenheit. Rette du die Welt.“' },
+    { name: 'Bisha, König der Yaks', type: 'duel', foe: 'b15_bisha', crowd: 0.2, theme: 'redspace', roles: R_ROTRAUM, comp: ['chris'],
+      text: 'Der gelangweilte Yak-König kommt selbst, als sein Bautrupp schweigt. Eine Hülle aus rotem Nebel schützt ihn, seine Fäuste schlagen ein wie Meteore. Chris, satt vom Fressen, lenkt sie ab.' },
+    { name: 'Luce', type: 'duel', foe: 'b15_luce', crowd: 0.1, theme: 'redspace', roles: R_ROTRAUM, comp: ['peter'],
+      text: 'Immortuis rechter Arm. Seine weißen Kugeln ziehen Lichtspuren durch die Luft, und wer die Spur berührt, wird von ihrer ganzen Länge getroffen. Peter landet in einer Schale aus weißem Eis.' },
+    { name: 'Training mit den Champions', type: 'duel', foe: 'b15_calva', crowd: 0, theme: 'rotezone', roles: R_ROTRAUM,
+      text: 'In einer grauen Ödnis kämpft Finn ohne Rüstung gegen drei Champions zugleich. Calvas Knochenregen, Pultras Tritte, Shintos schwarze Flammen. Die Antwort ist der Schatten – mit allem anderen verbunden.' },
+    { name: 'Die Divine-Invasion', type: 'survive', dur: 170, pace: 1.55, theme: 'redspace', roles: R_DIV15, elites: 2,
+      text: 'Überall im roten Raum öffnen sich weiße Portale. Zehntausende Divines fallen ein und töten alles: Dämonen, Skullys, ganze Dörfer. Finn hört das Leid – und greift ein.' },
+    { name: 'Tenbris', type: 'waveboss', at: 60, foe: 'b15_tenbris', pace: 1.6, theme: 'redspace', roles: R_GLUTTON, comp: ['chris'],
+      text: 'Chris in seiner neuen roten Werwolfform, Mähne und Schweif, gegen Unzoku. Dann kommt Tenbris hinzu: Seine blauen Wirbel machen alles, was sie berühren, unendlich schwer.' },
+    { name: 'Luces Dämonenform', type: 'duel', foe: 'b15_luceW', crowd: 0.2, theme: 'goetter', roles: R_DIV15, comp: ['peter'],
+      text: 'Ein Körper ganz aus weißer Substanz. Klingen heilen sofort, nur Celestial-Schläge wirken nach. Peter vereint seine Kopfschweife zu einer Axt.' },
+    { name: 'Unzoku, satt von Tenbris', type: 'duel', foe: 'b15_unzoku', crowd: 0.3, theme: 'redspace', roles: R_GLUTTON, comp: ['chris'],
+      text: 'Unzoku hat Tenbris geköpft und gefressen. Sein Heulen legt ganze Divine-Schwärme lahm, ein Hieb zerreißt die Yak-Stadt. Chris setzt ihm schwarze Flammen an Hände und Beine.' },
+    { name: 'Immortui mit Schlangenrüstung', type: 'duel', foe: 'b15_immortui', crowd: 0.1, theme: 'roterhimmel', roles: R_ROTRAUM,
+      text: 'Blutwirbel gegen Nebelhände, sechs Schattenarme gegen Schlangenstrahlen. Finn formt eine riesige, blitzgeladene Blutschatten-Sense. Und er verliert trotzdem.' },
+    { name: 'Krieg um die Siedlung', type: 'survive', dur: 180, pace: 1.8, theme: 'siedlung', roles: R_KRIEG, comp: ['lena', 'minny'], elites: 3,
+      text: 'Ein rotes Portal neben der Siedlung, ein schwarzes Schiff voller Werwölfe, dazu Divines vom Himmel. Die Schläfer in den Grüften werden geweckt. Lena kämpft mit Feueratem und Qi-Pfeilen.' },
+    { name: 'Eine neue Flamme', type: 'waveboss', at: 70, foe: 'b15_unzoku', pace: 1.7, theme: 'siedlung', roles: R_KRIEG, comp: ['peter', 'chris'],
+      text: 'Die Phönixflamme im Brustpanzer erschafft Finn neu: Herz, Körper, Blutkristall. Mundus hält Unzoku für einen Wimpernschlag in der Zeit fest – und alle feuern zugleich ihren stärksten Angriff.' },
+    { name: 'Der letzte Vampir', type: 'duel', foe: 'b15_final', crowd: 0.2, theme: 'roterhimmel', roles: R_DIV15, evo: 'Blut der dreizehn Familien', outro: CHAPTERS[14].outro,
+      text: 'Immortuis Endform ist eine Verschmelzung aller Dämonen. Finn trägt das Blut aller dreizehn Familien in sich. Doch stirbt Immortui, verschwindet alle Kraft, die er je gegeben hat – auch die der Vampire.' }
+  ]
+};
+
 /* ------------------------------------------------------------ Alle Etappen */
-// Etappen 14 ff.: bisherige Kapitel, bis sie Bogen fuer Bogen neu gebaut sind
-function autoLevels(ch) {
-  const out = [];
-  for (let l = 1; l <= 8; l++) {
-    if (l < 8) out.push({ name: 'Stufe ' + l, type: 'survive', dur: [150, 180, 210, 240, 270, 300, 330][l - 1], pace: [1.3, 1.45, 1.6, 1.75, 1.8, 1.85, 1.9][l - 1], text: ch.intro[Math.min(ch.intro.length - 1, l === 1 ? 0 : 1)] });
-    else out.push({ name: ENEMIES[ch.roles.boss].name, type: 'boss', full: true, text: ch.intro[ch.intro.length - 1] });
-  }
-  return out;
-}
-const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3, ETAPPE4, ETAPPE5, ETAPPE6, ETAPPE7, ETAPPE8, ETAPPE9, ETAPPE10, ETAPPE11, ETAPPE12, ETAPPE13].concat(CHAPTERS.slice(13).map((ch) => ({ title: ch.title, place: ch.place, src: ch.src, theme: ch.theme, ch: ch.n, levels: autoLevels(ch) })));
+const ETAPPEN = [ETAPPE1, ETAPPE2, ETAPPE3, ETAPPE4, ETAPPE5, ETAPPE6, ETAPPE7, ETAPPE8, ETAPPE9, ETAPPE10, ETAPPE11, ETAPPE12, ETAPPE13, ETAPPE14, ETAPPE15];
 ETAPPEN.forEach((E, i) => { E.n = i + 1; E.levels.forEach((L, j) => { L.l = j + 1; }); });
 // Kapitel (Gegner-/Boss-Sammlungen) -> Etappe, fuer den Boss-Turm
 const ET_OF_CH = {}; ETAPPEN.forEach((E) => { const chs = new Set([E.ch]); E.levels.forEach((L) => L.ch && chs.add(L.ch)); if (E.n === 1) chs.add(3); chs.forEach((c) => { ET_OF_CH[c] = E.n; }); });
