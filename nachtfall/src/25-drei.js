@@ -152,6 +152,14 @@ function buildChibi(id, tier) {
   if (L.hat) { add(head, CON(), M('#8a6a3e'), [0, 16, 0], [26, 10, 26]); }
   if (L.mask) { add(head, SPH(), M(shadeHex(top, 0.1)), [0, 3, -1], [18.6, 17.4, 17.8]); const mm = new T.Mesh(SPH(), new T.MeshBasicMaterial({ color: L.eye })); mm.position.set(0, -1, 16); mm.scale.set(9, 2, 1); head.add(mm); }
   if (L.horns) for (const sd of [-1, 1]) add(head, CON(), M('#e8d8b0'), [sd * 10, 14, 0], [3.4, 12, 3.4], [0, 0, -sd * 0.5]);
+  if (L.fangs) for (const sd of [-1, 1]) add(head, CON(), M('#ffffff'), [sd * 3, -9, 15], [1.2, 3.2, 1.2], [Math.PI, 0, 0], false);
+  if (L.crown) for (let k = 0; k < 5; k++) { const a = -1 + k * 0.5; add(head, CON(), M(L.crown, { emissive: new T.Color(L.crown), emissiveIntensity: 0.5 }), [Math.sin(a) * 12, 17, Math.cos(a) * 6 - 3], [2.4, 8, 2.4], null, false); }
+  // Fledermausfluegel (Vampirfuersten)
+  let wings = null;
+  if (L.wings) {
+    const wg = geo('wingg', () => { const s = new T.Shape(); s.moveTo(0, 0); s.lineTo(34, 16); s.lineTo(30, 4); s.lineTo(26, -6); s.lineTo(18, -2); s.lineTo(12, -12); s.lineTo(6, -4); s.lineTo(0, -8); s.lineTo(0, 0); return new T.ShapeGeometry(s); });
+    wings = [-1, 1].map((sd) => { const w = new T.Mesh(wg, M(L.wings, { side: T.DoubleSide })); w.position.set(sd * 4, 14, -6); w.scale.set(sd, 1, 1); torso.add(w); return w; });
+  }
   // Form: Umhang, Krone, Aura
   const cape = L.cape || ((id === 'finn' && t >= 3) || (HEROES[id] && HEROES[id].tiers && t >= 3) ? shadeHex(acc, -0.45) : null);
   let capeM = null;
@@ -161,7 +169,7 @@ function buildChibi(id, tier) {
   const aura = new T.Mesh(geo('ring', () => new T.RingGeometry(18, 22, 40)), new T.MeshBasicMaterial({ color: acc, transparent: true, opacity: 0.55, blending: T.AdditiveBlending, depthWrite: false, side: T.DoubleSide }));
   aura.rotation.x = -Math.PI / 2; aura.position.y = 0.6; root.add(aura);
   const sc = (L.scale || 1) * 1.3; body.scale.setScalar(sc);
-  return { root, body, legs, arms, torso, head, capeM, aura, mats, tier: t, id, yaw: 0 };
+  return { root, body, legs, arms, torso, head, capeM, aura, mats, wings, tier: t, id, yaw: 0 };
 }
 function poseChibi(R, o, dt) {
   const run = o.run || 0, ph = o.phase || 0;
@@ -177,6 +185,7 @@ function poseChibi(R, o, dt) {
   R.body.rotation.x = run * 0.12;
   R.head.rotation.z = Math.sin((o.t || 0) * 1.7) * 0.04; R.head.rotation.x = -0.32;
   if (R.capeM) R.capeM.rotation.x = 0.25 + run * 0.5 + Math.sin((o.t || 0) * 6) * 0.05;
+  if (R.wings) R.wings.forEach((w, i) => { const sd = i ? 1 : -1; w.rotation.y = sd * (0.5 + Math.sin((o.t || 0) * 5) * 0.35); w.rotation.z = sd * 0.15; });
   R.aura.rotation.z += dt * 1.5; R.aura.material.opacity = 0.35 + Math.sin((o.t || 0) * 3) * 0.15;
   if (o.dead) { R.body.rotation.x = Math.min(1.5, (o.deadT || 0) * 4); }
   const f = o.flash || 0; for (const m of R.mats) { if (!m.userData.e0) m.userData.e0 = m.emissive.clone(), m.userData.ei0 = m.emissiveIntensity; if (f > 0) { m.emissive.set(o.flashCol || '#ff3a3a'); m.emissiveIntensity = f; } else { m.emissive.copy(m.userData.e0); m.emissiveIntensity = m.userData.ei0; } }
@@ -255,12 +264,16 @@ function buildBoss(e) {
   const root = new T.Group(), body = new T.Group(); root.add(body);
   const mats = [], M = (c, o) => { const x = toon(c, o); mats.push(x); return x; };
   const add = (g, mat, p, s, r) => { const x = new T.Mesh(g, mat); x.position.set(...p); x.scale.set(...s); if (r) x.rotation.set(...r); body.add(x); const o = new T.Mesh(g, R3N.outline); o.scale.setScalar(1.06); x.add(o); return x; };
+  const own = BOSS_BUILD[e.def.bossDraw];
+  if (own) own(add, M, body);
+  else {
   add(CAP(), M(d), [0, 50, 0], [34, 30, 28]);
   add(SPH(), M(m), [0, 88, 0], [40, 32, 34]);
   add(SPH(), M(shadeHex(m, 0.15)), [0, 136, 8], [30, 28, 28]);
   for (const sd of [-1, 1]) { add(CON(), M('#e8d8b0'), [sd * 20, 166, 0], [6, 30, 6], [0, 0, -sd * 0.6]); add(CAP(), M(m), [sd * 50, 90, 10], [12, 22, 12], [0.4, 0, sd * 0.5]); add(CAP(), M(d), [sd * 18, 18, 0], [12, 14, 12]); }
   const eyeM = new T.MeshBasicMaterial({ color: '#ffd23a' });
   for (const sd of [-1, 1]) { const x = new T.Mesh(SPH(), eyeM); x.position.set(sd * 11, 138, 34); x.scale.set(5, 3, 2); body.add(x); }
+  }
   const aura = new T.Mesh(geo('bring', () => new T.RingGeometry(70, 80, 48)), new T.MeshBasicMaterial({ color: acc, transparent: true, opacity: 0.5, blending: T.AdditiveBlending, depthWrite: false, side: T.DoubleSide }));
   aura.rotation.x = -Math.PI / 2; aura.position.y = 1; root.add(aura);
   R3N.scene.add(root);
@@ -301,13 +314,63 @@ function humanParts(role, C, art) {
   return P;
 }
 // Menschliche Bosse als grosse Chibi-Figuren
-const BOSS_HUMAN = { mono: 'b_mono', ian: 'b_ian', stahlmann: 'b_duke', hagon: 'b_hilston', erin: 'emma', sendraco: 'draco' };
+// (auch Vampirfuersten: menschliche Gestalt, aber bleich, rote Augen, Fangzaehne, Umhang)
+const BOSS_HUMAN = { mono: 'b_mono', ian: 'b_ian', stahlmann: 'b_duke', hagon: 'b_hilston', erin: 'emma', sendraco: 'draco', silva: 'b_silva', cindy: 'b_cindy', original: 'b_laxmus', jim: 'b_jim' };
 Object.assign(CHIBI, {
   b_mono: { skin: '#e8d0c0', hair: '#1a1a2a', hs: 'spiky', top: '#1a2440', bot: '#0a1020', shoe: '#101018', eye: '#6a8ad8', weapon: 'sword' },
   b_ian: { skin: '#e0c0a0', hair: '#6a4a2a', hs: 'short', top: '#6a4a2a', bot: '#3a2a1a', shoe: '#2a1a10', eye: '#4a3020', hat: true, weapon: 'staff', cape: '#4a3a2a' },
   b_duke: { skin: '#e8c8b0', hair: '#c8c8d0', hs: 'short', top: '#3a3a44', bot: '#1a1a20', shoe: '#101014', eye: '#4a4a5a', weapon: 'sword', cape: '#2a2a34' },
-  b_hilston: { skin: '#e8d0c0', hair: '#e8e0d0', hs: 'long', top: '#2a2a3a', bot: '#141420', shoe: '#101014', eye: '#8a3a2a', weapon: 'katana', cape: '#5a1a1a' }
+  b_hilston: { skin: '#e8d0c0', hair: '#e8e0d0', hs: 'long', top: '#2a2a3a', bot: '#141420', shoe: '#101014', eye: '#8a3a2a', weapon: 'katana', cape: '#5a1a1a' },
+  b_silva: { skin: '#e4dcd8', hair: '#1a1418', hs: 'short', top: '#2a1a24', bot: '#0e080c', shoe: '#0a0608', eye: '#ff2a3a', fangs: true, weapon: 'sword', cape: '#6a0a18' },
+  b_cindy: { skin: '#f0e4e4', hair: '#e8a0c0', hs: 'long', top: '#5a1a3a', bot: '#1a0610', shoe: '#1a0610', eye: '#ff3a6a', fangs: true, girl: true, cape: '#8a1a3a' },
+  b_laxmus: { skin: '#dcd0d8', hair: '#c8c0d0', hs: 'long', top: '#3a0a14', bot: '#12040a', shoe: '#0a0206', eye: '#ff1a2a', fangs: true, cape: '#5a0610', wings: '#3a0a18', crown: '#ff3a4e' },
+  b_jim: { skin: '#e0d4d0', hair: '#2a2a30', hs: 'spiky', top: '#1a1a24', bot: '#0a0a10', shoe: '#08080c', eye: '#ff4a3a', fangs: true, glasses: true, cape: '#2a0a14', weapon: 'staff' }
 });
+// Eigene Kreaturen-Bosse: Dalki, Diamantkrabbe, Daemonenkoenige
+const BOSS_BUILD = {
+  dalki1: (add, M, body) => dalkiBody(add, M, body, 1, '#6a7a8a', '#c8d0d8'),
+  graham: (add, M, body) => dalkiBody(add, M, body, 10, '#5a5a6a', '#ffd060'),
+  krabbe(add, M, body) {
+    add(SPH(), M('#4a6a8a'), [0, 40, 0], [70, 30, 56]);
+    add(SPH(), M('#6a8aa8'), [0, 52, 6], [54, 18, 42]);
+    for (let i = 0; i < 7; i++) { const a = i * 0.9; add(OCT(), M('#9af0ff', { emissive: new THREE.Color('#4ad8ff'), emissiveIntensity: 0.7 }), [Math.cos(a) * 30, 72 + (i % 3) * 6, Math.sin(a) * 22 - 6], [9, 20 + (i % 2) * 8, 9], [0, a, 0.2]); }
+    for (const sd of [-1, 1]) {
+      for (let k = 0; k < 3; k++) add(CAP(), M('#3a5a7a'), [sd * (60 + k * 4), 22, -24 + k * 22], [6, 26, 6], [0, 0, sd * 1.1]);
+      add(CAP(), M('#4a6a8a'), [sd * 64, 44, 44], [10, 22, 10], [1.2, 0, sd * 0.5]);
+      add(SPH(), M('#5a7a9a'), [sd * 70, 50, 78], [22, 14, 26]);
+      add(CON(), M('#9af0ff'), [sd * 62, 50, 100], [6, 22, 6], [Math.PI / 2, 0, 0]);
+      add(CYL(), M('#3a5a7a'), [sd * 14, 66, 36], [3, 22, 3]);
+      const eye = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffd23a' })); eye.position.set(sd * 14, 80, 36); eye.scale.setScalar(6); body.add(eye);
+    }
+  },
+  kronker(add, M, body) {
+    add(CAP(), M('#4a0a0a'), [0, 50, 0], [36, 32, 30]); add(SPH(), M('#8a1a14'), [0, 92, 0], [44, 34, 36]); add(SPH(), M('#a02a1a'), [0, 140, 8], [30, 28, 28]);
+    for (const sd of [-1, 1]) {
+      add(CON(), M('#1a0a0a'), [sd * 26, 176, -4], [8, 44, 8], [0.3, 0, -sd * 0.8]);
+      for (const y of [100, 72]) add(CAP(), M('#8a1a14'), [sd * 54, y, 10], [11, 22, 11], [0.5, 0, sd * 0.7]);
+      add(CAP(), M('#2a0808'), [sd * 18, 18, 0], [13, 15, 13]);
+    }
+    add(SPH(), M('#ff6a2a', { emissive: new THREE.Color('#ff4a1a'), emissiveIntensity: 0.8 }), [0, 96, 34], [12, 12, 6]);
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ffb02a' })); x.position.set(sd * 11, 142, 34); x.scale.set(5, 3, 2); body.add(x); }
+  },
+  immortui(add, M, body) {
+    add(CON(), M('#140c1e'), [0, 60, 0], [46, 120, 46]); add(SPH(), M('#1e1430'), [0, 108, 0], [34, 26, 28]); add(SPH(), M('#2a1a40'), [0, 146, 6], [26, 26, 26]);
+    for (let k = 0; k < 7; k++) { const a = -1.2 + k * 0.4; add(CON(), M('#8a5aff', { emissive: new THREE.Color('#6a3aff'), emissiveIntensity: 0.8 }), [Math.sin(a) * 22, 176, Math.cos(a) * 10 - 4], [3.5, 16, 3.5]); }
+    for (const sd of [-1, 1]) { add(CAP(), M('#1e1430'), [sd * 44, 110, 12], [9, 26, 9], [0.6, 0, sd * 0.5]); add(SPH(), M('#b08aff', { emissive: new THREE.Color('#8a5aff'), emissiveIntensity: 1 }), [sd * 58, 86, 34], [10, 10, 10]); }
+    for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#d0b0ff' })); x.position.set(sd * 9, 148, 30); x.scale.set(5, 2.5, 2); body.add(x); }
+  }
+};
+function dalkiBody(add, M, body, spikes, skin, acc) {
+  add(CAP(), M(shadeHex(skin, -0.35)), [0, 46, 0], [30, 28, 26]);
+  add(SPH(), M(skin), [0, 86, 0], [38, 30, 32]);
+  add(SPH(), M(shadeHex(skin, 0.15)), [0, 130, 10], [26, 24, 24]);
+  for (const sd of [-1, 1]) { add(CAP(), M(skin), [sd * 46, 84, 12], [11, 24, 11], [0.5, 0, sd * 0.4]); add(SPH(), M(shadeHex(skin, 0.1)), [sd * 52, 58, 32], [13, 12, 13]); add(CAP(), M(shadeHex(skin, -0.35)), [sd * 16, 16, 0], [12, 14, 12]); }
+  const n = Math.min(spikes, 10);
+  // Stacheln als Kranz auf dem Kopf, von vorn gut sichtbar
+  for (let i = 0; i < n; i++) { const a = n === 1 ? 0 : -1.3 + i * 2.6 / (n - 1); add(CON(), M(acc, { emissive: new THREE.Color(acc), emissiveIntensity: 0.35 }), [Math.sin(a) * 22, 156 - Math.abs(a) * 12, 8 - Math.abs(a) * 6], [5.5, 34 + (1 - Math.abs(a)) * 10, 5.5], [0.25, 0, -a * 0.7]); }
+  add(BOX(), M('#1a1414'), [0, 122, 33], [16, 3, 3]);
+  for (const sd of [-1, 1]) { const x = new THREE.Mesh(SPH(), new THREE.MeshBasicMaterial({ color: '#ff8a2a' })); x.position.set(sd * 9, 134, 32); x.scale.set(4.5, 2.6, 2); body.add(x); }
+}
 
 /* ------------------------------------------------------------ Deko (instanziert je Art) */
 function propParts(type) {
@@ -476,7 +539,7 @@ function r3nBoss(e, p, time, dt) {
   const hum = BOSS_HUMAN[e.def.bossDraw];
   if (!B) { if (hum) { B = buildChibi(hum, 2); B.human = true; R3N.scene.add(B.root); } else B = buildBoss(e); R3N.bosses.set(e.id, B); }
   if (B.human) {
-    const s = 1.25 * (e.def.scale || 1), mv = Math.min(1, Math.hypot(e.vx || 0, e.vy || 0) / 40 + (e.run || 0));
+    const s = 1.6 * (e.def.scale || 1), mv = Math.min(1, Math.hypot(e.vx || 0, e.vy || 0) / 40 + (e.run || 0));
     poseChibi(B, { x: e.x, y: e.y, face: 1, aimYaw: p ? Math.atan2(p.x - e.x, p.y - e.y) : 0, run: e.dead ? 0 : Math.max(0.35, mv), phase: e.animT * 9, t: time, cast: e.state === 'wind' ? 1 : 0, flash: e.flash > 0 ? 0.7 : 0, flashCol: '#ffffff', dead: e.dead, deadT: e.deathT }, dt);
     B.root.scale.setScalar(s); B.aura.material.color.set('#ff3a4e');
     addShadow(e.x, e.y, 30 * s); return;
